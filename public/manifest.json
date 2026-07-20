@@ -1,0 +1,10 @@
+{
+  "name": "DistribPro — Gestion commerciale",
+  "short_name": "DistribPro",
+  "description": "Plateforme de gestion commerciale pour entreprises de distribution",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1f26",
+  "theme_color": "#0d2830",
+  "icons": []
+}
