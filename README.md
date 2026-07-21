@@ -77,3 +77,4 @@ supabase/
 - Permissions granulaires par rôle dans l'UI
 - Mode hors-ligne (PWA / IndexedDB) — le manifest est en place, le service worker reste à écrire
 - Module Tournées, IA (segmentation, prévision), export Excel/PDF
+Test sync GitHub
