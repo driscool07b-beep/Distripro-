@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { to: '/clients', label: 'Clients', icon: ClientsIcon },
   { to: '/stock', label: 'Produits & Stock', icon: StockIcon },
   { to: '/ventes', label: 'Ventes', icon: VentesIcon },
+  { to: '/tournees', label: 'Tournées', icon: VentesIcon },
 ]
 
 export default function Layout() {

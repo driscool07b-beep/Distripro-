@@ -7,6 +7,7 @@ import Clients from './pages/Clients'
 import Stock from './pages/Stock'
 import Ventes from './pages/Ventes'
 import NotFound from './pages/NotFound'
+import Tournees from './pages/Tournees';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="clients" element={<Clients />} />
         <Route path="stock" element={<Stock />} />
         <Route path="ventes" element={<Ventes />} />
+        <Route path="tournees" element={<Tournees />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
