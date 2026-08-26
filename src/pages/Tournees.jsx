@@ -72,7 +72,7 @@ export default function Tournees() {
     }
 
     const { data, error } = await supabase.rpc('creer_tournee_optimisee', {
-      p_entreprise_id: entrepriseId,
+      p_commercial_id: profil?.id,
       p_date_tournee: formData.date_tournee,
       p_client_ids: formData.clients_selectionnes,
     });
@@ -92,16 +92,35 @@ export default function Tournees() {
   };
 
   const marquerVisitee = async (visiteId) => {
-    const { error } = await supabase.rpc('valider_visite', {
-      p_visite_id: visiteId,
-    });
-
-    if (error) {
-      alert('Erreur : ' + error.message);
+    if (!navigator.geolocation) {
+      alert("La géolocalisation n'est pas disponible sur cet appareil/navigateur.");
       return;
     }
 
-    if (selectedTournee) chargerVisites(selectedTournee.id);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { error } = await supabase.rpc('valider_visite', {
+          p_tournee_ligne_id: visiteId,
+          p_latitude: position.coords.latitude,
+          p_longitude: position.coords.longitude,
+        });
+
+        if (error) {
+          alert(
+            error.message?.includes('tolerance') || error.message?.includes('distance')
+              ? 'Vous semblez trop éloigné du client pour valider cette visite.'
+              : 'Erreur : ' + error.message
+          );
+          return;
+        }
+
+        if (selectedTournee) chargerVisites(selectedTournee.id);
+      },
+      () => {
+        alert("Impossible d'obtenir votre position. Autorisez la géolocalisation pour valider une visite.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
 
   const toggleClientSelection = (clientId) => {
@@ -158,7 +177,7 @@ export default function Tournees() {
                   onClick={() => marquerVisitee(visite.id)}
                   className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm"
                 >
-                  Marquer visitée
+                  Marquer visitée (vérif. GPS)
                 </button>
               )}
             </div>
