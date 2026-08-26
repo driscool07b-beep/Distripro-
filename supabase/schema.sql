@@ -192,6 +192,10 @@ drop policy if exists produits_select on produits;
 create policy produits_select on produits
   for select using (entreprise_id = current_entreprise_id());
 
+drop policy if exists produits_insert on produits;
+create policy produits_insert on produits
+  for insert with check (entreprise_id = current_entreprise_id());
+
 -- STOCKS
 drop policy if exists stocks_select on stocks;
 create policy stocks_select on stocks

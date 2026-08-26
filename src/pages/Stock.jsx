@@ -52,7 +52,8 @@ export default function Stock() {
     })
     setEnregistrement(false)
     if (error) {
-      setErreur("Erreur lors de l'enregistrement. Réessayez.")
+      console.error('Erreur creer_produit:', error)
+      setErreur(`Erreur : ${error.message || 'inconnue'}`)
       return
     }
     setModalProduit(false)
