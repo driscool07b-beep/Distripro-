@@ -127,10 +127,12 @@ create table if not exists mouvements_stock (
   id             uuid primary key default gen_random_uuid(),
   entreprise_id  uuid not null references entreprises(id) on delete cascade,
   produit_id     uuid not null references produits(id) on delete cascade,
-  type           text not null check (type in ('entree', 'sortie')),
+  depot_id       uuid not null references depots(id) on delete cascade,
+  type_mouvement text not null check (type_mouvement in ('entree', 'sortie')),
   quantite       integer not null check (quantite > 0),
+  reference_doc  text,
   motif          text,
-  created_by     uuid references profils(id),
+  effectue_par   uuid references profils(id),
   created_at     timestamptz not null default now()
 );
 
@@ -281,8 +283,8 @@ begin
   values (v_entreprise_id, v_produit_id, v_depot_id, coalesce(p_quantite_initiale, 0));
 
   if coalesce(p_quantite_initiale, 0) > 0 then
-    insert into mouvements_stock (entreprise_id, produit_id, type, quantite, motif, created_by)
-    values (v_entreprise_id, v_produit_id, 'entree', p_quantite_initiale, 'Stock initial', auth.uid());
+    insert into mouvements_stock (entreprise_id, produit_id, depot_id, type_mouvement, quantite, motif, effectue_par)
+    values (v_entreprise_id, v_produit_id, v_depot_id, 'entree', p_quantite_initiale, 'Stock initial', auth.uid());
   end if;
 
   return v_produit_id;
@@ -304,6 +306,7 @@ as $$
 declare
   v_entreprise_id uuid := current_entreprise_id();
   v_quantite_actuelle integer;
+  v_depot_id uuid;
 begin
   if v_entreprise_id is null then
     raise exception 'utilisateur non rattaché à une entreprise';
@@ -312,7 +315,7 @@ begin
     raise exception 'type de mouvement invalide';
   end if;
 
-  select quantite into v_quantite_actuelle
+  select quantite, depot_id into v_quantite_actuelle, v_depot_id
   from stocks
   where produit_id = p_produit_id and entreprise_id = v_entreprise_id
   for update;
@@ -330,8 +333,8 @@ begin
       updated_at = now()
   where produit_id = p_produit_id and entreprise_id = v_entreprise_id;
 
-  insert into mouvements_stock (entreprise_id, produit_id, type, quantite, motif, created_by)
-  values (v_entreprise_id, p_produit_id, p_type, p_quantite, p_motif, auth.uid());
+  insert into mouvements_stock (entreprise_id, produit_id, depot_id, type_mouvement, quantite, motif, effectue_par)
+  values (v_entreprise_id, p_produit_id, v_depot_id, p_type, p_quantite, p_motif, auth.uid());
 end;
 $$;
 
