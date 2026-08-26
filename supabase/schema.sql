@@ -78,11 +78,17 @@ create index if not exists idx_clients_entreprise on clients(entreprise_id);
 create table if not exists produits (
   id             uuid primary key default gen_random_uuid(),
   entreprise_id  uuid not null references entreprises(id) on delete cascade,
+  reference      text,
   nom            text not null,
   categorie      text,
-  prix_unitaire  numeric(14,2) not null default 0,
+  unite          text,
+  prix_achat     numeric(14,2) not null default 0,
+  prix_vente     numeric(14,2) not null default 0,
   seuil_alerte   integer not null default 0,
+  actif          boolean not null default true,
   created_at     timestamptz not null default now()
+  -- NB: la colonne "prix_unitaire" existe encore en base (héritage) mais n'est plus
+  -- utilisée par l'application ; le prix catalogue de référence est prix_vente.
 );
 
 create index if not exists idx_produits_entreprise on produits(entreprise_id);
@@ -221,7 +227,7 @@ create policy ventes_lignes_select on ventes_lignes
 create or replace function creer_produit(
   p_nom text,
   p_categorie text,
-  p_prix_unitaire numeric,
+  p_prix_vente numeric,
   p_seuil_alerte integer,
   p_quantite_initiale integer
 )
@@ -238,8 +244,8 @@ begin
     raise exception 'utilisateur non rattaché à une entreprise';
   end if;
 
-  insert into produits (entreprise_id, nom, categorie, prix_unitaire, seuil_alerte)
-  values (v_entreprise_id, p_nom, p_categorie, p_prix_unitaire, p_seuil_alerte)
+  insert into produits (entreprise_id, nom, categorie, prix_vente, seuil_alerte)
+  values (v_entreprise_id, p_nom, p_categorie, p_prix_vente, p_seuil_alerte)
   returning id into v_produit_id;
 
   insert into stocks (entreprise_id, produit_id, quantite)

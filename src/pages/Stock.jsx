@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
-const PRODUIT_VIDE = { nom: '', categorie: '', prix_unitaire: '', seuil_alerte: '10', quantite_initiale: '0' }
+const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
 
 export default function Stock() {
   const [produits, setProduits] = useState([])
@@ -22,7 +22,7 @@ export default function Stock() {
     setChargement(true)
     const { data, error } = await supabase
       .from('produits')
-      .select('id, nom, categorie, prix_unitaire, seuil_alerte, created_at, stocks(quantite)')
+      .select('id, nom, categorie, prix_vente, seuil_alerte, created_at, stocks(quantite)')
       .order('created_at', { ascending: false })
     if (!error) {
       setProduits(
@@ -38,7 +38,7 @@ export default function Stock() {
   async function enregistrerProduit(e) {
     e.preventDefault()
     setErreur('')
-    if (!formulaire.nom.trim() || !formulaire.prix_unitaire) {
+    if (!formulaire.nom.trim() || !formulaire.prix_vente) {
       setErreur('Le nom et le prix unitaire sont requis.')
       return
     }
@@ -46,7 +46,7 @@ export default function Stock() {
     const { error } = await supabase.rpc('creer_produit', {
       p_nom: formulaire.nom.trim(),
       p_categorie: formulaire.categorie.trim() || null,
-      p_prix_unitaire: Number(formulaire.prix_unitaire),
+      p_prix_vente: Number(formulaire.prix_vente),
       p_seuil_alerte: Number(formulaire.seuil_alerte || 0),
       p_quantite_initiale: Number(formulaire.quantite_initiale || 0),
     })
@@ -139,7 +139,7 @@ export default function Stock() {
                   <tr key={p.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
                     <td className="px-4 py-3 font-medium">{p.nom}</td>
                     <td className="px-4 py-3 text-petrol-700">{p.categorie || '—'}</td>
-                    <td className="px-4 py-3 font-mono text-petrol-700">{formatXOF(p.prix_unitaire)}</td>
+                    <td className="px-4 py-3 font-mono text-petrol-700">{formatXOF(p.prix_vente)}</td>
                     <td className="px-4 py-3">
                       <span className={`font-mono px-2 py-0.5 rounded ${enAlerte ? 'bg-amber-50 text-amber-700' : 'text-petrol-900'}`}>
                         {p.quantite}
@@ -190,8 +190,8 @@ export default function Stock() {
                   <input
                     type="number"
                     className="input-field font-mono"
-                    value={formulaire.prix_unitaire}
-                    onChange={(e) => setFormulaire({ ...formulaire, prix_unitaire: e.target.value })}
+                    value={formulaire.prix_vente}
+                    onChange={(e) => setFormulaire({ ...formulaire, prix_vente: e.target.value })}
                   />
                 </div>
                 <div>

@@ -34,7 +34,7 @@ export default function Ventes() {
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
     const [{ data: c }, { data: p }] = await Promise.all([
       supabase.from('clients').select('id, nom').order('nom'),
-      supabase.from('produits').select('id, nom, prix_unitaire, stocks(quantite)').order('nom'),
+      supabase.from('produits').select('id, nom, prix_vente, stocks(quantite)').order('nom'),
     ])
     setClients(c || [])
     setProduits((p || []).map((pr) => ({ ...pr, quantite_stock: pr.stocks?.[0]?.quantite ?? 0 })))
@@ -54,7 +54,7 @@ export default function Ventes() {
     copie[index] = { ...copie[index], [champ]: valeur }
     if (champ === 'produit_id') {
       const produit = produits.find((p) => p.id === valeur)
-      copie[index].prix_unitaire = produit?.prix_unitaire ?? 0
+      copie[index].prix_unitaire = produit?.prix_vente ?? 0
     }
     setLignes(copie)
   }
