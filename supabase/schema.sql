@@ -94,14 +94,28 @@ create table if not exists produits (
 create index if not exists idx_produits_entreprise on produits(entreprise_id);
 
 -- -------------------------------------------------------------------------
--- 5. STOCKS (1 ligne par produit — évolutif vers multi-dépôt plus tard)
+-- 4bis. DEPOTS
+-- -------------------------------------------------------------------------
+create table if not exists depots (
+  id             uuid primary key default gen_random_uuid(),
+  entreprise_id  uuid not null references entreprises(id) on delete cascade,
+  nom            text not null,
+  actif          boolean not null default true
+);
+
+create index if not exists idx_depots_entreprise on depots(entreprise_id);
+
+-- -------------------------------------------------------------------------
+-- 5. STOCKS (1 ligne par produit par dépôt)
 -- -------------------------------------------------------------------------
 create table if not exists stocks (
   id             uuid primary key default gen_random_uuid(),
   entreprise_id  uuid not null references entreprises(id) on delete cascade,
-  produit_id     uuid not null references produits(id) on delete cascade unique,
+  produit_id     uuid not null references produits(id) on delete cascade,
+  depot_id       uuid not null references depots(id) on delete cascade,
   quantite       integer not null default 0,
-  updated_at     timestamptz not null default now()
+  updated_at     timestamptz not null default now(),
+  unique (produit_id, depot_id)
 );
 
 create index if not exists idx_stocks_entreprise on stocks(entreprise_id);
@@ -243,17 +257,28 @@ as $$
 declare
   v_entreprise_id uuid := current_entreprise_id();
   v_produit_id uuid;
+  v_depot_id uuid;
 begin
   if v_entreprise_id is null then
     raise exception 'utilisateur non rattaché à une entreprise';
+  end if;
+
+  select id into v_depot_id
+  from depots
+  where entreprise_id = v_entreprise_id and actif = true
+  order by nom
+  limit 1;
+
+  if v_depot_id is null then
+    raise exception 'aucun dépôt actif trouvé pour cette entreprise';
   end if;
 
   insert into produits (entreprise_id, nom, categorie, prix_vente, seuil_alerte)
   values (v_entreprise_id, p_nom, p_categorie, p_prix_vente, p_seuil_alerte)
   returning id into v_produit_id;
 
-  insert into stocks (entreprise_id, produit_id, quantite)
-  values (v_entreprise_id, v_produit_id, coalesce(p_quantite_initiale, 0));
+  insert into stocks (entreprise_id, produit_id, depot_id, quantite)
+  values (v_entreprise_id, v_produit_id, v_depot_id, coalesce(p_quantite_initiale, 0));
 
   if coalesce(p_quantite_initiale, 0) > 0 then
     insert into mouvements_stock (entreprise_id, produit_id, type, quantite, motif, created_by)
