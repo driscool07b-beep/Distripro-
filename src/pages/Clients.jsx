@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
 
 const CLIENT_VIDE = { nom: '', telephone: '', adresse: '', latitude: '', longitude: '' }
 
 export default function Clients() {
+  const { profil } = useAuth()
   const [clients, setClients] = useState([])
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
@@ -33,8 +35,14 @@ export default function Clients() {
       setErreur('Le nom du client est requis.')
       return
     }
+    if (!profil?.entreprise_id) {
+      setErreur('Profil non chargé. Réessayez dans un instant.')
+      return
+    }
     setEnregistrement(true)
     const { error } = await supabase.from('clients').insert({
+      entreprise_id: profil.entreprise_id,
+      created_by: profil.id,
       nom: formulaire.nom.trim(),
       telephone: formulaire.telephone.trim() || null,
       adresse: formulaire.adresse.trim() || null,
