@@ -8,7 +8,7 @@ const CLIENT_VIDE = {
   email: '',
   adresse: '',
   ville: '',
-  type_client: 'detaillant',
+  type_client: 'diaspora',
   segment: 'nouveau',
   limite_credit: '',
   notes: '',
@@ -219,10 +219,13 @@ export default function Clients() {
                     value={formulaire.type_client}
                     onChange={(e) => setFormulaire({ ...formulaire, type_client: e.target.value })}
                   >
-                    <option value="detaillant">Détaillant</option>
-                    <option value="demi_grossiste">Demi-grossiste</option>
-                    <option value="grossiste">Grossiste</option>
-                    <option value="supermarche">Supermarché</option>
+                    <option value="diaspora">Diaspora</option>
+                    <option value="prosuma">Prosuma</option>
+                    <option value="prosuma_port">Prosuma Port</option>
+                    <option value="sococe_ci">Sococe CI</option>
+                    <option value="s2p">S2P</option>
+                    <option value="auchan">Auchan</option>
+                    <option value="clinique">Clinique</option>
                     <option value="autre">Autre</option>
                   </select>
                 </div>
