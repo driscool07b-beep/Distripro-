@@ -49,19 +49,19 @@ export default function Tournees() {
     if (!error) setClients(data || []);
   };
 
-  const chargerVisites = async (tourneeId) => {
+  const chargerLignes = async (tourneeId) => {
     const { data, error } = await supabase
-      .from('visites')
+      .from('tournee_lignes')
       .select('*, clients(nom)')
       .eq('tournee_id', tourneeId)
-      .order('ordre_prevu', { ascending: true });
+      .order('ordre', { ascending: true });
 
     if (!error) setVisites(data || []);
   };
 
   const ouvrirTournee = (tournee) => {
     setSelectedTournee(tournee);
-    chargerVisites(tournee.id);
+    chargerLignes(tournee.id);
   };
 
   const creerTournee = async (e) => {
@@ -91,7 +91,7 @@ export default function Tournees() {
     chargerTournees();
   };
 
-  const marquerVisitee = async (visiteId) => {
+  const marquerVisitee = async (ligneId) => {
     if (!navigator.geolocation) {
       alert("La géolocalisation n'est pas disponible sur cet appareil/navigateur.");
       return;
@@ -99,22 +99,26 @@ export default function Tournees() {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const { error } = await supabase.rpc('valider_visite', {
-          p_tournee_ligne_id: visiteId,
+        const { data, error } = await supabase.rpc('valider_visite', {
+          p_tournee_ligne_id: ligneId,
           p_latitude: position.coords.latitude,
           p_longitude: position.coords.longitude,
         });
 
         if (error) {
+          alert('Erreur : ' + error.message);
+          return;
+        }
+
+        if (!data?.succes) {
           alert(
-            error.message?.includes('tolerance') || error.message?.includes('distance')
-              ? 'Vous semblez trop éloigné du client pour valider cette visite.'
-              : 'Erreur : ' + error.message
+            data?.message ||
+              `Vous semblez trop éloigné du client (${data?.distance_metres ?? '?'} m) pour valider cette visite.`
           );
           return;
         }
 
-        if (selectedTournee) chargerVisites(selectedTournee.id);
+        if (selectedTournee) chargerLignes(selectedTournee.id);
       },
       () => {
         alert("Impossible d'obtenir votre position. Autorisez la géolocalisation pour valider une visite.");
@@ -157,24 +161,24 @@ export default function Tournees() {
         </p>
 
         <div className="space-y-3">
-          {visites.map((visite, index) => (
+          {visites.map((ligne, index) => (
             <div
-              key={visite.id}
+              key={ligne.id}
               className={`border rounded-lg p-3 flex items-center justify-between ${
-                visite.statut === 'terminee' ? 'bg-green-50 border-green-200' : 'bg-white'
+                ligne.statut === 'visite' ? 'bg-green-50 border-green-200' : 'bg-white'
               }`}
             >
               <div>
                 <p className="font-medium">
-                  {index + 1}. {visite.clients?.nom || 'Client'}
+                  {index + 1}. {ligne.clients?.nom || 'Client'}
                 </p>
                 <p className="text-xs text-gray-500">
-                  Statut : {visite.statut === 'terminee' ? '✅ Visitée' : '⏳ En attente'}
+                  Statut : {ligne.statut === 'visite' ? '✅ Visitée' : '⏳ À visiter'}
                 </p>
               </div>
-              {visite.statut !== 'terminee' && (
+              {ligne.statut !== 'visite' && (
                 <button
-                  onClick={() => marquerVisitee(visite.id)}
+                  onClick={() => marquerVisitee(ligne.id)}
                   className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm"
                 >
                   Marquer visitée (vérif. GPS)
