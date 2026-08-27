@@ -79,7 +79,8 @@ export default function Clients() {
     })
     setEnregistrement(false)
     if (error) {
-      setErreur("Erreur lors de l'enregistrement. Réessayez.")
+      console.error('Erreur insertion client:', error)
+      setErreur(`Erreur : ${error.message || 'inconnue'}`)
       return
     }
     setModalOuvert(false)
