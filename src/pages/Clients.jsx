@@ -2,7 +2,19 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
-const CLIENT_VIDE = { nom: '', telephone: '', adresse: '', latitude: '', longitude: '' }
+const CLIENT_VIDE = {
+  nom: '',
+  telephone: '',
+  email: '',
+  adresse: '',
+  ville: '',
+  type_client: 'detaillant',
+  segment: 'nouveau',
+  limite_credit: '',
+  notes: '',
+  latitude: '',
+  longitude: '',
+}
 
 export default function Clients() {
   const { profil } = useAuth()
@@ -50,7 +62,7 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, adresse, created_at')
+      .select('id, nom, telephone, ville, type_client, segment, adresse, created_at')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
@@ -73,7 +85,13 @@ export default function Clients() {
       commercial_id: profil.id,
       nom: formulaire.nom.trim(),
       telephone: formulaire.telephone.trim() || null,
+      email: formulaire.email.trim() || null,
       adresse: formulaire.adresse.trim() || null,
+      ville: formulaire.ville.trim() || null,
+      type_client: formulaire.type_client || null,
+      segment: formulaire.segment || null,
+      limite_credit: formulaire.limite_credit ? Number(formulaire.limite_credit) : 0,
+      notes: formulaire.notes.trim() || null,
       latitude: formulaire.latitude ? Number(formulaire.latitude) : null,
       longitude: formulaire.longitude ? Number(formulaire.longitude) : null,
     })
@@ -119,20 +137,24 @@ export default function Clients() {
             <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
               <th className="px-4 py-3 font-medium">Nom</th>
               <th className="px-4 py-3 font-medium">Téléphone</th>
-              <th className="px-4 py-3 font-medium">Adresse</th>
+              <th className="px-4 py-3 font-medium">Ville</th>
+              <th className="px-4 py-3 font-medium">Type</th>
+              <th className="px-4 py-3 font-medium">Segment</th>
             </tr>
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={3} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
             ) : clientsFiltres.length === 0 ? (
-              <tr><td colSpan={3} className="px-4 py-8 text-center text-petrol-500">Aucun client trouvé.</td></tr>
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-petrol-500">Aucun client trouvé.</td></tr>
             ) : (
               clientsFiltres.map((c) => (
                 <tr key={c.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
                   <td className="px-4 py-3 font-medium">{c.nom}</td>
                   <td className="px-4 py-3 font-mono text-petrol-700">{c.telephone || '—'}</td>
-                  <td className="px-4 py-3 text-petrol-700">{c.adresse || '—'}</td>
+                  <td className="px-4 py-3 text-petrol-700">{c.ville || '—'}</td>
+                  <td className="px-4 py-3 text-petrol-700 capitalize">{c.type_client || '—'}</td>
+                  <td className="px-4 py-3 text-petrol-700 capitalize">{c.segment || '—'}</td>
                 </tr>
               ))
             )}
@@ -168,6 +190,75 @@ export default function Clients() {
                   className="input-field"
                   value={formulaire.adresse}
                   onChange={(e) => setFormulaire({ ...formulaire, adresse: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label">Email</label>
+                  <input
+                    type="email"
+                    className="input-field"
+                    value={formulaire.email}
+                    onChange={(e) => setFormulaire({ ...formulaire, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="label">Ville</label>
+                  <input
+                    className="input-field"
+                    value={formulaire.ville}
+                    onChange={(e) => setFormulaire({ ...formulaire, ville: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label">Type de client</label>
+                  <select
+                    className="input-field"
+                    value={formulaire.type_client}
+                    onChange={(e) => setFormulaire({ ...formulaire, type_client: e.target.value })}
+                  >
+                    <option value="detaillant">Détaillant</option>
+                    <option value="demi_grossiste">Demi-grossiste</option>
+                    <option value="grossiste">Grossiste</option>
+                    <option value="supermarche">Supermarché</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="label">Segment</label>
+                  <select
+                    className="input-field"
+                    value={formulaire.segment}
+                    onChange={(e) => setFormulaire({ ...formulaire, segment: e.target.value })}
+                  >
+                    <option value="nouveau">Nouveau</option>
+                    <option value="actif">Actif</option>
+                    <option value="vip">VIP</option>
+                    <option value="a_relancer">À relancer</option>
+                    <option value="inactif">Inactif</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="label">Limite de crédit (F CFA)</label>
+                <input
+                  type="number"
+                  min="0"
+                  className="input-field"
+                  value={formulaire.limite_credit}
+                  onChange={(e) => setFormulaire({ ...formulaire, limite_credit: e.target.value })}
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <label className="label">Notes</label>
+                <textarea
+                  className="input-field"
+                  rows={2}
+                  value={formulaire.notes}
+                  onChange={(e) => setFormulaire({ ...formulaire, notes: e.target.value })}
                 />
               </div>
               <div className="text-xs">
