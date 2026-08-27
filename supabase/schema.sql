@@ -106,6 +106,31 @@ create table if not exists depots (
 create index if not exists idx_depots_entreprise on depots(entreprise_id);
 
 -- -------------------------------------------------------------------------
+-- 4ter. TYPES DE CLIENT (paramétrage libre par entreprise — pas de valeurs
+-- imposées globalement : chaque entreprise cliente du SaaS définit sa liste)
+-- -------------------------------------------------------------------------
+create table if not exists types_client (
+  id             uuid primary key default gen_random_uuid(),
+  entreprise_id  uuid not null references entreprises(id) on delete cascade,
+  libelle        text not null,
+  actif          boolean not null default true,
+  created_at     timestamptz not null default now(),
+  unique (entreprise_id, libelle)
+);
+
+create index if not exists idx_types_client_entreprise on types_client(entreprise_id);
+
+alter table types_client enable row level security;
+
+drop policy if exists types_client_select on types_client;
+create policy types_client_select on types_client
+  for select using (entreprise_id = current_entreprise_id());
+
+drop policy if exists types_client_insert on types_client;
+create policy types_client_insert on types_client
+  for insert with check (entreprise_id = current_entreprise_id());
+
+-- -------------------------------------------------------------------------
 -- 5. STOCKS (1 ligne par produit par dépôt)
 -- -------------------------------------------------------------------------
 create table if not exists stocks (

@@ -8,7 +8,7 @@ const CLIENT_VIDE = {
   email: '',
   adresse: '',
   ville: '',
-  type_client: 'diaspora',
+  type_client: '',
   segment: 'nouveau',
   limite_credit: '',
   notes: '',
@@ -26,6 +26,9 @@ export default function Clients() {
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
   const [captureGps, setCaptureGps] = useState('idle') // idle | en_cours | ok | echec
+  const [typesClient, setTypesClient] = useState([])
+  const [ajoutTypeOuvert, setAjoutTypeOuvert] = useState(false)
+  const [nouveauType, setNouveauType] = useState('')
 
   function capturerPositionActuelle() {
     if (!navigator.geolocation) {
@@ -56,7 +59,33 @@ export default function Clients() {
 
   useEffect(() => {
     chargerClients()
+    chargerTypesClient()
   }, [])
+
+  async function chargerTypesClient() {
+    const { data, error } = await supabase
+      .from('types_client')
+      .select('id, libelle')
+      .eq('actif', true)
+      .order('libelle')
+    if (!error) setTypesClient(data || [])
+  }
+
+  async function ajouterTypeClient() {
+    const libelle = nouveauType.trim()
+    if (!libelle || !profil?.entreprise_id) return
+    const { data, error } = await supabase
+      .from('types_client')
+      .insert({ entreprise_id: profil.entreprise_id, libelle })
+      .select('id, libelle')
+      .single()
+    if (!error && data) {
+      setTypesClient((prev) => [...prev, data].sort((a, b) => a.libelle.localeCompare(b.libelle)))
+      setFormulaire((f) => ({ ...f, type_client: data.libelle }))
+    }
+    setNouveauType('')
+    setAjoutTypeOuvert(false)
+  }
 
   async function chargerClients() {
     setChargement(true)
@@ -104,6 +133,7 @@ export default function Clients() {
     setModalOuvert(false)
     setFormulaire(CLIENT_VIDE)
     setCaptureGps('idle')
+    setAjoutTypeOuvert(false)
     chargerClients()
   }
 
@@ -214,20 +244,49 @@ export default function Clients() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label">Type de client</label>
-                  <select
-                    className="input-field"
-                    value={formulaire.type_client}
-                    onChange={(e) => setFormulaire({ ...formulaire, type_client: e.target.value })}
-                  >
-                    <option value="diaspora">Diaspora</option>
-                    <option value="prosuma">Prosuma</option>
-                    <option value="prosuma_port">Prosuma Port</option>
-                    <option value="sococe_ci">Sococe CI</option>
-                    <option value="s2p">S2P</option>
-                    <option value="auchan">Auchan</option>
-                    <option value="clinique">Clinique</option>
-                    <option value="autre">Autre</option>
-                  </select>
+                  {!ajoutTypeOuvert ? (
+                    <select
+                      className="input-field"
+                      value={formulaire.type_client}
+                      onChange={(e) => {
+                        if (e.target.value === '__nouveau__') {
+                          setAjoutTypeOuvert(true)
+                        } else {
+                          setFormulaire({ ...formulaire, type_client: e.target.value })
+                        }
+                      }}
+                    >
+                      <option value="">— Sélectionner —</option>
+                      {typesClient.map((t) => (
+                        <option key={t.id} value={t.libelle}>{t.libelle}</option>
+                      ))}
+                      <option value="__nouveau__">+ Ajouter un type…</option>
+                    </select>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        className="input-field"
+                        autoFocus
+                        placeholder="Nom du nouveau type"
+                        value={nouveauType}
+                        onChange={(e) => setNouveauType(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), ajouterTypeClient())}
+                      />
+                      <button type="button" className="btn-secondary" onClick={ajouterTypeClient}>
+                        OK
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        onClick={() => {
+                          setAjoutTypeOuvert(false)
+                          setNouveauType('')
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="label">Segment</label>
@@ -317,6 +376,7 @@ export default function Clients() {
                     setFormulaire(CLIENT_VIDE)
                     setErreur('')
                     setCaptureGps('idle')
+                    setAjoutTypeOuvert(false)
                   }}
                 >
                   Annuler
