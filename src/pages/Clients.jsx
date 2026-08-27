@@ -70,7 +70,7 @@ export default function Clients() {
     setEnregistrement(true)
     const { error } = await supabase.from('clients').insert({
       entreprise_id: profil.entreprise_id,
-      created_by: profil.id,
+      commercial_id: profil.id,
       nom: formulaire.nom.trim(),
       telephone: formulaire.telephone.trim() || null,
       adresse: formulaire.adresse.trim() || null,
