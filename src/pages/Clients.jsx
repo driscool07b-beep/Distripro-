@@ -13,6 +13,34 @@ export default function Clients() {
   const [formulaire, setFormulaire] = useState(CLIENT_VIDE)
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
+  const [captureGps, setCaptureGps] = useState('idle') // idle | en_cours | ok | echec
+
+  function capturerPositionActuelle() {
+    if (!navigator.geolocation) {
+      setCaptureGps('echec')
+      return
+    }
+    setCaptureGps('en_cours')
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormulaire((f) => ({
+          ...f,
+          latitude: position.coords.latitude.toFixed(6),
+          longitude: position.coords.longitude.toFixed(6),
+        }))
+        setCaptureGps('ok')
+      },
+      () => setCaptureGps('echec'),
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }
+
+  function ouvrirNouveauClient() {
+    setFormulaire(CLIENT_VIDE)
+    setErreur('')
+    setModalOuvert(true)
+    capturerPositionActuelle()
+  }
 
   useEffect(() => {
     chargerClients()
@@ -56,6 +84,7 @@ export default function Clients() {
     }
     setModalOuvert(false)
     setFormulaire(CLIENT_VIDE)
+    setCaptureGps('idle')
     chargerClients()
   }
 
@@ -70,7 +99,7 @@ export default function Clients() {
           <h1 className="text-2xl font-semibold">Clients</h1>
           <p className="text-sm text-petrol-700 mt-1">{clients.length} client(s) enregistré(s)</p>
         </div>
-        <button className="btn-primary" onClick={() => setModalOuvert(true)}>
+        <button className="btn-primary" onClick={ouvrirNouveauClient}>
           + Nouveau client
         </button>
       </header>
@@ -140,6 +169,27 @@ export default function Clients() {
                   onChange={(e) => setFormulaire({ ...formulaire, adresse: e.target.value })}
                 />
               </div>
+              <div className="text-xs">
+                {captureGps === 'en_cours' && (
+                  <span className="text-petrol-600">📍 Capture de votre position en cours…</span>
+                )}
+                {captureGps === 'ok' && (
+                  <span className="text-green-600">📍 Position capturée automatiquement.</span>
+                )}
+                {captureGps === 'echec' && (
+                  <span className="text-amber-600">
+                    ⚠️ Position indisponible — saisissez-la manuellement, ou{' '}
+                    <button
+                      type="button"
+                      onClick={capturerPositionActuelle}
+                      className="underline"
+                    >
+                      réessayer
+                    </button>
+                    .
+                  </span>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label">Latitude</label>
@@ -171,6 +221,7 @@ export default function Clients() {
                     setModalOuvert(false)
                     setFormulaire(CLIENT_VIDE)
                     setErreur('')
+                    setCaptureGps('idle')
                   }}
                 >
                   Annuler
