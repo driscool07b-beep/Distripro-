@@ -256,7 +256,7 @@ export default function Clients() {
 
       {modalOuvert && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
-          <div className="card bg-white p-6 w-full max-w-md">
+          <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <h2 className="font-semibold text-lg mb-4">
               {clientEnEdition ? 'Modifier le client' : 'Nouveau client'}
             </h2>
