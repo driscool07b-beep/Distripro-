@@ -30,6 +30,10 @@ export default function Clients() {
   const [ajoutTypeOuvert, setAjoutTypeOuvert] = useState(false)
   const [nouveauType, setNouveauType] = useState('')
   const [clientEnEdition, setClientEnEdition] = useState(null) // null = création, sinon id du client
+  const [photoPath, setPhotoPath] = useState(null)
+  const [photoUrl, setPhotoUrl] = useState(null)
+  const [photoEnvoi, setPhotoEnvoi] = useState(false)
+  const [photoErreur, setPhotoErreur] = useState('')
 
   function capturerPositionActuelle() {
     if (!navigator.geolocation) {
@@ -55,6 +59,9 @@ export default function Clients() {
     setClientEnEdition(null)
     setFormulaire(CLIENT_VIDE)
     setErreur('')
+    setPhotoPath(null)
+    setPhotoUrl(null)
+    setPhotoErreur('')
     setModalOuvert(true)
     capturerPositionActuelle()
   }
@@ -76,7 +83,49 @@ export default function Clients() {
     })
     setErreur('')
     setCaptureGps('idle')
+    setPhotoPath(client.photo_devanture_path || null)
+    setPhotoUrl(null)
+    setPhotoErreur('')
+    if (client.photo_devanture_path) chargerUrlPhoto(client.photo_devanture_path)
     setModalOuvert(true)
+  }
+
+  async function chargerUrlPhoto(path) {
+    const { data } = await supabase.storage.from('client-photos').createSignedUrl(path, 3600)
+    if (data?.signedUrl) setPhotoUrl(data.signedUrl)
+  }
+
+  async function envoyerPhotoDevanture(e) {
+    const fichier = e.target.files?.[0]
+    if (!fichier || !clientEnEdition || !profil?.entreprise_id) return
+    setPhotoErreur('')
+    setPhotoEnvoi(true)
+
+    const extension = fichier.name.split('.').pop() || 'jpg'
+    const chemin = `${profil.entreprise_id}/${clientEnEdition}.${extension}`
+
+    const { error: erreurUpload } = await supabase.storage
+      .from('client-photos')
+      .upload(chemin, fichier, { upsert: true })
+
+    if (erreurUpload) {
+      setPhotoEnvoi(false)
+      setPhotoErreur(`Erreur envoi photo : ${erreurUpload.message}`)
+      return
+    }
+
+    const { error: erreurMaj } = await supabase
+      .from('clients')
+      .update({ photo_devanture_path: chemin })
+      .eq('id', clientEnEdition)
+
+    setPhotoEnvoi(false)
+    if (erreurMaj) {
+      setPhotoErreur(`Erreur enregistrement : ${erreurMaj.message}`)
+      return
+    }
+    setPhotoPath(chemin)
+    chargerUrlPhoto(chemin)
   }
 
   function ouvrirItineraire(client) {
@@ -119,7 +168,7 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, email, adresse, ville, type_client, segment, limite_credit, notes, latitude, longitude, created_at')
+      .select('id, nom, telephone, email, adresse, ville, type_client, segment, limite_credit, notes, latitude, longitude, photo_devanture_path, created_at')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
@@ -171,6 +220,9 @@ export default function Clients() {
     setCaptureGps('idle')
     setAjoutTypeOuvert(false)
     setClientEnEdition(null)
+    setPhotoPath(null)
+    setPhotoUrl(null)
+    setPhotoErreur('')
     chargerClients()
   }
 
@@ -387,6 +439,32 @@ export default function Clients() {
                   onChange={(e) => setFormulaire({ ...formulaire, notes: e.target.value })}
                 />
               </div>
+              {clientEnEdition ? (
+                <div>
+                  <label className="label">Photo de la devanture / enseigne</label>
+                  {photoUrl && (
+                    <img
+                      src={photoUrl}
+                      alt="Devanture du client"
+                      className="w-full h-40 object-cover rounded-lg mb-2 border border-line"
+                    />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={envoyerPhotoDevanture}
+                    disabled={photoEnvoi}
+                    className="text-sm"
+                  />
+                  {photoEnvoi && <p className="text-xs text-petrol-600 mt-1">Envoi en cours…</p>}
+                  {photoErreur && <p className="text-xs text-red-600 mt-1">{photoErreur}</p>}
+                </div>
+              ) : (
+                <p className="text-xs text-petrol-500">
+                  📷 La photo de la devanture pourra être ajoutée après l'enregistrement, via "Modifier".
+                </p>
+              )}
               <div className="text-xs flex items-center gap-2 flex-wrap">
                 {captureGps === 'en_cours' && (
                   <span className="text-petrol-600">📍 Capture de votre position en cours…</span>
@@ -437,6 +515,9 @@ export default function Clients() {
                     setCaptureGps('idle')
                     setAjoutTypeOuvert(false)
                     setClientEnEdition(null)
+                    setPhotoPath(null)
+                    setPhotoUrl(null)
+                    setPhotoErreur('')
                   }}
                 >
                   Annuler

@@ -59,15 +59,25 @@ $$;
 -- 3. CLIENTS
 -- -------------------------------------------------------------------------
 create table if not exists clients (
-  id             uuid primary key default gen_random_uuid(),
-  entreprise_id  uuid not null references entreprises(id) on delete cascade,
-  nom            text not null,
-  telephone      text,
-  adresse        text,
-  latitude       double precision,
-  longitude      double precision,
-  created_by     uuid references profils(id),
-  created_at     timestamptz not null default now()
+  id                    uuid primary key default gen_random_uuid(),
+  entreprise_id         uuid not null references entreprises(id) on delete cascade,
+  nom                   text not null,
+  type_client           text default 'detaillant',
+  telephone             text,
+  email                 text,
+  adresse               text,
+  ville                 text,
+  latitude              double precision,
+  longitude             double precision,
+  segment               text default 'nouveau',
+  limite_credit         numeric(14,2) default 0,
+  solde_credit          numeric(14,2) default 0,
+  commercial_id         uuid references profils(id),
+  notes                 text,
+  photo_devanture_path  text,
+  actif                 boolean default true,
+  created_at            timestamptz not null default now(),
+  updated_at            timestamptz default now()
 );
 
 create index if not exists idx_clients_entreprise on clients(entreprise_id);
@@ -469,6 +479,14 @@ begin
   return v_entreprise_id;
 end;
 $$;
+
+-- -------------------------------------------------------------------------
+-- STOCKAGE : bucket client-photos (privé, isolé par entreprise_id)
+-- Convention de chemin : {entreprise_id}/{client_id}.{extension}
+-- Voir supabase/migration_photo_client.sql pour la création du bucket et
+-- des policies RLS sur storage.objects (non gérable via ce schema.sql seul,
+-- car storage.buckets/storage.objects sont hors du schéma "public").
+-- -------------------------------------------------------------------------
 
 -- =========================================================================
 -- FIN DU SCHEMA v1
