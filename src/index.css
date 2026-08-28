@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html, body, #root {
+    @apply overflow-x-hidden;
+    max-width: 100vw;
+  }
   body {
     @apply bg-canvas text-petrol-950 font-body antialiased;
   }
