@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
 
     const { data: entrepriseData, error: entrepriseError } = await supabase
       .from('entreprises')
-      .select('id, nom, plan, statut')
+      .select('id, nom, plan, statut, photo_rapport_obligatoire')
       .eq('id', profilData.entreprise_id)
       .single()
 
@@ -76,6 +76,7 @@ export function AuthProvider({ children }) {
     connexion,
     deconnexion,
     estConnecte: !!session,
+    rechargerProfil: () => session?.user && chargerProfil(session.user.id),
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

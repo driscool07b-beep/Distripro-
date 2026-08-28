@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
 export default function Tournees() {
-  const { profil } = useAuth();
+  const { profil, entreprise } = useAuth();
   const entrepriseId = profil?.entreprise_id;
   const [tournees, setTournees] = useState([]);
   const [clients, setClients] = useState([]);
@@ -11,6 +11,13 @@ export default function Tournees() {
   const [showForm, setShowForm] = useState(false);
   const [selectedTournee, setSelectedTournee] = useState(null);
   const [visites, setVisites] = useState([]);
+
+  const [rapportLigne, setRapportLigne] = useState(null); // ligne en cours de rapport, ou null
+  const [rapportNotesRayon, setRapportNotesRayon] = useState('');
+  const [rapportNotesReserve, setRapportNotesReserve] = useState('');
+  const [rapportPhotos, setRapportPhotos] = useState([]); // [{file, apercu}]
+  const [rapportEnvoi, setRapportEnvoi] = useState(false);
+  const [rapportErreur, setRapportErreur] = useState('');
 
   const [formData, setFormData] = useState({
     date_tournee: new Date().toISOString().split('T')[0],
@@ -91,7 +98,7 @@ export default function Tournees() {
     chargerTournees();
   };
 
-  const marquerVisitee = async (ligneId) => {
+  const marquerVisitee = async (ligne) => {
     if (!navigator.geolocation) {
       alert("La géolocalisation n'est pas disponible sur cet appareil/navigateur.");
       return;
@@ -100,7 +107,7 @@ export default function Tournees() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { data, error } = await supabase.rpc('valider_visite', {
-          p_tournee_ligne_id: ligneId,
+          p_tournee_ligne_id: ligne.id,
           p_latitude: position.coords.latitude,
           p_longitude: position.coords.longitude,
         });
@@ -119,12 +126,76 @@ export default function Tournees() {
         }
 
         if (selectedTournee) chargerLignes(selectedTournee.id);
+        setRapportLigne(ligne);
+        setRapportNotesRayon('');
+        setRapportNotesReserve('');
+        setRapportPhotos([]);
+        setRapportErreur('');
       },
       () => {
         alert("Impossible d'obtenir votre position. Autorisez la géolocalisation pour valider une visite.");
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
+  };
+
+  const ajouterPhotoRapport = (e) => {
+    const fichier = e.target.files?.[0];
+    e.target.value = '';
+    if (!fichier || rapportPhotos.length >= 3) return;
+    setRapportPhotos((prev) => [...prev, { file: fichier, apercu: URL.createObjectURL(fichier) }]);
+  };
+
+  const retirerPhotoRapport = (index) => {
+    setRapportPhotos((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const fermerRapport = () => {
+    setRapportLigne(null);
+    setRapportPhotos([]);
+    setRapportErreur('');
+  };
+
+  const envoyerRapport = async () => {
+    if (entreprise?.photo_rapport_obligatoire && rapportPhotos.length === 0) {
+      setRapportErreur('Au moins une photo est requise pour ce rapport (réglage entreprise).');
+      return;
+    }
+    setRapportEnvoi(true);
+    setRapportErreur('');
+
+    const cheminsPhotos = [];
+    for (let i = 0; i < rapportPhotos.length; i++) {
+      const { file } = rapportPhotos[i];
+      const extension = file.name.split('.').pop() || 'jpg';
+      const chemin = `${entrepriseId}/rapports/${rapportLigne.id}/${i}.${extension}`;
+      const { error: erreurUpload } = await supabase.storage
+        .from('client-photos')
+        .upload(chemin, file, { upsert: true });
+      if (erreurUpload) {
+        setRapportEnvoi(false);
+        setRapportErreur(`Erreur envoi photo ${i + 1} : ${erreurUpload.message}`);
+        return;
+      }
+      cheminsPhotos.push(chemin);
+    }
+
+    const { error } = await supabase.from('rapports_visite').insert({
+      entreprise_id: entrepriseId,
+      tournee_ligne_id: rapportLigne.id,
+      client_id: rapportLigne.client_id,
+      commercial_id: profil?.id,
+      notes_rayon: rapportNotesRayon.trim() || null,
+      notes_reserve: rapportNotesReserve.trim() || null,
+      photos_paths: cheminsPhotos,
+    });
+
+    setRapportEnvoi(false);
+    if (error) {
+      setRapportErreur(`Erreur enregistrement rapport : ${error.message}`);
+      return;
+    }
+    fermerRapport();
   };
 
   const toggleClientSelection = (clientId) => {
@@ -178,7 +249,7 @@ export default function Tournees() {
               </div>
               {ligne.statut !== 'visite' && (
                 <button
-                  onClick={() => marquerVisitee(ligne.id)}
+                  onClick={() => marquerVisitee(ligne)}
                   className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm"
                 >
                   Marquer visitée (vérif. GPS)
@@ -272,6 +343,97 @@ export default function Tournees() {
           <p className="text-gray-400 text-center py-8">Aucune tournée créée pour le moment</p>
         )}
       </div>
+
+      {rapportLigne && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-5 w-full max-w-md max-h-[90vh] overflow-y-auto space-y-3">
+            <h2 className="font-semibold text-lg">Rapport de visite</h2>
+            <p className="text-sm text-gray-500">
+              {rapportLigne.clients?.nom || 'Client'} — visite validée ✅
+            </p>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">État du stock en rayon</label>
+              <textarea
+                className="w-full border rounded px-3 py-2 text-sm"
+                rows={2}
+                value={rapportNotesRayon}
+                onChange={(e) => setRapportNotesRayon(e.target.value)}
+                placeholder="Ex : rupture sur le Bacca mil 550g, bien fourni sinon"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">État du stock en réserve</label>
+              <textarea
+                className="w-full border rounded px-3 py-2 text-sm"
+                rows={2}
+                value={rapportNotesReserve}
+                onChange={(e) => setRapportNotesReserve(e.target.value)}
+                placeholder="Ex : 20 cartons en réserve, stock suffisant pour 2 semaines"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Photos ({rapportPhotos.length}/3)
+                {entreprise?.photo_rapport_obligatoire && (
+                  <span className="text-red-500"> — au moins 1 requise</span>
+                )}
+              </label>
+              <div className="flex gap-2 flex-wrap">
+                {rapportPhotos.map((p, i) => (
+                  <div key={i} className="relative w-20 h-20">
+                    <img src={p.apercu} alt="" className="w-20 h-20 object-cover rounded border" />
+                    <button
+                      type="button"
+                      onClick={() => retirerPhotoRapport(i)}
+                      className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs leading-5"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                {rapportPhotos.length < 3 && (
+                  <label className="w-20 h-20 border-2 border-dashed rounded flex items-center justify-center text-2xl text-gray-400 cursor-pointer">
+                    +
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={ajouterPhotoRapport}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+
+            {rapportErreur && <p className="text-sm text-red-600">{rapportErreur}</p>}
+
+            <div className="flex gap-2 pt-2">
+              {!entreprise?.photo_rapport_obligatoire && (
+                <button
+                  type="button"
+                  onClick={fermerRapport}
+                  disabled={rapportEnvoi}
+                  className="flex-1 border rounded-lg py-2 text-sm font-medium disabled:opacity-50"
+                >
+                  Passer
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={envoyerRapport}
+                disabled={rapportEnvoi}
+                className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50"
+              >
+                {rapportEnvoi ? 'Envoi…' : 'Enregistrer le rapport'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
