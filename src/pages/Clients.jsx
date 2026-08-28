@@ -29,6 +29,7 @@ export default function Clients() {
   const [typesClient, setTypesClient] = useState([])
   const [ajoutTypeOuvert, setAjoutTypeOuvert] = useState(false)
   const [nouveauType, setNouveauType] = useState('')
+  const [clientEnEdition, setClientEnEdition] = useState(null) // null = création, sinon id du client
 
   function capturerPositionActuelle() {
     if (!navigator.geolocation) {
@@ -51,10 +52,37 @@ export default function Clients() {
   }
 
   function ouvrirNouveauClient() {
+    setClientEnEdition(null)
     setFormulaire(CLIENT_VIDE)
     setErreur('')
     setModalOuvert(true)
     capturerPositionActuelle()
+  }
+
+  function ouvrirEditionClient(client) {
+    setClientEnEdition(client.id)
+    setFormulaire({
+      nom: client.nom || '',
+      telephone: client.telephone || '',
+      email: client.email || '',
+      adresse: client.adresse || '',
+      ville: client.ville || '',
+      type_client: client.type_client || '',
+      segment: client.segment || 'nouveau',
+      limite_credit: client.limite_credit != null ? String(client.limite_credit) : '',
+      notes: client.notes || '',
+      latitude: client.latitude != null ? String(client.latitude) : '',
+      longitude: client.longitude != null ? String(client.longitude) : '',
+    })
+    setErreur('')
+    setCaptureGps('idle')
+    setModalOuvert(true)
+  }
+
+  function ouvrirItineraire(client) {
+    if (client.latitude == null || client.longitude == null) return
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${client.latitude},${client.longitude}`
+    window.open(url, '_blank')
   }
 
   useEffect(() => {
@@ -91,7 +119,7 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, ville, type_client, segment, adresse, created_at')
+      .select('id, nom, telephone, email, adresse, ville, type_client, segment, limite_credit, notes, latitude, longitude, created_at')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
@@ -109,9 +137,8 @@ export default function Clients() {
       return
     }
     setEnregistrement(true)
-    const { error } = await supabase.from('clients').insert({
-      entreprise_id: profil.entreprise_id,
-      commercial_id: profil.id,
+
+    const donneesCommunes = {
       nom: formulaire.nom.trim(),
       telephone: formulaire.telephone.trim() || null,
       email: formulaire.email.trim() || null,
@@ -123,10 +150,19 @@ export default function Clients() {
       notes: formulaire.notes.trim() || null,
       latitude: formulaire.latitude ? Number(formulaire.latitude) : null,
       longitude: formulaire.longitude ? Number(formulaire.longitude) : null,
-    })
+    }
+
+    const { error } = clientEnEdition
+      ? await supabase.from('clients').update(donneesCommunes).eq('id', clientEnEdition)
+      : await supabase.from('clients').insert({
+          entreprise_id: profil.entreprise_id,
+          commercial_id: profil.id,
+          ...donneesCommunes,
+        })
+
     setEnregistrement(false)
     if (error) {
-      console.error('Erreur insertion client:', error)
+      console.error('Erreur enregistrement client:', error)
       setErreur(`Erreur : ${error.message || 'inconnue'}`)
       return
     }
@@ -134,6 +170,7 @@ export default function Clients() {
     setFormulaire(CLIENT_VIDE)
     setCaptureGps('idle')
     setAjoutTypeOuvert(false)
+    setClientEnEdition(null)
     chargerClients()
   }
 
@@ -170,13 +207,14 @@ export default function Clients() {
               <th className="px-4 py-3 font-medium">Ville</th>
               <th className="px-4 py-3 font-medium">Type</th>
               <th className="px-4 py-3 font-medium">Segment</th>
+              <th className="px-4 py-3 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
             ) : clientsFiltres.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-petrol-500">Aucun client trouvé.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Aucun client trouvé.</td></tr>
             ) : (
               clientsFiltres.map((c) => (
                 <tr key={c.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
@@ -185,6 +223,30 @@ export default function Clients() {
                   <td className="px-4 py-3 text-petrol-700">{c.ville || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700 capitalize">{c.type_client || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700 capitalize">{c.segment || '—'}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-3 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => ouvrirEditionClient(c)}
+                        className="text-petrol-700 underline"
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => ouvrirItineraire(c)}
+                        disabled={c.latitude == null || c.longitude == null}
+                        className={
+                          c.latitude == null || c.longitude == null
+                            ? 'text-petrol-300 cursor-not-allowed'
+                            : 'text-blue-600 underline'
+                        }
+                        title={c.latitude == null ? 'Pas de position GPS enregistrée' : 'Ouvrir dans Google Maps'}
+                      >
+                        📍 Itinéraire
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))
             )}
@@ -195,7 +257,9 @@ export default function Clients() {
       {modalOuvert && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md">
-            <h2 className="font-semibold text-lg mb-4">Nouveau client</h2>
+            <h2 className="font-semibold text-lg mb-4">
+              {clientEnEdition ? 'Modifier le client' : 'Nouveau client'}
+            </h2>
             <form onSubmit={enregistrerClient} className="space-y-3">
               <div>
                 <label className="label">Nom *</label>
@@ -323,7 +387,7 @@ export default function Clients() {
                   onChange={(e) => setFormulaire({ ...formulaire, notes: e.target.value })}
                 />
               </div>
-              <div className="text-xs">
+              <div className="text-xs flex items-center gap-2 flex-wrap">
                 {captureGps === 'en_cours' && (
                   <span className="text-petrol-600">📍 Capture de votre position en cours…</span>
                 )}
@@ -331,17 +395,12 @@ export default function Clients() {
                   <span className="text-green-600">📍 Position capturée automatiquement.</span>
                 )}
                 {captureGps === 'echec' && (
-                  <span className="text-amber-600">
-                    ⚠️ Position indisponible — saisissez-la manuellement, ou{' '}
-                    <button
-                      type="button"
-                      onClick={capturerPositionActuelle}
-                      className="underline"
-                    >
-                      réessayer
-                    </button>
-                    .
-                  </span>
+                  <span className="text-amber-600">⚠️ Position indisponible — saisissez-la manuellement.</span>
+                )}
+                {captureGps !== 'en_cours' && (
+                  <button type="button" onClick={capturerPositionActuelle} className="underline text-petrol-600">
+                    {clientEnEdition ? '📍 Recapturer ma position actuelle' : 'Réessayer la capture'}
+                  </button>
                 )}
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -377,12 +436,17 @@ export default function Clients() {
                     setErreur('')
                     setCaptureGps('idle')
                     setAjoutTypeOuvert(false)
+                    setClientEnEdition(null)
                   }}
                 >
                   Annuler
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? 'Enregistrement…' : 'Enregistrer'}
+                  {enregistrement
+                    ? 'Enregistrement…'
+                    : clientEnEdition
+                    ? 'Modifier'
+                    : 'Enregistrer'}
                 </button>
               </div>
             </form>
