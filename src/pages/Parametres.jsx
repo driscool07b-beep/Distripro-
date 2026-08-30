@@ -64,7 +64,7 @@ export default function Parametres() {
             onClick={basculerPhotoObligatoire}
             disabled={enregistrement}
             className={`shrink-0 w-12 h-7 rounded-full transition-colors relative disabled:opacity-50 ${
-              entreprise?.photo_rapport_obligatoire ? 'bg-amber-500' : 'bg-petrol-200'
+              entreprise?.photo_rapport_obligatoire ? 'bg-amber-500' : 'bg-line'
             }`}
           >
             <span

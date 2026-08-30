@@ -290,7 +290,7 @@ export default function Clients() {
                         disabled={c.latitude == null || c.longitude == null}
                         className={
                           c.latitude == null || c.longitude == null
-                            ? 'text-petrol-300 cursor-not-allowed'
+                            ? 'text-petrol-500 cursor-not-allowed'
                             : 'text-blue-600 underline'
                         }
                         title={c.latitude == null ? 'Pas de position GPS enregistrée' : 'Ouvrir dans Google Maps'}

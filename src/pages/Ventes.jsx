@@ -207,7 +207,7 @@ export default function Ventes() {
                         <button
                           type="button"
                           onClick={() => retirerLigne(i)}
-                          className="col-span-1 text-petrol-400 hover:text-red-600 text-sm"
+                          className="col-span-1 text-petrol-500 hover:text-red-600 text-sm"
                           disabled={lignes.length === 1}
                         >
                           ✕
