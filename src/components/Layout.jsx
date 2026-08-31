@@ -64,6 +64,22 @@ export default function Layout() {
               {item.label}
             </NavLink>
           ))}
+          {['admin', 'manager'].includes(profil?.role) && (
+            <NavLink
+              to="/analytique"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <AnalytiqueIcon className="w-4 h-4 shrink-0" />
+              Analytique
+            </NavLink>
+          )}
           {profil?.role === 'admin' && (
             <NavLink
               to="/parametres"
@@ -177,6 +193,14 @@ function CommandesIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <path d="M20 7L12 3 4 7m16 0-8 4m8-4v10l-8 4M4 7l8 4m-8-4v10l8 4m0-10v10" />
+    </svg>
+  )
+}
+function AnalytiqueIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M3 3v18h18" />
+      <path d="M7 16l4-6 4 3 5-8" />
     </svg>
   )
 }
