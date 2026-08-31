@@ -35,3 +35,9 @@
     @apply block text-xs font-medium text-petrol-700 mb-1;
   }
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

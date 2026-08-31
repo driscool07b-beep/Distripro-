@@ -10,6 +10,8 @@ import NotFound from './pages/NotFound'
 import Tournees from './pages/Tournees';
 import Parametres from './pages/Parametres'
 import Rapports from './pages/Rapports'
+import Creances from './pages/Creances'
+import GrandLivre from './pages/GrandLivre'
 
 export default function App() {
   return (
@@ -30,6 +32,8 @@ export default function App() {
         <Route path="ventes" element={<Ventes />} />
         <Route path="tournees" element={<Tournees />} />
         <Route path="rapports" element={<Rapports />} />
+        <Route path="creances" element={<Creances />} />
+        <Route path="grand-livre" element={<GrandLivre />} />
         <Route path="parametres" element={<Parametres />} />
       </Route>
 

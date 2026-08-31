@@ -31,6 +31,8 @@ export default function Ventes() {
   })
 
   const [clientId, setClientId] = useState('')
+  const [modePaiement, setModePaiement] = useState('cash')
+  const [dateEcheance, setDateEcheance] = useState('')
   const [lignes, setLignes] = useState([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
 
   useEffect(() => {
@@ -128,6 +130,8 @@ export default function Ventes() {
   async function ouvrirModal() {
     setErreur('')
     setClientId('')
+    setModePaiement('cash')
+    setDateEcheance('')
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
     const [{ data: c }, { data: p }] = await Promise.all([
       supabase.from('clients').select('id, nom').order('nom'),
@@ -181,6 +185,8 @@ export default function Ventes() {
         quantite: Number(l.quantite),
         prix_unitaire: Number(l.prix_unitaire),
       })),
+      p_mode_paiement: modePaiement,
+      p_date_echeance: modePaiement === 'credit' && dateEcheance ? dateEcheance : null,
     })
     setEnregistrement(false)
 
@@ -419,6 +425,31 @@ export default function Ventes() {
               <div className="flex items-center justify-between border-t border-line pt-3">
                 <span className="text-sm font-medium text-petrol-700">Total</span>
                 <span className="font-mono text-lg font-semibold">{formatXOF(total)}</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label">Mode de paiement</label>
+                  <select
+                    className="input-field"
+                    value={modePaiement}
+                    onChange={(e) => setModePaiement(e.target.value)}
+                  >
+                    <option value="cash">Cash (payé immédiatement)</option>
+                    <option value="credit">Crédit</option>
+                  </select>
+                </div>
+                {modePaiement === 'credit' && (
+                  <div>
+                    <label className="label">Échéance de paiement</label>
+                    <input
+                      type="date"
+                      className="input-field"
+                      value={dateEcheance}
+                      onChange={(e) => setDateEcheance(e.target.value)}
+                    />
+                  </div>
+                )}
               </div>
 
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}

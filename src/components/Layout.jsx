@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { to: '/ventes', label: 'Ventes', icon: VentesIcon },
   { to: '/tournees', label: 'Tournées', icon: VentesIcon },
   { to: '/rapports', label: 'Rapports de visite', icon: RapportsIcon },
+  { to: '/creances', label: 'Créances', icon: CreancesIcon },
 ]
 
 export default function Layout() {
@@ -25,7 +26,7 @@ export default function Layout() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 shrink-0 bg-petrol-950 text-white flex flex-col transition-transform duration-200 md:static md:translate-x-0 ${
+        className={`no-print fixed inset-y-0 left-0 z-50 w-64 shrink-0 bg-petrol-950 text-white flex flex-col transition-transform duration-200 md:static md:translate-x-0 ${
           menuOuvert ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -95,7 +96,7 @@ export default function Layout() {
       </aside>
 
       <div className="flex-1 min-w-0 flex flex-col">
-        <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-line">
+        <div className="no-print md:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-line">
           <button
             onClick={() => setMenuOuvert(true)}
             className="text-petrol-800 p-1"
@@ -160,6 +161,14 @@ function RapportsIcon(props) {
       <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
       <path d="M14 3v6h6" />
       <path d="M9 13h6M9 17h6M9 9h1" />
+    </svg>
+  )
+}
+function CreancesIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v10M9.5 9.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1 2.5 2c0 1.5-2.5 2-2.5 2s-2.5.5-2.5 2c0 1 1.1 2 2.5 2s2.5-1.1 2.5-2.5" />
     </svg>
   )
 }

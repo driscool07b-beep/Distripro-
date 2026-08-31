@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -297,6 +298,9 @@ export default function Clients() {
                       >
                         📍 Itinéraire
                       </button>
+                      <Link to={`/grand-livre?client=${c.id}`} className="text-petrol-700 underline">
+                        Grand livre
+                      </Link>
                     </div>
                   </td>
                 </tr>
