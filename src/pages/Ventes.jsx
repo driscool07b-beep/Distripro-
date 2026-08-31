@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
 
 export default function Ventes() {
+  const { entreprise } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const [ventes, setVentes] = useState([])
   const [clients, setClients] = useState([])
@@ -13,6 +15,10 @@ export default function Ventes() {
   const [modalOuvert, setModalOuvert] = useState(false)
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
+
+  const [venteOuverte, setVenteOuverte] = useState(null)
+  const [detailVente, setDetailVente] = useState(null)
+  const [chargementDetail, setChargementDetail] = useState(false)
 
   const [filtres, setFiltres] = useState({
     periode: searchParams.get('periode') || 'tout',
@@ -91,6 +97,32 @@ export default function Ventes() {
     if (!error) setVentes(data || [])
     else console.error('Erreur chargement ventes:', error)
     setChargement(false)
+  }
+
+  async function ouvrirDetailVente(venteId) {
+    setVenteOuverte(venteId)
+    setChargementDetail(true)
+    setDetailVente(null)
+
+    const [{ data: vente }, { data: lignes }] = await Promise.all([
+      supabase
+        .from('ventes')
+        .select('id, total, created_at, mode_paiement, statut, montant_regle, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
+        .eq('id', venteId)
+        .single(),
+      supabase
+        .from('ventes_lignes')
+        .select('quantite, prix_unitaire, sous_total, produits(nom)')
+        .eq('vente_id', venteId),
+    ])
+
+    setDetailVente({ vente, lignes: lignes || [] })
+    setChargementDetail(false)
+  }
+
+  function fermerDetailVente() {
+    setVenteOuverte(null)
+    setDetailVente(null)
   }
 
   async function ouvrirModal() {
@@ -287,7 +319,11 @@ export default function Ventes() {
               <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Aucune vente pour ces filtres.</td></tr>
             ) : (
               ventes.map((v) => (
-                <tr key={v.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
+                <tr
+                  key={v.id}
+                  onClick={() => ouvrirDetailVente(v.id)}
+                  className="border-b border-line last:border-0 hover:bg-canvas/60 cursor-pointer"
+                >
                   <td className="px-4 py-3 text-petrol-700">
                     {new Date(v.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </td>
@@ -396,6 +432,90 @@ export default function Ventes() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {venteOuverte && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            {chargementDetail ? (
+              <p className="text-sm text-petrol-500 text-center py-8">Chargement…</p>
+            ) : detailVente ? (
+              <>
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h2 className="font-semibold text-lg">{entreprise?.nom}</h2>
+                    <p className="text-xs text-petrol-500">Détail de vente</p>
+                  </div>
+                  <button onClick={fermerDetailVente} className="text-petrol-400 hover:text-petrol-700 text-xl leading-none">
+                    ✕
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-sm mb-4 pb-4 border-b border-line">
+                  <div>
+                    <p className="text-xs text-petrol-500">Client</p>
+                    <p className="font-medium">{detailVente.vente?.clients?.nom || '—'}</p>
+                    {detailVente.vente?.clients?.telephone && (
+                      <p className="text-petrol-600">{detailVente.vente.clients.telephone}</p>
+                    )}
+                    {detailVente.vente?.clients?.adresse && (
+                      <p className="text-petrol-600">{detailVente.vente.clients.adresse}</p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-petrol-500">Date</p>
+                    <p className="font-medium">
+                      {new Date(detailVente.vente?.created_at).toLocaleDateString('fr-FR', {
+                        dateStyle: 'medium',
+                      })}
+                    </p>
+                    <p className="text-xs text-petrol-500 mt-1">Commercial</p>
+                    <p className="text-petrol-700">{detailVente.vente?.profils?.nom || '—'}</p>
+                  </div>
+                </div>
+
+                <table className="w-full text-sm mb-4">
+                  <thead>
+                    <tr className="text-left text-xs text-petrol-500 border-b border-line">
+                      <th className="font-medium pb-2">Produit</th>
+                      <th className="font-medium pb-2 text-right">Qté</th>
+                      <th className="font-medium pb-2 text-right">PU</th>
+                      <th className="font-medium pb-2 text-right">Sous-total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detailVente.lignes.map((l, i) => (
+                      <tr key={i} className="border-b border-line last:border-0">
+                        <td className="py-2">{l.produits?.nom || '—'}</td>
+                        <td className="py-2 text-right font-mono">{l.quantite}</td>
+                        <td className="py-2 text-right font-mono">{formatXOF(l.prix_unitaire)}</td>
+                        <td className="py-2 text-right font-mono">{formatXOF(l.sous_total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className="flex justify-between items-center pt-2 border-t border-line">
+                  <div className="text-xs text-petrol-500">
+                    <p>Mode de paiement : <span className="capitalize">{detailVente.vente?.mode_paiement}</span></p>
+                    <p>Statut : <span className="capitalize">{detailVente.vente?.statut}</span></p>
+                    {detailVente.vente?.montant_regle < detailVente.vente?.total && (
+                      <p className="text-amber-600 font-medium">
+                        Reste à régler : {formatXOF(detailVente.vente.total - detailVente.vente.montant_regle)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-petrol-500">Total</p>
+                    <p className="font-mono text-xl font-semibold">{formatXOF(detailVente.vente?.total)}</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-red-600 text-center py-8">Impossible de charger le détail.</p>
+            )}
           </div>
         </div>
       )}
