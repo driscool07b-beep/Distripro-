@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
+import { exporterExcel, exporterPDF } from '../lib/export'
 
 export default function Creances() {
+  const { entreprise } = useAuth()
   const [searchParams] = useSearchParams()
   const filtreEchues = searchParams.get('filtre') === 'echues'
   const [creances, setCreances] = useState([])
@@ -39,6 +42,29 @@ export default function Creances() {
 
   const creancesAffichees = filtreEchues ? creances.filter(estEchue) : creances
   const totalAffiche = creancesAffichees.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
+
+  const COLONNES_EXPORT = [
+    { cle: 'client', titre: 'Client' },
+    { cle: 'commercial', titre: 'Commercial' },
+    { cle: 'echeance', titre: 'Échéance' },
+    { cle: 'statut', titre: 'Statut' },
+    { cle: 'resteDu', titre: 'Reste dû (F CFA)', alignDroite: true },
+  ]
+  function donneesExport() {
+    return creancesAffichees.map((v) => ({
+      client: v.clients?.nom || '—',
+      commercial: v.profils?.nom || '—',
+      echeance: v.date_echeance ? new Date(v.date_echeance).toLocaleDateString('fr-FR') : '—',
+      statut: estEchue(v) ? 'En retard' : 'En cours',
+      resteDu: Number(v.total) - Number(v.montant_regle),
+    }))
+  }
+  function exportExcel() {
+    exporterExcel('creances', COLONNES_EXPORT, donneesExport())
+  }
+  function exportPDF() {
+    exporterPDF('creances', 'Créances clients', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Total', formatXOF(totalAffiche))
+  }
 
   async function ouvrirDetail(venteId) {
     setVenteOuverte(venteId)
@@ -98,7 +124,17 @@ export default function Creances() {
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <h1 className="text-xl font-bold mb-1">Créances clients</h1>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="text-xl font-bold">Créances clients</h1>
+        <div className="flex gap-2">
+          <button className="btn-secondary text-xs" onClick={exportExcel} disabled={creancesAffichees.length === 0}>
+            📊 Excel
+          </button>
+          <button className="btn-secondary text-xs" onClick={exportPDF} disabled={creancesAffichees.length === 0}>
+            📄 PDF
+          </button>
+        </div>
+      </div>
       <p className="text-sm text-petrol-500 mb-4">
         {filtreEchues ? 'Créances échues' : 'Toutes les créances en cours'} — {creancesAffichees.length} —{' '}
         <span className="font-mono font-medium">{formatXOF(totalAffiche)}</span>

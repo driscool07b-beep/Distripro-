@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
+import { exporterExcel, exporterPDF } from '../lib/export'
 
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
 
 export default function Stock() {
+  const { entreprise } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const filtreAlertes = searchParams.get('filtre') === 'alertes'
   const [produits, setProduits] = useState([])
@@ -95,6 +98,29 @@ export default function Stock() {
   const nbAlertes = produits.filter((p) => p.quantite <= (p.seuil_alerte ?? 0)).length
   const valeurTotaleStock = produits.reduce((s, p) => s + p.quantite * (p.prix_vente || 0), 0)
 
+  const COLONNES_EXPORT = [
+    { cle: 'nom', titre: 'Produit' },
+    { cle: 'categorie', titre: 'Catégorie' },
+    { cle: 'prix', titre: 'Prix unitaire (F CFA)', alignDroite: true },
+    { cle: 'stock', titre: 'Stock', alignDroite: true },
+    { cle: 'valeur', titre: 'Valeur (F CFA)', alignDroite: true },
+  ]
+  function donneesExport() {
+    return (produitsFiltres || []).map((p) => ({
+      nom: p.nom,
+      categorie: p.categorie || '—',
+      prix: Number(p.prix_vente || 0),
+      stock: p.quantite,
+      valeur: p.quantite * (p.prix_vente || 0),
+    }))
+  }
+  function exportExcel() {
+    exporterExcel('stock', COLONNES_EXPORT, donneesExport())
+  }
+  function exportPDF() {
+    exporterPDF('stock', 'Produits & Stock', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Valeur totale', formatXOF(valeurTotaleStock))
+  }
+
   return (
     <div className="p-8 max-w-6xl">
       <header className="flex items-center justify-between mb-6">
@@ -111,9 +137,17 @@ export default function Stock() {
             Valeur totale du stock : <span className="font-mono font-medium">{formatXOF(valeurTotaleStock)}</span>
           </p>
         </div>
-        <button className="btn-primary" onClick={() => setModalProduit(true)}>
-          + Nouveau produit
-        </button>
+        <div className="flex gap-2">
+          <button className="btn-secondary text-sm" onClick={exportExcel} disabled={produitsFiltres.length === 0}>
+            📊 Excel
+          </button>
+          <button className="btn-secondary text-sm" onClick={exportPDF} disabled={produitsFiltres.length === 0}>
+            📄 PDF
+          </button>
+          <button className="btn-primary" onClick={() => setModalProduit(true)}>
+            + Nouveau produit
+          </button>
+        </div>
       </header>
 
       <input

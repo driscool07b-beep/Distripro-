@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { exporterExcel, exporterPDF } from '../lib/export'
 
 export default function Ventes() {
   const { entreprise } = useAuth()
@@ -163,6 +164,31 @@ export default function Ventes() {
   const total = lignes.reduce((s, l) => s + Number(l.quantite || 0) * Number(l.prix_unitaire || 0), 0)
   const totalFiltre = ventes.reduce((s, v) => s + Number(v.total || 0), 0)
 
+  const COLONNES_EXPORT = [
+    { cle: 'date', titre: 'Date' },
+    { cle: 'client', titre: 'Client' },
+    { cle: 'ville', titre: 'Ville' },
+    { cle: 'commercial', titre: 'Commercial' },
+    { cle: 'articles', titre: 'Articles', alignDroite: true },
+    { cle: 'total', titre: 'Total (F CFA)', alignDroite: true },
+  ]
+  function donneesExport() {
+    return ventes.map((v) => ({
+      date: new Date(v.created_at).toLocaleDateString('fr-FR'),
+      client: v.clients?.nom || '—',
+      ville: v.clients?.ville || '—',
+      commercial: v.profils?.nom || '—',
+      articles: v.ventes_lignes?.length || 0,
+      total: Number(v.total || 0),
+    }))
+  }
+  function exportExcel() {
+    exporterExcel('ventes', COLONNES_EXPORT, donneesExport())
+  }
+  function exportPDF() {
+    exporterPDF('ventes', 'Ventes', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Total', formatXOF(totalFiltre))
+  }
+
   async function validerVente(e) {
     e.preventDefault()
     setErreur('')
@@ -211,9 +237,17 @@ export default function Ventes() {
             {ventes.length} vente(s) — Total filtré : <span className="font-mono font-medium">{formatXOF(totalFiltre)}</span>
           </p>
         </div>
-        <button className="btn-primary" onClick={ouvrirModal}>
-          + Nouvelle vente
-        </button>
+        <div className="flex gap-2">
+          <button className="btn-secondary text-sm" onClick={exportExcel} disabled={ventes.length === 0}>
+            📊 Excel
+          </button>
+          <button className="btn-secondary text-sm" onClick={exportPDF} disabled={ventes.length === 0}>
+            📄 PDF
+          </button>
+          <button className="btn-primary" onClick={ouvrirModal}>
+            + Nouvelle vente
+          </button>
+        </div>
       </header>
 
       <div className="card p-4 mb-4 grid grid-cols-2 md:grid-cols-5 gap-3">

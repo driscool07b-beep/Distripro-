@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { exporterExcel, exporterPDF } from '../lib/export'
 
 export default function Rapports() {
-  const { profil } = useAuth()
+  const { profil, entreprise } = useAuth()
   const [rapports, setRapports] = useState([])
   const [chargement, setChargement] = useState(true)
   const [rapportOuvert, setRapportOuvert] = useState(null)
@@ -12,6 +13,29 @@ export default function Rapports() {
   const [photosUrls, setPhotosUrls] = useState([])
 
   const voitTout = profil?.role === 'admin' || profil?.role === 'manager'
+
+  const COLONNES_EXPORT = [
+    { cle: 'client', titre: 'Client' },
+    { cle: 'commercial', titre: 'Commercial' },
+    { cle: 'date', titre: 'Date' },
+    { cle: 'notesRayon', titre: 'Notes rayon' },
+    { cle: 'notesReserve', titre: 'Notes réserve' },
+  ]
+  function donneesExport() {
+    return rapports.map((r) => ({
+      client: r.clients?.nom || '—',
+      commercial: r.profils?.nom || '—',
+      date: new Date(r.created_at).toLocaleDateString('fr-FR'),
+      notesRayon: r.notes_rayon || '—',
+      notesReserve: r.notes_reserve || '—',
+    }))
+  }
+  function exportExcel() {
+    exporterExcel('rapports-visite', COLONNES_EXPORT, donneesExport())
+  }
+  function exportPDF() {
+    exporterPDF('rapports-visite', 'Rapports de visite', entreprise?.nom, COLONNES_EXPORT, donneesExport())
+  }
 
   useEffect(() => {
     if (profil) chargerRapports()
@@ -82,7 +106,17 @@ export default function Rapports() {
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <h1 className="text-xl font-bold mb-1">Rapports de visite</h1>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="text-xl font-bold">Rapports de visite</h1>
+        <div className="flex gap-2">
+          <button className="btn-secondary text-xs" onClick={exportExcel} disabled={rapports.length === 0}>
+            📊 Excel
+          </button>
+          <button className="btn-secondary text-xs" onClick={exportPDF} disabled={rapports.length === 0}>
+            📄 PDF
+          </button>
+        </div>
+      </div>
       <p className="text-sm text-petrol-500 mb-4">
         {voitTout ? 'Tous les commerciaux' : 'Vos visites'} — {rapports.length} rapport(s)
       </p>

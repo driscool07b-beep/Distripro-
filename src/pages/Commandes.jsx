@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { exporterExcel, exporterPDF } from '../lib/export'
 
 const LIBELLES_STATUT = {
   recue: 'Reçue',
@@ -105,6 +106,29 @@ export default function Commandes() {
   }
 
   const totalCommande = lignes.reduce((s, l) => s + Number(l.quantite || 0) * Number(l.prix_unitaire || 0), 0)
+
+  const COLONNES_EXPORT = [
+    { cle: 'client', titre: 'Client' },
+    { cle: 'commercial', titre: 'Commercial' },
+    { cle: 'statut', titre: 'Statut' },
+    { cle: 'articles', titre: 'Articles', alignDroite: true },
+    { cle: 'date', titre: 'Date' },
+  ]
+  function donneesExport() {
+    return commandes.map((c) => ({
+      client: c.clients?.nom || '—',
+      commercial: c.profils?.nom || '—',
+      statut: LIBELLES_STATUT[c.statut] || c.statut,
+      articles: c.commande_lignes?.length || 0,
+      date: new Date(c.created_at).toLocaleDateString('fr-FR'),
+    }))
+  }
+  function exportExcel() {
+    exporterExcel('commandes', COLONNES_EXPORT, donneesExport())
+  }
+  function exportPDF() {
+    exporterPDF('commandes', 'Commandes', entreprise?.nom, COLONNES_EXPORT, donneesExport())
+  }
 
   async function validerCommande(e) {
     e.preventDefault()
@@ -218,9 +242,17 @@ export default function Commandes() {
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Commandes</h1>
-        <button onClick={ouvrirModal} className="btn-primary text-sm">
-          + Nouvelle commande
-        </button>
+        <div className="flex gap-2">
+          <button className="btn-secondary text-xs" onClick={exportExcel} disabled={commandes.length === 0}>
+            📊 Excel
+          </button>
+          <button className="btn-secondary text-xs" onClick={exportPDF} disabled={commandes.length === 0}>
+            📄 PDF
+          </button>
+          <button onClick={ouvrirModal} className="btn-primary text-sm">
+            + Nouvelle commande
+          </button>
+        </div>
       </div>
 
       <div className="mb-4 flex gap-2 flex-wrap">
