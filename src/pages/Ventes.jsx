@@ -110,8 +110,8 @@ export default function Ventes() {
         </button>
       </header>
 
-      <div className="card overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="card overflow-x-auto">
+        <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
               <th className="px-4 py-3 font-medium">Date</th>
