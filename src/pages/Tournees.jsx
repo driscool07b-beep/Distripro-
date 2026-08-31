@@ -24,6 +24,8 @@ export default function Tournees() {
   const [produitAjoutSelection, setProduitAjoutSelection] = useState('');
 
   const [champsPerso, setChampsPerso] = useState([]);
+  const [concurrents, setConcurrents] = useState([]);
+  const [rapportPresenceConcurrents, setRapportPresenceConcurrents] = useState({}); // { produit_concurrent_id: bool }
   const [rapportValeursChamps, setRapportValeursChamps] = useState({}); // { champ_id: valeur }
 
   const [formData, setFormData] = useState({
@@ -37,6 +39,7 @@ export default function Tournees() {
       chargerClients();
       chargerCatalogueProduits();
       chargerChampsPerso();
+      chargerConcurrents();
     }
   }, [entrepriseId]);
 
@@ -58,6 +61,16 @@ export default function Tournees() {
       .eq('actif', true)
       .order('ordre');
     if (!error) setChampsPerso(data || []);
+  };
+
+  const chargerConcurrents = async () => {
+    const { data, error } = await supabase
+      .from('produits_concurrents')
+      .select('id, nom, marque')
+      .eq('entreprise_id', entrepriseId)
+      .eq('actif', true)
+      .order('nom');
+    if (!error) setConcurrents(data || []);
   };
 
   const chargerTournees = async () => {
@@ -170,6 +183,7 @@ export default function Tournees() {
         setRapportLignesProduits([]);
         setProduitAjoutSelection('');
         setRapportValeursChamps({});
+        setRapportPresenceConcurrents({});
       },
       () => {
         alert("Impossible d'obtenir votre position. Autorisez la géolocalisation pour valider une visite.");
@@ -218,6 +232,7 @@ export default function Tournees() {
     setRapportErreur('');
     setRapportLignesProduits([]);
     setRapportValeursChamps({});
+    setRapportPresenceConcurrents({});
   };
 
   const envoyerRapport = async () => {
@@ -294,6 +309,24 @@ export default function Tournees() {
       if (erreurChamps) {
         setRapportEnvoi(false);
         setRapportErreur(`Rapport enregistré, mais erreur sur les champs personnalisés : ${erreurChamps.message}`);
+        return;
+      }
+    }
+
+    const presencesSaisies = Object.entries(rapportPresenceConcurrents);
+    if (presencesSaisies.length > 0) {
+      const lignesConcurrents = presencesSaisies.map(([produitConcurrentId, present]) => ({
+        entreprise_id: entrepriseId,
+        rapport_id: rapportCree.id,
+        produit_concurrent_id: produitConcurrentId,
+        present,
+      }));
+      const { error: erreurConcurrents } = await supabase
+        .from('rapport_visite_concurrents')
+        .insert(lignesConcurrents);
+      if (erreurConcurrents) {
+        setRapportEnvoi(false);
+        setRapportErreur(`Rapport enregistré, mais erreur sur les produits concurrents : ${erreurConcurrents.message}`);
         return;
       }
     }
@@ -664,6 +697,28 @@ export default function Tournees() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+
+            {concurrents.length > 0 && (
+              <div className="border-t pt-3">
+                <label className="block text-sm font-medium mb-2">
+                  Présence des produits concurrents en rayon
+                </label>
+                <div className="space-y-1.5">
+                  {concurrents.map((c) => (
+                    <label key={c.id} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={!!rapportPresenceConcurrents[c.id]}
+                        onChange={(e) =>
+                          setRapportPresenceConcurrents((prev) => ({ ...prev, [c.id]: e.target.checked }))
+                        }
+                      />
+                      {c.nom}{c.marque ? ` (${c.marque})` : ''}
+                    </label>
+                  ))}
+                </div>
               </div>
             )}
 

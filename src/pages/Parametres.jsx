@@ -23,9 +23,58 @@ export default function Parametres() {
   const [ajoutChampEnvoi, setAjoutChampEnvoi] = useState(false)
   const [erreurChamp, setErreurChamp] = useState('')
 
+  const [concurrents, setConcurrents] = useState([])
+  const [chargementConcurrents, setChargementConcurrents] = useState(true)
+  const [nouveauConcurrent, setNouveauConcurrent] = useState({ nom: '', marque: '' })
+  const [ajoutConcurrentEnvoi, setAjoutConcurrentEnvoi] = useState(false)
+  const [erreurConcurrent, setErreurConcurrent] = useState('')
+
   useEffect(() => {
-    if (profil?.role === 'admin') chargerChamps()
+    if (profil?.role === 'admin') {
+      chargerChamps()
+      chargerConcurrents()
+    }
   }, [profil])
+
+  async function chargerConcurrents() {
+    setChargementConcurrents(true)
+    const { data, error } = await supabase
+      .from('produits_concurrents')
+      .select('*')
+      .order('created_at', { ascending: true })
+    if (!error) setConcurrents(data || [])
+    setChargementConcurrents(false)
+  }
+
+  async function ajouterConcurrent(e) {
+    e.preventDefault()
+    setErreurConcurrent('')
+    if (!nouveauConcurrent.nom.trim()) {
+      setErreurConcurrent('Le nom du produit est requis.')
+      return
+    }
+    setAjoutConcurrentEnvoi(true)
+    const { error } = await supabase.from('produits_concurrents').insert({
+      entreprise_id: entreprise.id,
+      nom: nouveauConcurrent.nom.trim(),
+      marque: nouveauConcurrent.marque.trim() || null,
+    })
+    setAjoutConcurrentEnvoi(false)
+    if (error) {
+      setErreurConcurrent(`Erreur : ${error.message}`)
+      return
+    }
+    setNouveauConcurrent({ nom: '', marque: '' })
+    chargerConcurrents()
+  }
+
+  async function basculerActifConcurrent(produit) {
+    await supabase
+      .from('produits_concurrents')
+      .update({ actif: !produit.actif })
+      .eq('id', produit.id)
+    chargerConcurrents()
+  }
 
   async function chargerChamps() {
     setChargementChamps(true)
@@ -222,6 +271,68 @@ export default function Parametres() {
           {erreurChamp && <p className="text-xs text-red-600">{erreurChamp}</p>}
           <button type="submit" disabled={ajoutChampEnvoi} className="btn-primary w-full">
             {ajoutChampEnvoi ? 'Ajout…' : '+ Ajouter cette question'}
+          </button>
+        </form>
+      </div>
+
+      <div className="card p-4">
+        <h2 className="font-semibold mb-1">Produits concurrents</h2>
+        <p className="text-sm text-petrol-600 mb-4">
+          Enregistrez les produits concurrents à surveiller — les commerciaux pourront cocher
+          leur présence en rayon chez chaque client visité, pour calculer votre taux de présence.
+        </p>
+
+        {chargementConcurrents ? (
+          <p className="text-sm text-petrol-500">Chargement…</p>
+        ) : (
+          <div className="space-y-2 mb-4">
+            {concurrents.length === 0 && (
+              <p className="text-sm text-petrol-400">Aucun produit concurrent pour le moment.</p>
+            )}
+            {concurrents.map((c) => (
+              <div
+                key={c.id}
+                className="flex items-center justify-between gap-3 border border-line rounded-lg px-3 py-2"
+              >
+                <div>
+                  <p className="text-sm font-medium">{c.nom}</p>
+                  {c.marque && <p className="text-xs text-petrol-500">{c.marque}</p>}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => basculerActifConcurrent(c)}
+                  className={`text-xs underline shrink-0 ${c.actif ? 'text-petrol-600' : 'text-petrol-400'}`}
+                >
+                  {c.actif ? 'Actif' : 'Désactivé'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <form onSubmit={ajouterConcurrent} className="border-t border-line pt-4 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="label">Nom du produit</label>
+              <input
+                className="input-field"
+                value={nouveauConcurrent.nom}
+                onChange={(e) => setNouveauConcurrent({ ...nouveauConcurrent, nom: e.target.value })}
+                placeholder="Ex : Céréale XYZ 400g"
+              />
+            </div>
+            <div>
+              <label className="label">Marque (optionnel)</label>
+              <input
+                className="input-field"
+                value={nouveauConcurrent.marque}
+                onChange={(e) => setNouveauConcurrent({ ...nouveauConcurrent, marque: e.target.value })}
+              />
+            </div>
+          </div>
+          {erreurConcurrent && <p className="text-xs text-red-600">{erreurConcurrent}</p>}
+          <button type="submit" disabled={ajoutConcurrentEnvoi} className="btn-primary w-full">
+            {ajoutConcurrentEnvoi ? 'Ajout…' : '+ Ajouter ce produit concurrent'}
           </button>
         </form>
       </div>

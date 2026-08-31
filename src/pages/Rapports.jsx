@@ -37,7 +37,7 @@ export default function Rapports() {
     setDetail(null)
     setPhotosUrls([])
 
-    const [{ data: lignesProduits }, { data: valeursChamps }] = await Promise.all([
+    const [{ data: lignesProduits }, { data: valeursChamps }, { data: presencesConcurrents }] = await Promise.all([
       supabase
         .from('rapport_visite_produits')
         .select('quantite_rayon, quantite_reserve, produits(nom)')
@@ -46,9 +46,17 @@ export default function Rapports() {
         .from('rapport_visite_champs_valeurs')
         .select('valeur, champs_personnalises_rapport(libelle)')
         .eq('rapport_id', rapport.id),
+      supabase
+        .from('rapport_visite_concurrents')
+        .select('present, produits_concurrents(nom, marque)')
+        .eq('rapport_id', rapport.id),
     ])
 
-    setDetail({ lignesProduits: lignesProduits || [], valeursChamps: valeursChamps || [] })
+    setDetail({
+      lignesProduits: lignesProduits || [],
+      valeursChamps: valeursChamps || [],
+      presencesConcurrents: presencesConcurrents || [],
+    })
     setChargementDetail(false)
 
     if (rapport.photos_paths?.length) {
@@ -157,6 +165,23 @@ export default function Rapports() {
                       </div>
                     )}
 
+                    {detail?.presencesConcurrents.length > 0 && (
+                      <div>
+                        <p className="text-xs font-medium text-petrol-600 mb-1">Produits concurrents en rayon</p>
+                        {detail.presencesConcurrents.map((p, i) => (
+                          <p key={i} className="text-sm flex justify-between">
+                            <span>
+                              {p.produits_concurrents?.nom}
+                              {p.produits_concurrents?.marque ? ` (${p.produits_concurrents.marque})` : ''}
+                            </span>
+                            <span className={p.present ? 'text-red-600' : 'text-green-600'}>
+                              {p.present ? 'Présent' : 'Absent'}
+                            </span>
+                          </p>
+                        ))}
+                      </div>
+                    )}
+
                     {photosUrls.length > 0 && (
                       <div>
                         <p className="text-xs font-medium text-petrol-600 mb-1">Photos</p>
@@ -174,6 +199,7 @@ export default function Rapports() {
                       !r.notes_reserve &&
                       detail?.lignesProduits.length === 0 &&
                       detail?.valeursChamps.length === 0 &&
+                      detail?.presencesConcurrents.length === 0 &&
                       photosUrls.length === 0 && (
                         <p className="text-sm text-petrol-400">Rapport vide (visite validée sans détail).</p>
                       )}
