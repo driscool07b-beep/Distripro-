@@ -14,6 +14,7 @@ import Creances from './pages/Creances'
 import GrandLivre from './pages/GrandLivre'
 import Commandes from './pages/Commandes'
 import Analytique from './pages/Analytique'
+import LocaliserStock from './pages/LocaliserStock'
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="creances" element={<Creances />} />
         <Route path="commandes" element={<Commandes />} />
         <Route path="analytique" element={<Analytique />} />
+        <Route path="localiser-stock" element={<LocaliserStock />} />
         <Route path="grand-livre" element={<GrandLivre />} />
         <Route path="parametres" element={<Parametres />} />
       </Route>
