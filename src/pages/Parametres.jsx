@@ -1,12 +1,42 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+
+const TYPES_CHAMP = [
+  { value: 'texte', label: 'Texte libre' },
+  { value: 'nombre', label: 'Nombre' },
+  { value: 'oui_non', label: 'Oui / Non' },
+  { value: 'choix_multiple', label: 'Choix parmi une liste' },
+]
+
+const CHAMP_VIDE = { libelle: '', type_champ: 'texte', options: '' }
 
 export default function Parametres() {
   const { profil, entreprise, rechargerProfil } = useAuth()
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
   const [confirmation, setConfirmation] = useState(false)
+
+  const [champs, setChamps] = useState([])
+  const [chargementChamps, setChargementChamps] = useState(true)
+  const [nouveauChamp, setNouveauChamp] = useState(CHAMP_VIDE)
+  const [ajoutChampEnvoi, setAjoutChampEnvoi] = useState(false)
+  const [erreurChamp, setErreurChamp] = useState('')
+
+  useEffect(() => {
+    if (profil?.role === 'admin') chargerChamps()
+  }, [profil])
+
+  async function chargerChamps() {
+    setChargementChamps(true)
+    const { data, error } = await supabase
+      .from('champs_personnalises_rapport')
+      .select('*')
+      .order('ordre', { ascending: true })
+      .order('created_at', { ascending: true })
+    if (!error) setChamps(data || [])
+    setChargementChamps(false)
+  }
 
   if (profil?.role !== 'admin') {
     return (
@@ -34,6 +64,45 @@ export default function Parametres() {
     await rechargerProfil()
     setConfirmation(true)
     setTimeout(() => setConfirmation(false), 2500)
+  }
+
+  async function ajouterChamp(e) {
+    e.preventDefault()
+    setErreurChamp('')
+    if (!nouveauChamp.libelle.trim()) {
+      setErreurChamp('Le libellé est requis.')
+      return
+    }
+    if (nouveauChamp.type_champ === 'choix_multiple' && !nouveauChamp.options.trim()) {
+      setErreurChamp('Indiquez au moins une option, séparée par des virgules.')
+      return
+    }
+    setAjoutChampEnvoi(true)
+    const { error } = await supabase.from('champs_personnalises_rapport').insert({
+      entreprise_id: entreprise.id,
+      libelle: nouveauChamp.libelle.trim(),
+      type_champ: nouveauChamp.type_champ,
+      options:
+        nouveauChamp.type_champ === 'choix_multiple'
+          ? nouveauChamp.options.split(',').map((o) => o.trim()).filter(Boolean)
+          : null,
+      ordre: champs.length,
+    })
+    setAjoutChampEnvoi(false)
+    if (error) {
+      setErreurChamp(`Erreur : ${error.message}`)
+      return
+    }
+    setNouveauChamp(CHAMP_VIDE)
+    chargerChamps()
+  }
+
+  async function basculerActifChamp(champ) {
+    await supabase
+      .from('champs_personnalises_rapport')
+      .update({ actif: !champ.actif })
+      .eq('id', champ.id)
+    chargerChamps()
   }
 
   return (
@@ -77,6 +146,84 @@ export default function Parametres() {
 
         {confirmation && <p className="text-xs text-green-600 mt-3">Réglage enregistré.</p>}
         {erreur && <p className="text-xs text-red-600 mt-3">{erreur}</p>}
+      </div>
+
+      <div className="card p-4">
+        <h2 className="font-semibold mb-1">Informations supplémentaires à collecter</h2>
+        <p className="text-sm text-petrol-600 mb-4">
+          Ajoutez vos propres questions pour votre étude commerciale — elles apparaîtront
+          automatiquement dans le formulaire de rapport de visite des commerciaux.
+        </p>
+
+        {chargementChamps ? (
+          <p className="text-sm text-petrol-500">Chargement…</p>
+        ) : (
+          <div className="space-y-2 mb-4">
+            {champs.length === 0 && (
+              <p className="text-sm text-petrol-400">Aucun champ personnalisé pour le moment.</p>
+            )}
+            {champs.map((champ) => (
+              <div
+                key={champ.id}
+                className="flex items-center justify-between gap-3 border border-line rounded-lg px-3 py-2"
+              >
+                <div>
+                  <p className="text-sm font-medium">{champ.libelle}</p>
+                  <p className="text-xs text-petrol-500">
+                    {TYPES_CHAMP.find((t) => t.value === champ.type_champ)?.label}
+                    {champ.options?.length ? ` — ${champ.options.join(', ')}` : ''}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => basculerActifChamp(champ)}
+                  className={`text-xs underline shrink-0 ${champ.actif ? 'text-petrol-600' : 'text-petrol-400'}`}
+                >
+                  {champ.actif ? 'Actif' : 'Désactivé'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <form onSubmit={ajouterChamp} className="border-t border-line pt-4 space-y-3">
+          <div>
+            <label className="label">Libellé de la question</label>
+            <input
+              className="input-field"
+              value={nouveauChamp.libelle}
+              onChange={(e) => setNouveauChamp({ ...nouveauChamp, libelle: e.target.value })}
+              placeholder="Ex : Présence de la PLV en vitrine ?"
+            />
+          </div>
+          <div>
+            <label className="label">Type de réponse</label>
+            <select
+              className="input-field"
+              value={nouveauChamp.type_champ}
+              onChange={(e) => setNouveauChamp({ ...nouveauChamp, type_champ: e.target.value })}
+            >
+              {TYPES_CHAMP.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </div>
+          {nouveauChamp.type_champ === 'choix_multiple' && (
+            <div>
+              <label className="label">Options (séparées par des virgules)</label>
+              <input
+                className="input-field"
+                value={nouveauChamp.options}
+                onChange={(e) => setNouveauChamp({ ...nouveauChamp, options: e.target.value })}
+                placeholder="Bonne, Moyenne, Mauvaise"
+              />
+            </div>
+          )}
+          {erreurChamp && <p className="text-xs text-red-600">{erreurChamp}</p>}
+          <button type="submit" disabled={ajoutChampEnvoi} className="btn-primary w-full">
+            {ajoutChampEnvoi ? 'Ajout…' : '+ Ajouter cette question'}
+          </button>
+        </form>
       </div>
     </div>
   )
