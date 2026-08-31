@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
 
 export default function Stock() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filtreAlertes = searchParams.get('filtre') === 'alertes'
   const [produits, setProduits] = useState([])
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
@@ -86,9 +89,9 @@ export default function Stock() {
     chargerProduits()
   }
 
-  const produitsFiltres = produits.filter((p) =>
-    p.nom.toLowerCase().includes(recherche.toLowerCase())
-  )
+  const produitsFiltres = produits
+    .filter((p) => p.nom.toLowerCase().includes(recherche.toLowerCase()))
+    .filter((p) => !filtreAlertes || p.quantite <= (p.seuil_alerte ?? 0))
   const nbAlertes = produits.filter((p) => p.quantite <= (p.seuil_alerte ?? 0)).length
   const valeurTotaleStock = produits.reduce((s, p) => s + p.quantite * (p.prix_vente || 0), 0)
 
@@ -120,6 +123,20 @@ export default function Stock() {
         onChange={(e) => setRecherche(e.target.value)}
         className="input-field max-w-sm mb-4"
       />
+
+      {filtreAlertes && (
+        <div className="mb-4 flex items-center gap-2 text-sm">
+          <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">
+            Filtré : produits en alerte de stock
+          </span>
+          <button
+            onClick={() => setSearchParams({})}
+            className="text-petrol-500 underline text-xs"
+          >
+            Retirer le filtre
+          </button>
+        </div>
+      )}
 
       <div className="card overflow-x-auto">
         <table className="w-full text-sm min-w-[640px]">

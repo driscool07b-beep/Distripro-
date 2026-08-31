@@ -1,30 +1,82 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export default function Ventes() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [ventes, setVentes] = useState([])
   const [clients, setClients] = useState([])
   const [produits, setProduits] = useState([])
+  const [commerciaux, setCommerciaux] = useState([])
+  const [villes, setVilles] = useState([])
   const [chargement, setChargement] = useState(true)
   const [modalOuvert, setModalOuvert] = useState(false)
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
 
+  const [filtres, setFiltres] = useState({
+    periode: searchParams.get('periode') || 'tout',
+    clientId: '',
+    ville: '',
+    commercialId: '',
+    produitId: '',
+  })
+
   const [clientId, setClientId] = useState('')
   const [lignes, setLignes] = useState([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
 
   useEffect(() => {
-    chargerVentes()
+    chargerReferences()
   }, [])
+
+  useEffect(() => {
+    chargerVentes()
+  }, [filtres])
+
+  async function chargerReferences() {
+    const [{ data: c }, { data: p }] = await Promise.all([
+      supabase.from('clients').select('id, nom, ville').order('nom'),
+      supabase.from('produits').select('id, nom').order('nom'),
+    ])
+    setClients(c || [])
+    setProduits(p || [])
+    const villesUniques = [...new Set((c || []).map((cl) => cl.ville).filter(Boolean))].sort()
+    setVilles(villesUniques)
+
+    const { data: ventesCreateurs } = await supabase.from('ventes').select('created_by')
+    const idsCommerciaux = [...new Set((ventesCreateurs || []).map((v) => v.created_by).filter(Boolean))]
+    if (idsCommerciaux.length > 0) {
+      const { data: profilsData } = await supabase.from('profils').select('id, nom').in('id', idsCommerciaux)
+      setCommerciaux(profilsData || [])
+    }
+  }
 
   async function chargerVentes() {
     setChargement(true)
-    const { data, error } = await supabase
-      .from('ventes')
-      .select('id, total, created_at, clients(nom), ventes_lignes(id)')
-      .order('created_at', { ascending: false })
-      .limit(50)
+
+    let selectStr = 'id, total, created_at, clients!inner(nom, ville), profils!created_by(nom)'
+    selectStr += filtres.produitId ? ', ventes_lignes!inner(id, produit_id)' : ', ventes_lignes(id)'
+
+    let requete = supabase.from('ventes').select(selectStr).order('created_at', { ascending: false }).limit(200)
+
+    if (filtres.periode === 'jour') {
+      const debut = new Date()
+      debut.setHours(0, 0, 0, 0)
+      requete = requete.gte('created_at', debut.toISOString())
+    } else if (filtres.periode === 'mois') {
+      const debut = new Date()
+      debut.setDate(1)
+      debut.setHours(0, 0, 0, 0)
+      requete = requete.gte('created_at', debut.toISOString())
+    }
+    if (filtres.clientId) requete = requete.eq('client_id', filtres.clientId)
+    if (filtres.ville) requete = requete.eq('clients.ville', filtres.ville)
+    if (filtres.commercialId) requete = requete.eq('created_by', filtres.commercialId)
+    if (filtres.produitId) requete = requete.eq('ventes_lignes.produit_id', filtres.produitId)
+
+    const { data, error } = await requete
     if (!error) setVentes(data || [])
+    else console.error('Erreur chargement ventes:', error)
     setChargement(false)
   }
 
@@ -60,6 +112,7 @@ export default function Ventes() {
   }
 
   const total = lignes.reduce((s, l) => s + Number(l.quantite || 0) * Number(l.prix_unitaire || 0), 0)
+  const totalFiltre = ventes.reduce((s, v) => s + Number(v.total || 0), 0)
 
   async function validerVente(e) {
     e.preventDefault()
@@ -103,12 +156,81 @@ export default function Ventes() {
       <header className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Ventes</h1>
-          <p className="text-sm text-petrol-700 mt-1">{ventes.length} vente(s) récente(s)</p>
+          <p className="text-sm text-petrol-700 mt-1">
+            {ventes.length} vente(s) — Total filtré : <span className="font-mono font-medium">{formatXOF(totalFiltre)}</span>
+          </p>
         </div>
         <button className="btn-primary" onClick={ouvrirModal}>
           + Nouvelle vente
         </button>
       </header>
+
+      <div className="card p-4 mb-4 grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div>
+          <label className="label">Période</label>
+          <select
+            className="input-field"
+            value={filtres.periode}
+            onChange={(e) => setFiltres({ ...filtres, periode: e.target.value })}
+          >
+            <option value="tout">Tout</option>
+            <option value="jour">Aujourd'hui</option>
+            <option value="mois">Ce mois</option>
+          </select>
+        </div>
+        <div>
+          <label className="label">Commercial</label>
+          <select
+            className="input-field"
+            value={filtres.commercialId}
+            onChange={(e) => setFiltres({ ...filtres, commercialId: e.target.value })}
+          >
+            <option value="">Tous</option>
+            {commerciaux.map((c) => (
+              <option key={c.id} value={c.id}>{c.nom}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="label">Magasin / client</label>
+          <select
+            className="input-field"
+            value={filtres.clientId}
+            onChange={(e) => setFiltres({ ...filtres, clientId: e.target.value })}
+          >
+            <option value="">Tous</option>
+            {clients.map((c) => (
+              <option key={c.id} value={c.id}>{c.nom}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="label">Zone / ville</label>
+          <select
+            className="input-field"
+            value={filtres.ville}
+            onChange={(e) => setFiltres({ ...filtres, ville: e.target.value })}
+          >
+            <option value="">Toutes</option>
+            {villes.map((v) => (
+              <option key={v} value={v}>{v}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="label">Produit</label>
+          <select
+            className="input-field"
+            value={filtres.produitId}
+            onChange={(e) => setFiltres({ ...filtres, produitId: e.target.value })}
+          >
+            <option value="">Tous</option>
+            {produits.map((p) => (
+              <option key={p.id} value={p.id}>{p.nom}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       <div className="card overflow-x-auto">
         <table className="w-full text-sm min-w-[640px]">
@@ -116,15 +238,17 @@ export default function Ventes() {
             <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
               <th className="px-4 py-3 font-medium">Date</th>
               <th className="px-4 py-3 font-medium">Client</th>
+              <th className="px-4 py-3 font-medium">Ville</th>
+              <th className="px-4 py-3 font-medium">Commercial</th>
               <th className="px-4 py-3 font-medium">Articles</th>
               <th className="px-4 py-3 font-medium text-right">Total</th>
             </tr>
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={4} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
             ) : ventes.length === 0 ? (
-              <tr><td colSpan={4} className="px-4 py-8 text-center text-petrol-500">Aucune vente enregistrée.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Aucune vente pour ces filtres.</td></tr>
             ) : (
               ventes.map((v) => (
                 <tr key={v.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
@@ -132,6 +256,8 @@ export default function Ventes() {
                     {new Date(v.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </td>
                   <td className="px-4 py-3 font-medium">{v.clients?.nom || '—'}</td>
+                  <td className="px-4 py-3 text-petrol-700">{v.clients?.ville || '—'}</td>
+                  <td className="px-4 py-3 text-petrol-700">{v.profils?.nom || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700">{v.ventes_lignes?.length || 0} article(s)</td>
                   <td className="px-4 py-3 font-mono text-right">{formatXOF(v.total)}</td>
                 </tr>

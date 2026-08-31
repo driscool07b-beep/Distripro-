@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -72,14 +73,15 @@ export default function Dashboard() {
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <CarteKpi label="Ventes du jour" valeur={formatXOF(kpi.caJour)} accent />
-        <CarteKpi label="Ventes du mois" valeur={formatXOF(kpi.caMois)} />
-        <CarteKpi label="Clients actifs" valeur={kpi.nbClients} />
-        <CarteKpi label="Valeur du stock" valeur={formatXOF(kpi.valeurStock)} />
+        <CarteKpi label="Ventes du jour" valeur={formatXOF(kpi.caJour)} accent to="/ventes?periode=jour" />
+        <CarteKpi label="Ventes du mois" valeur={formatXOF(kpi.caMois)} to="/ventes?periode=mois" />
+        <CarteKpi label="Clients actifs" valeur={kpi.nbClients} to="/clients" />
+        <CarteKpi label="Valeur du stock" valeur={formatXOF(kpi.valeurStock)} to="/stock" />
         <CarteKpi
           label="Alertes stock"
           valeur={kpi.alertesStock}
           alerte={kpi.alertesStock > 0}
+          to="/stock?filtre=alertes"
         />
       </div>
 
@@ -112,10 +114,14 @@ export default function Dashboard() {
           ) : (
             <ul className="space-y-3">
               {alertes.map((a, i) => (
-                <li key={i} className="flex items-center justify-between text-sm">
+                <Link
+                  key={i}
+                  to="/stock?filtre=alertes"
+                  className="flex items-center justify-between text-sm hover:underline"
+                >
                   <span className="truncate">{a.produits?.nom}</span>
                   <span className="font-mono text-amber-600 shrink-0 ml-2">{a.quantite} restants</span>
-                </li>
+                </Link>
               ))}
             </ul>
           )}
@@ -125,9 +131,13 @@ export default function Dashboard() {
   )
 }
 
-function CarteKpi({ label, valeur, accent, alerte }) {
-  return (
-    <div className={`card p-5 ${alerte ? 'border-amber-400 bg-amber-50/40' : ''}`}>
+function CarteKpi({ label, valeur, accent, alerte, to }) {
+  const contenu = (
+    <div
+      className={`card p-5 transition-shadow ${alerte ? 'border-amber-400 bg-amber-50/40' : ''} ${
+        to ? 'hover:shadow-md cursor-pointer' : ''
+      }`}
+    >
       <div className="text-xs text-petrol-600 mb-1.5">{label}</div>
       <div
         className={`font-mono text-xl font-medium ${
@@ -138,6 +148,7 @@ function CarteKpi({ label, valeur, accent, alerte }) {
       </div>
     </div>
   )
+  return to ? <Link to={to}>{contenu}</Link> : contenu
 }
 
 function formatXOF(n) {
