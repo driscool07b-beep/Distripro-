@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 
 export default function Dashboard() {
   const { profil } = useAuth()
-  const [kpi, setKpi] = useState({ caJour: 0, caMois: 0, nbClients: 0, alertesStock: 0 })
+  const [kpi, setKpi] = useState({ caJour: 0, caMois: 0, nbClients: 0, alertesStock: 0, valeurStock: 0 })
   const [ventes7j, setVentes7j] = useState([])
   const [alertes, setAlertes] = useState([])
   const [chargement, setChargement] = useState(true)
@@ -28,7 +28,7 @@ export default function Dashboard() {
         supabase.from('ventes').select('total').gte('created_at', debutJour.toISOString()),
         supabase.from('ventes').select('total, created_at').gte('created_at', debutMois.toISOString()),
         supabase.from('clients').select('id', { count: 'exact', head: true }),
-        supabase.from('stocks').select('quantite, produits(nom, seuil_alerte)'),
+        supabase.from('stocks').select('quantite, produits(nom, seuil_alerte, prix_vente)'),
         supabase
           .from('ventes')
           .select('total, created_at')
@@ -39,6 +39,10 @@ export default function Dashboard() {
     const caMois = (ventesMois || []).reduce((s, v) => s + Number(v.total || 0), 0)
     const enAlerte = (stockBas || []).filter(
       (s) => s.produits && s.quantite <= (s.produits.seuil_alerte ?? 0)
+    )
+    const valeurStock = (stockBas || []).reduce(
+      (s, ligne) => s + ligne.quantite * (ligne.produits?.prix_vente || 0),
+      0
     )
 
     // Regroupement des ventes par jour pour le graphique
@@ -53,6 +57,7 @@ export default function Dashboard() {
       caMois,
       nbClients: nbClients || 0,
       alertesStock: enAlerte.length,
+      valeurStock,
     })
     setAlertes(enAlerte.slice(0, 5))
     setVentes7j(Object.entries(parJour).map(([jour, total]) => ({ jour, total })))
@@ -66,10 +71,11 @@ export default function Dashboard() {
         <p className="text-sm text-petrol-700 mt-1">Voici l'activité de votre entreprise aujourd'hui.</p>
       </header>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         <CarteKpi label="Ventes du jour" valeur={formatXOF(kpi.caJour)} accent />
         <CarteKpi label="Ventes du mois" valeur={formatXOF(kpi.caMois)} />
         <CarteKpi label="Clients actifs" valeur={kpi.nbClients} />
+        <CarteKpi label="Valeur du stock" valeur={formatXOF(kpi.valeurStock)} />
         <CarteKpi
           label="Alertes stock"
           valeur={kpi.alertesStock}

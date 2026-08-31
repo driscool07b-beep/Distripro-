@@ -90,6 +90,7 @@ export default function Stock() {
     p.nom.toLowerCase().includes(recherche.toLowerCase())
   )
   const nbAlertes = produits.filter((p) => p.quantite <= (p.seuil_alerte ?? 0)).length
+  const valeurTotaleStock = produits.reduce((s, p) => s + p.quantite * (p.prix_vente || 0), 0)
 
   return (
     <div className="p-8 max-w-6xl">
@@ -102,6 +103,9 @@ export default function Stock() {
             ) : (
               'stock sain'
             )}
+          </p>
+          <p className="text-sm text-petrol-700 mt-0.5">
+            Valeur totale du stock : <span className="font-mono font-medium">{formatXOF(valeurTotaleStock)}</span>
           </p>
         </div>
         <button className="btn-primary" onClick={() => setModalProduit(true)}>
@@ -125,14 +129,15 @@ export default function Stock() {
               <th className="px-4 py-3 font-medium">Catégorie</th>
               <th className="px-4 py-3 font-medium">Prix unitaire</th>
               <th className="px-4 py-3 font-medium">Stock</th>
+              <th className="px-4 py-3 font-medium">Valeur</th>
               <th className="px-4 py-3 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
             ) : produitsFiltres.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-petrol-500">Aucun produit trouvé.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Aucun produit trouvé.</td></tr>
             ) : (
               produitsFiltres.map((p) => {
                 const enAlerte = p.quantite <= (p.seuil_alerte ?? 0)
@@ -145,6 +150,9 @@ export default function Stock() {
                       <span className={`font-mono px-2 py-0.5 rounded ${enAlerte ? 'bg-amber-50 text-amber-700' : 'text-petrol-900'}`}>
                         {p.quantite}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-petrol-700">
+                      {formatXOF(p.quantite * (p.prix_vente || 0))}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <button
