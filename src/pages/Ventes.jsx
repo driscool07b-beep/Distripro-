@@ -16,6 +16,8 @@ export default function Ventes() {
 
   const [filtres, setFiltres] = useState({
     periode: searchParams.get('periode') || 'tout',
+    dateDebut: '',
+    dateFin: '',
     clientId: '',
     ville: '',
     commercialId: '',
@@ -68,6 +70,17 @@ export default function Ventes() {
       debut.setDate(1)
       debut.setHours(0, 0, 0, 0)
       requete = requete.gte('created_at', debut.toISOString())
+    } else if (filtres.periode === 'personnalise') {
+      if (filtres.dateDebut) {
+        const debut = new Date(filtres.dateDebut)
+        debut.setHours(0, 0, 0, 0)
+        requete = requete.gte('created_at', debut.toISOString())
+      }
+      if (filtres.dateFin) {
+        const fin = new Date(filtres.dateFin)
+        fin.setHours(23, 59, 59, 999)
+        requete = requete.lte('created_at', fin.toISOString())
+      }
     }
     if (filtres.clientId) requete = requete.eq('client_id', filtres.clientId)
     if (filtres.ville) requete = requete.eq('clients.ville', filtres.ville)
@@ -176,8 +189,31 @@ export default function Ventes() {
             <option value="tout">Tout</option>
             <option value="jour">Aujourd'hui</option>
             <option value="mois">Ce mois</option>
+            <option value="personnalise">Personnalisée…</option>
           </select>
         </div>
+        {filtres.periode === 'personnalise' && (
+          <div className="col-span-2 grid grid-cols-2 gap-3">
+            <div>
+              <label className="label">Du</label>
+              <input
+                type="date"
+                className="input-field"
+                value={filtres.dateDebut}
+                onChange={(e) => setFiltres({ ...filtres, dateDebut: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="label">Au</label>
+              <input
+                type="date"
+                className="input-field"
+                value={filtres.dateFin}
+                onChange={(e) => setFiltres({ ...filtres, dateFin: e.target.value })}
+              />
+            </div>
+          </div>
+        )}
         <div>
           <label className="label">Commercial</label>
           <select
