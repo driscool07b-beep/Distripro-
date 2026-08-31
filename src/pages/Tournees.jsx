@@ -88,11 +88,18 @@ export default function Tournees() {
   const chargerLignes = async (tourneeId) => {
     const { data, error } = await supabase
       .from('tournee_lignes')
-      .select('*, clients(nom)')
+      .select('*, clients(nom, latitude, longitude)')
       .eq('tournee_id', tourneeId)
       .order('ordre', { ascending: true });
 
     if (!error) setVisites(data || []);
+  };
+
+  const ouvrirItineraire = (ligne) => {
+    const { latitude, longitude } = ligne.clients || {};
+    if (latitude == null || longitude == null) return;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    window.open(url, '_blank');
   };
 
   const ouvrirTournee = (tournee) => {
@@ -328,11 +335,29 @@ export default function Tournees() {
           {visites.length} visite(s) planifiée(s)
         </p>
 
+        {(() => {
+          const prochaine = visites.find((l) => l.statut !== 'visite');
+          return prochaine && prochaine.clients?.latitude != null ? (
+            <div className="border border-blue-200 bg-blue-50 rounded-lg p-3 mb-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-blue-700 font-medium mb-0.5">Prochain arrêt</p>
+                <p className="font-medium text-sm">{prochaine.clients?.nom || 'Client'}</p>
+              </div>
+              <button
+                onClick={() => ouvrirItineraire(prochaine)}
+                className="bg-blue-600 text-white px-3 py-2 rounded text-sm shrink-0"
+              >
+                📍 M'y guider
+              </button>
+            </div>
+          ) : null;
+        })()}
+
         <div className="space-y-3">
           {visites.map((ligne, index) => (
             <div
               key={ligne.id}
-              className={`border rounded-lg p-3 flex items-center justify-between ${
+              className={`border rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 ${
                 ligne.statut === 'visite' ? 'bg-green-50 border-green-200' : 'bg-white'
               }`}
             >
@@ -345,12 +370,22 @@ export default function Tournees() {
                 </p>
               </div>
               {ligne.statut !== 'visite' && (
-                <button
-                  onClick={() => marquerVisitee(ligne)}
-                  className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm"
-                >
-                  Marquer visitée (vérif. GPS)
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => ouvrirItineraire(ligne)}
+                    disabled={ligne.clients?.latitude == null}
+                    title={ligne.clients?.latitude == null ? 'Pas de position GPS enregistrée pour ce client' : "Ouvrir l'itinéraire Google Maps"}
+                    className="border border-blue-600 text-blue-600 px-3 py-1.5 rounded text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    📍 Itinéraire
+                  </button>
+                  <button
+                    onClick={() => marquerVisitee(ligne)}
+                    className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm"
+                  >
+                    Marquer visitée (vérif. GPS)
+                  </button>
+                </div>
               )}
             </div>
           ))}
