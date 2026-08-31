@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: '/clients', label: 'Clients', icon: ClientsIcon },
   { to: '/stock', label: 'Produits & Stock', icon: StockIcon },
   { to: '/ventes', label: 'Ventes', icon: VentesIcon },
+  { to: '/commandes', label: 'Commandes', icon: CommandesIcon },
   { to: '/tournees', label: 'Tournées', icon: VentesIcon },
   { to: '/rapports', label: 'Rapports de visite', icon: RapportsIcon },
   { to: '/creances', label: 'Créances', icon: CreancesIcon },
@@ -169,6 +170,13 @@ function CreancesIcon(props) {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v10M9.5 9.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1 2.5 2c0 1.5-2.5 2-2.5 2s-2.5.5-2.5 2c0 1 1.1 2 2.5 2s2.5-1.1 2.5-2.5" />
+    </svg>
+  )
+}
+function CommandesIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M20 7L12 3 4 7m16 0-8 4m8-4v10l-8 4M4 7l8 4m-8-4v10l8 4m0-10v10" />
     </svg>
   )
 }

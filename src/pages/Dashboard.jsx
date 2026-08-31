@@ -14,6 +14,7 @@ export default function Dashboard() {
     valeurStock: 0,
     creances: 0,
     creancesEchues: 0,
+    commandesEnAttente: 0,
   })
   const [ventes7j, setVentes7j] = useState([])
   const [alertes, setAlertes] = useState([])
@@ -32,7 +33,7 @@ export default function Dashboard() {
     debutMois.setDate(1)
     debutMois.setHours(0, 0, 0, 0)
 
-    const [{ data: ventesJour }, { data: ventesMois }, { count: nbClients }, { data: stockBas }, { data: histo }, { data: creancesData }] =
+    const [{ data: ventesJour }, { data: ventesMois }, { count: nbClients }, { data: stockBas }, { data: histo }, { data: creancesData }, { count: commandesCount }] =
       await Promise.all([
         supabase.from('ventes').select('total').gte('created_at', debutJour.toISOString()),
         supabase.from('ventes').select('total, created_at').gte('created_at', debutMois.toISOString()),
@@ -46,6 +47,10 @@ export default function Dashboard() {
           .from('ventes')
           .select('total, montant_regle, date_echeance')
           .eq('mode_paiement', 'credit'),
+        supabase
+          .from('commandes')
+          .select('id', { count: 'exact', head: true })
+          .in('statut', ['recue', 'confirmee', 'en_preparation']),
       ])
 
     const caJour = (ventesJour || []).reduce((s, v) => s + Number(v.total || 0), 0)
@@ -79,6 +84,7 @@ export default function Dashboard() {
       valeurStock,
       creances: totalCreances,
       creancesEchues: totalCreancesEchues,
+      commandesEnAttente: commandesCount || 0,
     })
     setAlertes(enAlerte.slice(0, 5))
     setVentes7j(Object.entries(parJour).map(([jour, total]) => ({ jour, total })))
@@ -111,6 +117,12 @@ export default function Dashboard() {
           valeur={formatXOF(kpi.creancesEchues)}
           alerte={kpi.creancesEchues > 0}
           to="/creances?filtre=echues"
+        />
+        <CarteKpi
+          label="Commandes en attente"
+          valeur={kpi.commandesEnAttente}
+          alerte={kpi.commandesEnAttente > 0}
+          to="/commandes"
         />
       </div>
 
