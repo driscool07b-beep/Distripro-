@@ -35,7 +35,7 @@ export default function Ventes() {
   const [tarifsClient, setTarifsClient] = useState({}) // { produit_id: prix_negocie }
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
   const [commerciaux, setCommerciaux] = useState([])
-  const [modePaiement, setModePaiement] = useState('cash')
+  const [montantPaye, setMontantPaye] = useState('')
   const [dateEcheance, setDateEcheance] = useState('')
   const [lignes, setLignes] = useState([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
 
@@ -163,7 +163,7 @@ export default function Ventes() {
     setErreur('')
     setClientId('')
     setTarifsClient({})
-    setModePaiement('cash')
+    setMontantPaye('')
     setDateEcheance('')
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
     setCommercialVendeurId(profil?.role === 'commercial' ? profil.id : '')
@@ -258,6 +258,9 @@ export default function Ventes() {
       return
     }
 
+    const montantPayeEffectif = montantPaye === '' ? total : Math.min(Number(montantPaye), total)
+    const resteAPayer = total - montantPayeEffectif
+
     setEnregistrement(true)
     const { data: nouvelleVenteId, error } = await supabase.rpc('creer_vente', {
       p_client_id: clientId,
@@ -266,8 +269,9 @@ export default function Ventes() {
         quantite: Number(l.quantite),
         prix_unitaire: Number(l.prix_unitaire),
       })),
-      p_mode_paiement: modePaiement,
-      p_date_echeance: modePaiement === 'credit' && dateEcheance ? dateEcheance : null,
+      p_mode_paiement: resteAPayer > 0 ? 'credit' : 'cash',
+      p_montant_paye: montantPaye === '' ? null : montantPayeEffectif,
+      p_date_echeance: resteAPayer > 0 && dateEcheance ? dateEcheance : null,
       p_commercial_id: commercialVendeurId || null,
     })
     setEnregistrement(false)
@@ -282,7 +286,7 @@ export default function Ventes() {
     }
     setModalOuvert(false)
     chargerVentes()
-    if (nouvelleVenteId) ouvrirDetailVente(nouvelleVenteId)
+    if (nouvelleVenteId && montantPayeEffectif > 0) ouvrirDetailVente(nouvelleVenteId)
   }
 
   return (
@@ -541,27 +545,39 @@ export default function Ventes() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Mode de paiement</label>
-                  <select
+                  <label className="label">Montant payé maintenant</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max={total}
                     className="input-field"
-                    value={modePaiement}
-                    onChange={(e) => setModePaiement(e.target.value)}
-                  >
-                    <option value="cash">Cash (payé immédiatement)</option>
-                    <option value="credit">Crédit</option>
-                  </select>
+                    value={montantPaye}
+                    onChange={(e) => setMontantPaye(e.target.value)}
+                    placeholder={`Total : ${formatXOF(total)}`}
+                  />
+                  <p className="text-xs text-petrol-500 mt-1">Laissez vide pour un paiement intégral (cash).</p>
                 </div>
-                {modePaiement === 'credit' && (
-                  <div>
-                    <label className="label">Échéance de paiement</label>
-                    <input
-                      type="date"
-                      className="input-field"
-                      value={dateEcheance}
-                      onChange={(e) => setDateEcheance(e.target.value)}
-                    />
-                  </div>
-                )}
+                {(() => {
+                  const montantPayeEffectif = montantPaye === '' ? total : Math.min(Number(montantPaye), total)
+                  const resteAPayer = total - montantPayeEffectif
+                  return resteAPayer > 0 ? (
+                    <div>
+                      <label className="label">Solde à payer : {formatXOF(resteAPayer)}</label>
+                      <input
+                        type="date"
+                        className="input-field"
+                        value={dateEcheance}
+                        onChange={(e) => setDateEcheance(e.target.value)}
+                        placeholder="Échéance du solde"
+                      />
+                      <p className="text-xs text-petrol-500 mt-1">Échéance du solde (optionnel)</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-end">
+                      <p className="text-sm text-green-700 font-medium">✓ Paiement intégral</p>
+                    </div>
+                  )
+                })()}
               </div>
 
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}

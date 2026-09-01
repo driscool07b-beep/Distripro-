@@ -119,3 +119,36 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
 
   return doc
 }
+
+/**
+ * Génère un reçu de paiement (encaissement sur une vente à crédit).
+ */
+export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde, total, date }) {
+  const doc = new jsPDF()
+  const formatMontant = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
+
+  doc.setFontSize(16)
+  doc.text(entreprise?.nom || 'Reçu de paiement', 14, 18)
+  doc.setFontSize(10)
+  doc.setTextColor(100)
+  doc.text('Reçu de paiement — document interne', 14, 25)
+
+  doc.setTextColor(0)
+  doc.setFontSize(11)
+  doc.text(`Client : ${client?.nom || '—'}`, 14, 40)
+  if (client?.telephone) doc.text(`Téléphone : ${client.telephone}`, 14, 47)
+  doc.text(`Date : ${new Date(date).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 14, 54)
+
+  doc.setFontSize(14)
+  doc.text(`Montant reçu : ${formatMontant(montant)}`, 14, 70)
+
+  doc.setFontSize(10)
+  doc.text(`Total de la vente : ${formatMontant(total)}`, 14, 82)
+  doc.text(`Solde restant dû après ce paiement : ${formatMontant(nouveauSolde)}`, 14, 89)
+
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
+
+  return doc
+}

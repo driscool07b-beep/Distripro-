@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuPaiement } from '../lib/export'
 
 export default function Creances() {
   const { entreprise } = useAuth()
@@ -114,6 +114,18 @@ export default function Creances() {
       setErreurPaiement(`Erreur : ${error.message}`)
       return
     }
+
+    const nouveauSolde = resteDu - montant
+    const doc = genererRecuPaiement({
+      entreprise,
+      client: detail.vente.clients,
+      montant,
+      nouveauSolde,
+      total: detail.vente.total,
+      date: new Date().toISOString(),
+    })
+    doc.save(`recu-paiement-${venteOuverte.slice(0, 8)}-${Date.now()}.pdf`)
+
     await ouvrirDetail(venteOuverte)
     chargerCreances()
   }
