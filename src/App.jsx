@@ -16,6 +16,8 @@ import Commandes from './pages/Commandes'
 import Analytique from './pages/Analytique'
 import LocaliserStock from './pages/LocaliserStock'
 import AnalyseIA from './pages/AnalyseIA'
+import StockCommercial from './pages/StockCommercial'
+import Versements from './pages/Versements'
 
 export default function App() {
   return (
@@ -41,6 +43,8 @@ export default function App() {
         <Route path="analytique" element={<Analytique />} />
         <Route path="localiser-stock" element={<LocaliserStock />} />
         <Route path="analyse-ia" element={<AnalyseIA />} />
+        <Route path="stock-commercial" element={<StockCommercial />} />
+        <Route path="versements" element={<Versements />} />
         <Route path="grand-livre" element={<GrandLivre />} />
         <Route path="parametres" element={<Parametres />} />
       </Route>

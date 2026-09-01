@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF } from '../lib/export'
 
 export default function Ventes() {
-  const { entreprise } = useAuth()
+  const { entreprise, profil } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const [ventes, setVentes] = useState([])
   const [clients, setClients] = useState([])
@@ -32,6 +32,8 @@ export default function Ventes() {
   })
 
   const [clientId, setClientId] = useState('')
+  const [commercialVendeurId, setCommercialVendeurId] = useState('')
+  const [commerciaux, setCommerciaux] = useState([])
   const [modePaiement, setModePaiement] = useState('cash')
   const [dateEcheance, setDateEcheance] = useState('')
   const [lignes, setLignes] = useState([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
@@ -134,12 +136,15 @@ export default function Ventes() {
     setModePaiement('cash')
     setDateEcheance('')
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
-    const [{ data: c }, { data: p }] = await Promise.all([
+    setCommercialVendeurId(profil?.role === 'commercial' ? profil.id : '')
+    const [{ data: c }, { data: p }, { data: com }] = await Promise.all([
       supabase.from('clients').select('id, nom').order('nom'),
       supabase.from('produits').select('id, nom, prix_vente, stocks(quantite)').order('nom'),
+      supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom'),
     ])
     setClients(c || [])
     setProduits((p || []).map((pr) => ({ ...pr, quantite_stock: pr.stocks?.[0]?.quantite ?? 0 })))
+    setCommerciaux(com || [])
     setModalOuvert(true)
   }
 
@@ -213,6 +218,7 @@ export default function Ventes() {
       })),
       p_mode_paiement: modePaiement,
       p_date_echeance: modePaiement === 'credit' && dateEcheance ? dateEcheance : null,
+      p_commercial_id: commercialVendeurId || null,
     })
     setEnregistrement(false)
 
@@ -459,6 +465,24 @@ export default function Ventes() {
               <div className="flex items-center justify-between border-t border-line pt-3">
                 <span className="text-sm font-medium text-petrol-700">Total</span>
                 <span className="font-mono text-lg font-semibold">{formatXOF(total)}</span>
+              </div>
+
+              <div>
+                <label className="label">Vente réalisée par (stock terrain)</label>
+                {profil?.role === 'commercial' ? (
+                  <p className="text-sm text-petrol-600 border border-line rounded-lg px-3 py-2 bg-canvas">
+                    Vous-même — débitée de votre stock en main
+                  </p>
+                ) : (
+                  <select
+                    className="input-field"
+                    value={commercialVendeurId}
+                    onChange={(e) => setCommercialVendeurId(e.target.value)}
+                  >
+                    <option value="">Vente de bureau (débite le stock magasin)</option>
+                    {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
+                  </select>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
