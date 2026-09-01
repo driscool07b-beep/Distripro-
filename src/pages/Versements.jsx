@@ -29,8 +29,8 @@ export default function Versements() {
       .lt('created_at', `${date}T23:59:59.999`)
 
     const { data: recouvrements } = await supabase
-      .from('paiements_credit')
-      .select('montant, effectue_par')
+      .from('reglements')
+      .select('montant, created_by')
       .gte('created_at', `${date}T00:00:00`)
       .lt('created_at', `${date}T23:59:59.999`)
 
@@ -39,7 +39,7 @@ export default function Versements() {
         .filter((v) => v.commercial_id === c.id)
         .reduce((s, v) => s + Number(v.montant_regle || 0), 0)
       const recouvre = (recouvrements || [])
-        .filter((p) => p.effectue_par === c.id)
+        .filter((p) => p.created_by === c.id)
         .reduce((s, p) => s + Number(p.montant || 0), 0)
       return {
         commercial: c.nom,

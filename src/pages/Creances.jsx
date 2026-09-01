@@ -80,7 +80,7 @@ export default function Creances() {
         .eq('id', venteId)
         .single(),
       supabase.from('ventes_lignes').select('quantite, prix_unitaire, sous_total, produits(nom)').eq('vente_id', venteId),
-      supabase.from('paiements_credit').select('montant, note, created_at').eq('vente_id', venteId).order('created_at'),
+      supabase.from('reglements').select('montant, mode, created_at').eq('vente_id', venteId).order('created_at'),
     ])
 
     setDetail({ vente, lignes: lignes || [], paiements: paiements || [] })
@@ -105,9 +105,10 @@ export default function Creances() {
       return
     }
     setEnvoiPaiement(true)
-    const { error } = await supabase.rpc('enregistrer_paiement', {
+    const { error } = await supabase.rpc('enregistrer_reglement', {
       p_vente_id: venteOuverte,
       p_montant: montant,
+      p_mode: 'espece',
     })
     setEnvoiPaiement(false)
     if (error) {

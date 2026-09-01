@@ -41,7 +41,7 @@ export default function GrandLivre() {
     let paiements = []
     if (venteIds.length > 0) {
       const { data: paiementsData } = await supabase
-        .from('paiements_credit')
+        .from('reglements')
         .select('vente_id, montant, created_at')
         .in('vente_id', venteIds)
         .order('created_at')
