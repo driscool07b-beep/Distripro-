@@ -31,6 +31,11 @@ export default function Clients() {
   const [ajoutTypeOuvert, setAjoutTypeOuvert] = useState(false)
   const [nouveauType, setNouveauType] = useState('')
   const [clientEnEdition, setClientEnEdition] = useState(null) // null = création, sinon id du client
+  const [tarifs, setTarifs] = useState([])
+  const [produitsCatalogue, setProduitsCatalogue] = useState([])
+  const [nouveauTarifProduit, setNouveauTarifProduit] = useState('')
+  const [nouveauTarifPrix, setNouveauTarifPrix] = useState('')
+  const [erreurTarif, setErreurTarif] = useState('')
   const [photoPath, setPhotoPath] = useState(null)
   const [photoUrl, setPhotoUrl] = useState(null)
   const [photoEnvoi, setPhotoEnvoi] = useState(false)
@@ -88,7 +93,48 @@ export default function Clients() {
     setPhotoUrl(null)
     setPhotoErreur('')
     if (client.photo_devanture_path) chargerUrlPhoto(client.photo_devanture_path)
+    setNouveauTarifProduit('')
+    setNouveauTarifPrix('')
+    setErreurTarif('')
+    if (profil?.role === 'admin' || profil?.role === 'manager') chargerTarifs(client.id)
     setModalOuvert(true)
+  }
+
+  async function chargerTarifs(clientId) {
+    const [{ data: t }, { data: p }] = await Promise.all([
+      supabase.from('tarifs_client').select('id, produit_id, prix_negocie, produits(nom)').eq('client_id', clientId).order('created_at'),
+      supabase.from('produits').select('id, nom, prix_vente').eq('actif', true).order('nom'),
+    ])
+    setTarifs(t || [])
+    setProduitsCatalogue(p || [])
+  }
+
+  async function ajouterTarif() {
+    setErreurTarif('')
+    if (!nouveauTarifProduit || !nouveauTarifPrix) {
+      setErreurTarif('Choisissez un produit et un prix.')
+      return
+    }
+    const { data, error } = await supabase
+      .from('tarifs_client')
+      .upsert(
+        { entreprise_id: profil.entreprise_id, client_id: clientEnEdition, produit_id: nouveauTarifProduit, prix_negocie: Number(nouveauTarifPrix) },
+        { onConflict: 'client_id,produit_id' }
+      )
+      .select('id, produit_id, prix_negocie, produits(nom)')
+      .single()
+    if (error) {
+      setErreurTarif(`Erreur : ${error.message}`)
+      return
+    }
+    setTarifs((prev) => [...prev.filter((t) => t.produit_id !== nouveauTarifProduit), data])
+    setNouveauTarifProduit('')
+    setNouveauTarifPrix('')
+  }
+
+  async function retirerTarif(tarifId) {
+    await supabase.from('tarifs_client').delete().eq('id', tarifId)
+    setTarifs((prev) => prev.filter((t) => t.id !== tarifId))
   }
 
   async function chargerUrlPhoto(path) {
@@ -443,6 +489,44 @@ export default function Clients() {
                   onChange={(e) => setFormulaire({ ...formulaire, notes: e.target.value })}
                 />
               </div>
+              {clientEnEdition && (profil?.role === 'admin' || profil?.role === 'manager') && (
+                <div>
+                  <label className="label">Tarifs négociés (remise contractuelle)</label>
+                  {tarifs.length > 0 && (
+                    <div className="space-y-1 mb-2">
+                      {tarifs.map((t) => (
+                        <div key={t.id} className="flex items-center justify-between text-xs border border-line rounded px-2 py-1.5">
+                          <span>{t.produits?.nom}</span>
+                          <span className="flex items-center gap-2">
+                            <span className="font-mono">{Number(t.prix_negocie).toLocaleString('fr-FR')} F CFA</span>
+                            <button type="button" onClick={() => retirerTarif(t.id)} className="text-red-600">✕</button>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <select
+                      className="input-field flex-1"
+                      value={nouveauTarifProduit}
+                      onChange={(e) => setNouveauTarifProduit(e.target.value)}
+                    >
+                      <option value="">— Produit —</option>
+                      {produitsCatalogue.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
+                    </select>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="Prix"
+                      className="input-field w-24"
+                      value={nouveauTarifPrix}
+                      onChange={(e) => setNouveauTarifPrix(e.target.value)}
+                    />
+                    <button type="button" onClick={ajouterTarif} className="btn-secondary text-xs px-2">+</button>
+                  </div>
+                  {erreurTarif && <p className="text-xs text-red-600 mt-1">{erreurTarif}</p>}
+                </div>
+              )}
               {clientEnEdition ? (
                 <div>
                   <label className="label">Photo de la devanture / enseigne</label>

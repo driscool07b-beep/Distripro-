@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuVente } from '../lib/export'
 
 export default function Ventes() {
   const { entreprise, profil } = useAuth()
@@ -32,6 +32,7 @@ export default function Ventes() {
   })
 
   const [clientId, setClientId] = useState('')
+  const [tarifsClient, setTarifsClient] = useState({}) // { produit_id: prix_negocie }
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
   const [commerciaux, setCommerciaux] = useState([])
   const [modePaiement, setModePaiement] = useState('cash')
@@ -130,9 +131,38 @@ export default function Ventes() {
     setDetailVente(null)
   }
 
+  function telechargerRecu() {
+    if (!detailVente) return
+    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes })
+    doc.save(`recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`)
+  }
+
+  async function partagerRecu() {
+    if (!detailVente) return
+    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes })
+    const blob = doc.output('blob')
+    const fichier = new File([blob], `recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`, { type: 'application/pdf' })
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [fichier] })) {
+      try {
+        await navigator.share({
+          files: [fichier],
+          title: 'Reçu de vente',
+          text: `Reçu de vente — ${entreprise?.nom || ''}`,
+        })
+      } catch (e) {
+        // Annulation par l'utilisateur : ne rien faire
+      }
+    } else {
+      alert("Le partage direct n'est pas disponible sur ce navigateur. Téléchargez le PDF puis partagez-le manuellement (WhatsApp, email…).")
+      doc.save(`recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`)
+    }
+  }
+
   async function ouvrirModal() {
     setErreur('')
     setClientId('')
+    setTarifsClient({})
     setModePaiement('cash')
     setDateEcheance('')
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
@@ -156,12 +186,32 @@ export default function Ventes() {
     setLignes(lignes.filter((_, i) => i !== index))
   }
 
+  async function changerClient(nouveauClientId) {
+    setClientId(nouveauClientId)
+    if (!nouveauClientId) {
+      setTarifsClient({})
+      return
+    }
+    const { data } = await supabase.from('tarifs_client').select('produit_id, prix_negocie').eq('client_id', nouveauClientId)
+    const carte = {}
+    ;(data || []).forEach((t) => { carte[t.produit_id] = Number(t.prix_negocie) })
+    setTarifsClient(carte)
+    // Réapplique le bon prix sur les lignes déjà sélectionnées
+    setLignes((prev) =>
+      prev.map((l) =>
+        l.produit_id
+          ? { ...l, prix_unitaire: carte[l.produit_id] ?? produits.find((p) => p.id === l.produit_id)?.prix_vente ?? 0 }
+          : l
+      )
+    )
+  }
+
   function modifierLigne(index, champ, valeur) {
     const copie = [...lignes]
     copie[index] = { ...copie[index], [champ]: valeur }
     if (champ === 'produit_id') {
       const produit = produits.find((p) => p.id === valeur)
-      copie[index].prix_unitaire = produit?.prix_vente ?? 0
+      copie[index].prix_unitaire = tarifsClient[valeur] ?? produit?.prix_vente ?? 0
     }
     setLignes(copie)
   }
@@ -209,7 +259,7 @@ export default function Ventes() {
     }
 
     setEnregistrement(true)
-    const { error } = await supabase.rpc('creer_vente', {
+    const { data: nouvelleVenteId, error } = await supabase.rpc('creer_vente', {
       p_client_id: clientId,
       p_lignes: lignesValides.map((l) => ({
         produit_id: l.produit_id,
@@ -232,6 +282,7 @@ export default function Ventes() {
     }
     setModalOuvert(false)
     chargerVentes()
+    if (nouvelleVenteId) ouvrirDetailVente(nouvelleVenteId)
   }
 
   return (
@@ -395,7 +446,7 @@ export default function Ventes() {
                 <select
                   className="input-field"
                   value={clientId}
-                  onChange={(e) => setClientId(e.target.value)}
+                  onChange={(e) => changerClient(e.target.value)}
                 >
                   <option value="">Sélectionner un client…</option>
                   {clients.map((c) => (
@@ -444,6 +495,9 @@ export default function Ventes() {
                           onChange={(e) => modifierLigne(i, 'prix_unitaire', e.target.value)}
                         />
                         <div className="col-span-1 font-mono text-xs text-petrol-700 text-right">
+                          {ligne.produit_id && tarifsClient[ligne.produit_id] != null && (
+                            <span className="text-green-600" title="Tarif négocié appliqué">%</span>
+                          )}
                           {produit && ligne.quantite > produit.quantite_stock && (
                             <span className="text-red-600">stock!</span>
                           )}
@@ -532,7 +586,7 @@ export default function Ventes() {
               <p className="text-sm text-petrol-500 text-center py-8">Chargement…</p>
             ) : detailVente ? (
               <>
-                <div className="flex justify-between items-start mb-4">
+                <div className="no-print flex justify-between items-start mb-4">
                   <div>
                     <h2 className="font-semibold text-lg">{entreprise?.nom}</h2>
                     <p className="text-xs text-petrol-500">Détail de vente</p>
@@ -540,6 +594,10 @@ export default function Ventes() {
                   <button onClick={fermerDetailVente} className="text-petrol-400 hover:text-petrol-700 text-xl leading-none">
                     ✕
                   </button>
+                </div>
+                <div className="hidden print:block mb-4">
+                  <h2 className="font-semibold text-lg">{entreprise?.nom}</h2>
+                  <p className="text-xs text-petrol-500">Reçu de vente — document interne</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-sm mb-4 pb-4 border-b border-line">
@@ -600,6 +658,18 @@ export default function Ventes() {
                     <p className="text-xs text-petrol-500">Total</p>
                     <p className="font-mono text-xl font-semibold">{formatXOF(detailVente.vente?.total)}</p>
                   </div>
+                </div>
+
+                <div className="no-print flex gap-2 pt-4 mt-2 border-t border-line">
+                  <button onClick={() => window.print()} className="btn-secondary text-xs flex-1">
+                    🖨️ Imprimer
+                  </button>
+                  <button onClick={telechargerRecu} className="btn-secondary text-xs flex-1">
+                    📄 PDF
+                  </button>
+                  <button onClick={partagerRecu} className="btn-primary text-xs flex-1">
+                    📤 Partager
+                  </button>
                 </div>
               </>
             ) : (

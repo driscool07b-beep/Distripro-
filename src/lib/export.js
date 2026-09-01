@@ -64,3 +64,58 @@ export function exporterPDF(nomFichier, titre, sousTitre, colonnes, lignes, tota
 
   doc.save(`${nomFichier}.pdf`)
 }
+
+/**
+ * Génère un reçu/facture interne pour une vente (document jsPDF, non enregistré).
+ * Appelant : doc.save(nom) pour télécharger, ou doc.output('blob') pour partager.
+ */
+export function genererRecuVente({ entreprise, vente, lignes }) {
+  const doc = new jsPDF()
+
+  doc.setFontSize(16)
+  doc.text(entreprise?.nom || 'Facture', 14, 18)
+  doc.setFontSize(10)
+  doc.setTextColor(100)
+  doc.text('Reçu de vente — document interne', 14, 25)
+
+  doc.setTextColor(0)
+  doc.setFontSize(10)
+  doc.text(`Client : ${vente.clients?.nom || '—'}`, 14, 36)
+  if (vente.clients?.telephone) doc.text(`Téléphone : ${vente.clients.telephone}`, 14, 42)
+  if (vente.clients?.adresse) doc.text(`Adresse : ${vente.clients.adresse}`, 14, 48)
+  doc.text(`Date : ${new Date(vente.created_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 120, 36)
+  if (vente.profils?.nom) doc.text(`Commercial : ${vente.profils.nom}`, 120, 42)
+
+  autoTable(doc, {
+    startY: 56,
+    head: [['Produit', 'Qté', 'PU (F CFA)', 'Sous-total (F CFA)']],
+    body: lignes.map((l) => [
+      l.produits?.nom || '',
+      String(l.quantite),
+      new Intl.NumberFormat('fr-FR').format(l.prix_unitaire || 0),
+      new Intl.NumberFormat('fr-FR').format(l.sous_total || 0),
+    ]),
+    styles: { fontSize: 9 },
+    headStyles: { fillColor: [10, 31, 38] },
+    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' } },
+  })
+
+  const y = doc.lastAutoTable.finalY + 10
+  const formatMontant = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
+
+  doc.setFontSize(11)
+  doc.text(`Total : ${formatMontant(vente.total)}`, 14, y)
+  doc.text(`Mode de paiement : ${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}`, 14, y + 7)
+  doc.text(`Montant réglé : ${formatMontant(vente.montant_regle)}`, 14, y + 14)
+  if (Number(vente.montant_regle) < Number(vente.total)) {
+    doc.setTextColor(180, 60, 20)
+    doc.text(`Reste dû : ${formatMontant(vente.total - vente.montant_regle)}`, 14, y + 21)
+    doc.setTextColor(0)
+  }
+
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
+
+  return doc
+}
