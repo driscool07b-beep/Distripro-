@@ -15,6 +15,7 @@ import GrandLivre from './pages/GrandLivre'
 import Commandes from './pages/Commandes'
 import Analytique from './pages/Analytique'
 import LocaliserStock from './pages/LocaliserStock'
+import AnalyseIA from './pages/AnalyseIA'
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="commandes" element={<Commandes />} />
         <Route path="analytique" element={<Analytique />} />
         <Route path="localiser-stock" element={<LocaliserStock />} />
+        <Route path="analyse-ia" element={<AnalyseIA />} />
         <Route path="grand-livre" element={<GrandLivre />} />
         <Route path="parametres" element={<Parametres />} />
       </Route>

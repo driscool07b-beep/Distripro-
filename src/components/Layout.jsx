@@ -81,6 +81,22 @@ export default function Layout() {
               Analytique
             </NavLink>
           )}
+          {['admin', 'manager'].includes(profil?.role) && (
+            <NavLink
+              to="/analyse-ia"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <AnalyseIAIcon className="w-4 h-4 shrink-0" />
+              Analyse IA
+            </NavLink>
+          )}
           {profil?.role === 'admin' && (
             <NavLink
               to="/parametres"
@@ -211,6 +227,14 @@ function LocaliserIcon(props) {
       <circle cx="11" cy="11" r="7" />
       <path d="M21 21l-4.3-4.3" />
       <path d="M11 8v3l2 1" />
+    </svg>
+  )
+}
+function AnalyseIAIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
+      <path d="M19 15l.7 2.1L22 18l-2.3.9L19 21l-.7-2.1L16 18l2.3-.9L19 15z" />
     </svg>
   )
 }
