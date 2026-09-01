@@ -34,7 +34,6 @@ export default function Ventes() {
   const [clientId, setClientId] = useState('')
   const [tarifsClient, setTarifsClient] = useState({}) // { produit_id: prix_negocie }
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
-  const [commerciaux, setCommerciaux] = useState([])
   const [montantPaye, setMontantPaye] = useState('')
   const [dateEcheance, setDateEcheance] = useState('')
   const [lignes, setLignes] = useState([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
