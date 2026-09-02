@@ -276,11 +276,8 @@ export default function Ventes() {
     setEnregistrement(false)
 
     if (error) {
-      setErreur(
-        error.message?.includes('stock insuffisant')
-          ? 'Stock insuffisant pour au moins un article de la commande.'
-          : "Erreur lors de l'enregistrement de la vente."
-      )
+      console.error('Erreur creer_vente:', error)
+      setErreur(`Erreur (création vente) : ${error.message || 'inconnue'}`)
       return
     }
     setModalOuvert(false)
