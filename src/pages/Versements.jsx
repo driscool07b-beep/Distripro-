@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, formatMontantPDF } from '../lib/export'
 
 export default function Versements() {
   const { profil, entreprise } = useAuth()
@@ -85,7 +85,7 @@ export default function Versements() {
         <button
           className="btn-secondary text-xs"
           disabled={lignes.length === 0}
-          onClick={() => exporterPDF(`versements-${date}`, 'Montants à verser', `${entreprise?.nom} — ${date}`, COLONNES, lignes, 'Total général', formatXOF(totalGeneral))}
+          onClick={() => exporterPDF(`versements-${date}`, 'Montants à verser', `${entreprise?.nom} — ${date}`, COLONNES, lignes, 'Total général', formatMontantPDF(totalGeneral) + ' F CFA')}
         >
           📄 PDF
         </button>

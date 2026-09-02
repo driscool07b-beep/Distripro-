@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF, genererRecuVente } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuVente, formatMontantPDF } from '../lib/export'
 
 export default function Ventes() {
   const { entreprise, profil } = useAuth()
@@ -240,7 +240,7 @@ export default function Ventes() {
     exporterExcel('ventes', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('ventes', 'Ventes', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Total', formatXOF(totalFiltre))
+    exporterPDF('ventes', 'Ventes', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Total', formatMontantPDF(totalFiltre) + ' F CFA')
   }
 
   async function validerVente(e) {

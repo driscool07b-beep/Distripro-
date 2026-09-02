@@ -3,6 +3,18 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
 /**
+ * Formate un montant pour affichage dans un PDF. Intl.NumberFormat('fr-FR')
+ * utilise une espace fine insécable (U+202F) comme séparateur de milliers,
+ * que la police par défaut de jsPDF (Helvetica) ne sait pas afficher — elle
+ * la rend visuellement comme un "/". On la remplace par une espace normale.
+ */
+export function formatMontantPDF(n) {
+  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 })
+    .format(n || 0)
+    .replace(/[\u202F\u00A0]/g, ' ')
+}
+
+/**
  * Exporte un tableau d'objets en fichier Excel (.xlsx).
  * @param {string} nomFichier - sans extension, ex. "ventes-2026-08"
  * @param {{ cle: string, titre: string }[]} colonnes - définit l'ordre et les en-têtes
@@ -92,8 +104,8 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
     body: lignes.map((l) => [
       l.produits?.nom || '',
       String(l.quantite),
-      new Intl.NumberFormat('fr-FR').format(l.prix_unitaire || 0),
-      new Intl.NumberFormat('fr-FR').format(l.sous_total || 0),
+      formatMontantPDF(l.prix_unitaire),
+      formatMontantPDF(l.sous_total),
     ]),
     styles: { fontSize: 9 },
     headStyles: { fillColor: [10, 31, 38] },
@@ -101,7 +113,7 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
   })
 
   const y = doc.lastAutoTable.finalY + 10
-  const formatMontant = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
+  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
 
   doc.setFontSize(11)
   doc.text(`Total : ${formatMontant(vente.total)}`, 14, y)
@@ -125,7 +137,7 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
  */
 export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde, total, date }) {
   const doc = new jsPDF()
-  const formatMontant = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
+  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
 
   doc.setFontSize(16)
   doc.text(entreprise?.nom || 'Reçu de paiement', 14, 18)

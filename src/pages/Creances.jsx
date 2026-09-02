@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF, genererRecuPaiement } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF } from '../lib/export'
 
 export default function Creances() {
   const { entreprise } = useAuth()
@@ -63,7 +63,7 @@ export default function Creances() {
     exporterExcel('creances', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('creances', 'Créances clients', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Total', formatXOF(totalAffiche))
+    exporterPDF('creances', 'Créances clients', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Total', formatMontantPDF(totalAffiche) + ' F CFA')
   }
 
   async function ouvrirDetail(venteId) {

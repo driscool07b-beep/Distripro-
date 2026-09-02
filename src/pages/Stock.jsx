@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, formatMontantPDF } from '../lib/export'
 
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
 
@@ -118,7 +118,7 @@ export default function Stock() {
     exporterExcel('stock', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('stock', 'Produits & Stock', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Valeur totale', formatXOF(valeurTotaleStock))
+    exporterPDF('stock', 'Produits & Stock', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Valeur totale', formatMontantPDF(valeurTotaleStock) + ' F CFA')
   }
 
   return (
