@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererFactureProforma } from '../lib/export'
 
 const LIBELLES_STATUT = {
   brouillon: 'Brouillon',
@@ -54,7 +54,6 @@ export default function Commandes() {
   const [modePaiementLivraison, setModePaiementLivraison] = useState('cash')
   const [actionEnvoi, setActionEnvoi] = useState(false)
   const [erreurAction, setErreurAction] = useState('')
-  const [vueProforma, setVueProforma] = useState(false)
   const [refBonCommande, setRefBonCommande] = useState('')
   const [urlBonCommande, setUrlBonCommande] = useState(null)
   const [envoiBonCommande, setEnvoiBonCommande] = useState(false)
@@ -184,7 +183,6 @@ export default function Commandes() {
     setChargementDetail(true)
     setDetail(null)
     setModeLivraison(false)
-    setVueProforma(false)
     setErreurAction('')
     setMontantSupplementaire('')
 
@@ -217,7 +215,12 @@ export default function Commandes() {
     setCommandeOuverte(null)
     setDetail(null)
     setModeLivraison(false)
-    setVueProforma(false)
+  }
+
+  function telechargerProforma() {
+    if (!detail) return
+    const doc = genererFactureProforma({ entreprise, commande: detail.commande, lignes: detail.lignes })
+    doc.save(`${detail.commande?.numero || 'proforma'}.pdf`)
   }
 
   async function enregistrerReferenceBonCommande() {
@@ -332,7 +335,7 @@ export default function Commandes() {
           <button className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterExcel('commandes', COLONNES_EXPORT, donneesExport())}>
             📊 Excel
           </button>
-          <button className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterPDF('commandes', 'Commandes', entreprise?.nom, COLONNES_EXPORT, donneesExport())}>
+          <button className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterPDF('commandes', 'Commandes', null, COLONNES_EXPORT, donneesExport(), undefined, undefined, entreprise)}>
             📄 PDF
           </button>
           <button onClick={ouvrirModal} className="btn-primary text-sm">
@@ -507,45 +510,6 @@ export default function Commandes() {
           <div className="bg-white rounded-lg p-5 w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-3">
             {chargementDetail ? (
               <p className="text-sm text-petrol-500 text-center py-8">Chargement…</p>
-            ) : detail && vueProforma ? (
-              <>
-                <div className="no-print flex justify-between items-center mb-2">
-                  <button onClick={() => setVueProforma(false)} className="text-xs text-petrol-600 underline">← Retour</button>
-                  <button onClick={() => window.print()} className="btn-secondary text-xs">🖨️ Imprimer</button>
-                </div>
-                <div className="text-center border-2 border-amber-400 bg-amber-50 rounded p-2 text-xs font-medium text-amber-800 mb-3">
-                  FACTURE PROFORMA — document non valable comme facture définitive
-                </div>
-                <h2 className="font-semibold text-lg">{entreprise?.nom}</h2>
-                <p className="text-sm">{detail.commande?.numero} — {detail.commande?.clients?.nom}</p>
-                {detail.commande?.clients?.adresse && <p className="text-xs text-petrol-500">{detail.commande.clients.adresse}</p>}
-                <p className="text-xs text-petrol-500 mb-3">Date : {new Date(detail.commande?.created_at).toLocaleDateString('fr-FR')}</p>
-                <table className="w-full text-sm mb-3">
-                  <thead>
-                    <tr className="text-left text-xs text-petrol-500 border-b border-line">
-                      <th className="pb-2">Produit</th>
-                      <th className="pb-2 text-right">Qté</th>
-                      <th className="pb-2 text-right">PU</th>
-                      <th className="pb-2 text-right">Sous-total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {detail.lignes.map((l) => (
-                      <tr key={l.id} className="border-b border-line last:border-0">
-                        <td className="py-1.5">{l.produits?.nom}</td>
-                        <td className="py-1.5 text-right font-mono">{l.quantite}</td>
-                        <td className="py-1.5 text-right font-mono">{formatXOF(l.prix_unitaire)}</td>
-                        <td className="py-1.5 text-right font-mono">{formatXOF(l.montant_ligne)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="text-sm space-y-1">
-                  <div className="flex justify-between"><span>Montant HT</span><span className="font-mono">{formatXOF(detail.commande?.montant_ht)}</span></div>
-                  <div className="flex justify-between"><span>TVA</span><span className="font-mono">{formatXOF(detail.commande?.montant_tva)}</span></div>
-                  <div className="flex justify-between font-semibold border-t border-line pt-1"><span>Total TTC</span><span className="font-mono">{formatXOF(detail.commande?.montant_ttc)}</span></div>
-                </div>
-              </>
             ) : detail ? (
               <>
                 <div className="flex justify-between items-start">
@@ -664,7 +628,7 @@ export default function Commandes() {
                 {erreurAction && <p className="text-sm text-red-600">{erreurAction}</p>}
 
                 <div className="flex flex-wrap gap-2 pt-2 border-t border-line">
-                  <button onClick={() => setVueProforma(true)} className="btn-secondary text-sm">
+                  <button onClick={telechargerProforma} className="btn-secondary text-sm">
                     📄 Facture proforma
                   </button>
 

@@ -63,7 +63,7 @@ export default function Creances() {
     exporterExcel('creances', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('creances', 'Créances clients', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Total', formatMontantPDF(totalAffiche) + ' F CFA')
+    exporterPDF('creances', 'Créances clients', null, COLONNES_EXPORT, donneesExport(), 'Total', formatMontantPDF(totalAffiche) + ' F CFA', entreprise)
   }
 
   async function ouvrirDetail(venteId) {

@@ -118,7 +118,7 @@ export default function Stock() {
     exporterExcel('stock', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('stock', 'Produits & Stock', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Valeur totale', formatMontantPDF(valeurTotaleStock) + ' F CFA')
+    exporterPDF('stock', 'Produits & Stock', null, COLONNES_EXPORT, donneesExport(), 'Valeur totale', formatMontantPDF(valeurTotaleStock) + ' F CFA', entreprise)
   }
 
   return (

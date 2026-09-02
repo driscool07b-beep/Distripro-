@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
 
     const { data: entrepriseData, error: entrepriseError } = await supabase
       .from('entreprises')
-      .select('id, nom, plan, statut, photo_rapport_obligatoire')
+      .select('id, nom, plan, statut, photo_rapport_obligatoire, adresse, telephone, email, ncc, rccm')
       .eq('id', profilData.entreprise_id)
       .single()
 

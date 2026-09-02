@@ -7,6 +7,7 @@ const ONGLETS = [
   { id: 'recap', label: 'Récap quotidien' },
   { id: 'rotation', label: 'Taux de rotation' },
   { id: 'presence', label: 'Taux de présence' },
+  { id: 'manque', label: 'Manque à gagner' },
 ]
 
 export default function Analytique() {
@@ -45,6 +46,7 @@ export default function Analytique() {
       {onglet === 'recap' && <RecapQuotidien entreprise={entreprise} />}
       {onglet === 'rotation' && <TauxRotation entreprise={entreprise} />}
       {onglet === 'presence' && <TauxPresence entreprise={entreprise} />}
+      {onglet === 'manque' && <ManqueAGagner entreprise={entreprise} />}
     </div>
   )
 }
@@ -122,7 +124,7 @@ function RecapQuotidien({ entreprise }) {
         <button
           className="btn-secondary text-xs"
           disabled={lignes.length === 0}
-          onClick={() => exporterPDF(`recap-${date}`, 'Récap quotidien', `${entreprise?.nom} — ${date}`, COLONNES, lignes)}
+          onClick={() => exporterPDF(`recap-${date}`, 'Récap quotidien', date, COLONNES, lignes, undefined, undefined, entreprise)}
         >
           📄 PDF
         </button>
@@ -238,7 +240,7 @@ function TauxRotation({ entreprise }) {
         <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterExcel('taux-rotation', COLONNES, lignes)}>
           📊 Excel
         </button>
-        <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterPDF('taux-rotation', 'Taux de rotation', entreprise?.nom, COLONNES, lignes)}>
+        <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterPDF('taux-rotation', 'Taux de rotation', null, COLONNES, lignes, undefined, undefined, entreprise)}>
           📄 PDF
         </button>
       </div>
@@ -338,7 +340,7 @@ function TauxPresence({ entreprise }) {
             <div className="flex gap-1">
               <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterExcel('presence-nos-produits', COLONNES, propres)}>Excel</button>
               <span className="text-petrol-300">·</span>
-              <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterPDF('presence-nos-produits', 'Taux de présence — nos produits', entreprise?.nom, COLONNES, propres)}>PDF</button>
+              <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterPDF('presence-nos-produits', 'Taux de présence — nos produits', null, COLONNES, propres, undefined, undefined, entreprise)}>PDF</button>
             </div>
           </div>
           <TableauPresence lignes={propres} />
@@ -350,7 +352,7 @@ function TauxPresence({ entreprise }) {
             <div className="flex gap-1">
               <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterExcel('presence-concurrents', COLONNES, concurrents)}>Excel</button>
               <span className="text-petrol-300">·</span>
-              <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterPDF('presence-concurrents', 'Taux de présence — concurrents', entreprise?.nom, COLONNES, concurrents)}>PDF</button>
+              <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterPDF('presence-concurrents', 'Taux de présence — concurrents', null, COLONNES, concurrents, undefined, undefined, entreprise)}>PDF</button>
             </div>
           </div>
           <TableauPresence lignes={concurrents} />
@@ -391,4 +393,202 @@ function TableauPresence({ lignes }) {
       </table>
     </div>
   )
+}
+
+function ManqueAGagner({ entreprise }) {
+  const [chargement, setChargement] = useState(true)
+  const [annulees, setAnnulees] = useState([])
+  const [livraisonsPartielles, setLivraisonsPartielles] = useState([])
+  const [delais, setDelais] = useState([])
+
+  useEffect(() => {
+    charger()
+  }, [])
+
+  async function charger() {
+    setChargement(true)
+
+    const [{ data: commandesAnnulees }, { data: lignesLivrees }, { data: commandesLivrees }, { data: historique }] = await Promise.all([
+      supabase.from('commandes').select('id, numero, montant_ttc, created_at, clients(nom)').eq('statut', 'annulee'),
+      supabase
+        .from('lignes_commande')
+        .select('quantite, quantite_livree, prix_unitaire, produits(nom), commandes!inner(numero, statut, clients(nom))')
+        .eq('commandes.statut', 'livree'),
+      supabase.from('commandes').select('id, numero, date_livraison_souhaitee, clients(nom)').eq('statut', 'livree').not('date_livraison_souhaitee', 'is', null),
+      supabase.from('commande_historique').select('commande_id, created_at').eq('nouveau_statut', 'livree'),
+    ])
+
+    setAnnulees(
+      (commandesAnnulees || []).map((c) => ({
+        numero: c.numero,
+        client: c.clients?.nom || '—',
+        montant: Number(c.montant_ttc || 0),
+        date: new Date(c.created_at).toLocaleDateString('fr-FR'),
+      }))
+    )
+
+    const ecarts = (lignesLivrees || [])
+      .map((l) => {
+        const livree = l.quantite_livree ?? l.quantite
+        const manque = l.quantite - livree
+        return {
+          numero: l.commandes?.numero,
+          client: l.commandes?.clients?.nom || '—',
+          produit: l.produits?.nom,
+          manqueQte: manque,
+          manqueValeur: manque * Number(l.prix_unitaire || 0),
+        }
+      })
+      .filter((l) => l.manqueQte > 0)
+    setLivraisonsPartielles(ecarts)
+
+    const dateLivraisonParCommande = {}
+    ;(historique || []).forEach((h) => {
+      if (!dateLivraisonParCommande[h.commande_id]) dateLivraisonParCommande[h.commande_id] = h.created_at
+    })
+    const delaisCalcules = (commandesLivrees || [])
+      .map((c) => {
+        const dateEffective = dateLivraisonParCommande[c.id]
+        if (!dateEffective) return null
+        const jours = Math.round((new Date(dateEffective) - new Date(c.date_livraison_souhaitee)) / 86400000)
+        return { numero: c.numero, client: c.clients?.nom || '—', jours }
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.jours - a.jours)
+    setDelais(delaisCalcules)
+
+    setChargement(false)
+  }
+
+  const totalAnnule = annulees.reduce((s, c) => s + c.montant, 0)
+  const totalManque = livraisonsPartielles.reduce((s, l) => s + l.manqueValeur, 0)
+  const retardMoyen = delais.length > 0 ? Math.round(delais.reduce((s, d) => s + d.jours, 0) / delais.length) : null
+  const enRetard = delais.filter((d) => d.jours > 0).length
+
+  const COLONNES_ANNULEES = [
+    { cle: 'numero', titre: 'Commande' },
+    { cle: 'client', titre: 'Client' },
+    { cle: 'date', titre: 'Date' },
+    { cle: 'montant', titre: 'Montant perdu (F CFA)', alignDroite: true },
+  ]
+  const COLONNES_ECARTS = [
+    { cle: 'numero', titre: 'Commande' },
+    { cle: 'client', titre: 'Client' },
+    { cle: 'produit', titre: 'Produit' },
+    { cle: 'manqueQte', titre: 'Qté manquante', alignDroite: true },
+    { cle: 'manqueValeur', titre: 'Valeur manquante (F CFA)', alignDroite: true },
+  ]
+
+  if (chargement) return <p className="text-sm text-petrol-500">Chargement…</p>
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-semibold text-sm">Commandes annulées</h2>
+          <div className="flex gap-2">
+            <button className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterExcel('commandes-annulees', COLONNES_ANNULEES, annulees)}>Excel</button>
+            <button className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterPDF('commandes-annulees', 'Commandes annulées', null, COLONNES_ANNULEES, annulees, 'Total perdu', formatXOF(totalAnnule), entreprise)}>PDF</button>
+          </div>
+        </div>
+        <p className="text-xs text-petrol-500 mb-2">Valeur totale perdue : <span className="font-semibold text-red-600">{formatXOF(totalAnnule)}</span></p>
+        <div className="card overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-line bg-canvas text-left text-petrol-600">
+                <th className="px-3 py-2">Commande</th>
+                <th className="px-3 py-2">Client</th>
+                <th className="px-3 py-2">Date</th>
+                <th className="px-3 py-2 text-right">Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              {annulees.map((c, i) => (
+                <tr key={i} className="border-b border-line last:border-0">
+                  <td className="px-3 py-2">{c.numero}</td>
+                  <td className="px-3 py-2">{c.client}</td>
+                  <td className="px-3 py-2">{c.date}</td>
+                  <td className="px-3 py-2 text-right font-mono">{formatXOF(c.montant)}</td>
+                </tr>
+              ))}
+              {annulees.length === 0 && <tr><td colSpan={4} className="px-3 py-6 text-center text-petrol-400">Aucune commande annulée.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-semibold text-sm">Livraisons partielles (rupture)</h2>
+          <div className="flex gap-2">
+            <button className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterExcel('livraisons-partielles', COLONNES_ECARTS, livraisonsPartielles)}>Excel</button>
+            <button className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterPDF('livraisons-partielles', 'Livraisons partielles', null, COLONNES_ECARTS, livraisonsPartielles, 'Total manque à gagner', formatXOF(totalManque), entreprise)}>PDF</button>
+          </div>
+        </div>
+        <p className="text-xs text-petrol-500 mb-2">Manque à gagner total : <span className="font-semibold text-amber-600">{formatXOF(totalManque)}</span></p>
+        <div className="card overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-line bg-canvas text-left text-petrol-600">
+                <th className="px-3 py-2">Commande</th>
+                <th className="px-3 py-2">Client</th>
+                <th className="px-3 py-2">Produit</th>
+                <th className="px-3 py-2 text-right">Qté manquante</th>
+                <th className="px-3 py-2 text-right">Valeur</th>
+              </tr>
+            </thead>
+            <tbody>
+              {livraisonsPartielles.map((l, i) => (
+                <tr key={i} className="border-b border-line last:border-0">
+                  <td className="px-3 py-2">{l.numero}</td>
+                  <td className="px-3 py-2">{l.client}</td>
+                  <td className="px-3 py-2">{l.produit}</td>
+                  <td className="px-3 py-2 text-right font-mono">{l.manqueQte}</td>
+                  <td className="px-3 py-2 text-right font-mono">{formatXOF(l.manqueValeur)}</td>
+                </tr>
+              ))}
+              {livraisonsPartielles.length === 0 && <tr><td colSpan={5} className="px-3 py-6 text-center text-petrol-400">Aucune rupture détectée.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <h2 className="font-semibold text-sm mb-2">Délais de livraison</h2>
+        {retardMoyen !== null && (
+          <p className="text-xs text-petrol-500 mb-2">
+            Retard moyen : <span className={`font-semibold ${retardMoyen > 0 ? 'text-red-600' : 'text-green-600'}`}>{retardMoyen > 0 ? `+${retardMoyen}` : retardMoyen} jour(s)</span>
+            {' — '}{enRetard} commande(s) livrée(s) en retard sur {delais.length}
+          </p>
+        )}
+        <div className="card overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-line bg-canvas text-left text-petrol-600">
+                <th className="px-3 py-2">Commande</th>
+                <th className="px-3 py-2">Client</th>
+                <th className="px-3 py-2 text-right">Écart vs souhaité</th>
+              </tr>
+            </thead>
+            <tbody>
+              {delais.map((d, i) => (
+                <tr key={i} className="border-b border-line last:border-0">
+                  <td className="px-3 py-2">{d.numero}</td>
+                  <td className="px-3 py-2">{d.client}</td>
+                  <td className={`px-3 py-2 text-right font-mono ${d.jours > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                    {d.jours > 0 ? `+${d.jours} j` : d.jours === 0 ? 'À temps' : `${d.jours} j`}
+                  </td>
+                </tr>
+              ))}
+              {delais.length === 0 && <tr><td colSpan={3} className="px-3 py-6 text-center text-petrol-400">Pas assez de données (date de livraison souhaitée requise).</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function formatXOF(n) {
+  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
 }

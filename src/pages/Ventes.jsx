@@ -248,7 +248,7 @@ export default function Ventes() {
     exporterExcel('ventes', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('ventes', 'Ventes', entreprise?.nom, COLONNES_EXPORT, donneesExport(), 'Total', formatMontantPDF(totalFiltre) + ' F CFA')
+    exporterPDF('ventes', 'Ventes', null, COLONNES_EXPORT, donneesExport(), 'Total', formatMontantPDF(totalFiltre) + ' F CFA', entreprise)
   }
 
   async function validerVente(e) {

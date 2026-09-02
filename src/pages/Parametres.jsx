@@ -13,6 +13,22 @@ const CHAMP_VIDE = { libelle: '', type_champ: 'texte', options: '' }
 
 export default function Parametres() {
   const { profil, entreprise, rechargerProfil } = useAuth()
+  const [infosLegales, setInfosLegales] = useState({ adresse: '', telephone: '', email: '', ncc: '', rccm: '' })
+  const [enregistrementInfos, setEnregistrementInfos] = useState(false)
+  const [erreurInfos, setErreurInfos] = useState('')
+  const [confirmationInfos, setConfirmationInfos] = useState(false)
+
+  useEffect(() => {
+    if (entreprise) {
+      setInfosLegales({
+        adresse: entreprise.adresse || '',
+        telephone: entreprise.telephone || '',
+        email: entreprise.email || '',
+        ncc: entreprise.ncc || '',
+        rccm: entreprise.rccm || '',
+      })
+    }
+  }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
   const [confirmation, setConfirmation] = useState(false)
@@ -115,6 +131,31 @@ export default function Parametres() {
     setTimeout(() => setConfirmation(false), 2500)
   }
 
+  async function enregistrerInfosLegales(e) {
+    e.preventDefault()
+    setErreurInfos('')
+    setConfirmationInfos(false)
+    setEnregistrementInfos(true)
+    const { error } = await supabase
+      .from('entreprises')
+      .update({
+        adresse: infosLegales.adresse.trim() || null,
+        telephone: infosLegales.telephone.trim() || null,
+        email: infosLegales.email.trim() || null,
+        ncc: infosLegales.ncc.trim() || null,
+        rccm: infosLegales.rccm.trim() || null,
+      })
+      .eq('id', entreprise.id)
+    setEnregistrementInfos(false)
+    if (error) {
+      setErreurInfos(`Erreur : ${error.message}`)
+      return
+    }
+    await rechargerProfil()
+    setConfirmationInfos(true)
+    setTimeout(() => setConfirmationInfos(false), 2500)
+  }
+
   async function ajouterChamp(e) {
     e.preventDefault()
     setErreurChamp('')
@@ -159,6 +200,65 @@ export default function Parametres() {
       <div>
         <h1 className="text-xl font-bold">Paramètres</h1>
         <p className="text-sm text-petrol-500">{entreprise?.nom}</p>
+      </div>
+
+      <div className="card p-4">
+        <h2 className="font-semibold mb-1">Informations légales</h2>
+        <p className="text-sm text-petrol-600 mb-4">
+          Affichées sur tous les documents générés (factures, reçus, bons de livraison, proforma).
+        </p>
+        <form onSubmit={enregistrerInfosLegales} className="space-y-3">
+          <div>
+            <label className="label">Adresse</label>
+            <input
+              className="input-field"
+              value={infosLegales.adresse}
+              onChange={(e) => setInfosLegales({ ...infosLegales, adresse: e.target.value })}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="label">Téléphone</label>
+              <input
+                className="input-field"
+                value={infosLegales.telephone}
+                onChange={(e) => setInfosLegales({ ...infosLegales, telephone: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="label">Email</label>
+              <input
+                type="email"
+                className="input-field"
+                value={infosLegales.email}
+                onChange={(e) => setInfosLegales({ ...infosLegales, email: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="label">NCC (numéro de compte contribuable)</label>
+              <input
+                className="input-field"
+                value={infosLegales.ncc}
+                onChange={(e) => setInfosLegales({ ...infosLegales, ncc: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="label">RCCM (registre de commerce)</label>
+              <input
+                className="input-field"
+                value={infosLegales.rccm}
+                onChange={(e) => setInfosLegales({ ...infosLegales, rccm: e.target.value })}
+              />
+            </div>
+          </div>
+          {erreurInfos && <p className="text-xs text-red-600">{erreurInfos}</p>}
+          {confirmationInfos && <p className="text-xs text-green-600">Enregistré.</p>}
+          <button type="submit" disabled={enregistrementInfos} className="btn-primary w-full">
+            {enregistrementInfos ? 'Enregistrement…' : 'Enregistrer'}
+          </button>
+        </form>
       </div>
 
       <div className="card p-4">

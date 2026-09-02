@@ -85,7 +85,7 @@ export default function Versements() {
         <button
           className="btn-secondary text-xs"
           disabled={lignes.length === 0}
-          onClick={() => exporterPDF(`versements-${date}`, 'Montants à verser', `${entreprise?.nom} — ${date}`, COLONNES, lignes, 'Total général', formatMontantPDF(totalGeneral) + ' F CFA')}
+          onClick={() => exporterPDF(`versements-${date}`, 'Montants à verser', date, COLONNES, lignes, 'Total général', formatMontantPDF(totalGeneral) + ' F CFA', entreprise)}
         >
           📄 PDF
         </button>

@@ -34,7 +34,7 @@ export default function Rapports() {
     exporterExcel('rapports-visite', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('rapports-visite', 'Rapports de visite', entreprise?.nom, COLONNES_EXPORT, donneesExport())
+    exporterPDF('rapports-visite', 'Rapports de visite', null, COLONNES_EXPORT, donneesExport(), undefined, undefined, entreprise)
   }
 
   useEffect(() => {
