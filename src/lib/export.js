@@ -88,7 +88,7 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
   doc.text(entreprise?.nom || 'Facture', 14, 18)
   doc.setFontSize(10)
   doc.setTextColor(100)
-  doc.text('Reçu de vente — document interne', 14, 25)
+  doc.text(`Reçu de vente — document interne${vente.numero_vente ? ' — ' + vente.numero_vente : ''}`, 14, 25)
 
   doc.setTextColor(0)
   doc.setFontSize(10)
@@ -161,6 +161,49 @@ export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde,
   doc.setFontSize(8)
   doc.setTextColor(130)
   doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
+
+  return doc
+}
+
+/**
+ * Génère un bon de livraison (atteste ce qui a été physiquement remis au
+ * client — distinct du reçu/facture, sans emphase sur le paiement).
+ */
+export function genererBonLivraison({ entreprise, vente, lignes }) {
+  const doc = new jsPDF()
+
+  doc.setFontSize(16)
+  doc.text(entreprise?.nom || 'Bon de livraison', 14, 18)
+  doc.setFontSize(10)
+  doc.setTextColor(100)
+  doc.text(`BON DE LIVRAISON${vente.numero_bl ? ' — ' + vente.numero_bl : ''}`, 14, 25)
+
+  doc.setTextColor(0)
+  doc.setFontSize(10)
+  doc.text(`Client : ${vente.clients?.nom || '—'}`, 14, 36)
+  if (vente.clients?.telephone) doc.text(`Téléphone : ${vente.clients.telephone}`, 14, 42)
+  if (vente.clients?.adresse) doc.text(`Adresse de livraison : ${vente.clients.adresse}`, 14, 48)
+  doc.text(`Date : ${new Date(vente.created_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 120, 36)
+  if (vente.profils?.nom) doc.text(`Livré par : ${vente.profils.nom}`, 120, 42)
+  if (vente.numero_vente) doc.text(`Réf. vente : ${vente.numero_vente}`, 120, 48)
+
+  autoTable(doc, {
+    startY: 56,
+    head: [['Produit', 'Quantité livrée']],
+    body: lignes.map((l) => [l.produits?.nom || '', String(l.quantite)]),
+    styles: { fontSize: 9 },
+    headStyles: { fillColor: [10, 31, 38] },
+    columnStyles: { 1: { halign: 'right' } },
+  })
+
+  const y = doc.lastAutoTable.finalY + 20
+  doc.setFontSize(9)
+  doc.text('Signature du destinataire (bon reçu, conforme) :', 14, y)
+  doc.rect(14, y + 5, 80, 25)
+
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text('Ce document tient lieu de bon de livraison interne — pas une facture normalisée DGI (FNE).', 14, 285)
 
   return doc
 }

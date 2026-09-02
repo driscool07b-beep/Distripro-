@@ -55,6 +55,10 @@ export default function Commandes() {
   const [actionEnvoi, setActionEnvoi] = useState(false)
   const [erreurAction, setErreurAction] = useState('')
   const [vueProforma, setVueProforma] = useState(false)
+  const [refBonCommande, setRefBonCommande] = useState('')
+  const [urlBonCommande, setUrlBonCommande] = useState(null)
+  const [envoiBonCommande, setEnvoiBonCommande] = useState(false)
+  const [erreurBonCommande, setErreurBonCommande] = useState('')
 
   useEffect(() => {
     chargerCommandes()
@@ -187,7 +191,7 @@ export default function Commandes() {
     const [{ data: commande }, { data: lignesData }, { data: historique }] = await Promise.all([
       supabase
         .from('commandes')
-        .select('id, numero, statut, mode_paiement, montant_ht, montant_tva, montant_ttc, montant_paye, date_livraison_souhaitee, notes, created_at, clients(nom, telephone, adresse), profils!commercial_id(nom)')
+        .select('id, numero, statut, mode_paiement, montant_ht, montant_tva, montant_ttc, montant_paye, date_livraison_souhaitee, notes, bon_commande_client_path, bon_commande_client_reference, created_at, clients(nom, telephone, adresse), profils!commercial_id(nom)')
         .eq('id', commandeId)
         .single(),
       supabase.from('lignes_commande').select('id, produit_id, quantite, prix_unitaire, montant_ligne, quantite_livree, produits(nom)').eq('commande_id', commandeId),
@@ -198,6 +202,13 @@ export default function Commandes() {
     const init = {}
     ;(lignesData || []).forEach((l) => { init[l.produit_id] = l.quantite_livree ?? l.quantite })
     setQuantitesLivrees(init)
+    setRefBonCommande(commande?.bon_commande_client_reference || '')
+    setUrlBonCommande(null)
+    setErreurBonCommande('')
+    if (commande?.bon_commande_client_path) {
+      const { data } = await supabase.storage.from('pieces-jointes').createSignedUrl(commande.bon_commande_client_path, 3600)
+      if (data?.signedUrl) setUrlBonCommande(data.signedUrl)
+    }
     setModePaiementLivraison(commande?.mode_paiement || 'cash')
     setChargementDetail(false)
   }
@@ -207,6 +218,49 @@ export default function Commandes() {
     setDetail(null)
     setModeLivraison(false)
     setVueProforma(false)
+  }
+
+  async function enregistrerReferenceBonCommande() {
+    setErreurBonCommande('')
+    const { error } = await supabase
+      .from('commandes')
+      .update({ bon_commande_client_reference: refBonCommande.trim() || null })
+      .eq('id', commandeOuverte)
+    if (error) setErreurBonCommande(`Erreur : ${error.message}`)
+  }
+
+  async function envoyerBonCommande(e) {
+    const fichier = e.target.files?.[0]
+    if (!fichier || !commandeOuverte || !entreprise?.id) return
+    setErreurBonCommande('')
+    setEnvoiBonCommande(true)
+
+    const extension = fichier.name.split('.').pop() || 'pdf'
+    const chemin = `${entreprise.id}/commandes/${commandeOuverte}.${extension}`
+
+    const { error: erreurUpload } = await supabase.storage
+      .from('pieces-jointes')
+      .upload(chemin, fichier, { upsert: true })
+
+    if (erreurUpload) {
+      setEnvoiBonCommande(false)
+      setErreurBonCommande(`Erreur envoi : ${erreurUpload.message}`)
+      return
+    }
+
+    const { error: erreurMaj } = await supabase
+      .from('commandes')
+      .update({ bon_commande_client_path: chemin })
+      .eq('id', commandeOuverte)
+
+    setEnvoiBonCommande(false)
+    if (erreurMaj) {
+      setErreurBonCommande(`Erreur enregistrement : ${erreurMaj.message}`)
+      return
+    }
+
+    const { data } = await supabase.storage.from('pieces-jointes').createSignedUrl(chemin, 3600)
+    if (data?.signedUrl) setUrlBonCommande(data.signedUrl)
   }
 
   async function changerStatut(nouveauStatut) {
@@ -515,6 +569,37 @@ export default function Commandes() {
                     Livraison souhaitée : {new Date(detail.commande.date_livraison_souhaitee).toLocaleDateString('fr-FR')}
                   </p>
                 )}
+
+                <div className="border-t border-line pt-3">
+                  <label className="label">Bon de commande du client (justificatif)</label>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      className="input-field flex-1 text-sm"
+                      placeholder="Référence du bon de commande (ex. BC-4521)"
+                      value={refBonCommande}
+                      onChange={(e) => setRefBonCommande(e.target.value)}
+                      onBlur={enregistrerReferenceBonCommande}
+                    />
+                  </div>
+                  {urlBonCommande ? (
+                    <a href={urlBonCommande} target="_blank" rel="noreferrer" className="text-blue-600 text-sm underline">
+                      📎 Voir le document joint
+                    </a>
+                  ) : (
+                    <p className="text-xs text-petrol-400 mb-1">Aucun document joint pour le moment.</p>
+                  )}
+                  <div className="mt-2">
+                    <input
+                      type="file"
+                      accept="application/pdf,image/*"
+                      onChange={envoyerBonCommande}
+                      disabled={envoiBonCommande}
+                      className="text-sm"
+                    />
+                    {envoiBonCommande && <p className="text-xs text-petrol-600 mt-1">Envoi en cours…</p>}
+                    {erreurBonCommande && <p className="text-xs text-red-600 mt-1">{erreurBonCommande}</p>}
+                  </div>
+                </div>
 
                 {!modeLivraison ? (
                   <table className="w-full text-sm">

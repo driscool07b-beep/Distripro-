@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF, genererRecuVente, formatMontantPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, formatMontantPDF } from '../lib/export'
 
 export default function Ventes() {
   const { entreprise, profil } = useAuth()
@@ -67,7 +67,7 @@ export default function Ventes() {
   async function chargerVentes() {
     setChargement(true)
 
-    let selectStr = 'id, total, created_at, clients!inner(nom, ville), profils!created_by(nom)'
+    let selectStr = 'id, numero_vente, total, created_at, clients!inner(nom, ville), profils!created_by(nom)'
     selectStr += filtres.produitId ? ', ventes_lignes!inner(id, produit_id)' : ', ventes_lignes(id)'
 
     let requete = supabase.from('ventes').select(selectStr).order('created_at', { ascending: false }).limit(200)
@@ -112,7 +112,7 @@ export default function Ventes() {
     const [{ data: vente }, { data: lignes }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, total, created_at, mode_paiement, statut, montant_regle, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
+        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, statut, montant_regle, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
         .eq('id', venteId)
         .single(),
       supabase
@@ -134,6 +134,12 @@ export default function Ventes() {
     if (!detailVente) return
     const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes })
     doc.save(`recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`)
+  }
+
+  function telechargerBonLivraison() {
+    if (!detailVente) return
+    const doc = genererBonLivraison({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes })
+    doc.save(`${detailVente.vente.numero_bl || 'bon-livraison-' + detailVente.vente.id.slice(0, 8)}.pdf`)
   }
 
   async function partagerRecu() {
@@ -219,6 +225,7 @@ export default function Ventes() {
   const totalFiltre = ventes.reduce((s, v) => s + Number(v.total || 0), 0)
 
   const COLONNES_EXPORT = [
+    { cle: 'numero', titre: 'N° vente' },
     { cle: 'date', titre: 'Date' },
     { cle: 'client', titre: 'Client' },
     { cle: 'ville', titre: 'Ville' },
@@ -228,6 +235,7 @@ export default function Ventes() {
   ]
   function donneesExport() {
     return ventes.map((v) => ({
+      numero: v.numero_vente || '—',
       date: new Date(v.created_at).toLocaleDateString('fr-FR'),
       client: v.clients?.nom || '—',
       ville: v.clients?.ville || '—',
@@ -601,7 +609,9 @@ export default function Ventes() {
                 <div className="no-print flex justify-between items-start mb-4">
                   <div>
                     <h2 className="font-semibold text-lg">{entreprise?.nom}</h2>
-                    <p className="text-xs text-petrol-500">Détail de vente</p>
+                    <p className="text-xs text-petrol-500">
+                      Détail de vente{detailVente.vente?.numero_vente ? ` — ${detailVente.vente.numero_vente}` : ''}
+                    </p>
                   </div>
                   <button onClick={fermerDetailVente} className="text-petrol-400 hover:text-petrol-700 text-xl leading-none">
                     ✕
@@ -672,12 +682,15 @@ export default function Ventes() {
                   </div>
                 </div>
 
-                <div className="no-print flex gap-2 pt-4 mt-2 border-t border-line">
+                <div className="no-print flex gap-2 pt-4 mt-2 border-t border-line flex-wrap">
                   <button onClick={() => window.print()} className="btn-secondary text-xs flex-1">
                     🖨️ Imprimer
                   </button>
                   <button onClick={telechargerRecu} className="btn-secondary text-xs flex-1">
                     📄 PDF
+                  </button>
+                  <button onClick={telechargerBonLivraison} className="btn-secondary text-xs flex-1">
+                    📦 Bon de livraison
                   </button>
                   <button onClick={partagerRecu} className="btn-primary text-xs flex-1">
                     📤 Partager
