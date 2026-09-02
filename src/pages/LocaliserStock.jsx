@@ -34,39 +34,62 @@ export default function LocaliserStock() {
     setChargement(true)
     setResultats(null)
 
-    const { data, error } = await supabase
-      .from('rapport_visite_produits')
-      .select('quantite_rayon, rapports_visite(created_at, client_id, clients(nom, telephone, adresse, ville, latitude, longitude))')
-      .eq('produit_id', produitId)
-      .gt('quantite_rayon', 0)
-      .order('created_at', { foreignTable: 'rapports_visite', ascending: false })
+    const [{ data: releves }, { data: ventes }] = await Promise.all([
+      supabase
+        .from('rapport_visite_produits')
+        .select('quantite_rayon, rapports_visite(created_at, client_id, clients(nom, telephone, adresse, ville, latitude, longitude))')
+        .eq('produit_id', produitId)
+        .gt('quantite_rayon', 0),
+      supabase
+        .from('ventes_lignes')
+        .select('quantite, ventes!inner(created_at, client_id, statut, clients(nom, telephone, adresse, ville, latitude, longitude))')
+        .eq('produit_id', produitId)
+        .neq('ventes.statut', 'annulee'),
+    ])
 
-    if (error || !data) {
-      setResultats([])
-      setChargement(false)
-      return
-    }
-
-    const dejaVus = new Set()
-    let clientsUniques = []
-    const donneesTriees = [...data].sort(
-      (a, b) => new Date(b.rapports_visite?.created_at || 0) - new Date(a.rapports_visite?.created_at || 0)
-    )
-    donneesTriees.forEach((l) => {
+    // Fusionne les deux sources en un seul flux d'observations, chacune datée
+    const observations = []
+    ;(releves || []).forEach((l) => {
       const rv = l.rapports_visite
       if (!rv || !rv.clients) return
-      if (dejaVus.has(rv.client_id)) return
-      dejaVus.add(rv.client_id)
-      clientsUniques.push({
+      observations.push({
         clientId: rv.client_id,
-        nom: rv.clients.nom,
-        telephone: rv.clients.telephone,
-        adresse: rv.clients.adresse,
-        ville: rv.clients.ville,
-        latitude: rv.clients.latitude,
-        longitude: rv.clients.longitude,
+        clients: rv.clients,
         quantite: l.quantite_rayon,
-        dateReleve: rv.created_at,
+        date: rv.created_at,
+        source: 'visite',
+      })
+    })
+    ;(ventes || []).forEach((l) => {
+      const v = l.ventes
+      if (!v || !v.clients) return
+      observations.push({
+        clientId: v.client_id,
+        clients: v.clients,
+        quantite: l.quantite,
+        date: v.created_at,
+        source: 'livraison',
+      })
+    })
+
+    // Ne garder que l'observation la plus récente par client, tous types confondus
+    observations.sort((a, b) => new Date(b.date) - new Date(a.date))
+    const dejaVus = new Set()
+    let clientsUniques = []
+    observations.forEach((o) => {
+      if (dejaVus.has(o.clientId)) return
+      dejaVus.add(o.clientId)
+      clientsUniques.push({
+        clientId: o.clientId,
+        nom: o.clients.nom,
+        telephone: o.clients.telephone,
+        adresse: o.clients.adresse,
+        ville: o.clients.ville,
+        latitude: o.clients.latitude,
+        longitude: o.clients.longitude,
+        quantite: o.quantite,
+        dateReleve: o.date,
+        source: o.source,
       })
     })
 
@@ -106,7 +129,7 @@ export default function LocaliserStock() {
     <div className="p-4 max-w-2xl mx-auto">
       <h1 className="text-xl font-bold mb-1">Localiser un produit</h1>
       <p className="text-sm text-petrol-500 mb-4">
-        Trouvez les clients ayant eu ce produit en rayon lors de leur dernière visite relevée —
+        Combine les relevés de visite terrain et les livraisons récentes —
         utile quand un client appelle pour savoir où en trouver.
       </p>
 
@@ -147,7 +170,8 @@ export default function LocaliserStock() {
                   {c.distanceKm != null && ` — ${c.distanceKm.toFixed(1)} km`}
                 </p>
                 <p className="text-xs text-petrol-500">
-                  {c.quantite} unité(s) vue(s) en rayon — relevé {joursDepuis(c.dateReleve)}
+                  {c.quantite} unité(s) {c.source === 'livraison' ? 'livrée(s)' : 'vue(s) en rayon'} —{' '}
+                  {c.source === 'livraison' ? 'livré' : 'relevé'} {joursDepuis(c.dateReleve)}
                 </p>
                 {c.telephone && <p className="text-xs text-petrol-600 mt-1">📞 {c.telephone}</p>}
               </div>
