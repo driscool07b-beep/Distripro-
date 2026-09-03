@@ -40,7 +40,7 @@ export default function Ventes() {
   const [tarifsClient, setTarifsClient] = useState({}) // { produit_id: prix_negocie }
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
   const [montantPaye, setMontantPaye] = useState('')
-  const [remiseMontant, setRemiseMontant] = useState('')
+  const [remisePourcentage, setRemisePourcentage] = useState('')
   const [motifRemise, setMotifRemise] = useState('')
   const [modeReglement, setModeReglement] = useState('espece')
   const [dateEcheance, setDateEcheance] = useState('')
@@ -202,7 +202,7 @@ export default function Ventes() {
     setClientId('')
     setTarifsClient({})
     setMontantPaye('')
-    setRemiseMontant('')
+    setRemisePourcentage('')
     setMotifRemise('')
     setModeReglement('espece')
     setDateEcheance('')
@@ -258,7 +258,8 @@ export default function Ventes() {
   }
 
   const sousTotal = lignes.reduce((s, l) => s + Number(l.quantite || 0) * Number(l.prix_unitaire || 0), 0)
-  const remiseEffective = Math.min(Number(remiseMontant || 0), sousTotal)
+  const remisePourcentageEffectif = Math.min(Math.max(Number(remisePourcentage || 0), 0), 100)
+  const remiseEffective = Math.round(sousTotal * (remisePourcentageEffectif / 100))
   const total = sousTotal - remiseEffective
   const totalFiltre = ventes.reduce((s, v) => (v.statut === 'annulee' ? s : s + Number(v.total || 0)), 0)
 
@@ -579,16 +580,20 @@ export default function Ventes() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="label">Remise (F CFA)</label>
+                    <label className="label">Remise (%)</label>
                     <input
                       type="number"
                       min="0"
-                      max={sousTotal}
+                      max="100"
+                      step="0.5"
                       className="input-field"
-                      value={remiseMontant}
-                      onChange={(e) => setRemiseMontant(e.target.value)}
+                      value={remisePourcentage}
+                      onChange={(e) => setRemisePourcentage(e.target.value)}
                       placeholder="0"
                     />
+                    {remiseEffective > 0 && (
+                      <p className="text-xs text-petrol-500 mt-1">Soit -{formatXOF(remiseEffective)}</p>
+                    )}
                   </div>
                   {remiseEffective > 0 && (
                     <div>
@@ -603,10 +608,10 @@ export default function Ventes() {
                   )}
                 </div>
 
-                {remiseEffective > 0 && sousTotal > 0 && profil?.role === 'commercial' && (
-                  (remiseEffective / sousTotal) * 100 > (entreprise?.seuil_remise_pourcentage ?? 15) && (
+                {remiseEffective > 0 && profil?.role === 'commercial' && (
+                  remisePourcentageEffectif > (entreprise?.seuil_remise_pourcentage ?? 15) && (
                     <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5">
-                      ⚠️ Cette remise ({((remiseEffective / sousTotal) * 100).toFixed(1)}%) dépasse le seuil autorisé
+                      ⚠️ Cette remise ({remisePourcentageEffectif}%) dépasse le seuil autorisé
                       ({entreprise?.seuil_remise_pourcentage ?? 15}%). Un manager ou administrateur doit la valider.
                     </p>
                   )
