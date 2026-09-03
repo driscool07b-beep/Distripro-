@@ -32,6 +32,9 @@ export default function Clients() {
   const [nouveauType, setNouveauType] = useState('')
   const [clientEnEdition, setClientEnEdition] = useState(null) // null = création, sinon id du client
   const [tarifs, setTarifs] = useState([])
+  const [groupes, setGroupes] = useState([])
+  const [groupeId, setGroupeId] = useState('')
+  const [nouveauGroupeNom, setNouveauGroupeNom] = useState('')
   const [produitsCatalogue, setProduitsCatalogue] = useState([])
   const [nouveauTarifProduit, setNouveauTarifProduit] = useState('')
   const [nouveauTarifPrix, setNouveauTarifPrix] = useState('')
@@ -68,6 +71,8 @@ export default function Clients() {
     setPhotoPath(null)
     setPhotoUrl(null)
     setPhotoErreur('')
+    setGroupeId('')
+    setNouveauGroupeNom('')
     setModalOuvert(true)
     capturerPositionActuelle()
   }
@@ -89,6 +94,8 @@ export default function Clients() {
     })
     setErreur('')
     setCaptureGps('idle')
+    setGroupeId(client.groupe_id || '')
+    setNouveauGroupeNom('')
     setPhotoPath(client.photo_devanture_path || null)
     setPhotoUrl(null)
     setPhotoErreur('')
@@ -184,7 +191,13 @@ export default function Clients() {
   useEffect(() => {
     chargerClients()
     chargerTypesClient()
+    chargerGroupes()
   }, [])
+
+  async function chargerGroupes() {
+    const { data } = await supabase.from('groupes_clients').select('id, nom').order('nom')
+    setGroupes(data || [])
+  }
 
   async function chargerTypesClient() {
     const { data, error } = await supabase
@@ -215,7 +228,7 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, email, adresse, ville, type_client, segment, limite_credit, notes, latitude, longitude, photo_devanture_path, created_at')
+      .select('id, nom, telephone, email, adresse, ville, type_client, segment, limite_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, groupes_clients(nom)')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
@@ -234,6 +247,22 @@ export default function Clients() {
     }
     setEnregistrement(true)
 
+    let groupeIdFinal = groupeId || null
+    if (nouveauGroupeNom.trim()) {
+      const { data: nouveauGroupe, error: erreurGroupe } = await supabase
+        .from('groupes_clients')
+        .insert({ entreprise_id: profil.entreprise_id, nom: nouveauGroupeNom.trim() })
+        .select('id, nom')
+        .single()
+      if (erreurGroupe) {
+        setEnregistrement(false)
+        setErreur(`Erreur création du groupe : ${erreurGroupe.message}`)
+        return
+      }
+      groupeIdFinal = nouveauGroupe.id
+      setGroupes((prev) => [...prev, nouveauGroupe].sort((a, b) => a.nom.localeCompare(b.nom)))
+    }
+
     const donneesCommunes = {
       nom: formulaire.nom.trim(),
       telephone: formulaire.telephone.trim() || null,
@@ -246,6 +275,7 @@ export default function Clients() {
       notes: formulaire.notes.trim() || null,
       latitude: formulaire.latitude ? Number(formulaire.latitude) : null,
       longitude: formulaire.longitude ? Number(formulaire.longitude) : null,
+      groupe_id: groupeIdFinal,
     }
 
     const { error } = clientEnEdition
@@ -468,6 +498,29 @@ export default function Clients() {
                     <option value="inactif">Inactif</option>
                   </select>
                 </div>
+              </div>
+              <div>
+                <label className="label">Groupe (chaîne de magasins, optionnel)</label>
+                <div className="flex gap-2">
+                  <select
+                    className="input-field flex-1"
+                    value={groupeId}
+                    onChange={(e) => { setGroupeId(e.target.value); setNouveauGroupeNom('') }}
+                    disabled={!!nouveauGroupeNom}
+                  >
+                    <option value="">— Aucun —</option>
+                    {groupes.map((g) => <option key={g.id} value={g.id}>{g.nom}</option>)}
+                  </select>
+                  <input
+                    className="input-field flex-1"
+                    placeholder="Ou créer un nouveau groupe"
+                    value={nouveauGroupeNom}
+                    onChange={(e) => { setNouveauGroupeNom(e.target.value); setGroupeId('') }}
+                  />
+                </div>
+                <p className="text-xs text-petrol-500 mt-1">
+                  Regrouper les magasins d'une même enseigne pour un récap de livraisons consolidé.
+                </p>
               </div>
               <div>
                 <label className="label">Limite de crédit (F CFA)</label>

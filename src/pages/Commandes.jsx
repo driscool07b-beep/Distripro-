@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, genererFactureProforma } from '../lib/export'
+import SelectRecherche from '../components/SelectRecherche'
 
 const LIBELLES_STATUT = {
   brouillon: 'Brouillon',
@@ -393,10 +394,7 @@ export default function Commandes() {
             <form onSubmit={validerCommande} className="space-y-3">
               <div>
                 <label className="label">Client</label>
-                <select className="input-field" value={clientId} onChange={(e) => setClientId(e.target.value)}>
-                  <option value="">— Sélectionner —</option>
-                  {clients.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
-                </select>
+                <SelectRecherche options={clients} value={clientId} onChange={setClientId} placeholder="Rechercher un client…" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">

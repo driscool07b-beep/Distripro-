@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, formatMontantPDF } from '../lib/export'
+import SelectRecherche from '../components/SelectRecherche'
 
 export default function Ventes() {
   const { entreprise, profil } = useAuth()
@@ -451,16 +452,12 @@ export default function Ventes() {
             <form onSubmit={validerVente} className="space-y-4">
               <div>
                 <label className="label">Client *</label>
-                <select
-                  className="input-field"
+                <SelectRecherche
+                  options={clients}
                   value={clientId}
-                  onChange={(e) => changerClient(e.target.value)}
-                >
-                  <option value="">Sélectionner un client…</option>
-                  {clients.map((c) => (
-                    <option key={c.id} value={c.id}>{c.nom}</option>
-                  ))}
-                </select>
+                  onChange={changerClient}
+                  placeholder="Rechercher un client…"
+                />
               </div>
 
               <div>

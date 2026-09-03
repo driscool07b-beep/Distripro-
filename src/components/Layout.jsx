@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 const NAV_ITEMS = [
   { to: '/', label: 'Tableau de bord', icon: DashIcon, end: true },
   { to: '/clients', label: 'Clients', icon: ClientsIcon },
+  { to: '/groupes', label: 'Groupes de clients', icon: GroupesIcon },
   { to: '/stock', label: 'Produits & Stock', icon: StockIcon },
   { to: '/ventes', label: 'Ventes', icon: VentesIcon },
   { to: '/commandes', label: 'Commandes', icon: CommandesIcon },
@@ -195,6 +196,16 @@ function ClientsIcon(props) {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <circle cx="9" cy="8" r="3" /><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6" />
       <circle cx="17" cy="8" r="2.5" /><path d="M16 14.2c2.8.4 5 2.4 5 5.8" />
+    </svg>
+  )
+}
+function GroupesIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <rect x="3" y="4" width="7" height="7" rx="1" />
+      <rect x="14" y="4" width="7" height="7" rx="1" />
+      <rect x="3" y="15" width="7" height="7" rx="1" />
+      <rect x="14" y="15" width="7" height="7" rx="1" />
     </svg>
   )
 }
