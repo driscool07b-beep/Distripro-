@@ -125,13 +125,21 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
 
-  doc.setFontSize(11)
-  doc.setTextColor(60)
-  doc.text(`Reçu de vente${vente.numero_vente ? ' — ' + vente.numero_vente : ''}`, 14, y0)
+  const soldeDu = Number(vente.total) - Number(vente.montant_regle)
+  const couleurBandeau = soldeDu > 0 ? [255, 243, 224] : [230, 245, 236]
+  const couleurBordure = soldeDu > 0 ? [217, 160, 60] : [45, 140, 90]
+  const couleurTexte = soldeDu > 0 ? [150, 90, 10] : [20, 100, 55]
+
+  doc.setFillColor(...couleurBandeau)
+  doc.setDrawColor(...couleurBordure)
+  doc.rect(14, y0, 182, 9, 'FD')
+  doc.setFontSize(9)
+  doc.setTextColor(...couleurTexte)
+  doc.text(`REÇU DE VENTE${vente.numero_vente ? ' — ' + vente.numero_vente : ''}`, 105, y0 + 6, { align: 'center' })
 
   doc.setTextColor(0)
   doc.setFontSize(10)
-  const yInfo = y0 + 10
+  const yInfo = y0 + 18
   doc.text(`Client : ${vente.clients?.nom || '—'}`, 14, yInfo)
   if (vente.clients?.telephone) doc.text(`Téléphone : ${vente.clients.telephone}`, 14, yInfo + 6)
   if (vente.clients?.adresse) doc.text(`Adresse : ${vente.clients.adresse}`, 14, yInfo + 12)
@@ -147,23 +155,33 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
       formatMontantPDF(l.prix_unitaire),
       formatMontantPDF(l.sous_total),
     ]),
-    styles: { fontSize: 9 },
+    styles: { fontSize: 9, cellPadding: 3 },
     headStyles: { fillColor: [10, 31, 38] },
     columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' } },
+    margin: { left: 14, right: 14 },
   })
 
-  const y = doc.lastAutoTable.finalY + 10
   const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
+  const corpsRecap = [
+    ['Total', formatMontant(vente.total)],
+    ['Mode de paiement', `${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}${vente.mode_reglement ? ' — ' + LIBELLES_MODE[vente.mode_reglement] : ''}`],
+    ['Montant réglé', formatMontant(vente.montant_regle)],
+  ]
+  if (soldeDu > 0) corpsRecap.push(['Reste dû', formatMontant(soldeDu)])
 
-  doc.setFontSize(11)
-  doc.text(`Total : ${formatMontant(vente.total)}`, 14, y)
-  doc.text(`Mode de paiement : ${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}${vente.mode_reglement ? ' — ' + LIBELLES_MODE[vente.mode_reglement] : ''}`, 14, y + 7)
-  doc.text(`Montant réglé : ${formatMontant(vente.montant_regle)}`, 14, y + 14)
-  if (Number(vente.montant_regle) < Number(vente.total)) {
-    doc.setTextColor(180, 60, 20)
-    doc.text(`Reste dû : ${formatMontant(vente.total - vente.montant_regle)}`, 14, y + 21)
-    doc.setTextColor(0)
-  }
+  autoTable(doc, {
+    startY: doc.lastAutoTable.finalY + 8,
+    body: corpsRecap,
+    styles: { fontSize: 10, cellPadding: 3 },
+    theme: 'plain',
+    columnStyles: { 1: { halign: 'right', fontStyle: 'bold' } },
+    margin: { left: 14, right: 14 },
+    didParseCell: (data) => {
+      if (soldeDu > 0 && data.row.index === corpsRecap.length - 1) {
+        data.cell.styles.textColor = [180, 60, 20]
+      }
+    },
+  })
 
   doc.setFontSize(8)
   doc.setTextColor(130)
@@ -175,28 +193,50 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
 /**
  * Génère un reçu de paiement (encaissement sur une vente à crédit).
  */
-export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde, total, date }) {
+export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde, total, date, numero, venteNumero }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
   const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
 
-  doc.setFontSize(11)
-  doc.setTextColor(60)
-  doc.text('Reçu de paiement', 14, y0)
+  doc.setFillColor(230, 245, 236)
+  doc.setDrawColor(45, 140, 90)
+  doc.rect(14, y0, 182, 9, 'FD')
+  doc.setFontSize(9)
+  doc.setTextColor(20, 100, 55)
+  doc.text(`REÇU DE PAIEMENT${numero ? ' — ' + numero : ''}`, 105, y0 + 6, { align: 'center' })
 
   doc.setTextColor(0)
   doc.setFontSize(11)
-  const yInfo = y0 + 12
+  const yInfo = y0 + 20
   doc.text(`Client : ${client?.nom || '—'}`, 14, yInfo)
   if (client?.telephone) doc.text(`Téléphone : ${client.telephone}`, 14, yInfo + 7)
-  doc.text(`Date : ${new Date(date).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 14)
+  doc.text(`Date : ${new Date(date).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 130, yInfo)
+  if (venteNumero) doc.text(`Réf. vente : ${venteNumero}`, 130, yInfo + 7)
 
-  doc.setFontSize(14)
-  doc.text(`Montant reçu : ${formatMontant(montant)}`, 14, yInfo + 30)
-
+  const yBoite = yInfo + 20
+  doc.setFillColor(247, 247, 245)
+  doc.setDrawColor(220, 220, 215)
+  doc.rect(14, yBoite, 182, 22, 'FD')
   doc.setFontSize(10)
-  doc.text(`Total de la vente : ${formatMontant(total)}`, 14, yInfo + 42)
-  doc.text(`Solde restant dû après ce paiement : ${formatMontant(nouveauSolde)}`, 14, yInfo + 49)
+  doc.setTextColor(90)
+  doc.text('Montant reçu', 22, yBoite + 9)
+  doc.setFontSize(18)
+  doc.setTextColor(20, 100, 55)
+  doc.setFont(undefined, 'bold')
+  doc.text(formatMontant(montant), 22, yBoite + 18)
+  doc.setFont(undefined, 'normal')
+
+  autoTable(doc, {
+    startY: yBoite + 32,
+    body: [
+      ['Total de la vente', formatMontant(total)],
+      ['Solde restant dû après ce paiement', formatMontant(nouveauSolde)],
+    ],
+    styles: { fontSize: 10, cellPadding: 3 },
+    theme: 'plain',
+    columnStyles: { 1: { halign: 'right', fontStyle: 'bold' } },
+    margin: { left: 14, right: 14 },
+  })
 
   doc.setFontSize(8)
   doc.setTextColor(130)

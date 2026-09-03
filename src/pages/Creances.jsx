@@ -85,7 +85,7 @@ export default function Creances() {
     const [{ data: vente }, { data: lignes }, { data: paiements }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, total, montant_regle, date_echeance, created_at, solde_report, notes, clients(nom, telephone, adresse), profils!created_by(nom)')
+        .select('id, numero_vente, total, montant_regle, date_echeance, created_at, solde_report, notes, clients(nom, telephone, adresse), profils!created_by(nom)')
         .eq('id', venteId)
         .single(),
       supabase.from('ventes_lignes').select('quantite, prix_unitaire, sous_total, produits(nom)').eq('vente_id', venteId),
@@ -201,7 +201,7 @@ export default function Creances() {
       return
     }
     setEnvoiPaiement(true)
-    const { error } = await supabase.rpc('enregistrer_reglement', {
+    const { data: reglementId, error } = await supabase.rpc('enregistrer_reglement', {
       p_vente_id: venteOuverte,
       p_montant: montant,
       p_mode: modePaiementCreance,
@@ -212,6 +212,8 @@ export default function Creances() {
       return
     }
 
+    const { data: reglement } = await supabase.from('reglements').select('numero').eq('id', reglementId).single()
+
     const nouveauSolde = resteDu - montant
     const doc = genererRecuPaiement({
       entreprise,
@@ -220,8 +222,10 @@ export default function Creances() {
       nouveauSolde,
       total: detail.vente.total,
       date: new Date().toISOString(),
+      numero: reglement?.numero,
+      venteNumero: detail.vente.numero_vente,
     })
-    doc.save(`recu-paiement-${venteOuverte.slice(0, 8)}-${Date.now()}.pdf`)
+    doc.save(`${reglement?.numero || 'recu-paiement-' + venteOuverte.slice(0, 8)}.pdf`)
 
     await ouvrirDetail(venteOuverte)
     chargerCreances()
