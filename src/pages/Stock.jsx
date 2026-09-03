@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF } from '../lib/export'
+import * as XLSX from 'xlsx'
 
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
 
@@ -14,6 +15,12 @@ export default function Stock() {
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
   const [modalProduit, setModalProduit] = useState(false)
+  const [modalImportOuvert, setModalImportOuvert] = useState(false)
+  const [lignesImport, setLignesImport] = useState([])
+  const [erreurImport, setErreurImport] = useState('')
+  const [importEnCours, setImportEnCours] = useState(false)
+  const [progressionImport, setProgressionImport] = useState(0)
+  const [resultatImport, setResultatImport] = useState(null)
   const [modalMouvement, setModalMouvement] = useState(null) // produit sélectionné
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
   const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', motif: '' })
@@ -64,6 +71,85 @@ export default function Stock() {
     }
     setModalProduit(false)
     setFormulaire(PRODUIT_VIDE)
+    chargerProduits()
+  }
+
+  function ouvrirModalImport() {
+    setLignesImport([])
+    setErreurImport('')
+    setResultatImport(null)
+    setProgressionImport(0)
+    setModalImportOuvert(true)
+  }
+
+  function telechargerModeleImport() {
+    const feuille = XLSX.utils.aoa_to_sheet([
+      ['Nom', 'Catégorie', 'Prix de vente', 'Seuil alerte', 'Stock initial'],
+      ['Produit Exemple 500g', 'Céréales', 1000, 10, 50],
+    ])
+    const classeur = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(classeur, feuille, 'Produits')
+    XLSX.writeFile(classeur, 'modele-import-produits.xlsx')
+  }
+
+  function lireFichierImport(e) {
+    const fichier = e.target.files?.[0]
+    if (!fichier) return
+    setErreurImport('')
+    setResultatImport(null)
+
+    const lecteur = new FileReader()
+    lecteur.onload = (event) => {
+      try {
+        const classeur = XLSX.read(event.target.result, { type: 'array' })
+        const feuille = classeur.Sheets[classeur.SheetNames[0]]
+        const lignes = XLSX.utils.sheet_to_json(feuille, {
+          header: ['nom', 'categorie', 'prix_vente', 'seuil_alerte', 'quantite_initiale'],
+          range: 1,
+          defval: '',
+        })
+        const lignesValides = lignes
+          .map((l) => ({
+            nom: String(l.nom || '').trim(),
+            categorie: String(l.categorie || '').trim(),
+            prix_vente: Number(l.prix_vente) || 0,
+            seuil_alerte: Number(l.seuil_alerte) || 0,
+            quantite_initiale: Number(l.quantite_initiale) || 0,
+          }))
+          .filter((l) => l.nom && l.prix_vente > 0)
+        setLignesImport(lignesValides)
+        if (lignesValides.length === 0) setErreurImport('Aucune ligne valide (nom et prix de vente obligatoires).')
+      } catch (err) {
+        setErreurImport(`Fichier illisible : ${err.message}`)
+      }
+    }
+    lecteur.readAsArrayBuffer(fichier)
+  }
+
+  async function confirmerImport() {
+    if (lignesImport.length === 0) return
+    setImportEnCours(true)
+    setErreurImport('')
+    let reussis = 0
+    const echecs = []
+
+    for (let i = 0; i < lignesImport.length; i++) {
+      const l = lignesImport[i]
+      const { error } = await supabase.rpc('creer_produit', {
+        p_nom: l.nom,
+        p_categorie: l.categorie || null,
+        p_prix_vente: l.prix_vente,
+        p_seuil_alerte: l.seuil_alerte,
+        p_quantite_initiale: l.quantite_initiale,
+      })
+      if (error) echecs.push(`${l.nom} : ${error.message}`)
+      else reussis++
+      setProgressionImport(i + 1)
+    }
+
+    setImportEnCours(false)
+    setResultatImport({ reussis, total: lignesImport.length, echecs })
+    setLignesImport([])
     chargerProduits()
   }
 
@@ -143,6 +229,9 @@ export default function Stock() {
           </button>
           <button className="btn-secondary text-sm" onClick={exportPDF} disabled={produitsFiltres.length === 0}>
             📄 PDF
+          </button>
+          <button className="btn-secondary text-sm" onClick={ouvrirModalImport}>
+            📥 Importer
           </button>
           <button className="btn-primary" onClick={() => setModalProduit(true)}>
             + Nouveau produit
@@ -366,6 +455,76 @@ export default function Stock() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {modalImportOuvert && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="font-semibold text-lg">Importer des produits (Excel)</h2>
+              <button onClick={() => setModalImportOuvert(false)} className="text-petrol-400 text-xl leading-none">✕</button>
+            </div>
+
+            <p className="text-sm text-petrol-600 mb-3">
+              Téléchargez le modèle, remplissez-le en gardant l'ordre des colonnes, puis importez-le.
+            </p>
+            <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
+              📄 Télécharger le modèle
+            </button>
+
+            <div className="mb-4">
+              <label className="label">Fichier Excel (.xlsx)</label>
+              <input type="file" accept=".xlsx,.xls" onChange={lireFichierImport} className="text-sm" />
+            </div>
+
+            {erreurImport && <p className="text-sm text-red-600 mb-3">{erreurImport}</p>}
+
+            {lignesImport.length > 0 && (
+              <>
+                <p className="text-sm font-medium mb-2">{lignesImport.length} produit(s) prêt(s) à importer</p>
+                <div className="border border-line rounded-lg overflow-y-auto max-h-48 mb-4">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-canvas text-left">
+                        <th className="px-2 py-1.5">Nom</th>
+                        <th className="px-2 py-1.5 text-right">Prix</th>
+                        <th className="px-2 py-1.5 text-right">Stock initial</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lignesImport.slice(0, 20).map((l, i) => (
+                        <tr key={i} className="border-t border-line">
+                          <td className="px-2 py-1.5">{l.nom}</td>
+                          <td className="px-2 py-1.5 text-right font-mono">{l.prix_vente}</td>
+                          <td className="px-2 py-1.5 text-right font-mono">{l.quantite_initiale}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {lignesImport.length > 20 && (
+                    <p className="text-xs text-petrol-400 text-center py-1.5">… et {lignesImport.length - 20} de plus</p>
+                  )}
+                </div>
+                <button onClick={confirmerImport} disabled={importEnCours} className="btn-primary w-full">
+                  {importEnCours ? `Import en cours… (${progressionImport}/${lignesImport.length})` : `Importer ${lignesImport.length} produit(s)`}
+                </button>
+              </>
+            )}
+
+            {resultatImport && (
+              <div className="mt-3">
+                <p className="text-sm text-green-700">
+                  ✓ {resultatImport.reussis} produit(s) importé(s) sur {resultatImport.total}.
+                </p>
+                {resultatImport.echecs.length > 0 && (
+                  <div className="text-xs text-red-600 mt-2">
+                    {resultatImport.echecs.map((e, i) => <p key={i}>{e}</p>)}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

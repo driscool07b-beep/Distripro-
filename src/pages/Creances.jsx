@@ -3,15 +3,22 @@ import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF } from '../lib/export'
+import * as XLSX from 'xlsx'
 
 export default function Creances() {
-  const { entreprise } = useAuth()
+  const { entreprise, profil } = useAuth()
   const [searchParams] = useSearchParams()
   const filtreEchues = searchParams.get('filtre') === 'echues'
   const [creances, setCreances] = useState([])
   const [chargement, setChargement] = useState(true)
 
   const [venteOuverte, setVenteOuverte] = useState(null)
+  const [modalImportOuvert, setModalImportOuvert] = useState(false)
+  const [lignesImport, setLignesImport] = useState([])
+  const [erreurImport, setErreurImport] = useState('')
+  const [importEnCours, setImportEnCours] = useState(false)
+  const [progressionImport, setProgressionImport] = useState(0)
+  const [resultatImport, setResultatImport] = useState(null)
   const [detail, setDetail] = useState(null)
   const [chargementDetail, setChargementDetail] = useState(false)
   const [montantPaiement, setMontantPaiement] = useState('')
@@ -26,7 +33,7 @@ export default function Creances() {
     setChargement(true)
     const { data, error } = await supabase
       .from('ventes')
-      .select('id, total, montant_regle, date_echeance, created_at, clients(nom, telephone), profils!created_by(nom)')
+      .select('id, total, montant_regle, date_echeance, created_at, solde_report, clients(nom, telephone), profils!created_by(nom)')
       .eq('mode_paiement', 'credit')
       .order('date_echeance', { ascending: true, nullsFirst: false })
 
@@ -76,7 +83,7 @@ export default function Creances() {
     const [{ data: vente }, { data: lignes }, { data: paiements }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, total, montant_regle, date_echeance, created_at, clients(nom, telephone, adresse), profils!created_by(nom)')
+        .select('id, total, montant_regle, date_echeance, created_at, solde_report, notes, clients(nom, telephone, adresse), profils!created_by(nom)')
         .eq('id', venteId)
         .single(),
       supabase.from('ventes_lignes').select('quantite, prix_unitaire, sous_total, produits(nom)').eq('vente_id', venteId),
@@ -90,6 +97,93 @@ export default function Creances() {
   function fermerDetail() {
     setVenteOuverte(null)
     setDetail(null)
+  }
+
+  function ouvrirModalImport() {
+    setLignesImport([])
+    setErreurImport('')
+    setResultatImport(null)
+    setProgressionImport(0)
+    setModalImportOuvert(true)
+  }
+
+  function telechargerModeleImport() {
+    const feuille = XLSX.utils.aoa_to_sheet([
+      ['Client (nom exact)', 'Montant dû', 'Échéance (AAAA-MM-JJ, optionnel)', 'Notes'],
+      ['Boutique Exemple', 150000, '2026-10-15', 'Solde au 01/09/2026 — ancien logiciel'],
+    ])
+    const classeur = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(classeur, feuille, 'Soldes')
+    XLSX.writeFile(classeur, 'modele-import-soldes-creances.xlsx')
+  }
+
+  async function lireFichierImport(e) {
+    const fichier = e.target.files?.[0]
+    if (!fichier) return
+    setErreurImport('')
+    setResultatImport(null)
+
+    const { data: tousClients } = await supabase.from('clients').select('id, nom')
+    const parNom = {}
+    ;(tousClients || []).forEach((c) => { parNom[c.nom.trim().toLowerCase()] = c.id })
+
+    const lecteur = new FileReader()
+    lecteur.onload = (event) => {
+      try {
+        const classeur = XLSX.read(event.target.result, { type: 'array' })
+        const feuille = classeur.Sheets[classeur.SheetNames[0]]
+        const lignes = XLSX.utils.sheet_to_json(feuille, {
+          header: ['client_nom', 'montant', 'echeance', 'notes'],
+          range: 1,
+          defval: '',
+        })
+        const lignesTraitees = lignes
+          .filter((l) => String(l.client_nom || '').trim())
+          .map((l) => {
+            const nomTrim = String(l.client_nom).trim()
+            const clientId = parNom[nomTrim.toLowerCase()]
+            return {
+              clientNom: nomTrim,
+              clientId: clientId || null,
+              montant: Number(l.montant) || 0,
+              echeance: String(l.echeance || '').trim() || null,
+              notes: String(l.notes || '').trim() || null,
+            }
+          })
+        setLignesImport(lignesTraitees)
+        if (lignesTraitees.length === 0) setErreurImport('Aucune ligne valide trouvée.')
+      } catch (err) {
+        setErreurImport(`Fichier illisible : ${err.message}`)
+      }
+    }
+    lecteur.readAsArrayBuffer(fichier)
+  }
+
+  async function confirmerImport() {
+    const lignesValides = lignesImport.filter((l) => l.clientId && l.montant > 0)
+    if (lignesValides.length === 0) return
+    setImportEnCours(true)
+    setErreurImport('')
+    let reussis = 0
+    const echecs = []
+
+    for (let i = 0; i < lignesValides.length; i++) {
+      const l = lignesValides[i]
+      const { error } = await supabase.rpc('importer_solde_creance', {
+        p_client_id: l.clientId,
+        p_montant: l.montant,
+        p_date_echeance: l.echeance,
+        p_notes: l.notes,
+      })
+      if (error) echecs.push(`${l.clientNom} : ${error.message}`)
+      else reussis++
+      setProgressionImport(i + 1)
+    }
+
+    setImportEnCours(false)
+    setResultatImport({ reussis, total: lignesValides.length, echecs })
+    setLignesImport([])
+    chargerCreances()
   }
 
   async function enregistrerPaiement() {
@@ -146,6 +240,11 @@ export default function Creances() {
           <button className="btn-secondary text-xs" onClick={exportPDF} disabled={creancesAffichees.length === 0}>
             📄 PDF
           </button>
+          {['admin', 'manager'].includes(profil?.role) && (
+            <button className="btn-secondary text-xs" onClick={ouvrirModalImport}>
+              📥 Importer
+            </button>
+          )}
         </div>
       </div>
       <p className="text-sm text-petrol-500 mb-4">
@@ -166,7 +265,10 @@ export default function Creances() {
               }`}
             >
               <div>
-                <p className="font-medium text-sm">{v.clients?.nom || 'Client'}</p>
+                <p className="font-medium text-sm">
+                  {v.clients?.nom || 'Client'}
+                  {v.solde_report && <span className="ml-2 text-xs bg-petrol-100 text-petrol-600 px-1.5 py-0.5 rounded">Solde reporté</span>}
+                </p>
                 <p className="text-xs text-petrol-500">
                   Commercial : {v.profils?.nom || '—'}
                   {v.date_echeance && (
@@ -203,24 +305,31 @@ export default function Creances() {
                   <button onClick={fermerDetail} className="text-petrol-400 hover:text-petrol-700 text-xl leading-none">✕</button>
                 </div>
 
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-xs text-petrol-500 border-b border-line">
-                      <th className="font-medium pb-2">Produit</th>
-                      <th className="font-medium pb-2 text-right">Qté</th>
-                      <th className="font-medium pb-2 text-right">Sous-total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {detail.lignes.map((l, i) => (
-                      <tr key={i} className="border-b border-line last:border-0">
-                        <td className="py-1.5">{l.produits?.nom}</td>
-                        <td className="py-1.5 text-right font-mono">{l.quantite}</td>
-                        <td className="py-1.5 text-right font-mono">{formatXOF(l.sous_total)}</td>
+                {detail.vente?.solde_report ? (
+                  <div className="border border-line rounded-lg p-3 bg-canvas">
+                    <p className="text-sm font-medium">Solde reporté (import)</p>
+                    {detail.vente?.notes && <p className="text-xs text-petrol-500 mt-1">{detail.vente.notes}</p>}
+                  </div>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-left text-xs text-petrol-500 border-b border-line">
+                        <th className="font-medium pb-2">Produit</th>
+                        <th className="font-medium pb-2 text-right">Qté</th>
+                        <th className="font-medium pb-2 text-right">Sous-total</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {detail.lignes.map((l, i) => (
+                        <tr key={i} className="border-b border-line last:border-0">
+                          <td className="py-1.5">{l.produits?.nom}</td>
+                          <td className="py-1.5 text-right font-mono">{l.quantite}</td>
+                          <td className="py-1.5 text-right font-mono">{formatXOF(l.sous_total)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
 
                 <div className="flex justify-between text-sm border-t border-line pt-2">
                   <span>Total</span>
@@ -275,6 +384,88 @@ export default function Creances() {
               </>
             ) : (
               <p className="text-sm text-red-600 text-center py-8">Impossible de charger le détail.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {modalImportOuvert && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="font-semibold text-lg">Importer des soldes de créances</h2>
+              <button onClick={() => setModalImportOuvert(false)} className="text-petrol-400 text-xl leading-none">✕</button>
+            </div>
+
+            <p className="text-sm text-petrol-600 mb-3">
+              Le nom du client doit correspondre exactement à un client déjà enregistré. Créez d'abord les clients
+              manquants (page Clients) avant l'import.
+            </p>
+            <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
+              📄 Télécharger le modèle
+            </button>
+
+            <div className="mb-4">
+              <label className="label">Fichier Excel (.xlsx)</label>
+              <input type="file" accept=".xlsx,.xls" onChange={lireFichierImport} className="text-sm" />
+            </div>
+
+            {erreurImport && <p className="text-sm text-red-600 mb-3">{erreurImport}</p>}
+
+            {lignesImport.length > 0 && (
+              <>
+                <p className="text-sm font-medium mb-2">
+                  {lignesImport.filter((l) => l.clientId).length} client(s) reconnu(s) sur {lignesImport.length}
+                </p>
+                <div className="border border-line rounded-lg overflow-y-auto max-h-48 mb-4">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-canvas text-left">
+                        <th className="px-2 py-1.5">Client</th>
+                        <th className="px-2 py-1.5 text-right">Montant</th>
+                        <th className="px-2 py-1.5">Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lignesImport.map((l, i) => (
+                        <tr key={i} className="border-t border-line">
+                          <td className="px-2 py-1.5">{l.clientNom}</td>
+                          <td className="px-2 py-1.5 text-right font-mono">{l.montant}</td>
+                          <td className="px-2 py-1.5">
+                            {l.clientId ? (
+                              <span className="text-green-600">✓ trouvé</span>
+                            ) : (
+                              <span className="text-red-600">✗ client introuvable</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <button
+                  onClick={confirmerImport}
+                  disabled={importEnCours || lignesImport.filter((l) => l.clientId).length === 0}
+                  className="btn-primary w-full"
+                >
+                  {importEnCours
+                    ? `Import en cours… (${progressionImport}/${lignesImport.filter((l) => l.clientId).length})`
+                    : `Importer ${lignesImport.filter((l) => l.clientId).length} solde(s)`}
+                </button>
+              </>
+            )}
+
+            {resultatImport && (
+              <div className="mt-3">
+                <p className="text-sm text-green-700">
+                  ✓ {resultatImport.reussis} solde(s) importé(s) sur {resultatImport.total}.
+                </p>
+                {resultatImport.echecs.length > 0 && (
+                  <div className="text-xs text-red-600 mt-2">
+                    {resultatImport.echecs.map((e, i) => <p key={i}>{e}</p>)}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
