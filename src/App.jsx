@@ -19,11 +19,14 @@ import AnalyseIA from './pages/AnalyseIA'
 import StockCommercial from './pages/StockCommercial'
 import Versements from './pages/Versements'
 import Groupes from './pages/Groupes'
+import Inscription from './pages/Inscription'
+import Utilisateurs from './pages/Utilisateurs'
 
 export default function App() {
   return (
     <Routes>
       <Route path="/connexion" element={<Login />} />
+      <Route path="/inscription" element={<Inscription />} />
 
       <Route
         path="/"
@@ -47,6 +50,7 @@ export default function App() {
         <Route path="stock-commercial" element={<StockCommercial />} />
         <Route path="versements" element={<Versements />} />
         <Route path="groupes" element={<Groupes />} />
+        <Route path="utilisateurs" element={<Utilisateurs />} />
         <Route path="grand-livre" element={<GrandLivre />} />
         <Route path="parametres" element={<Parametres />} />
       </Route>

@@ -10,11 +10,27 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   const chargerProfil = useCallback(async (userId) => {
-    const { data: profilData, error: profilError } = await supabase
+    let { data: profilData, error: profilError } = await supabase
       .from('profils')
-      .select('id, nom, role, entreprise_id')
+      .select('id, nom, role, entreprise_id, actif')
       .eq('id', userId)
       .single()
+
+    if ((profilError || !profilData)) {
+      // Peut-être une personne qui vient de finaliser son inscription et
+      // n'a pas encore de profil créé — on tente de le générer depuis son
+      // invitation en attente, puis on relit une fois.
+      const { error: erreurFinalisation } = await supabase.rpc('finaliser_inscription')
+      if (!erreurFinalisation) {
+        const retry = await supabase
+          .from('profils')
+          .select('id, nom, role, entreprise_id, actif')
+          .eq('id', userId)
+          .single()
+        profilData = retry.data
+        profilError = retry.error
+      }
+    }
 
     if (profilError || !profilData) {
       console.error('Erreur chargement profil:', profilError)
@@ -22,6 +38,14 @@ export function AuthProvider({ children }) {
       setEntreprise(null)
       return
     }
+
+    if (profilData.actif === false) {
+      await supabase.auth.signOut()
+      setProfil(null)
+      setEntreprise(null)
+      return
+    }
+
     setProfil(profilData)
 
     const { data: entrepriseData, error: entrepriseError } = await supabase
@@ -64,6 +88,11 @@ export function AuthProvider({ children }) {
     return { error }
   }
 
+  const inscription = async (email, motDePasse) => {
+    const { data, error } = await supabase.auth.signUp({ email, password: motDePasse })
+    return { data, error }
+  }
+
   const deconnexion = async () => {
     await supabase.auth.signOut()
   }
@@ -74,6 +103,7 @@ export function AuthProvider({ children }) {
     entreprise,
     loading,
     connexion,
+    inscription,
     deconnexion,
     estConnecte: !!session,
     rechargerProfil: () => session?.user && chargerProfil(session.user.id),

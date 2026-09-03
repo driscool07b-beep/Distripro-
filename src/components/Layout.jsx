@@ -132,6 +132,22 @@ export default function Layout() {
           )}
           {profil?.role === 'admin' && (
             <NavLink
+              to="/utilisateurs"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <EquipeIcon className="w-4 h-4 shrink-0" />
+              Équipe
+            </NavLink>
+          )}
+          {profil?.role === 'admin' && (
+            <NavLink
               to="/parametres"
               onClick={() => setMenuOuvert(false)}
               className={({ isActive }) =>
@@ -221,6 +237,16 @@ function VentesIcon(props) {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L21 8H6" />
       <circle cx="9" cy="20" r="1" /><circle cx="17" cy="20" r="1" />
+    </svg>
+  )
+}
+function EquipeIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <circle cx="9" cy="7" r="3" />
+      <path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7" />
+      <path d="M16 4.2a3 3 0 0 1 0 5.6" />
+      <path d="M21 21c0-3-1.7-5.6-4-6.7" />
     </svg>
   )
 }
