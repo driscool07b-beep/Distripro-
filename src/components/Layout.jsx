@@ -84,6 +84,22 @@ export default function Layout() {
           )}
           {['admin', 'manager'].includes(profil?.role) && (
             <NavLink
+              to="/objectifs"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <ObjectifsIcon className="w-4 h-4 shrink-0" />
+              Objectifs
+            </NavLink>
+          )}
+          {['admin', 'manager'].includes(profil?.role) && (
+            <NavLink
               to="/analyse-ia"
               onClick={() => setMenuOuvert(false)}
               className={({ isActive }) =>
@@ -287,6 +303,15 @@ function AnalytiqueIcon(props) {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <path d="M3 3v18h18" />
       <path d="M7 16l4-6 4 3 5-8" />
+    </svg>
+  )
+}
+function ObjectifsIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1" />
     </svg>
   )
 }
