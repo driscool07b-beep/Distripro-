@@ -23,11 +23,14 @@ export default function Creances() {
   const [chargementDetail, setChargementDetail] = useState(false)
   const [montantPaiement, setMontantPaiement] = useState('')
   const [modePaiementCreance, setModePaiementCreance] = useState('espece')
+  const [commercialRecouvrement, setCommercialRecouvrement] = useState('')
+  const [commerciaux, setCommerciaux] = useState([])
   const [envoiPaiement, setEnvoiPaiement] = useState(false)
   const [erreurPaiement, setErreurPaiement] = useState('')
 
   useEffect(() => {
     chargerCreances()
+    supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom').then(({ data }) => setCommerciaux(data || []))
   }, [])
 
   async function chargerCreances() {
@@ -80,6 +83,7 @@ export default function Creances() {
     setDetail(null)
     setMontantPaiement('')
     setModePaiementCreance('espece')
+    setCommercialRecouvrement(profil?.role === 'commercial' ? profil.id : '')
     setErreurPaiement('')
 
     const [{ data: vente }, { data: lignes }, { data: paiements }] = await Promise.all([
@@ -205,6 +209,7 @@ export default function Creances() {
       p_vente_id: venteOuverte,
       p_montant: montant,
       p_mode: modePaiementCreance,
+      p_commercial_id: commercialRecouvrement || null,
     })
     setEnvoiPaiement(false)
     if (error) {
@@ -386,6 +391,21 @@ export default function Creances() {
                         <option value="mobile_money">Mobile Money</option>
                         <option value="virement">Virement</option>
                       </select>
+                    </div>
+                    <div className="mb-2">
+                      <label className="text-xs text-petrol-500">Recouvrement effectué par (commercial, optionnel)</label>
+                      {profil?.role === 'commercial' ? (
+                        <p className="text-sm text-petrol-600 border border-line rounded px-2 py-1.5 mt-1">Vous-même</p>
+                      ) : (
+                        <select
+                          className="input-field mt-1"
+                          value={commercialRecouvrement}
+                          onChange={(e) => setCommercialRecouvrement(e.target.value)}
+                        >
+                          <option value="">Aucun (recouvrement de bureau)</option>
+                          {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
+                        </select>
+                      )}
                     </div>
                     <button
                       onClick={enregistrerPaiement}
