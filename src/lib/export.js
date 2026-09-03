@@ -2,6 +2,13 @@ import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
+const LIBELLES_MODE = {
+  espece: 'Espèces',
+  cheque: 'Chèque',
+  mobile_money: 'Mobile Money',
+  virement: 'Virement bancaire',
+}
+
 /**
  * Formate un montant pour affichage dans un PDF. Intl.NumberFormat('fr-FR')
  * utilise une espace fine insécable (U+202F) comme séparateur de milliers,
@@ -150,7 +157,7 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
 
   doc.setFontSize(11)
   doc.text(`Total : ${formatMontant(vente.total)}`, 14, y)
-  doc.text(`Mode de paiement : ${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}`, 14, y + 7)
+  doc.text(`Mode de paiement : ${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}${vente.mode_reglement ? ' — ' + LIBELLES_MODE[vente.mode_reglement] : ''}`, 14, y + 7)
   doc.text(`Montant réglé : ${formatMontant(vente.montant_regle)}`, 14, y + 14)
   if (Number(vente.montant_regle) < Number(vente.total)) {
     doc.setTextColor(180, 60, 20)
@@ -310,6 +317,46 @@ export function genererFactureProforma({ entreprise, commande, lignes }) {
   doc.setFontSize(8)
   doc.setTextColor(130)
   doc.text('Document non contractuel, sujet à confirmation de disponibilité et de prix.', 14, 285)
+
+  return doc
+}
+
+/**
+ * Génère un accusé de réception pour un versement d'un commercial à une caisse.
+ */
+export function genererAccuseVersement({ entreprise, versement, commercial, caisse, recuPar }) {
+  const doc = new jsPDF()
+  const y0 = ecrireEnTeteEntreprise(doc, entreprise)
+  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
+
+  doc.setFontSize(11)
+  doc.setTextColor(60)
+  doc.text(`ACCUSÉ DE RÉCEPTION${versement.numero ? ' — ' + versement.numero : ''}`, 14, y0)
+
+  doc.setTextColor(0)
+  doc.setFontSize(11)
+  const yInfo = y0 + 14
+  doc.text(`Commercial : ${commercial?.nom || '—'}`, 14, yInfo)
+  doc.text(`Caisse : ${caisse?.nom || '—'}`, 14, yInfo + 8)
+  doc.text(`Date : ${new Date(versement.date_versement).toLocaleDateString('fr-FR')}`, 14, yInfo + 16)
+  doc.text(`Reçu par : ${recuPar?.nom || '—'}`, 14, yInfo + 24)
+
+  doc.setFontSize(16)
+  doc.text(`Montant remis : ${formatMontant(versement.montant)}`, 14, yInfo + 42)
+
+  doc.setFontSize(9)
+  doc.setTextColor(90)
+  doc.text("Ce document atteste la remise physique de ce montant par le commercial à la caisse indiquée.", 14, yInfo + 58)
+
+  doc.setFontSize(9)
+  doc.text('Signature du commercial', 14, yInfo + 80)
+  doc.rect(14, yInfo + 84, 80, 22)
+  doc.text('Signature du réceptionnaire', 110, yInfo + 80)
+  doc.rect(110, yInfo + 84, 80, 22)
+
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
 
   return doc
 }

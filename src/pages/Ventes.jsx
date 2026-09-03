@@ -36,6 +36,7 @@ export default function Ventes() {
   const [tarifsClient, setTarifsClient] = useState({}) // { produit_id: prix_negocie }
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
   const [montantPaye, setMontantPaye] = useState('')
+  const [modeReglement, setModeReglement] = useState('espece')
   const [dateEcheance, setDateEcheance] = useState('')
   const [lignes, setLignes] = useState([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
 
@@ -113,7 +114,7 @@ export default function Ventes() {
     const [{ data: vente }, { data: lignes }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, statut, montant_regle, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
+        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
         .eq('id', venteId)
         .single(),
       supabase
@@ -170,6 +171,7 @@ export default function Ventes() {
     setClientId('')
     setTarifsClient({})
     setMontantPaye('')
+    setModeReglement('espece')
     setDateEcheance('')
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
     setCommercialVendeurId(profil?.role === 'commercial' ? profil.id : '')
@@ -279,6 +281,7 @@ export default function Ventes() {
       })),
       p_mode_paiement: resteAPayer > 0 ? 'credit' : 'cash',
       p_montant_paye: montantPaye === '' ? null : montantPayeEffectif,
+      p_mode_reglement: modeReglement,
       p_date_echeance: resteAPayer > 0 && dateEcheance ? dateEcheance : null,
       p_commercial_id: commercialVendeurId || null,
     })
@@ -580,6 +583,18 @@ export default function Ventes() {
                   )
                 })()}
               </div>
+
+              {(montantPaye === '' || Number(montantPaye) > 0) && (
+                <div>
+                  <label className="label">Mode de règlement</label>
+                  <select className="input-field" value={modeReglement} onChange={(e) => setModeReglement(e.target.value)}>
+                    <option value="espece">Espèces</option>
+                    <option value="cheque">Chèque</option>
+                    <option value="mobile_money">Mobile Money</option>
+                    <option value="virement">Virement bancaire</option>
+                  </select>
+                </div>
+              )}
 
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 

@@ -22,6 +22,7 @@ export default function Creances() {
   const [detail, setDetail] = useState(null)
   const [chargementDetail, setChargementDetail] = useState(false)
   const [montantPaiement, setMontantPaiement] = useState('')
+  const [modePaiementCreance, setModePaiementCreance] = useState('espece')
   const [envoiPaiement, setEnvoiPaiement] = useState(false)
   const [erreurPaiement, setErreurPaiement] = useState('')
 
@@ -78,6 +79,7 @@ export default function Creances() {
     setChargementDetail(true)
     setDetail(null)
     setMontantPaiement('')
+    setModePaiementCreance('espece')
     setErreurPaiement('')
 
     const [{ data: vente }, { data: lignes }, { data: paiements }] = await Promise.all([
@@ -202,7 +204,7 @@ export default function Creances() {
     const { error } = await supabase.rpc('enregistrer_reglement', {
       p_vente_id: venteOuverte,
       p_montant: montant,
-      p_mode: 'espece',
+      p_mode: modePaiementCreance,
     })
     setEnvoiPaiement(false)
     if (error) {
@@ -361,7 +363,7 @@ export default function Creances() {
                 {Number(detail.vente?.montant_regle) < Number(detail.vente?.total) && (
                   <div className="border-t border-line pt-3">
                     <label className="block text-sm font-medium mb-1">Enregistrer un paiement</label>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mb-2">
                       <input
                         type="number"
                         min="0"
@@ -370,14 +372,24 @@ export default function Creances() {
                         onChange={(e) => setMontantPaiement(e.target.value)}
                         placeholder="Montant en F CFA"
                       />
-                      <button
-                        onClick={enregistrerPaiement}
-                        disabled={envoiPaiement}
-                        className="bg-blue-600 text-white px-4 rounded text-sm disabled:opacity-50"
+                      <select
+                        className="border rounded px-2 py-2 text-sm"
+                        value={modePaiementCreance}
+                        onChange={(e) => setModePaiementCreance(e.target.value)}
                       >
-                        {envoiPaiement ? '…' : 'Valider'}
-                      </button>
+                        <option value="espece">Espèces</option>
+                        <option value="cheque">Chèque</option>
+                        <option value="mobile_money">Mobile Money</option>
+                        <option value="virement">Virement</option>
+                      </select>
                     </div>
+                    <button
+                      onClick={enregistrerPaiement}
+                      disabled={envoiPaiement}
+                      className="bg-blue-600 text-white px-4 py-2 rounded text-sm disabled:opacity-50 w-full"
+                    >
+                      {envoiPaiement ? '…' : 'Valider'}
+                    </button>
                     {erreurPaiement && <p className="text-xs text-red-600 mt-1">{erreurPaiement}</p>}
                   </div>
                 )}

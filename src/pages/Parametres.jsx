@@ -14,6 +14,9 @@ const CHAMP_VIDE = { libelle: '', type_champ: 'texte', options: '' }
 export default function Parametres() {
   const { profil, entreprise, rechargerProfil } = useAuth()
   const [infosLegales, setInfosLegales] = useState({ adresse: '', telephone: '', email: '', ncc: '', rccm: '' })
+  const [caisses, setCaisses] = useState([])
+  const [nouvelleCaisseNom, setNouvelleCaisseNom] = useState('')
+  const [erreurCaisse, setErreurCaisse] = useState('')
   const [enregistrementInfos, setEnregistrementInfos] = useState(false)
   const [erreurInfos, setErreurInfos] = useState('')
   const [confirmationInfos, setConfirmationInfos] = useState(false)
@@ -50,7 +53,36 @@ export default function Parametres() {
       chargerChamps()
       chargerConcurrents()
     }
+    if (['admin', 'manager'].includes(profil?.role)) {
+      chargerCaisses()
+    }
   }, [profil])
+
+  async function chargerCaisses() {
+    const { data } = await supabase.from('caisses').select('id, nom, actif').order('created_at')
+    setCaisses(data || [])
+  }
+
+  async function ajouterCaisse() {
+    setErreurCaisse('')
+    if (!nouvelleCaisseNom.trim()) return
+    const { data, error } = await supabase
+      .from('caisses')
+      .insert({ entreprise_id: profil.entreprise_id, nom: nouvelleCaisseNom.trim() })
+      .select('id, nom, actif')
+      .single()
+    if (error) {
+      setErreurCaisse(`Erreur : ${error.message}`)
+      return
+    }
+    setCaisses((prev) => [...prev, data])
+    setNouvelleCaisseNom('')
+  }
+
+  async function basculerCaisseActive(caisse) {
+    await supabase.from('caisses').update({ actif: !caisse.actif }).eq('id', caisse.id)
+    setCaisses((prev) => prev.map((c) => (c.id === caisse.id ? { ...c, actif: !c.actif } : c)))
+  }
 
   async function chargerConcurrents() {
     setChargementConcurrents(true)
@@ -260,6 +292,36 @@ export default function Parametres() {
           </button>
         </form>
       </div>
+
+      {['admin', 'manager'].includes(profil?.role) && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">Caisses</h2>
+          <p className="text-sm text-petrol-600 mb-3">
+            Où les commerciaux remettent leurs versements (espèces et autres modes de règlement encaissés).
+          </p>
+          <div className="space-y-1 mb-3">
+            {caisses.map((c) => (
+              <div key={c.id} className="flex items-center justify-between text-sm border border-line rounded px-3 py-2">
+                <span className={c.actif ? '' : 'text-petrol-400 line-through'}>{c.nom}</span>
+                <button onClick={() => basculerCaisseActive(c)} className="text-xs text-petrol-600 underline">
+                  {c.actif ? 'Désactiver' : 'Réactiver'}
+                </button>
+              </div>
+            ))}
+            {caisses.length === 0 && <p className="text-xs text-petrol-400">Aucune caisse créée.</p>}
+          </div>
+          <div className="flex gap-2">
+            <input
+              className="input-field flex-1"
+              placeholder="Ex. Caisse 1"
+              value={nouvelleCaisseNom}
+              onChange={(e) => setNouvelleCaisseNom(e.target.value)}
+            />
+            <button onClick={ajouterCaisse} className="btn-secondary text-sm px-3">+ Ajouter</button>
+          </div>
+          {erreurCaisse && <p className="text-xs text-red-600 mt-2">{erreurCaisse}</p>}
+        </div>
+      )}
 
       <div className="card p-4">
         <h2 className="font-semibold mb-1">Rapports de visite commerciale</h2>
