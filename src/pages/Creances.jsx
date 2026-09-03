@@ -39,6 +39,7 @@ export default function Creances() {
       .from('ventes')
       .select('id, total, montant_regle, date_echeance, created_at, solde_report, clients(nom, telephone), profils!created_by(nom)')
       .eq('mode_paiement', 'credit')
+      .neq('statut', 'annulee')
       .order('date_echeance', { ascending: true, nullsFirst: false })
 
     if (!error) {

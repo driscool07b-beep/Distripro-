@@ -43,6 +43,7 @@ export default function Versements() {
       .from('ventes')
       .select('montant_regle, commercial_id, created_by')
       .eq('mode_paiement', 'cash')
+      .neq('statut', 'annulee')
       .gte('created_at', `${date}T00:00:00`)
       .lt('created_at', `${date}T23:59:59.999`)
 

@@ -36,23 +36,25 @@ export default function Dashboard() {
 
     const [{ data: ventesJour }, { data: ventesMois }, { count: nbClientsActifs }, { count: nbClientsTotal }, { data: stockBas }, { data: histo }, { data: creancesData }, { count: commandesCount }] =
       await Promise.all([
-        supabase.from('ventes').select('total').gte('created_at', debutJour.toISOString()),
-        supabase.from('ventes').select('total, created_at').gte('created_at', debutMois.toISOString()),
+        supabase.from('ventes').select('total').neq('statut', 'annulee').gte('created_at', debutJour.toISOString()),
+        supabase.from('ventes').select('total, created_at').neq('statut', 'annulee').gte('created_at', debutMois.toISOString()),
         supabase.from('clients').select('id', { count: 'exact', head: true }).eq('segment', 'actif'),
         supabase.from('clients').select('id', { count: 'exact', head: true }),
         supabase.from('stocks').select('quantite, produits(nom, seuil_alerte, prix_vente)'),
         supabase
           .from('ventes')
           .select('total, created_at')
+          .neq('statut', 'annulee')
           .gte('created_at', new Date(Date.now() - 7 * 86400000).toISOString()),
         supabase
           .from('ventes')
           .select('total, montant_regle, date_echeance')
-          .eq('mode_paiement', 'credit'),
+          .eq('mode_paiement', 'credit')
+          .neq('statut', 'annulee'),
         supabase
           .from('commandes')
           .select('id', { count: 'exact', head: true })
-          .in('statut', ['recue', 'confirmee', 'en_preparation']),
+          .in('statut', ['brouillon', 'confirmee', 'en_preparation']),
       ])
 
     const caJour = (ventesJour || []).reduce((s, v) => s + Number(v.total || 0), 0)

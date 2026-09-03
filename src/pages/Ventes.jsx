@@ -19,6 +19,10 @@ export default function Ventes() {
   const [erreur, setErreur] = useState('')
 
   const [venteOuverte, setVenteOuverte] = useState(null)
+  const [modeAnnulation, setModeAnnulation] = useState(false)
+  const [motifAnnulation, setMotifAnnulation] = useState('')
+  const [envoiAnnulation, setEnvoiAnnulation] = useState(false)
+  const [erreurAnnulation, setErreurAnnulation] = useState('')
   const [detailVente, setDetailVente] = useState(null)
   const [chargementDetail, setChargementDetail] = useState(false)
 
@@ -69,7 +73,7 @@ export default function Ventes() {
   async function chargerVentes() {
     setChargement(true)
 
-    let selectStr = 'id, numero_vente, total, created_at, clients!inner(nom, ville), profils!created_by(nom)'
+    let selectStr = 'id, numero_vente, total, created_at, statut, clients!inner(nom, ville), profils!created_by(nom)'
     selectStr += filtres.produitId ? ', ventes_lignes!inner(id, produit_id)' : ', ventes_lignes(id)'
 
     let requete = supabase.from('ventes').select(selectStr).order('created_at', { ascending: false }).limit(200)
@@ -130,6 +134,31 @@ export default function Ventes() {
   function fermerDetailVente() {
     setVenteOuverte(null)
     setDetailVente(null)
+    setModeAnnulation(false)
+    setMotifAnnulation('')
+    setErreurAnnulation('')
+  }
+
+  async function confirmerAnnulation() {
+    if (!motifAnnulation.trim()) {
+      setErreurAnnulation('Le motif est obligatoire.')
+      return
+    }
+    setEnvoiAnnulation(true)
+    setErreurAnnulation('')
+    const { error } = await supabase.rpc('creer_avoir', {
+      p_vente_id: venteOuverte,
+      p_motif: motifAnnulation.trim(),
+    })
+    setEnvoiAnnulation(false)
+    if (error) {
+      setErreurAnnulation(`Erreur : ${error.message}`)
+      return
+    }
+    setModeAnnulation(false)
+    setMotifAnnulation('')
+    await ouvrirDetailVente(venteOuverte)
+    chargerVentes()
   }
 
   function telechargerRecu() {
@@ -225,7 +254,7 @@ export default function Ventes() {
   }
 
   const total = lignes.reduce((s, l) => s + Number(l.quantite || 0) * Number(l.prix_unitaire || 0), 0)
-  const totalFiltre = ventes.reduce((s, v) => s + Number(v.total || 0), 0)
+  const totalFiltre = ventes.reduce((s, v) => (v.statut === 'annulee' ? s : s + Number(v.total || 0)), 0)
 
   const COLONNES_EXPORT = [
     { cle: 'numero', titre: 'N° vente' },
@@ -431,12 +460,17 @@ export default function Ventes() {
                 <tr
                   key={v.id}
                   onClick={() => ouvrirDetailVente(v.id)}
-                  className="border-b border-line last:border-0 hover:bg-canvas/60 cursor-pointer"
+                  className={`border-b border-line last:border-0 hover:bg-canvas/60 cursor-pointer ${v.statut === 'annulee' ? 'opacity-50' : ''}`}
                 >
                   <td className="px-4 py-3 text-petrol-700">
                     {new Date(v.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </td>
-                  <td className="px-4 py-3 font-medium">{v.clients?.nom || '—'}</td>
+                  <td className="px-4 py-3 font-medium">
+                    {v.clients?.nom || '—'}
+                    {v.statut === 'annulee' && (
+                      <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">Annulée</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-petrol-700">{v.clients?.ville || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700">{v.profils?.nom || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700">{v.ventes_lignes?.length || 0} article(s)</td>
@@ -694,6 +728,40 @@ export default function Ventes() {
                   </div>
                 </div>
 
+                {detailVente.vente?.statut === 'annulee' ? (
+                  <div className="no-print border border-red-200 bg-red-50 rounded-lg p-3">
+                    <p className="text-sm font-medium text-red-700">Cette vente a été annulée (avoir émis, stock remis en magasin).</p>
+                  </div>
+                ) : modeAnnulation ? (
+                  <div className="no-print border border-red-200 bg-red-50 rounded-lg p-3 space-y-2">
+                    <label className="text-sm font-medium text-red-700">Motif de l'annulation (obligatoire)</label>
+                    <textarea
+                      className="input-field text-sm"
+                      rows={2}
+                      value={motifAnnulation}
+                      onChange={(e) => setMotifAnnulation(e.target.value)}
+                      placeholder="Ex. erreur de saisie, retour client, mauvais client sélectionné…"
+                    />
+                    {erreurAnnulation && <p className="text-xs text-red-600">{erreurAnnulation}</p>}
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className="btn-secondary text-xs flex-1"
+                        onClick={() => { setModeAnnulation(false); setMotifAnnulation(''); setErreurAnnulation('') }}
+                      >
+                        Retour
+                      </button>
+                      <button
+                        onClick={confirmerAnnulation}
+                        disabled={envoiAnnulation}
+                        className="bg-red-600 text-white text-xs flex-1 rounded px-3 py-2 disabled:opacity-50"
+                      >
+                        {envoiAnnulation ? 'Envoi…' : 'Confirmer l\u2019annulation'}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
                 <div className="no-print flex gap-2 pt-4 mt-2 border-t border-line flex-wrap">
                   <button onClick={() => window.print()} className="btn-secondary text-xs flex-1">
                     🖨️ Imprimer
@@ -707,6 +775,11 @@ export default function Ventes() {
                   <button onClick={partagerRecu} className="btn-primary text-xs flex-1">
                     📤 Partager
                   </button>
+                  {['admin', 'manager'].includes(profil?.role) && detailVente.vente?.statut !== 'annulee' && !modeAnnulation && (
+                    <button onClick={() => setModeAnnulation(true)} className="text-xs text-red-600 underline w-full text-center pt-1">
+                      Annuler cette vente (avoir)
+                    </button>
+                  )}
                 </div>
               </>
             ) : (
