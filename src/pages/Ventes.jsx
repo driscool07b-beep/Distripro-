@@ -40,6 +40,8 @@ export default function Ventes() {
   const [tarifsClient, setTarifsClient] = useState({}) // { produit_id: prix_negocie }
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
   const [montantPaye, setMontantPaye] = useState('')
+  const [remiseMontant, setRemiseMontant] = useState('')
+  const [motifRemise, setMotifRemise] = useState('')
   const [modeReglement, setModeReglement] = useState('espece')
   const [dateEcheance, setDateEcheance] = useState('')
   const [lignes, setLignes] = useState([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
@@ -118,7 +120,7 @@ export default function Ventes() {
     const [{ data: vente }, { data: lignes }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
+        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
         .eq('id', venteId)
         .single(),
       supabase
@@ -200,6 +202,8 @@ export default function Ventes() {
     setClientId('')
     setTarifsClient({})
     setMontantPaye('')
+    setRemiseMontant('')
+    setMotifRemise('')
     setModeReglement('espece')
     setDateEcheance('')
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
@@ -253,7 +257,9 @@ export default function Ventes() {
     setLignes(copie)
   }
 
-  const total = lignes.reduce((s, l) => s + Number(l.quantite || 0) * Number(l.prix_unitaire || 0), 0)
+  const sousTotal = lignes.reduce((s, l) => s + Number(l.quantite || 0) * Number(l.prix_unitaire || 0), 0)
+  const remiseEffective = Math.min(Number(remiseMontant || 0), sousTotal)
+  const total = sousTotal - remiseEffective
   const totalFiltre = ventes.reduce((s, v) => (v.statut === 'annulee' ? s : s + Number(v.total || 0)), 0)
 
   const COLONNES_EXPORT = [
@@ -297,6 +303,11 @@ export default function Ventes() {
       return
     }
 
+    if (remiseEffective > 0 && !motifRemise.trim()) {
+      setErreur('Un motif est requis pour appliquer une remise.')
+      return
+    }
+
     const montantPayeEffectif = montantPaye === '' ? total : Math.min(Number(montantPaye), total)
     const resteAPayer = total - montantPayeEffectif
 
@@ -313,6 +324,8 @@ export default function Ventes() {
       p_mode_reglement: modeReglement,
       p_date_echeance: resteAPayer > 0 && dateEcheance ? dateEcheance : null,
       p_commercial_id: commercialVendeurId || null,
+      p_remise_montant: remiseEffective,
+      p_motif_remise: remiseEffective > 0 ? motifRemise.trim() : null,
     })
     setEnregistrement(false)
 
@@ -558,9 +571,42 @@ export default function Ventes() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-t border-line pt-3">
-                <span className="text-sm font-medium text-petrol-700">Total</span>
-                <span className="font-mono text-lg font-semibold">{formatXOF(total)}</span>
+              <div className="border-t border-line pt-3 space-y-2">
+                <div className="flex items-center justify-between text-sm text-petrol-600">
+                  <span>Sous-total</span>
+                  <span className="font-mono">{formatXOF(sousTotal)}</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="label">Remise (F CFA)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max={sousTotal}
+                      className="input-field"
+                      value={remiseMontant}
+                      onChange={(e) => setRemiseMontant(e.target.value)}
+                      placeholder="0"
+                    />
+                  </div>
+                  {remiseEffective > 0 && (
+                    <div>
+                      <label className="label">Motif de la remise</label>
+                      <input
+                        className="input-field"
+                        value={motifRemise}
+                        onChange={(e) => setMotifRemise(e.target.value)}
+                        placeholder="Ex. geste commercial, gros volume…"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-sm font-medium text-petrol-700">Total</span>
+                  <span className="font-mono text-lg font-semibold">{formatXOF(total)}</span>
+                </div>
               </div>
 
               <div>
@@ -714,6 +760,9 @@ export default function Ventes() {
 
                 <div className="flex justify-between items-center pt-2 border-t border-line">
                   <div className="text-xs text-petrol-500">
+                    {Number(detailVente.vente?.remise_montant) > 0 && (
+                      <p className="text-blue-600">Remise appliquée : {formatXOF(detailVente.vente.remise_montant)}</p>
+                    )}
                     <p>Mode de paiement : <span className="capitalize">{detailVente.vente?.mode_paiement}</span></p>
                     <p>Statut : <span className="capitalize">{detailVente.vente?.statut}</span></p>
                     {detailVente.vente?.montant_regle < detailVente.vente?.total && (
