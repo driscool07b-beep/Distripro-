@@ -9,7 +9,8 @@ export default function Dashboard() {
   const [kpi, setKpi] = useState({
     caJour: 0,
     caMois: 0,
-    nbClients: 0,
+    nbClientsActifs: 0,
+    nbClientsTotal: 0,
     alertesStock: 0,
     valeurStock: 0,
     creances: 0,
@@ -33,10 +34,11 @@ export default function Dashboard() {
     debutMois.setDate(1)
     debutMois.setHours(0, 0, 0, 0)
 
-    const [{ data: ventesJour }, { data: ventesMois }, { count: nbClients }, { data: stockBas }, { data: histo }, { data: creancesData }, { count: commandesCount }] =
+    const [{ data: ventesJour }, { data: ventesMois }, { count: nbClientsActifs }, { count: nbClientsTotal }, { data: stockBas }, { data: histo }, { data: creancesData }, { count: commandesCount }] =
       await Promise.all([
         supabase.from('ventes').select('total').gte('created_at', debutJour.toISOString()),
         supabase.from('ventes').select('total, created_at').gte('created_at', debutMois.toISOString()),
+        supabase.from('clients').select('id', { count: 'exact', head: true }).eq('segment', 'actif'),
         supabase.from('clients').select('id', { count: 'exact', head: true }),
         supabase.from('stocks').select('quantite, produits(nom, seuil_alerte, prix_vente)'),
         supabase
@@ -79,7 +81,8 @@ export default function Dashboard() {
     setKpi({
       caJour,
       caMois,
-      nbClients: nbClients || 0,
+      nbClientsActifs: nbClientsActifs || 0,
+      nbClientsTotal: nbClientsTotal || 0,
       alertesStock: enAlerte.length,
       valeurStock,
       creances: totalCreances,
@@ -101,7 +104,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
         <CarteKpi label="Ventes du jour" valeur={formatXOF(kpi.caJour)} accent to="/ventes?periode=jour" />
         <CarteKpi label="Ventes du mois" valeur={formatXOF(kpi.caMois)} to="/ventes?periode=mois" />
-        <CarteKpi label="Clients actifs" valeur={kpi.nbClients} to="/clients" />
+        <CarteKpi label="Clients actifs" valeur={`${kpi.nbClientsActifs}/${kpi.nbClientsTotal}`} to="/clients" />
         <CarteKpi label="Valeur du stock" valeur={formatXOF(kpi.valeurStock)} to="/stock" />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">

@@ -59,10 +59,35 @@ export default function Commandes() {
   const [urlBonCommande, setUrlBonCommande] = useState(null)
   const [envoiBonCommande, setEnvoiBonCommande] = useState(false)
   const [erreurBonCommande, setErreurBonCommande] = useState('')
+  const [recap, setRecap] = useState(null)
+  const [recapOuvert, setRecapOuvert] = useState(false)
 
   useEffect(() => {
     chargerCommandes()
   }, [filtreStatut])
+
+  useEffect(() => {
+    chargerRecap()
+  }, [])
+
+  async function chargerRecap() {
+    const { data } = await supabase
+      .from('lignes_commande')
+      .select('quantite, prix_unitaire, produits(nom), commandes!inner(statut)')
+      .in('commandes.statut', ['brouillon', 'confirmee', 'en_preparation'])
+
+    const parProduit = {}
+    ;(data || []).forEach((l) => {
+      const nom = l.produits?.nom || 'Inconnu'
+      if (!parProduit[nom]) parProduit[nom] = { produit: nom, quantite: 0, valeur: 0 }
+      parProduit[nom].quantite += l.quantite
+      parProduit[nom].valeur += l.quantite * Number(l.prix_unitaire || 0)
+    })
+
+    const lignes = Object.values(parProduit).sort((a, b) => b.valeur - a.valeur)
+    const totalValeur = lignes.reduce((s, l) => s + l.valeur, 0)
+    setRecap({ lignes, totalValeur })
+  }
 
   async function chargerCommandes() {
     setChargement(true)
@@ -74,6 +99,7 @@ export default function Commandes() {
     const { data, error } = await requete
     if (!error) setCommandes(data || [])
     setChargement(false)
+    chargerRecap()
   }
 
   function capturerPosition() {
@@ -344,6 +370,40 @@ export default function Commandes() {
           </button>
         </div>
       </div>
+
+      {recap && recap.lignes.length > 0 && (
+        <div className="card p-4 mb-4">
+          <button
+            onClick={() => setRecapOuvert(!recapOuvert)}
+            className="w-full flex items-center justify-between"
+          >
+            <span className="font-semibold text-sm">
+              📦 Récap commandes en cours — {recap.lignes.reduce((s, l) => s + l.quantite, 0)} unité(s), {formatXOF(recap.totalValeur)}
+            </span>
+            <span className="text-petrol-400 text-xs">{recapOuvert ? '▲' : '▼'}</span>
+          </button>
+          {recapOuvert && (
+            <table className="w-full text-xs mt-3">
+              <thead>
+                <tr className="text-left text-petrol-500 border-b border-line">
+                  <th className="pb-1.5">Produit</th>
+                  <th className="pb-1.5 text-right">Quantité</th>
+                  <th className="pb-1.5 text-right">Valeur estimée</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recap.lignes.map((l, i) => (
+                  <tr key={i} className="border-b border-line last:border-0">
+                    <td className="py-1.5">{l.produit}</td>
+                    <td className="py-1.5 text-right font-mono">{l.quantite}</td>
+                    <td className="py-1.5 text-right font-mono">{formatXOF(l.valeur)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
 
       <div className="mb-4 flex gap-2 flex-wrap">
         <button
