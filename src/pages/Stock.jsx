@@ -209,7 +209,7 @@ export default function Stock() {
 
   return (
     <div className="p-8 max-w-6xl">
-      <header className="flex items-center justify-between mb-6">
+      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Produits &amp; Stock</h1>
           <p className="text-sm text-petrol-700 mt-1">
@@ -223,7 +223,7 @@ export default function Stock() {
             Valeur totale du stock : <span className="font-mono font-medium">{formatXOF(valeurTotaleStock)}</span>
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button className="btn-secondary text-sm" onClick={exportExcel} disabled={produitsFiltres.length === 0}>
             📊 Excel
           </button>

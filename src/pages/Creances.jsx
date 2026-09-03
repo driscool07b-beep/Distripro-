@@ -231,9 +231,9 @@ export default function Creances() {
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">Créances clients</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button className="btn-secondary text-xs" onClick={exportExcel} disabled={creancesAffichees.length === 0}>
             📊 Excel
           </button>

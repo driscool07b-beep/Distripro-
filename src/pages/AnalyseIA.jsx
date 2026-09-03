@@ -54,10 +54,10 @@ export default function AnalyseIA() {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">Analyse stratégique (IA)</h1>
         <button onClick={genererAnalyse} disabled={generation} className="btn-primary text-sm">
-          {generation ? 'Génération en cours… (peut prendre 30s)' : '✨ Générer une nouvelle analyse'}
+          {generation ? 'Génération en cours…' : '✨ Générer une nouvelle analyse'}
         </button>
       </div>
       <p className="text-sm text-petrol-500 mb-4">{entreprise?.nom}</p>
