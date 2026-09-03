@@ -4,6 +4,14 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import * as XLSX from 'xlsx'
 
+const COULEURS_SEGMENT = {
+  actif: 'bg-green-50 text-green-700 border-green-200',
+  vip: 'bg-green-50 text-green-700 border-green-200',
+  nouveau: 'bg-blue-50 text-blue-700 border-blue-200',
+  a_relancer: 'bg-amber-50 text-amber-700 border-amber-200',
+  inactif: 'bg-red-50 text-red-700 border-red-200',
+}
+
 const CLIENT_VIDE = {
   nom: '',
   telephone: '',
@@ -37,6 +45,9 @@ export default function Clients() {
   const [groupeId, setGroupeId] = useState('')
   const [nouveauGroupeNom, setNouveauGroupeNom] = useState('')
   const [modalImportOuvert, setModalImportOuvert] = useState(false)
+  const [clientASupprimer, setClientASupprimer] = useState(null)
+  const [erreurSuppression, setErreurSuppression] = useState('')
+  const [suppressionEnCours, setSuppressionEnCours] = useState(false)
   const [lignesImport, setLignesImport] = useState([])
   const [erreurImport, setErreurImport] = useState('')
   const [importEnCours, setImportEnCours] = useState(false)
@@ -444,7 +455,11 @@ export default function Clients() {
                   <td className="px-4 py-3 font-mono text-petrol-700">{c.telephone || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700">{c.ville || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700 capitalize">{c.type_client || '—'}</td>
-                  <td className="px-4 py-3 text-petrol-700 capitalize">{c.segment || '—'}</td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs px-2 py-1 rounded-full border capitalize ${COULEURS_SEGMENT[c.segment] || 'bg-petrol-50 text-petrol-500 border-line'}`}>
+                      {c.segment || '—'}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-3 text-xs">
                       <button
