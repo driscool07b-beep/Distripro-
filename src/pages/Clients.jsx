@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import * as XLSX from 'xlsx'
 
 const CLIENT_VIDE = {
   nom: '',
@@ -35,6 +36,11 @@ export default function Clients() {
   const [groupes, setGroupes] = useState([])
   const [groupeId, setGroupeId] = useState('')
   const [nouveauGroupeNom, setNouveauGroupeNom] = useState('')
+  const [modalImportOuvert, setModalImportOuvert] = useState(false)
+  const [lignesImport, setLignesImport] = useState([])
+  const [erreurImport, setErreurImport] = useState('')
+  const [importEnCours, setImportEnCours] = useState(false)
+  const [resultatImport, setResultatImport] = useState(null)
   const [produitsCatalogue, setProduitsCatalogue] = useState([])
   const [nouveauTarifProduit, setNouveauTarifProduit] = useState('')
   const [nouveauTarifPrix, setNouveauTarifPrix] = useState('')
@@ -199,6 +205,88 @@ export default function Clients() {
     setGroupes(data || [])
   }
 
+  function ouvrirModalImport() {
+    setLignesImport([])
+    setErreurImport('')
+    setResultatImport(null)
+    setModalImportOuvert(true)
+  }
+
+  function telechargerModeleImport() {
+    const feuille = XLSX.utils.aoa_to_sheet([
+      ['Nom', 'Téléphone', 'Email', 'Adresse', 'Ville', 'Type'],
+      ['Boutique Exemple', '0700000000', 'contact@exemple.ci', 'Rue 12, Cocody', 'Abidjan', 'Boutique'],
+    ])
+    const classeur = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(classeur, feuille, 'Clients')
+    XLSX.writeFile(classeur, 'modele-import-clients.xlsx')
+  }
+
+  function lireFichierImport(e) {
+    const fichier = e.target.files?.[0]
+    if (!fichier) return
+    setErreurImport('')
+    setResultatImport(null)
+
+    const lecteur = new FileReader()
+    lecteur.onload = (event) => {
+      try {
+        const classeur = XLSX.read(event.target.result, { type: 'array' })
+        const feuille = classeur.Sheets[classeur.SheetNames[0]]
+        const lignes = XLSX.utils.sheet_to_json(feuille, {
+          header: ['nom', 'telephone', 'email', 'adresse', 'ville', 'type_client'],
+          range: 1,
+          defval: '',
+        })
+        const lignesValides = lignes
+          .map((l) => ({
+            nom: String(l.nom || '').trim(),
+            telephone: String(l.telephone || '').trim(),
+            email: String(l.email || '').trim(),
+            adresse: String(l.adresse || '').trim(),
+            ville: String(l.ville || '').trim(),
+            type_client: String(l.type_client || '').trim(),
+          }))
+          .filter((l) => l.nom)
+        setLignesImport(lignesValides)
+        if (lignesValides.length === 0) setErreurImport('Aucune ligne valide trouvée (le nom est obligatoire).')
+      } catch (err) {
+        setErreurImport(`Fichier illisible : ${err.message}`)
+      }
+    }
+    lecteur.readAsArrayBuffer(fichier)
+  }
+
+  async function confirmerImport() {
+    if (lignesImport.length === 0 || !profil?.entreprise_id) return
+    setImportEnCours(true)
+    setErreurImport('')
+
+    const donnees = lignesImport.map((l) => ({
+      entreprise_id: profil.entreprise_id,
+      commercial_id: profil.id,
+      nom: l.nom,
+      telephone: l.telephone || null,
+      email: l.email || null,
+      adresse: l.adresse || null,
+      ville: l.ville || null,
+      type_client: l.type_client || null,
+      segment: 'nouveau',
+      limite_credit: 0,
+    }))
+
+    const { data, error } = await supabase.from('clients').insert(donnees).select('id')
+
+    setImportEnCours(false)
+    if (error) {
+      setErreurImport(`Erreur : ${error.message}`)
+      return
+    }
+    setResultatImport({ importes: data?.length || 0, total: lignesImport.length })
+    setLignesImport([])
+    chargerClients()
+  }
+
   async function chargerTypesClient() {
     const { data, error } = await supabase
       .from('types_client')
@@ -314,9 +402,14 @@ export default function Clients() {
           <h1 className="text-2xl font-semibold">Clients</h1>
           <p className="text-sm text-petrol-700 mt-1">{clients.length} client(s) enregistré(s)</p>
         </div>
-        <button className="btn-primary" onClick={ouvrirNouveauClient}>
-          + Nouveau client
-        </button>
+        <div className="flex gap-2">
+          <button className="btn-secondary" onClick={ouvrirModalImport}>
+            📥 Importer
+          </button>
+          <button className="btn-primary" onClick={ouvrirNouveauClient}>
+            + Nouveau client
+          </button>
+        </div>
       </header>
 
       <input
@@ -672,6 +765,69 @@ export default function Clients() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {modalImportOuvert && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="font-semibold text-lg">Importer des clients (Excel)</h2>
+              <button onClick={() => setModalImportOuvert(false)} className="text-petrol-400 text-xl leading-none">✕</button>
+            </div>
+
+            <p className="text-sm text-petrol-600 mb-3">
+              Téléchargez le modèle, remplissez-le en gardant l'ordre des colonnes, puis importez-le.
+            </p>
+            <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
+              📄 Télécharger le modèle
+            </button>
+
+            <div className="mb-4">
+              <label className="label">Fichier Excel (.xlsx)</label>
+              <input type="file" accept=".xlsx,.xls" onChange={lireFichierImport} className="text-sm" />
+            </div>
+
+            {erreurImport && <p className="text-sm text-red-600 mb-3">{erreurImport}</p>}
+
+            {lignesImport.length > 0 && (
+              <>
+                <p className="text-sm font-medium mb-2">{lignesImport.length} client(s) prêt(s) à importer</p>
+                <div className="border border-line rounded-lg overflow-y-auto max-h-48 mb-4">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-canvas text-left">
+                        <th className="px-2 py-1.5">Nom</th>
+                        <th className="px-2 py-1.5">Téléphone</th>
+                        <th className="px-2 py-1.5">Ville</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lignesImport.slice(0, 20).map((l, i) => (
+                        <tr key={i} className="border-t border-line">
+                          <td className="px-2 py-1.5">{l.nom}</td>
+                          <td className="px-2 py-1.5">{l.telephone || '—'}</td>
+                          <td className="px-2 py-1.5">{l.ville || '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {lignesImport.length > 20 && (
+                    <p className="text-xs text-petrol-400 text-center py-1.5">… et {lignesImport.length - 20} de plus</p>
+                  )}
+                </div>
+                <button onClick={confirmerImport} disabled={importEnCours} className="btn-primary w-full">
+                  {importEnCours ? 'Import en cours…' : `Importer ${lignesImport.length} client(s)`}
+                </button>
+              </>
+            )}
+
+            {resultatImport && (
+              <p className="text-sm text-green-700 mt-3">
+                ✓ {resultatImport.importes} client(s) importé(s) sur {resultatImport.total}.
+              </p>
+            )}
           </div>
         </div>
       )}
