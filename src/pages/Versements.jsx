@@ -29,19 +29,26 @@ export default function Versements() {
   async function charger() {
     setChargement(true)
 
-    const { data: commerciaux } = await supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom')
+    // Tout profil pouvant encaisser une vente ou un recouvrement (cf. rôles
+    // autorisés dans creer_vente / enregistrer_reglement), pas seulement les
+    // commerciaux de terrain — le dirigeant doit voir toutes les entrées
+    // d'argent, y compris celles faites au bureau en son absence.
+    const { data: personnel } = await supabase
+      .from('profils')
+      .select('id, nom, role')
+      .in('role', ['commercial', 'admin', 'manager', 'comptable'])
+      .order('nom')
 
     const { data: ventesCash } = await supabase
       .from('ventes')
-      .select('montant_regle, commercial_id')
+      .select('montant_regle, commercial_id, created_by')
       .eq('mode_paiement', 'cash')
-      .not('commercial_id', 'is', null)
       .gte('created_at', `${date}T00:00:00`)
       .lt('created_at', `${date}T23:59:59.999`)
 
     const { data: recouvrements } = await supabase
       .from('reglements')
-      .select('montant, commercial_id')
+      .select('montant, commercial_id, created_by')
       .gte('created_at', `${date}T00:00:00`)
       .lt('created_at', `${date}T23:59:59.999`)
 
@@ -50,12 +57,12 @@ export default function Versements() {
       .select('montant, commercial_id')
       .eq('date_versement', date)
 
-    const resultat = (commerciaux || []).map((c) => {
+    const resultat = (personnel || []).map((c) => {
       const cash = (ventesCash || [])
-        .filter((v) => v.commercial_id === c.id)
+        .filter((v) => (v.commercial_id || v.created_by) === c.id)
         .reduce((s, v) => s + Number(v.montant_regle || 0), 0)
       const recouvre = (recouvrements || [])
-        .filter((p) => p.commercial_id === c.id)
+        .filter((p) => (p.commercial_id || p.created_by) === c.id)
         .reduce((s, p) => s + Number(p.montant || 0), 0)
       const dejaVerse = (versementsFaits || [])
         .filter((v) => v.commercial_id === c.id)
@@ -64,6 +71,7 @@ export default function Versements() {
       return {
         commercialId: c.id,
         commercial: c.nom,
+        role: c.role,
         ventesCash: cash,
         recouvrement: recouvre,
         total,
@@ -198,7 +206,12 @@ export default function Versements() {
             <tbody>
               {lignes.map((l, i) => (
                 <tr key={i} className="border-b border-line last:border-0">
-                  <td className="px-4 py-3 font-medium">{l.commercial}</td>
+                  <td className="px-4 py-3 font-medium">
+                    {l.commercial}
+                    {l.role !== 'commercial' && (
+                      <span className="ml-2 text-xs bg-petrol-100 text-petrol-600 px-1.5 py-0.5 rounded">Bureau</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-right font-mono">{formatXOF(l.ventesCash)}</td>
                   <td className="px-4 py-3 text-right font-mono">{formatXOF(l.recouvrement)}</td>
                   <td className="px-4 py-3 text-right font-mono font-semibold">{formatXOF(l.total)}</td>
