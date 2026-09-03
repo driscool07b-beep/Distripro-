@@ -603,6 +603,15 @@ export default function Ventes() {
                   )}
                 </div>
 
+                {remiseEffective > 0 && sousTotal > 0 && profil?.role === 'commercial' && (
+                  (remiseEffective / sousTotal) * 100 > (entreprise?.seuil_remise_pourcentage ?? 15) && (
+                    <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5">
+                      ⚠️ Cette remise ({((remiseEffective / sousTotal) * 100).toFixed(1)}%) dépasse le seuil autorisé
+                      ({entreprise?.seuil_remise_pourcentage ?? 15}%). Un manager ou administrateur doit la valider.
+                    </p>
+                  )
+                )}
+
                 <div className="flex items-center justify-between pt-1">
                   <span className="text-sm font-medium text-petrol-700">Total</span>
                   <span className="font-mono text-lg font-semibold">{formatXOF(total)}</span>

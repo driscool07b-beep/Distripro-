@@ -14,6 +14,10 @@ const CHAMP_VIDE = { libelle: '', type_champ: 'texte', options: '' }
 export default function Parametres() {
   const { profil, entreprise, rechargerProfil } = useAuth()
   const [infosLegales, setInfosLegales] = useState({ adresse: '', telephone: '', email: '', ncc: '', rccm: '' })
+  const [seuilRemise, setSeuilRemise] = useState('15')
+  const [enregistrementSeuil, setEnregistrementSeuil] = useState(false)
+  const [erreurSeuil, setErreurSeuil] = useState('')
+  const [confirmationSeuil, setConfirmationSeuil] = useState(false)
   const [caisses, setCaisses] = useState([])
   const [nouvelleCaisseNom, setNouvelleCaisseNom] = useState('')
   const [erreurCaisse, setErreurCaisse] = useState('')
@@ -30,6 +34,7 @@ export default function Parametres() {
         ncc: entreprise.ncc || '',
         rccm: entreprise.rccm || '',
       })
+      setSeuilRemise(String(entreprise.seuil_remise_pourcentage ?? 15))
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -188,6 +193,27 @@ export default function Parametres() {
     setTimeout(() => setConfirmationInfos(false), 2500)
   }
 
+  async function enregistrerSeuilRemise(e) {
+    e.preventDefault()
+    setErreurSeuil('')
+    setConfirmationSeuil(false)
+    const valeur = Number(seuilRemise)
+    if (isNaN(valeur) || valeur < 0 || valeur > 100) {
+      setErreurSeuil('Le seuil doit être un pourcentage entre 0 et 100.')
+      return
+    }
+    setEnregistrementSeuil(true)
+    const { error } = await supabase.from('entreprises').update({ seuil_remise_pourcentage: valeur }).eq('id', entreprise.id)
+    setEnregistrementSeuil(false)
+    if (error) {
+      setErreurSeuil(`Erreur : ${error.message}`)
+      return
+    }
+    await rechargerProfil()
+    setConfirmationSeuil(true)
+    setTimeout(() => setConfirmationSeuil(false), 2500)
+  }
+
   async function ajouterChamp(e) {
     e.preventDefault()
     setErreurChamp('')
@@ -320,6 +346,35 @@ export default function Parametres() {
             <button onClick={ajouterCaisse} className="btn-secondary text-sm px-3">+ Ajouter</button>
           </div>
           {erreurCaisse && <p className="text-xs text-red-600 mt-2">{erreurCaisse}</p>}
+        </div>
+      )}
+
+      {['admin', 'manager'].includes(profil?.role) && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">Politique de remises</h2>
+          <p className="text-sm text-petrol-600 mb-3">
+            Au-delà de ce seuil, un commercial ne peut plus valider seul la remise — seuls un manager
+            ou un administrateur peuvent l'appliquer.
+          </p>
+          <form onSubmit={enregistrerSeuilRemise} className="flex gap-2 items-end">
+            <div className="flex-1">
+              <label className="label">Seuil (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.5"
+                className="input-field"
+                value={seuilRemise}
+                onChange={(e) => setSeuilRemise(e.target.value)}
+              />
+            </div>
+            <button type="submit" disabled={enregistrementSeuil} className="btn-primary">
+              {enregistrementSeuil ? '…' : 'Enregistrer'}
+            </button>
+          </form>
+          {erreurSeuil && <p className="text-xs text-red-600 mt-2">{erreurSeuil}</p>}
+          {confirmationSeuil && <p className="text-xs text-green-600 mt-2">Enregistré.</p>}
         </div>
       )}
 
