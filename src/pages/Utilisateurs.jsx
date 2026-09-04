@@ -30,6 +30,7 @@ export default function Utilisateurs() {
   const [nomCompletMembre, setNomCompletMembre] = useState('')
   const [roleMembre, setRoleMembre] = useState('commercial')
   const [zoneMembre, setZoneMembre] = useState('')
+  const [accesEtenduMembre, setAccesEtenduMembre] = useState(false)
   const [telephoneMembre, setTelephoneMembre] = useState('')
   const [envoiMembre, setEnvoiMembre] = useState(false)
   const [erreurMembre, setErreurMembre] = useState('')
@@ -41,7 +42,7 @@ export default function Utilisateurs() {
   async function charger() {
     setChargement(true)
     const [{ data: m }, { data: inv }] = await Promise.all([
-      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone').order('nom'),
+      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu').order('nom'),
       supabase.from('invitations').select('id, email, nom_complet, role, zone, statut, created_at').eq('statut', 'en_attente').order('created_at', { ascending: false }),
     ])
     setMembres(m || [])
@@ -113,6 +114,7 @@ export default function Utilisateurs() {
     setRoleMembre(membre.role)
     setZoneMembre(membre.zone || '')
     setTelephoneMembre(membre.telephone || '')
+    setAccesEtenduMembre(membre.acces_etendu || false)
     setErreurMembre('')
     setModalMembreOuvert(true)
   }
@@ -132,6 +134,7 @@ export default function Utilisateurs() {
         nom: nomCompletMembre.trim(),
         role: roleMembre,
         zone: zoneMembre.trim() || null,
+        acces_etendu: accesEtenduMembre,
         telephone: telephoneMembre.trim() || null,
       })
       .eq('id', membreEnEdition.id)
@@ -206,6 +209,9 @@ export default function Utilisateurs() {
                   <p className="text-sm font-medium">
                     {m.nom_complet || m.nom}
                     {!m.actif && <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">Désactivé</span>}
+                    {m.role === 'commercial' && m.acces_etendu && (
+                      <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Accès élargi</span>
+                    )}
                   </p>
                   <p className="text-xs text-petrol-500">
                     {LIBELLES_ROLE[m.role] || m.role}
@@ -329,6 +335,16 @@ export default function Utilisateurs() {
                   onChange={(e) => setZoneMembre(e.target.value)}
                 />
               </div>
+              {roleMembre === 'commercial' && (
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={accesEtenduMembre}
+                    onChange={(e) => setAccesEtenduMembre(e.target.checked)}
+                  />
+                  Accès élargi (voit l'activité de toute l'entreprise, pas seulement la sienne)
+                </label>
+              )}
               {erreurMembre && <p className="text-sm text-red-600">{erreurMembre}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="button" className="btn-secondary flex-1" onClick={() => setModalMembreOuvert(false)}>

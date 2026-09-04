@@ -29,18 +29,24 @@ export default function Creances() {
   const [erreurPaiement, setErreurPaiement] = useState('')
 
   useEffect(() => {
-    chargerCreances()
+    if (profil) chargerCreances()
     supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom').then(({ data }) => setCommerciaux(data || []))
-  }, [])
+  }, [profil])
 
   async function chargerCreances() {
     setChargement(true)
-    const { data, error } = await supabase
+    let requete = supabase
       .from('ventes')
       .select('id, total, montant_regle, date_echeance, created_at, solde_report, clients(nom, telephone), profils!created_by(nom)')
       .eq('mode_paiement', 'credit')
       .neq('statut', 'annulee')
       .order('date_echeance', { ascending: true, nullsFirst: false })
+
+    if (profil?.role === 'commercial' && !profil?.acces_etendu) {
+      requete = requete.eq('commercial_id', profil.id)
+    }
+
+    const { data, error } = await requete
 
     if (!error) {
       const ouvertes = (data || []).filter((v) => Number(v.montant_regle) < Number(v.total))

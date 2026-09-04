@@ -63,18 +63,24 @@ export default function Commandes() {
   const [recapOuvert, setRecapOuvert] = useState(false)
 
   useEffect(() => {
-    chargerCommandes()
-  }, [filtreStatut])
+    if (profil) chargerCommandes()
+  }, [filtreStatut, profil])
 
   useEffect(() => {
-    chargerRecap()
-  }, [])
+    if (profil) chargerRecap()
+  }, [profil])
 
   async function chargerRecap() {
-    const { data } = await supabase
+    let requete = supabase
       .from('lignes_commande')
-      .select('quantite, prix_unitaire, produits(nom), commandes!inner(statut)')
+      .select('quantite, prix_unitaire, produits(nom), commandes!inner(statut, commercial_id)')
       .in('commandes.statut', ['brouillon', 'confirmee', 'en_preparation'])
+
+    if (profil?.role === 'commercial' && !profil?.acces_etendu) {
+      requete = requete.eq('commandes.commercial_id', profil.id)
+    }
+
+    const { data } = await requete
 
     const parProduit = {}
     ;(data || []).forEach((l) => {
@@ -96,6 +102,9 @@ export default function Commandes() {
       .select('id, numero, statut, montant_ttc, montant_paye, date_livraison_souhaitee, created_at, clients(nom), profils!commercial_id(nom), lignes_commande(id)')
       .order('created_at', { ascending: false })
     if (filtreStatut) requete = requete.eq('statut', filtreStatut)
+    if (profil?.role === 'commercial' && !profil?.acces_etendu) {
+      requete = requete.eq('commercial_id', profil.id)
+    }
     const { data, error } = await requete
     if (!error) setCommandes(data || [])
     setChargement(false)

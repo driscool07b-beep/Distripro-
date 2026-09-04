@@ -51,8 +51,8 @@ export default function Ventes() {
   }, [])
 
   useEffect(() => {
-    chargerVentes()
-  }, [filtres])
+    if (profil) chargerVentes()
+  }, [filtres, profil])
 
   async function chargerReferences() {
     const [{ data: c }, { data: p }] = await Promise.all([
@@ -105,6 +105,9 @@ export default function Ventes() {
     if (filtres.ville) requete = requete.eq('clients.ville', filtres.ville)
     if (filtres.commercialId) requete = requete.eq('created_by', filtres.commercialId)
     if (filtres.produitId) requete = requete.eq('ventes_lignes.produit_id', filtres.produitId)
+    if (profil?.role === 'commercial' && !profil?.acces_etendu) {
+      requete = requete.eq('commercial_id', profil.id)
+    }
 
     const { data, error } = await requete
     if (!error) setVentes(data || [])
