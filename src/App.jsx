@@ -22,6 +22,7 @@ import Groupes from './pages/Groupes'
 import Inscription from './pages/Inscription'
 import Utilisateurs from './pages/Utilisateurs'
 import Objectifs from './pages/Objectifs'
+import CarteClients from './pages/CarteClients'
 
 export default function App() {
   return (
@@ -53,6 +54,7 @@ export default function App() {
         <Route path="groupes" element={<Groupes />} />
         <Route path="utilisateurs" element={<Utilisateurs />} />
         <Route path="objectifs" element={<Objectifs />} />
+        <Route path="carte-clients" element={<CarteClients />} />
         <Route path="grand-livre" element={<GrandLivre />} />
         <Route path="parametres" element={<Parametres />} />
       </Route>

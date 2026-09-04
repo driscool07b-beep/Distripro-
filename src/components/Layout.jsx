@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { to: '/', label: 'Tableau de bord', icon: DashIcon, end: true },
   { to: '/clients', label: 'Clients', icon: ClientsIcon },
   { to: '/groupes', label: 'Groupes de clients', icon: GroupesIcon },
+  { to: '/carte-clients', label: 'Carte des clients', icon: CarteIcon },
   { to: '/stock', label: 'Produits & Stock', icon: StockIcon },
   { to: '/ventes', label: 'Ventes', icon: VentesIcon },
   { to: '/commandes', label: 'Commandes', icon: CommandesIcon },
@@ -238,6 +239,14 @@ function GroupesIcon(props) {
       <rect x="14" y="4" width="7" height="7" rx="1" />
       <rect x="3" y="15" width="7" height="7" rx="1" />
       <rect x="14" y="15" width="7" height="7" rx="1" />
+    </svg>
+  )
+}
+function CarteIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Z" />
+      <path d="M9 3v16M15 5v16" />
     </svg>
   )
 }
