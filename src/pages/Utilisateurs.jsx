@@ -17,12 +17,22 @@ export default function Utilisateurs() {
   const [chargement, setChargement] = useState(true)
 
   const [modalOuvert, setModalOuvert] = useState(false)
+  const [invitationEnEdition, setInvitationEnEdition] = useState(null) // null = création
   const [email, setEmail] = useState('')
   const [nomComplet, setNomComplet] = useState('')
   const [role, setRole] = useState('commercial')
   const [zone, setZone] = useState('')
   const [envoi, setEnvoi] = useState(false)
   const [erreur, setErreur] = useState('')
+
+  const [membreEnEdition, setMembreEnEdition] = useState(null)
+  const [modalMembreOuvert, setModalMembreOuvert] = useState(false)
+  const [nomCompletMembre, setNomCompletMembre] = useState('')
+  const [roleMembre, setRoleMembre] = useState('commercial')
+  const [zoneMembre, setZoneMembre] = useState('')
+  const [telephoneMembre, setTelephoneMembre] = useState('')
+  const [envoiMembre, setEnvoiMembre] = useState(false)
+  const [erreurMembre, setErreurMembre] = useState('')
 
   useEffect(() => {
     if (profil?.role === 'admin') charger()
@@ -39,11 +49,20 @@ export default function Utilisateurs() {
     setChargement(false)
   }
 
-  function ouvrirModal() {
-    setEmail('')
-    setNomComplet('')
-    setRole('commercial')
-    setZone('')
+  function ouvrirModal(invitation) {
+    if (invitation) {
+      setInvitationEnEdition(invitation)
+      setEmail(invitation.email)
+      setNomComplet(invitation.nom_complet || '')
+      setRole(invitation.role)
+      setZone(invitation.zone || '')
+    } else {
+      setInvitationEnEdition(null)
+      setEmail('')
+      setNomComplet('')
+      setRole('commercial')
+      setZone('')
+    }
     setErreur('')
     setModalOuvert(true)
   }
@@ -56,12 +75,24 @@ export default function Utilisateurs() {
       return
     }
     setEnvoi(true)
-    const { error } = await supabase.rpc('creer_invitation', {
-      p_email: email.trim(),
-      p_nom_complet: nomComplet.trim(),
-      p_role: role,
-      p_zone: zone.trim() || null,
-    })
+
+    let error
+    if (invitationEnEdition) {
+      const resultat = await supabase
+        .from('invitations')
+        .update({ email: email.trim(), nom_complet: nomComplet.trim(), role, zone: zone.trim() || null })
+        .eq('id', invitationEnEdition.id)
+      error = resultat.error
+    } else {
+      const resultat = await supabase.rpc('creer_invitation', {
+        p_email: email.trim(),
+        p_nom_complet: nomComplet.trim(),
+        p_role: role,
+        p_zone: zone.trim() || null,
+      })
+      error = resultat.error
+    }
+
     setEnvoi(false)
     if (error) {
       setErreur(`Erreur : ${error.message}`)
@@ -73,6 +104,43 @@ export default function Utilisateurs() {
 
   async function annulerInvitation(id) {
     await supabase.from('invitations').delete().eq('id', id)
+    charger()
+  }
+
+  function ouvrirModalMembre(membre) {
+    setMembreEnEdition(membre)
+    setNomCompletMembre(membre.nom_complet || membre.nom || '')
+    setRoleMembre(membre.role)
+    setZoneMembre(membre.zone || '')
+    setTelephoneMembre(membre.telephone || '')
+    setErreurMembre('')
+    setModalMembreOuvert(true)
+  }
+
+  async function enregistrerMembre(e) {
+    e.preventDefault()
+    setErreurMembre('')
+    if (!nomCompletMembre.trim()) {
+      setErreurMembre('Le nom complet est requis.')
+      return
+    }
+    setEnvoiMembre(true)
+    const { error } = await supabase
+      .from('profils')
+      .update({
+        nom_complet: nomCompletMembre.trim(),
+        nom: nomCompletMembre.trim(),
+        role: roleMembre,
+        zone: zoneMembre.trim() || null,
+        telephone: telephoneMembre.trim() || null,
+      })
+      .eq('id', membreEnEdition.id)
+    setEnvoiMembre(false)
+    if (error) {
+      setErreurMembre(`Erreur : ${error.message}`)
+      return
+    }
+    setModalMembreOuvert(false)
     charger()
   }
 
@@ -93,7 +161,7 @@ export default function Utilisateurs() {
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">Équipe</h1>
-        <button onClick={ouvrirModal} className="btn-primary text-sm">
+        <button onClick={() => ouvrirModal(null)} className="btn-primary text-sm">
           + Inviter un collaborateur
         </button>
       </div>
@@ -116,9 +184,14 @@ export default function Utilisateurs() {
                         {inv.zone ? ` — ${inv.zone}` : ''}
                       </p>
                     </div>
-                    <button onClick={() => annulerInvitation(inv.id)} className="text-xs text-red-600 underline">
-                      Annuler
-                    </button>
+                    <div className="flex gap-3 shrink-0">
+                      <button onClick={() => ouvrirModal(inv)} className="text-xs text-petrol-600 underline">
+                        Modifier
+                      </button>
+                      <button onClick={() => annulerInvitation(inv.id)} className="text-xs text-red-600 underline">
+                        Annuler
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -140,11 +213,16 @@ export default function Utilisateurs() {
                     {m.telephone ? ` — ${m.telephone}` : ''}
                   </p>
                 </div>
-                {m.id !== profil.id && (
-                  <button onClick={() => basculerActif(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
-                    {m.actif ? 'Désactiver' : 'Réactiver'}
+                <div className="flex gap-3 shrink-0">
+                  <button onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
+                    Modifier
                   </button>
-                )}
+                  {m.id !== profil.id && (
+                    <button onClick={() => basculerActif(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
+                      {m.actif ? 'Désactiver' : 'Réactiver'}
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
             {membres.length === 0 && <p className="text-xs text-petrol-400">Aucun membre.</p>}
@@ -155,7 +233,7 @@ export default function Utilisateurs() {
       {modalOuvert && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md">
-            <h2 className="font-semibold text-lg mb-4">Inviter un collaborateur</h2>
+            <h2 className="font-semibold text-lg mb-4">{invitationEnEdition ? 'Modifier l\u2019invitation' : 'Inviter un collaborateur'}</h2>
             <form onSubmit={envoyerInvitation} className="space-y-3">
               <div>
                 <label className="label">Email</label>
@@ -204,7 +282,60 @@ export default function Utilisateurs() {
                   Annuler
                 </button>
                 <button type="submit" disabled={envoi} className="btn-primary flex-1">
-                  {envoi ? 'Envoi…' : 'Inviter'}
+                  {envoi ? 'Envoi…' : invitationEnEdition ? 'Enregistrer' : 'Inviter'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {modalMembreOuvert && membreEnEdition && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-md">
+            <h2 className="font-semibold text-lg mb-4">Modifier le membre</h2>
+            <form onSubmit={enregistrerMembre} className="space-y-3">
+              <div>
+                <label className="label">Nom complet</label>
+                <input
+                  className="input-field"
+                  value={nomCompletMembre}
+                  onChange={(e) => setNomCompletMembre(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="label">Téléphone</label>
+                <input
+                  className="input-field"
+                  value={telephoneMembre}
+                  onChange={(e) => setTelephoneMembre(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="label">Rôle</label>
+                <select className="input-field" value={roleMembre} onChange={(e) => setRoleMembre(e.target.value)}>
+                  <option value="commercial">Commercial</option>
+                  <option value="manager">Manager</option>
+                  <option value="comptable">Comptable</option>
+                  <option value="gestionnaire_stock">Gestionnaire de stock</option>
+                  <option value="admin">Administrateur</option>
+                </select>
+              </div>
+              <div>
+                <label className="label">Zone</label>
+                <input
+                  className="input-field"
+                  value={zoneMembre}
+                  onChange={(e) => setZoneMembre(e.target.value)}
+                />
+              </div>
+              {erreurMembre && <p className="text-sm text-red-600">{erreurMembre}</p>}
+              <div className="flex gap-2 pt-2">
+                <button type="button" className="btn-secondary flex-1" onClick={() => setModalMembreOuvert(false)}>
+                  Annuler
+                </button>
+                <button type="submit" disabled={envoiMembre} className="btn-primary flex-1">
+                  {envoiMembre ? 'Enregistrement…' : 'Enregistrer'}
                 </button>
               </div>
             </form>
