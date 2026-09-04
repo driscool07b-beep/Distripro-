@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
@@ -68,7 +68,8 @@ export default function Login() {
         </form>
 
         <p className="text-center text-xs text-white/40 mt-6">
-          Pas encore de compte entreprise ? Contactez votre administrateur DistribPro.
+          Invité(e) à rejoindre une équipe ?{' '}
+          <Link to="/inscription" className="underline text-white/70">Créer votre compte</Link>
         </p>
       </div>
     </div>
