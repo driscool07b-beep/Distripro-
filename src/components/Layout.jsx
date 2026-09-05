@@ -115,7 +115,7 @@ export default function Layout() {
               Analyse IA
             </NavLink>
           )}
-          {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && (
+          {['admin', 'manager', 'gestionnaire_stock', 'commercial'].includes(profil?.role) && (
             <NavLink
               to="/stock-commercial"
               onClick={() => setMenuOuvert(false)}
@@ -128,7 +128,7 @@ export default function Layout() {
               }
             >
               <StockCommercialIcon className="w-4 h-4 shrink-0" />
-              Stock des commerciaux
+              {profil?.role === 'commercial' ? 'Mon stock en main' : 'Stock des commerciaux'}
             </NavLink>
           )}
           {['admin', 'manager', 'comptable'].includes(profil?.role) && (

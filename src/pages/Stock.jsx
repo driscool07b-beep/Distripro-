@@ -8,7 +8,7 @@ import * as XLSX from 'xlsx'
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
 
 export default function Stock() {
-  const { entreprise } = useAuth()
+  const { entreprise, profil } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const filtreAlertes = searchParams.get('filtre') === 'alertes'
   const [produits, setProduits] = useState([])
@@ -230,12 +230,16 @@ export default function Stock() {
           <button className="btn-secondary text-sm" onClick={exportPDF} disabled={produitsFiltres.length === 0}>
             📄 PDF
           </button>
-          <button className="btn-secondary text-sm" onClick={ouvrirModalImport}>
-            📥 Importer
-          </button>
-          <button className="btn-primary" onClick={() => setModalProduit(true)}>
-            + Nouveau produit
-          </button>
+          {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && (
+            <>
+              <button className="btn-secondary text-sm" onClick={ouvrirModalImport}>
+                📥 Importer
+              </button>
+              <button className="btn-primary" onClick={() => setModalProduit(true)}>
+                + Nouveau produit
+              </button>
+            </>
+          )}
         </div>
       </header>
 
@@ -295,12 +299,14 @@ export default function Stock() {
                       {formatXOF(p.quantite * (p.prix_vente || 0))}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button
-                        className="text-xs font-medium text-petrol-700 hover:text-amber-600"
-                        onClick={() => setModalMouvement(p)}
-                      >
-                        Ajuster le stock
-                      </button>
+                      {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && (
+                        <button
+                          className="text-xs font-medium text-petrol-700 hover:text-amber-600"
+                          onClick={() => setModalMouvement(p)}
+                        >
+                          Ajuster le stock
+                        </button>
+                      )}
                     </td>
                   </tr>
                 )

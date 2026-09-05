@@ -6,14 +6,24 @@ export default function StockCommercial() {
   const { profil } = useAuth()
   const [onglet, setOnglet] = useState('enmain')
 
-  const autorise = ['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)
+  const gestionComplete = ['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)
+  const lectureSeuleCommercial = profil?.role === 'commercial'
 
-  if (!autorise) {
+  if (!gestionComplete && !lectureSeuleCommercial) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
         <p className="text-petrol-500">
           Cette page est réservée à la gestion de stock (admin, manager, gestionnaire de stock).
         </p>
+      </div>
+    )
+  }
+
+  if (lectureSeuleCommercial) {
+    return (
+      <div className="p-4 max-w-3xl mx-auto">
+        <h1 className="text-xl font-bold mb-4">Mon stock en main</h1>
+        <StockEnMain />
       </div>
     )
   }
