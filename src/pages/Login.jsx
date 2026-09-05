@@ -71,6 +71,10 @@ export default function Login() {
           Invité(e) à rejoindre une équipe ?{' '}
           <Link to="/inscription" className="underline text-white/70">Créer votre compte</Link>
         </p>
+        <p className="text-center text-xs text-white/40 mt-2">
+          Nouvelle entreprise ?{' '}
+          <Link to="/creer-entreprise" className="underline text-white/70">Créer votre espace DistribPro</Link>
+        </p>
       </div>
     </div>
   )

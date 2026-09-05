@@ -20,6 +20,7 @@ import StockCommercial from './pages/StockCommercial'
 import Versements from './pages/Versements'
 import Groupes from './pages/Groupes'
 import Inscription from './pages/Inscription'
+import CreerEntreprise from './pages/CreerEntreprise'
 import Utilisateurs from './pages/Utilisateurs'
 import Objectifs from './pages/Objectifs'
 import CarteClients from './pages/CarteClients'
@@ -29,6 +30,7 @@ export default function App() {
     <Routes>
       <Route path="/connexion" element={<Login />} />
       <Route path="/inscription" element={<Inscription />} />
+      <Route path="/creer-entreprise" element={<CreerEntreprise />} />
 
       <Route
         path="/"

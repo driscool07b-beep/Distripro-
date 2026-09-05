@@ -18,10 +18,19 @@ export function AuthProvider({ children }) {
 
     if ((profilError || !profilData)) {
       // Peut-être une personne qui vient de finaliser son inscription et
-      // n'a pas encore de profil créé — on tente de le générer depuis son
-      // invitation en attente, puis on relit une fois.
+      // n'a pas encore de profil créé — on tente d'abord de le générer
+      // depuis une invitation en attente, sinon depuis une inscription de
+      // nouvelle entreprise (métadonnées du compte), puis on relit.
+      let finalise = false
       const { error: erreurFinalisation } = await supabase.rpc('finaliser_inscription')
-      if (!erreurFinalisation) {
+      if (!erreurFinalisation) finalise = true
+
+      if (!finalise) {
+        const { error: erreurCreationEntreprise } = await supabase.rpc('finaliser_creation_entreprise')
+        if (!erreurCreationEntreprise) finalise = true
+      }
+
+      if (finalise) {
         const retry = await supabase
           .from('profils')
           .select('id, nom, role, entreprise_id, actif, acces_etendu')
@@ -88,8 +97,8 @@ export function AuthProvider({ children }) {
     return { error }
   }
 
-  const inscription = async (email, motDePasse) => {
-    const { data, error } = await supabase.auth.signUp({ email, password: motDePasse })
+  const inscription = async (email, motDePasse, metadata = {}) => {
+    const { data, error } = await supabase.auth.signUp({ email, password: motDePasse, options: { data: metadata } })
     return { data, error }
   }
 
