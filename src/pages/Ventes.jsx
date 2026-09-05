@@ -211,14 +211,29 @@ export default function Ventes() {
     setDateEcheance('')
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
     setCommercialVendeurId(profil?.role === 'commercial' ? profil.id : '')
+
     const [{ data: c }, { data: p }, { data: com }] = await Promise.all([
       supabase.from('clients').select('id, nom').order('nom'),
       supabase.from('produits').select('id, nom, prix_vente, stocks(quantite)').order('nom'),
       supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom'),
     ])
     setClients(c || [])
-    setProduits((p || []).map((pr) => ({ ...pr, quantite_stock: pr.stocks?.[0]?.quantite ?? 0 })))
     setCommerciaux(com || [])
+
+    if (profil?.role === 'commercial') {
+      // Sur le terrain, le commercial doit voir son propre stock en main,
+      // pas le stock magasin (qui a déjà été débité lors de la sortie).
+      const { data: stockPerso } = await supabase
+        .from('stock_commercial')
+        .select('produit_id, quantite')
+        .eq('commercial_id', profil.id)
+      const quantitesParProduit = {}
+      ;(stockPerso || []).forEach((s) => { quantitesParProduit[s.produit_id] = s.quantite })
+      setProduits((p || []).map((pr) => ({ ...pr, quantite_stock: quantitesParProduit[pr.id] ?? 0 })))
+    } else {
+      setProduits((p || []).map((pr) => ({ ...pr, quantite_stock: pr.stocks?.[0]?.quantite ?? 0 })))
+    }
+
     setModalOuvert(true)
   }
 
@@ -535,7 +550,7 @@ export default function Ventes() {
                           <option value="">Produit…</option>
                           {produits.map((p) => (
                             <option key={p.id} value={p.id}>
-                              {p.nom} (stock: {p.quantite_stock})
+                              {p.nom} ({profil?.role === 'commercial' ? 'en main' : 'stock'}: {p.quantite_stock})
                             </option>
                           ))}
                         </select>
