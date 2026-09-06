@@ -7,6 +7,8 @@ import { useAuth } from '../context/AuthContext'
 export default function Dashboard() {
   const { profil } = useAuth()
   if (profil?.role === 'commercial') return <DashboardCommercial />
+  if (profil?.role === 'comptable') return <DashboardComptable />
+  if (profil?.role === 'gestionnaire_stock') return <DashboardGestionnaireStock />
   return <DashboardEntreprise />
 }
 
@@ -320,6 +322,156 @@ function DashboardCommercial() {
           </ResponsiveContainer>
         )}
       </div>
+    </div>
+  )
+}
+
+function DashboardComptable() {
+  const { profil } = useAuth()
+  const [kpi, setKpi] = useState({
+    ventesCashJour: 0,
+    recouvrementJour: 0,
+    creances: 0,
+    creancesEchues: 0,
+  })
+  const [chargement, setChargement] = useState(true)
+
+  useEffect(() => {
+    chargerDonnees()
+  }, [])
+
+  async function chargerDonnees() {
+    setChargement(true)
+    const debutJour = new Date()
+    debutJour.setHours(0, 0, 0, 0)
+    const aujourdhui = new Date().toISOString().split('T')[0]
+
+    const [{ data: ventesCash }, { data: reglementsJour }, { data: creancesData }] = await Promise.all([
+      supabase.from('ventes').select('montant_regle').eq('mode_paiement', 'cash').neq('statut', 'annulee').gte('created_at', debutJour.toISOString()),
+      supabase.from('reglements').select('montant').gte('created_at', debutJour.toISOString()),
+      supabase.from('ventes').select('total, montant_regle, date_echeance').eq('mode_paiement', 'credit').neq('statut', 'annulee'),
+    ])
+
+    const ventesCashJour = (ventesCash || []).reduce((s, v) => s + Number(v.montant_regle || 0), 0)
+    const recouvrementJour = (reglementsJour || []).reduce((s, p) => s + Number(p.montant || 0), 0)
+
+    const creancesOuvertes = (creancesData || []).filter((v) => Number(v.montant_regle) < Number(v.total))
+    const totalCreances = creancesOuvertes.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
+    const creancesEchues = creancesOuvertes.filter((v) => v.date_echeance && v.date_echeance < aujourdhui)
+    const totalCreancesEchues = creancesEchues.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
+
+    setKpi({ ventesCashJour, recouvrementJour, creances: totalCreances, creancesEchues: totalCreancesEchues })
+    setChargement(false)
+  }
+
+  const totalAttendu = kpi.ventesCashJour + kpi.recouvrementJour
+
+  return (
+    <div className="p-4 sm:p-8 max-w-4xl">
+      <header className="mb-6">
+        <h1 className="text-2xl font-semibold">Bonjour {profil?.nom?.split(' ')[0] || ''} 👋</h1>
+        <p className="text-sm text-petrol-700 mt-1">Voici la situation financière du jour.</p>
+      </header>
+
+      {chargement ? (
+        <p className="text-sm text-petrol-500">Chargement…</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <CarteKpi label="Total à verser aujourd'hui" valeur={formatXOF(totalAttendu)} accent to="/versements" />
+            <CarteKpi label="Créances en cours" valeur={formatXOF(kpi.creances)} to="/creances" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <CarteKpi label="Ventes cash du jour" valeur={formatXOF(kpi.ventesCashJour)} to="/versements" />
+            <CarteKpi label="Recouvrement du jour" valeur={formatXOF(kpi.recouvrementJour)} to="/versements" />
+          </div>
+          <div className="grid grid-cols-1">
+            <CarteKpi
+              label="Créances échues"
+              valeur={formatXOF(kpi.creancesEchues)}
+              alerte={kpi.creancesEchues > 0}
+              to="/creances?filtre=echues"
+            />
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function DashboardGestionnaireStock() {
+  const { profil } = useAuth()
+  const [kpi, setKpi] = useState({
+    valeurStock: 0,
+    alertesStock: 0,
+    valeurStockCommerciaux: 0,
+  })
+  const [alertes, setAlertes] = useState([])
+  const [chargement, setChargement] = useState(true)
+
+  useEffect(() => {
+    chargerDonnees()
+  }, [])
+
+  async function chargerDonnees() {
+    setChargement(true)
+    const [{ data: stockBas }, { data: stockCommerciaux }] = await Promise.all([
+      supabase.from('stocks').select('quantite, produits(nom, seuil_alerte, prix_vente)'),
+      supabase.from('stock_commercial').select('quantite, produits(prix_vente)').gt('quantite', 0),
+    ])
+
+    const enAlerte = (stockBas || []).filter((s) => s.produits && s.quantite <= (s.produits.seuil_alerte ?? 0))
+    const valeurStock = (stockBas || []).reduce((s, l) => s + l.quantite * (l.produits?.prix_vente || 0), 0)
+    const valeurStockCommerciaux = (stockCommerciaux || []).reduce((s, l) => s + l.quantite * (l.produits?.prix_vente || 0), 0)
+
+    setKpi({ valeurStock, alertesStock: enAlerte.length, valeurStockCommerciaux })
+    setAlertes(enAlerte.slice(0, 8))
+    setChargement(false)
+  }
+
+  return (
+    <div className="p-4 sm:p-8 max-w-4xl">
+      <header className="mb-6">
+        <h1 className="text-2xl font-semibold">Bonjour {profil?.nom?.split(' ')[0] || ''} 👋</h1>
+        <p className="text-sm text-petrol-700 mt-1">Voici la situation du stock.</p>
+      </header>
+
+      {chargement ? (
+        <p className="text-sm text-petrol-500">Chargement…</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <CarteKpi label="Valeur du stock magasin" valeur={formatXOF(kpi.valeurStock)} accent to="/stock" />
+            <CarteKpi label="Valeur en main (commerciaux)" valeur={formatXOF(kpi.valeurStockCommerciaux)} to="/stock-commercial" />
+            <CarteKpi
+              label="Alertes stock"
+              valeur={kpi.alertesStock}
+              alerte={kpi.alertesStock > 0}
+              to="/stock?filtre=alertes"
+            />
+          </div>
+
+          <div className="card p-6">
+            <h2 className="font-semibold mb-4">Produits en alerte</h2>
+            {alertes.length === 0 ? (
+              <p className="text-sm text-petrol-500">Aucun produit sous le seuil d'alerte.</p>
+            ) : (
+              <ul className="space-y-3">
+                {alertes.map((a, i) => (
+                  <Link
+                    key={i}
+                    to="/stock?filtre=alertes"
+                    className="flex items-center justify-between text-sm hover:underline"
+                  >
+                    <span className="truncate">{a.produits?.nom}</span>
+                    <span className="font-mono text-amber-600 shrink-0 ml-2">{a.quantite} restants</span>
+                  </Link>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }
