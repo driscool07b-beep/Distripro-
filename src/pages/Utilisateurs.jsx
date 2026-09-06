@@ -14,6 +14,7 @@ export default function Utilisateurs() {
   const { profil, entreprise } = useAuth()
   const [membres, setMembres] = useState([])
   const [invitationsEnAttente, setInvitationsEnAttente] = useState([])
+  const [journal, setJournal] = useState([])
   const [chargement, setChargement] = useState(true)
 
   const [modalOuvert, setModalOuvert] = useState(false)
@@ -31,6 +32,7 @@ export default function Utilisateurs() {
   const [roleMembre, setRoleMembre] = useState('commercial')
   const [zoneMembre, setZoneMembre] = useState('')
   const [accesEtenduMembre, setAccesEtenduMembre] = useState(false)
+  const [lectureSeuleMembre, setLectureSeuleMembre] = useState(false)
   const [telephoneMembre, setTelephoneMembre] = useState('')
   const [envoiMembre, setEnvoiMembre] = useState(false)
   const [erreurMembre, setErreurMembre] = useState('')
@@ -41,12 +43,18 @@ export default function Utilisateurs() {
 
   async function charger() {
     setChargement(true)
-    const [{ data: m }, { data: inv }] = await Promise.all([
-      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu').order('nom'),
+    const [{ data: m }, { data: inv }, { data: j }] = await Promise.all([
+      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu, lecture_seule').order('nom'),
       supabase.from('invitations').select('id, email, nom_complet, role, zone, statut, created_at').eq('statut', 'en_attente').order('created_at', { ascending: false }),
+      supabase
+        .from('journal_administration')
+        .select('id, action, details, created_at, effectue_par:profils!effectue_par(nom), cible:profils!cible_profil_id(nom)')
+        .order('created_at', { ascending: false })
+        .limit(30),
     ])
     setMembres(m || [])
     setInvitationsEnAttente(inv || [])
+    setJournal(j || [])
     setChargement(false)
   }
 
@@ -115,6 +123,7 @@ export default function Utilisateurs() {
     setZoneMembre(membre.zone || '')
     setTelephoneMembre(membre.telephone || '')
     setAccesEtenduMembre(membre.acces_etendu || false)
+    setLectureSeuleMembre(membre.lecture_seule || false)
     setErreurMembre('')
     setModalMembreOuvert(true)
   }
@@ -127,17 +136,16 @@ export default function Utilisateurs() {
       return
     }
     setEnvoiMembre(true)
-    const { error } = await supabase
-      .from('profils')
-      .update({
-        nom_complet: nomCompletMembre.trim(),
-        nom: nomCompletMembre.trim(),
-        role: roleMembre,
-        zone: zoneMembre.trim() || null,
-        acces_etendu: accesEtenduMembre,
-        telephone: telephoneMembre.trim() || null,
-      })
-      .eq('id', membreEnEdition.id)
+    const { error } = await supabase.rpc('modifier_membre_equipe', {
+      p_profil_id: membreEnEdition.id,
+      p_nom_complet: nomCompletMembre.trim(),
+      p_telephone: telephoneMembre.trim() || null,
+      p_role: roleMembre,
+      p_zone: zoneMembre.trim() || null,
+      p_acces_etendu: accesEtenduMembre,
+      p_actif: membreEnEdition.actif,
+      p_lecture_seule: lectureSeuleMembre,
+    })
     setEnvoiMembre(false)
     if (error) {
       setErreurMembre(`Erreur : ${error.message}`)
@@ -148,7 +156,16 @@ export default function Utilisateurs() {
   }
 
   async function basculerActif(membre) {
-    await supabase.from('profils').update({ actif: !membre.actif }).eq('id', membre.id)
+    await supabase.rpc('modifier_membre_equipe', {
+      p_profil_id: membre.id,
+      p_nom_complet: membre.nom_complet || membre.nom,
+      p_telephone: membre.telephone || null,
+      p_role: membre.role,
+      p_zone: membre.zone || null,
+      p_acces_etendu: membre.acces_etendu || false,
+      p_actif: !membre.actif,
+      p_lecture_seule: membre.lecture_seule || false,
+    })
     charger()
   }
 
@@ -212,6 +229,9 @@ export default function Utilisateurs() {
                     {m.role === 'commercial' && m.acces_etendu && (
                       <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Accès élargi</span>
                     )}
+                    {m.lecture_seule && (
+                      <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Lecture seule</span>
+                    )}
                   </p>
                   <p className="text-xs text-petrol-500">
                     {LIBELLES_ROLE[m.role] || m.role}
@@ -233,6 +253,24 @@ export default function Utilisateurs() {
             ))}
             {membres.length === 0 && <p className="text-xs text-petrol-400">Aucun membre.</p>}
           </div>
+
+          {journal.length > 0 && (
+            <div className="mt-8">
+              <p className="text-sm font-medium mb-2">Journal d'administration</p>
+              <div className="space-y-1.5">
+                {journal.map((j) => (
+                  <div key={j.id} className="text-xs text-petrol-600 border-b border-line pb-1.5">
+                    <span className="text-petrol-400">
+                      {new Date(j.created_at).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    {' — '}
+                    <strong>{j.effectue_par?.nom || '—'}</strong> a modifié <strong>{j.cible?.nom || '—'}</strong>
+                    {j.details ? ` : ${j.details}` : ''}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
 
@@ -343,6 +381,16 @@ export default function Utilisateurs() {
                     onChange={(e) => setAccesEtenduMembre(e.target.checked)}
                   />
                   Accès élargi (voit l'activité de toute l'entreprise, pas seulement la sienne)
+                </label>
+              )}
+              {membreEnEdition?.id !== profil.id && (
+                <label className="flex items-center gap-2 text-sm bg-amber-50 border border-amber-200 rounded px-3 py-2">
+                  <input
+                    type="checkbox"
+                    checked={lectureSeuleMembre}
+                    onChange={(e) => setLectureSeuleMembre(e.target.checked)}
+                  />
+                  Lecture seule (peut tout consulter, ne peut plus rien enregistrer ni modifier)
                 </label>
               )}
               {erreurMembre && <p className="text-sm text-red-600">{erreurMembre}</p>}
