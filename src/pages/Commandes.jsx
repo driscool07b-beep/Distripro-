@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererFactureProforma } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
 
@@ -357,6 +358,14 @@ export default function Commandes() {
       montant: Number(c.montant_ttc || 0),
       date: new Date(c.created_at).toLocaleDateString('fr-FR'),
     }))
+  }
+
+  if (!accesAutorise('commandes', profil?.role)) {
+    return (
+      <div className="p-4 max-w-2xl mx-auto">
+        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+      </div>
+    )
   }
 
   if (chargement) {

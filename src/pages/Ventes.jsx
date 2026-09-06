@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, formatMontantPDF } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
 
@@ -356,6 +357,14 @@ export default function Ventes() {
     setModalOuvert(false)
     chargerVentes()
     if (nouvelleVenteId && montantPayeEffectif > 0) ouvrirDetailVente(nouvelleVenteId)
+  }
+
+  if (!accesAutorise('ventes', profil?.role)) {
+    return (
+      <div className="p-4 max-w-2xl mx-auto">
+        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+      </div>
+    )
   }
 
   return (

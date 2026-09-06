@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
+import { accesAutorise } from '../lib/accesRole'
 
 const COULEURS_SEGMENT_HEX = {
   actif: '#16a34a',
@@ -23,6 +25,7 @@ const LIBELLES_SEGMENT = {
 const CENTRE_CI = [7.54, -5.55]
 
 export default function CarteClients() {
+  const { profil } = useAuth()
   const [clients, setClients] = useState([])
   const [chargement, setChargement] = useState(true)
   const [segmentsVisibles, setSegmentsVisibles] = useState({
@@ -56,6 +59,14 @@ export default function CarteClients() {
 
   function basculerSegment(segment) {
     setSegmentsVisibles((prev) => ({ ...prev, [segment]: !prev[segment] }))
+  }
+
+  if (!accesAutorise('carteClients', profil?.role)) {
+    return (
+      <div className="p-4 max-w-2xl mx-auto">
+        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+      </div>
+    )
   }
 
   if (chargement) {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { accesAutorise } from '../lib/accesRole';
 
 export default function Tournees() {
   const { profil, entreprise } = useAuth();
@@ -346,6 +347,14 @@ export default function Tournees() {
       };
     });
   };
+
+  if (!accesAutorise('tournees', profil?.role)) {
+    return (
+      <div className="p-4 max-w-2xl mx-auto">
+        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="p-4 text-center text-gray-500">Chargement des tournées...</div>;

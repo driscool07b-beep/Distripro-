@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF } from '../lib/export'
 
 export default function Groupes() {
-  const { entreprise } = useAuth()
+  const { entreprise, profil } = useAuth()
   const [groupes, setGroupes] = useState([])
   const [chargement, setChargement] = useState(true)
   const [groupeSelectionne, setGroupeSelectionne] = useState('')
@@ -85,6 +86,14 @@ export default function Groupes() {
     { cle: 'quantite', titre: 'Quantité', alignDroite: true },
     { cle: 'valeur', titre: 'Valeur (F CFA)', alignDroite: true },
   ]
+
+  if (!accesAutorise('groupes', profil?.role)) {
+    return (
+      <div className="p-4 max-w-2xl mx-auto">
+        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+      </div>
+    )
+  }
 
   if (chargement) return <div className="p-4 text-center text-petrol-500">Chargement…</div>
 

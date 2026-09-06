@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { accesAutorise } from '../lib/accesRole'
 import * as XLSX from 'xlsx'
 
 const COULEURS_SEGMENT = {
@@ -405,6 +406,14 @@ export default function Clients() {
   const clientsFiltres = clients.filter((c) =>
     c.nom.toLowerCase().includes(recherche.toLowerCase())
   )
+
+  if (!accesAutorise('clients', profil?.role)) {
+    return (
+      <div className="p-4 max-w-2xl mx-auto">
+        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="p-8 max-w-6xl">

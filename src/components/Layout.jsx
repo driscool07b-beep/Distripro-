@@ -1,19 +1,22 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { ROLES_PAGES } from '../lib/accesRole'
+
+const TOUS_ROLES = ['admin', 'manager', 'commercial', 'comptable', 'gestionnaire_stock']
 
 const NAV_ITEMS = [
-  { to: '/', label: 'Tableau de bord', icon: DashIcon, end: true },
-  { to: '/clients', label: 'Clients', icon: ClientsIcon },
-  { to: '/groupes', label: 'Groupes de clients', icon: GroupesIcon },
-  { to: '/carte-clients', label: 'Carte des clients', icon: CarteIcon },
-  { to: '/stock', label: 'Produits & Stock', icon: StockIcon },
-  { to: '/ventes', label: 'Ventes', icon: VentesIcon },
-  { to: '/commandes', label: 'Commandes', icon: CommandesIcon },
-  { to: '/tournees', label: 'Tournées', icon: VentesIcon },
-  { to: '/rapports', label: 'Rapports de visite', icon: RapportsIcon },
-  { to: '/creances', label: 'Créances', icon: CreancesIcon },
-  { to: '/localiser-stock', label: 'Localiser un produit', icon: LocaliserIcon },
+  { to: '/', label: 'Tableau de bord', icon: DashIcon, end: true, roles: TOUS_ROLES },
+  { to: '/clients', label: 'Clients', icon: ClientsIcon, roles: ROLES_PAGES.clients },
+  { to: '/groupes', label: 'Groupes de clients', icon: GroupesIcon, roles: ROLES_PAGES.groupes },
+  { to: '/carte-clients', label: 'Carte des clients', icon: CarteIcon, roles: ROLES_PAGES.carteClients },
+  { to: '/stock', label: 'Produits & Stock', icon: StockIcon, roles: ['admin', 'manager', 'gestionnaire_stock', 'commercial'] },
+  { to: '/ventes', label: 'Ventes', icon: VentesIcon, roles: ROLES_PAGES.ventes },
+  { to: '/commandes', label: 'Commandes', icon: CommandesIcon, roles: ROLES_PAGES.commandes },
+  { to: '/tournees', label: 'Tournées', icon: VentesIcon, roles: ROLES_PAGES.tournees },
+  { to: '/rapports', label: 'Rapports de visite', icon: RapportsIcon, roles: ROLES_PAGES.rapports },
+  { to: '/creances', label: 'Créances', icon: CreancesIcon, roles: ROLES_PAGES.creances },
+  { to: '/localiser-stock', label: 'Localiser un produit', icon: LocaliserIcon, roles: ['admin', 'manager', 'commercial', 'gestionnaire_stock'] },
 ]
 
 export default function Layout() {
@@ -49,24 +52,39 @@ export default function Layout() {
         </div>
 
         <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={() => setMenuOuvert(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-amber-500 text-petrol-950'
-                    : 'text-white/70 hover:bg-white/10 hover:text-white'
-                }`
-              }
-            >
-              <item.icon className="w-4 h-4 shrink-0" />
-              {item.label}
-            </NavLink>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const autorise = item.roles.includes(profil?.role)
+            if (!autorise) {
+              return (
+                <div
+                  key={item.to}
+                  title="Non accessible pour votre rôle"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/25 cursor-not-allowed select-none"
+                >
+                  <item.icon className="w-4 h-4 shrink-0" />
+                  {item.label}
+                </div>
+              )
+            }
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                onClick={() => setMenuOuvert(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-amber-500 text-petrol-950'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  }`
+                }
+              >
+                <item.icon className="w-4 h-4 shrink-0" />
+                {item.label}
+              </NavLink>
+            )
+          })}
           {['admin', 'manager'].includes(profil?.role) && (
             <NavLink
               to="/analytique"
