@@ -53,20 +53,7 @@ export default function Layout() {
         </div>
 
         <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const autorise = item.roles.includes(profil?.role)
-            if (!autorise) {
-              return (
-                <div
-                  key={item.to}
-                  title="Non accessible pour votre rôle"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/25 cursor-not-allowed select-none"
-                >
-                  <item.icon className="w-4 h-4 shrink-0" />
-                  {item.label}
-                </div>
-              )
-            }
+          {NAV_ITEMS.filter((item) => item.roles.includes(profil?.role)).map((item) => {
             return (
               <NavLink
                 key={item.to}
