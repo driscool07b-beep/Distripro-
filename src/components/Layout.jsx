@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { to: '/carte-clients', label: 'Carte des clients', icon: CarteIcon, roles: ROLES_PAGES.carteClients },
   { to: '/stock', label: 'Produits & Stock', icon: StockIcon, roles: ['admin', 'manager', 'gestionnaire_stock', 'commercial'] },
   { to: '/depots', label: 'Magasins de stockage', icon: DepotsIcon, roles: ['admin', 'manager'] },
+  { to: '/mouvements-stock', label: 'Journal de stock', icon: JournalIcon, roles: ['admin', 'manager', 'gestionnaire_stock'] },
   { to: '/ventes', label: 'Ventes', icon: VentesIcon, roles: ROLES_PAGES.ventes },
   { to: '/commandes', label: 'Commandes', icon: CommandesIcon, roles: ROLES_PAGES.commandes },
   { to: '/tournees', label: 'Tournées', icon: VentesIcon, roles: ROLES_PAGES.tournees },
@@ -270,6 +271,15 @@ function DepotsIcon(props) {
       <path d="M3 9h18" />
       <rect x="7" y="12" width="4" height="4" />
       <rect x="13" y="12" width="4" height="4" />
+    </svg>
+  )
+}
+function JournalIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+      <path d="M9 7h7M9 11h7" />
     </svg>
   )
 }

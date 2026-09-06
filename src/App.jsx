@@ -22,6 +22,7 @@ import Groupes from './pages/Groupes'
 import Inscription from './pages/Inscription'
 import CreerEntreprise from './pages/CreerEntreprise'
 import Depots from './pages/Depots'
+import MouvementsStock from './pages/MouvementsStock'
 import Utilisateurs from './pages/Utilisateurs'
 import Objectifs from './pages/Objectifs'
 import CarteClients from './pages/CarteClients'
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="clients" element={<Clients />} />
         <Route path="stock" element={<Stock />} />
         <Route path="depots" element={<Depots />} />
+        <Route path="mouvements-stock" element={<MouvementsStock />} />
         <Route path="ventes" element={<Ventes />} />
         <Route path="tournees" element={<Tournees />} />
         <Route path="rapports" element={<Rapports />} />
