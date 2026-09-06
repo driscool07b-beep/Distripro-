@@ -15,6 +15,9 @@ export default function Stock() {
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
   const [modalProduit, setModalProduit] = useState(false)
+  const [produitEnEdition, setProduitEnEdition] = useState(null)
+  const [modalHistorique, setModalHistorique] = useState(null)
+  const [historiquePrix, setHistoriquePrix] = useState([])
   const [modalImportOuvert, setModalImportOuvert] = useState(false)
   const [lignesImport, setLignesImport] = useState([])
   const [erreurImport, setErreurImport] = useState('')
@@ -59,22 +62,61 @@ export default function Stock() {
       return
     }
     setEnregistrement(true)
-    const { error } = await supabase.rpc('creer_produit', {
-      p_nom: formulaire.nom.trim(),
-      p_categorie: formulaire.categorie.trim() || null,
-      p_prix_vente: Number(formulaire.prix_vente),
-      p_seuil_alerte: Number(formulaire.seuil_alerte || 0),
-      p_quantite_initiale: Number(formulaire.quantite_initiale || 0),
-    })
+
+    let error
+    if (produitEnEdition) {
+      const resultat = await supabase.rpc('modifier_produit', {
+        p_produit_id: produitEnEdition.id,
+        p_nom: formulaire.nom.trim(),
+        p_categorie: formulaire.categorie.trim() || null,
+        p_prix_vente: Number(formulaire.prix_vente),
+        p_seuil_alerte: Number(formulaire.seuil_alerte || 0),
+      })
+      error = resultat.error
+    } else {
+      const resultat = await supabase.rpc('creer_produit', {
+        p_nom: formulaire.nom.trim(),
+        p_categorie: formulaire.categorie.trim() || null,
+        p_prix_vente: Number(formulaire.prix_vente),
+        p_seuil_alerte: Number(formulaire.seuil_alerte || 0),
+        p_quantite_initiale: Number(formulaire.quantite_initiale || 0),
+      })
+      error = resultat.error
+    }
+
     setEnregistrement(false)
     if (error) {
-      console.error('Erreur creer_produit:', error)
+      console.error('Erreur enregistrerProduit:', error)
       setErreur(`Erreur : ${error.message || 'inconnue'}`)
       return
     }
     setModalProduit(false)
+    setProduitEnEdition(null)
     setFormulaire(PRODUIT_VIDE)
     chargerProduits()
+  }
+
+  function ouvrirModalEdition(produit) {
+    setProduitEnEdition(produit)
+    setFormulaire({
+      nom: produit.nom,
+      categorie: produit.categorie || '',
+      prix_vente: String(produit.prix_vente || ''),
+      seuil_alerte: String(produit.seuil_alerte ?? '10'),
+      quantite_initiale: '0',
+    })
+    setErreur('')
+    setModalProduit(true)
+  }
+
+  async function ouvrirHistorique(produit) {
+    setModalHistorique(produit)
+    const { data } = await supabase
+      .from('produits_historique_prix')
+      .select('ancien_prix, nouveau_prix, created_at, profils!modifie_par(nom)')
+      .eq('produit_id', produit.id)
+      .order('created_at', { ascending: false })
+    setHistoriquePrix(data || [])
   }
 
   function ouvrirModalImport() {
@@ -264,7 +306,7 @@ export default function Stock() {
               <button className="btn-secondary text-sm" onClick={ouvrirModalImport}>
                 📥 Importer
               </button>
-              <button className="btn-primary" onClick={() => setModalProduit(true)}>
+              <button className="btn-primary" onClick={() => { setProduitEnEdition(null); setFormulaire(PRODUIT_VIDE); setModalProduit(true) }}>
                 + Nouveau produit
               </button>
             </>
@@ -329,12 +371,22 @@ export default function Stock() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && (
-                        <button
-                          className="text-xs font-medium text-petrol-700 hover:text-amber-600"
-                          onClick={() => setModalMouvement(p)}
-                        >
-                          Ajuster le stock
-                        </button>
+                        <div className="flex flex-col items-end gap-1">
+                          <button
+                            className="text-xs font-medium text-petrol-700 hover:text-amber-600"
+                            onClick={() => setModalMouvement(p)}
+                          >
+                            Ajuster le stock
+                          </button>
+                          <div className="flex gap-2">
+                            <button className="text-xs text-petrol-500 underline" onClick={() => ouvrirModalEdition(p)}>
+                              Modifier
+                            </button>
+                            <button className="text-xs text-petrol-500 underline" onClick={() => ouvrirHistorique(p)}>
+                              Historique
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -348,7 +400,7 @@ export default function Stock() {
       {modalProduit && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-4">Nouveau produit</h2>
+            <h2 className="font-semibold text-lg mb-4">{produitEnEdition ? 'Modifier le produit' : 'Nouveau produit'}</h2>
             <form onSubmit={enregistrerProduit} className="space-y-3">
               <div>
                 <label className="label">Nom *</label>
@@ -388,15 +440,17 @@ export default function Stock() {
                   />
                 </div>
               </div>
-              <div>
-                <label className="label">Quantité initiale en stock</label>
-                <input
-                  type="number"
-                  className="input-field font-mono"
-                  value={formulaire.quantite_initiale}
-                  onChange={(e) => setFormulaire({ ...formulaire, quantite_initiale: e.target.value })}
-                />
-              </div>
+              {!produitEnEdition && (
+                <div>
+                  <label className="label">Quantité initiale en stock</label>
+                  <input
+                    type="number"
+                    className="input-field font-mono"
+                    value={formulaire.quantite_initiale}
+                    onChange={(e) => setFormulaire({ ...formulaire, quantite_initiale: e.target.value })}
+                  />
+                </div>
+              )}
 
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
@@ -406,6 +460,7 @@ export default function Stock() {
                   className="btn-secondary flex-1"
                   onClick={() => {
                     setModalProduit(false)
+                    setProduitEnEdition(null)
                     setFormulaire(PRODUIT_VIDE)
                     setErreur('')
                   }}
@@ -586,6 +641,35 @@ export default function Stock() {
                 )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {modalHistorique && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h2 className="font-semibold text-lg mb-1">Historique des prix</h2>
+            <p className="text-sm text-petrol-600 mb-4">{modalHistorique.nom}</p>
+            {historiquePrix.length === 0 ? (
+              <p className="text-sm text-petrol-400">Aucun changement de prix enregistré.</p>
+            ) : (
+              <div className="space-y-2">
+                {historiquePrix.map((h, i) => (
+                  <div key={i} className="text-sm border-b border-line pb-2">
+                    <p>
+                      {h.ancien_prix != null ? formatXOF(h.ancien_prix) : '—'} → <strong>{formatXOF(h.nouveau_prix)}</strong>
+                    </p>
+                    <p className="text-xs text-petrol-500">
+                      {h.profils?.nom || '—'} —{' '}
+                      {new Date(h.created_at).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button className="btn-secondary w-full mt-4" onClick={() => setModalHistorique(null)}>
+              Fermer
+            </button>
           </div>
         </div>
       )}
