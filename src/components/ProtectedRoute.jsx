@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProtectedRoute({ children }) {
-  const { estConnecte, loading, entreprise } = useAuth()
+  const { estConnecte, loading, entreprise, profil, session } = useAuth()
 
   if (loading) {
     return (
@@ -14,6 +14,14 @@ export default function ProtectedRoute({ children }) {
 
   if (!estConnecte) {
     return <Navigate to="/connexion" replace />
+  }
+
+  if (session?.user && !profil) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-canvas">
+        <div className="text-petrol-700 font-mono text-sm">Chargement du profil…</div>
+      </div>
+    )
   }
 
   if (entreprise?.statut === 'suspendu') {
