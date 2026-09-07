@@ -18,6 +18,9 @@ export default function Parametres() {
   const [enregistrementSeuil, setEnregistrementSeuil] = useState(false)
   const [erreurSeuil, setErreurSeuil] = useState('')
   const [confirmationSeuil, setConfirmationSeuil] = useState(false)
+  const [justificatifObligatoire, setJustificatifObligatoire] = useState(true)
+  const [enregistrementJustificatif, setEnregistrementJustificatif] = useState(false)
+  const [confirmationJustificatif, setConfirmationJustificatif] = useState(false)
   const [caisses, setCaisses] = useState([])
   const [nouvelleCaisseNom, setNouvelleCaisseNom] = useState('')
   const [erreurCaisse, setErreurCaisse] = useState('')
@@ -35,6 +38,7 @@ export default function Parametres() {
         rccm: entreprise.rccm || '',
       })
       setSeuilRemise(String(entreprise.seuil_remise_pourcentage ?? 15))
+      setJustificatifObligatoire(entreprise.justificatif_stock_obligatoire ?? true)
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -214,6 +218,18 @@ export default function Parametres() {
     setTimeout(() => setConfirmationSeuil(false), 2500)
   }
 
+  async function basculerJustificatifObligatoire(valeur) {
+    setJustificatifObligatoire(valeur)
+    setEnregistrementJustificatif(true)
+    const { error } = await supabase.from('entreprises').update({ justificatif_stock_obligatoire: valeur }).eq('id', entreprise.id)
+    setEnregistrementJustificatif(false)
+    if (!error) {
+      await rechargerProfil()
+      setConfirmationJustificatif(true)
+      setTimeout(() => setConfirmationJustificatif(false), 2500)
+    }
+  }
+
   async function ajouterChamp(e) {
     e.preventDefault()
     setErreurChamp('')
@@ -375,6 +391,22 @@ export default function Parametres() {
           </form>
           {erreurSeuil && <p className="text-xs text-red-600 mt-2">{erreurSeuil}</p>}
           {confirmationSeuil && <p className="text-xs text-green-600 mt-2">Enregistré.</p>}
+        </div>
+      )}
+
+      {['admin', 'manager'].includes(profil?.role) && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">Politique de stock</h2>
+          <label className="flex items-center gap-2 text-sm mt-2">
+            <input
+              type="checkbox"
+              checked={justificatifObligatoire}
+              disabled={enregistrementJustificatif}
+              onChange={(e) => basculerJustificatifObligatoire(e.target.checked)}
+            />
+            Exiger un justificatif (photo/PDF) pour tout ajustement manuel de stock
+          </label>
+          {confirmationJustificatif && <p className="text-xs text-green-600 mt-2">Enregistré.</p>}
         </div>
       )}
 

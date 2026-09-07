@@ -204,7 +204,7 @@ export default function Stock() {
       setErreur('Indiquez une quantité valide.')
       return
     }
-    if (!fichierJustificatif) {
+    if (entreprise?.justificatif_stock_obligatoire && !fichierJustificatif) {
       setErreur('Un justificatif (photo ou PDF) est obligatoire pour tout ajustement de stock.')
       return
     }
@@ -227,16 +227,18 @@ export default function Stock() {
       return
     }
 
-    const extension = fichierJustificatif.name.split('.').pop()
-    const chemin = `${entreprise.id}/mouvements-stock/${mouvementId}.${extension}`
-    const { error: erreurUpload } = await supabase.storage.from('justificatifs-stock').upload(chemin, fichierJustificatif, { upsert: true })
-    if (!erreurUpload) {
-      await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: mouvementId, p_chemin: chemin })
-    } else {
-      // Le mouvement est déjà enregistré (et donc tracé dans le journal comme
-      // sans justificatif, visible pour un administrateur) — on informe sans
-      // bloquer, puisque le stock a déjà été mis à jour.
-      console.error('Erreur upload justificatif:', erreurUpload)
+    if (fichierJustificatif) {
+      const extension = fichierJustificatif.name.split('.').pop()
+      const chemin = `${entreprise.id}/mouvements-stock/${mouvementId}.${extension}`
+      const { error: erreurUpload } = await supabase.storage.from('justificatifs-stock').upload(chemin, fichierJustificatif, { upsert: true })
+      if (!erreurUpload) {
+        await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: mouvementId, p_chemin: chemin })
+      } else {
+        // Le mouvement est déjà enregistré (et donc tracé dans le journal comme
+        // sans justificatif, visible pour un administrateur) — on informe sans
+        // bloquer, puisque le stock a déjà été mis à jour.
+        console.error('Erreur upload justificatif:', erreurUpload)
+      }
     }
 
     setEnregistrement(false)
@@ -528,7 +530,9 @@ export default function Stock() {
                 />
               </div>
               <div>
-                <label className="label">Justificatif (photo ou PDF) *</label>
+                <label className="label">
+                  Justificatif (photo ou PDF){entreprise?.justificatif_stock_obligatoire ? ' *' : ' (optionnel)'}
+                </label>
                 <input
                   type="file"
                   accept="image/*,application/pdf"
@@ -536,7 +540,7 @@ export default function Stock() {
                   className="input-field"
                 />
                 <p className="text-xs text-petrol-500 mt-1">
-                  Obligatoire — bon d'approvisionnement, photo de la casse, feuille d'inventaire…
+                  {entreprise?.justificatif_stock_obligatoire ? 'Obligatoire' : 'Facultatif'} — bon d'approvisionnement, photo de la casse, feuille d'inventaire…
                 </p>
               </div>
 
