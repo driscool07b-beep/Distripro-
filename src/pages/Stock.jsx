@@ -25,9 +25,7 @@ export default function Stock() {
   const [progressionImport, setProgressionImport] = useState(0)
   const [resultatImport, setResultatImport] = useState(null)
   const [modalMouvement, setModalMouvement] = useState(null) // produit sélectionné
-  const [mouvementIdCree, setMouvementIdCree] = useState(null)
   const [fichierJustificatif, setFichierJustificatif] = useState(null)
-  const [envoiJustificatif, setEnvoiJustificatif] = useState(false)
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
   const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', motif: '' })
   const [enregistrement, setEnregistrement] = useState(false)
@@ -206,6 +204,10 @@ export default function Stock() {
       setErreur('Indiquez une quantité valide.')
       return
     }
+    if (!fichierJustificatif) {
+      setErreur('Un justificatif (photo ou PDF) est obligatoire pour tout ajustement de stock.')
+      return
+    }
     setEnregistrement(true)
     const { data: mouvementId, error } = await supabase.rpc('ajuster_stock', {
       p_produit_id: modalMouvement.id,
@@ -213,8 +215,8 @@ export default function Stock() {
       p_quantite: qte,
       p_motif: mouvement.motif.trim() || null,
     })
-    setEnregistrement(false)
     if (error) {
+      setEnregistrement(false)
       setErreur(
         error.message?.includes('stock insuffisant')
           ? 'Stock insuffisant pour cette sortie.'
@@ -224,27 +226,27 @@ export default function Stock() {
       )
       return
     }
-    chargerProduits()
-    setMouvementIdCree(mouvementId)
-  }
 
-  async function joindreJustificatif() {
-    if (!fichierJustificatif || !mouvementIdCree) return
-    setEnvoiJustificatif(true)
     const extension = fichierJustificatif.name.split('.').pop()
-    const chemin = `${entreprise.id}/mouvements-stock/${mouvementIdCree}.${extension}`
+    const chemin = `${entreprise.id}/mouvements-stock/${mouvementId}.${extension}`
     const { error: erreurUpload } = await supabase.storage.from('justificatifs-stock').upload(chemin, fichierJustificatif, { upsert: true })
     if (!erreurUpload) {
-      await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: mouvementIdCree, p_chemin: chemin })
+      await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: mouvementId, p_chemin: chemin })
+    } else {
+      // Le mouvement est déjà enregistré (et donc tracé dans le journal comme
+      // sans justificatif, visible pour un administrateur) — on informe sans
+      // bloquer, puisque le stock a déjà été mis à jour.
+      console.error('Erreur upload justificatif:', erreurUpload)
     }
-    setEnvoiJustificatif(false)
+
+    setEnregistrement(false)
+    chargerProduits()
     fermerModalMouvement()
   }
 
   function fermerModalMouvement() {
     setModalMouvement(null)
     setMouvement({ type: 'entree', quantite: '', motif: '' })
-    setMouvementIdCree(null)
     setFichierJustificatif(null)
     setErreur('')
   }
@@ -479,34 +481,6 @@ export default function Stock() {
       {modalMouvement && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            {mouvementIdCree ? (
-              <>
-                <h2 className="font-semibold text-lg mb-1">Mouvement enregistré</h2>
-                <p className="text-sm text-petrol-600 mb-4">
-                  Vous pouvez joindre un justificatif (bon d'approvisionnement, photo…), ou terminer sans.
-                </p>
-                <input
-                  type="file"
-                  accept="image/*,application/pdf"
-                  onChange={(e) => setFichierJustificatif(e.target.files?.[0] || null)}
-                  className="input-field mb-3"
-                />
-                <div className="flex gap-2 pt-2">
-                  <button type="button" className="btn-secondary flex-1" onClick={fermerModalMouvement}>
-                    Terminer sans justificatif
-                  </button>
-                  <button
-                    type="button"
-                    disabled={!fichierJustificatif || envoiJustificatif}
-                    onClick={joindreJustificatif}
-                    className="btn-primary flex-1"
-                  >
-                    {envoiJustificatif ? 'Envoi…' : 'Joindre et terminer'}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
             <h2 className="font-semibold text-lg mb-1">Ajuster le stock</h2>
             <p className="text-sm text-petrol-600 mb-4">{modalMouvement.nom} — stock actuel : {modalMouvement.quantite}</p>
             <form onSubmit={enregistrerMouvement} className="space-y-3">
@@ -553,6 +527,18 @@ export default function Stock() {
                   placeholder="Réception fournisseur, casse, inventaire…"
                 />
               </div>
+              <div>
+                <label className="label">Justificatif (photo ou PDF) *</label>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={(e) => setFichierJustificatif(e.target.files?.[0] || null)}
+                  className="input-field"
+                />
+                <p className="text-xs text-petrol-500 mt-1">
+                  Obligatoire — bon d'approvisionnement, photo de la casse, feuille d'inventaire…
+                </p>
+              </div>
 
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
@@ -569,8 +555,6 @@ export default function Stock() {
                 </button>
               </div>
             </form>
-              </>
-            )}
           </div>
         </div>
       )}
