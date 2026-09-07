@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
   const chargerProfil = useCallback(async (userId) => {
     let { data: profilData, error: profilError } = await supabase
       .from('profils')
-      .select('id, nom, role, entreprise_id, actif, acces_etendu')
+      .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees')
       .eq('id', userId)
       .single()
 
@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
       if (finalise) {
         const retry = await supabase
           .from('profils')
-          .select('id, nom, role, entreprise_id, actif, acces_etendu')
+          .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees')
           .eq('id', userId)
           .single()
         profilData = retry.data

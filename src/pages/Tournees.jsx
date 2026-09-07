@@ -11,6 +11,7 @@ export default function Tournees() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [selectedTournee, setSelectedTournee] = useState(null);
+  const [clientAAjouter, setClientAAjouter] = useState('');
   const [visites, setVisites] = useState([]);
 
   const [rapportLigne, setRapportLigne] = useState(null); // ligne en cours de rapport, ou null
@@ -107,6 +108,23 @@ export default function Tournees() {
       .order('ordre', { ascending: true });
 
     if (!error) setVisites(data || []);
+  };
+
+  const ajouterClient = async () => {
+    if (!clientAAjouter || !selectedTournee) return;
+    const { error } = await supabase.rpc('ajouter_client_tournee', {
+      p_tournee_id: selectedTournee.id,
+      p_client_id: clientAAjouter,
+    });
+    if (!error) {
+      setClientAAjouter('');
+      chargerLignes(selectedTournee.id);
+    }
+  };
+
+  const retirerClient = async (ligneId) => {
+    const { error } = await supabase.rpc('retirer_client_tournee', { p_tournee_ligne_id: ligneId });
+    if (!error && selectedTournee) chargerLignes(selectedTournee.id);
   };
 
   const ouvrirItineraire = (ligne) => {
@@ -348,6 +366,8 @@ export default function Tournees() {
     });
   };
 
+  const autoriseProgrammer = ['admin', 'manager'].includes(profil?.role) || profil?.responsable_tournees
+
   if (!accesAutorise('tournees', profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
@@ -427,6 +447,14 @@ export default function Tournees() {
                   >
                     Marquer visitée (vérif. GPS)
                   </button>
+                  {autoriseProgrammer && (
+                    <button
+                      onClick={() => retirerClient(ligne.id)}
+                      className="border border-red-500 text-red-600 px-3 py-1.5 rounded text-sm"
+                    >
+                      Retirer
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -435,6 +463,33 @@ export default function Tournees() {
             <p className="text-gray-400 text-center py-8">Aucune visite pour cette tournée</p>
           )}
         </div>
+
+        {autoriseProgrammer && (
+          <div className="border rounded-lg p-4 mt-4 bg-gray-50">
+            <p className="text-sm font-medium mb-2">Ajouter un client à cette tournée</p>
+            <div className="flex gap-2">
+              <select
+                value={clientAAjouter}
+                onChange={(e) => setClientAAjouter(e.target.value)}
+                className="flex-1 border rounded-lg px-3 py-2 text-sm"
+              >
+                <option value="">— Sélectionner un client —</option>
+                {clients
+                  .filter((c) => !visites.some((v) => v.client_id === c.id))
+                  .map((c) => (
+                    <option key={c.id} value={c.id}>{c.nom}</option>
+                  ))}
+              </select>
+              <button
+                onClick={ajouterClient}
+                disabled={!clientAAjouter}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-40"
+              >
+                + Ajouter
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -443,15 +498,17 @@ export default function Tournees() {
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">Tournées</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
-        >
-          {showForm ? 'Annuler' : '+ Nouvelle tournée'}
-        </button>
+        {autoriseProgrammer && (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
+          >
+            {showForm ? 'Annuler' : '+ Nouvelle tournée'}
+          </button>
+        )}
       </div>
 
-      {showForm && (
+      {showForm && autoriseProgrammer && (
         <form onSubmit={creerTournee} className="border rounded-lg p-4 mb-4 bg-gray-50 space-y-3">
           <div>
             <label className="block text-sm font-medium mb-1">Date de la tournée</label>

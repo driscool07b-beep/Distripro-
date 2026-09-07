@@ -33,6 +33,7 @@ export default function Utilisateurs() {
   const [zoneMembre, setZoneMembre] = useState('')
   const [accesEtenduMembre, setAccesEtenduMembre] = useState(false)
   const [lectureSeuleMembre, setLectureSeuleMembre] = useState(false)
+  const [responsableTourneesMembre, setResponsableTourneesMembre] = useState(false)
   const [telephoneMembre, setTelephoneMembre] = useState('')
   const [envoiMembre, setEnvoiMembre] = useState(false)
   const [erreurMembre, setErreurMembre] = useState('')
@@ -44,7 +45,7 @@ export default function Utilisateurs() {
   async function charger() {
     setChargement(true)
     const [{ data: m }, { data: inv }, { data: j }] = await Promise.all([
-      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu, lecture_seule').order('nom'),
+      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu, lecture_seule, responsable_tournees').order('nom'),
       supabase.from('invitations').select('id, email, nom_complet, role, zone, statut, created_at').eq('statut', 'en_attente').order('created_at', { ascending: false }),
       supabase
         .from('journal_administration')
@@ -124,6 +125,7 @@ export default function Utilisateurs() {
     setTelephoneMembre(membre.telephone || '')
     setAccesEtenduMembre(membre.acces_etendu || false)
     setLectureSeuleMembre(membre.lecture_seule || false)
+    setResponsableTourneesMembre(membre.responsable_tournees || false)
     setErreurMembre('')
     setModalMembreOuvert(true)
   }
@@ -145,6 +147,7 @@ export default function Utilisateurs() {
       p_acces_etendu: accesEtenduMembre,
       p_actif: membreEnEdition.actif,
       p_lecture_seule: lectureSeuleMembre,
+      p_responsable_tournees: responsableTourneesMembre,
     })
     setEnvoiMembre(false)
     if (error) {
@@ -165,6 +168,7 @@ export default function Utilisateurs() {
       p_acces_etendu: membre.acces_etendu || false,
       p_actif: !membre.actif,
       p_lecture_seule: membre.lecture_seule || false,
+      p_responsable_tournees: membre.responsable_tournees || false,
     })
     charger()
   }
@@ -231,6 +235,9 @@ export default function Utilisateurs() {
                     )}
                     {m.lecture_seule && (
                       <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Lecture seule</span>
+                    )}
+                    {m.responsable_tournees && (
+                      <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">Responsable tournées</span>
                     )}
                   </p>
                   <p className="text-xs text-petrol-500">
@@ -393,6 +400,14 @@ export default function Utilisateurs() {
                   Lecture seule (peut tout consulter, ne peut plus rien enregistrer ni modifier)
                 </label>
               )}
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={responsableTourneesMembre}
+                  onChange={(e) => setResponsableTourneesMembre(e.target.checked)}
+                />
+                Responsable des tournées (peut programmer et modifier les tournées des commerciaux)
+              </label>
               {erreurMembre && <p className="text-sm text-red-600">{erreurMembre}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="button" className="btn-secondary flex-1" onClick={() => setModalMembreOuvert(false)}>
