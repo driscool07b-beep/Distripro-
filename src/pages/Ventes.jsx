@@ -13,6 +13,7 @@ export default function Ventes() {
   const [clients, setClients] = useState([])
   const [produits, setProduits] = useState([])
   const [commerciaux, setCommerciaux] = useState([])
+  const [depots, setDepots] = useState([])
   const [villes, setVilles] = useState([])
   const [chargement, setChargement] = useState(true)
   const [modalOuvert, setModalOuvert] = useState(false)
@@ -40,6 +41,8 @@ export default function Ventes() {
   const [clientId, setClientId] = useState('')
   const [tarifsClient, setTarifsClient] = useState({}) // { produit_id: prix_negocie }
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
+  const [depotId, setDepotId] = useState('')
+  const [stocksParDepot, setStocksParDepot] = useState({}) // { produit_id: { depot_id: quantite } }
   const [montantPaye, setMontantPaye] = useState('')
   const [remisePourcentage, setRemisePourcentage] = useState('')
   const [motifRemise, setMotifRemise] = useState('')
@@ -212,14 +215,29 @@ export default function Ventes() {
     setDateEcheance('')
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
     setCommercialVendeurId(profil?.role === 'commercial' ? profil.id : '')
+    setDepotId('')
 
-    const [{ data: c }, { data: p }, { data: com }] = await Promise.all([
+    const [{ data: c }, { data: p }, { data: com }, { data: d }] = await Promise.all([
       supabase.from('clients').select('id, nom').order('nom'),
-      supabase.from('produits').select('id, nom, prix_vente, stocks(quantite)').order('nom'),
+      supabase.from('produits').select('id, nom, prix_vente, stocks(quantite, depot_id)').order('nom'),
       supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom'),
+      supabase.from('depots').select('id, nom').eq('actif', true).order('nom'),
     ])
     setClients(c || [])
     setCommerciaux(com || [])
+    setDepots(d || [])
+    // Un seul dépôt actif : le présélectionner directement (pas besoin de
+    // faire choisir l'utilisateur). Plusieurs dépôts : il faudra choisir.
+    if ((d || []).length === 1) setDepotId(d[0].id)
+
+    // Quantité par produit et par dépôt, pour recalculer l'affichage sans
+    // recharger quand on change de dépôt sélectionné.
+    const parDepot = {}
+    ;(p || []).forEach((pr) => {
+      parDepot[pr.id] = {}
+      ;(pr.stocks || []).forEach((s) => { parDepot[pr.id][s.depot_id] = s.quantite })
+    })
+    setStocksParDepot(parDepot)
 
     if (profil?.role === 'commercial') {
       // Sur le terrain, le commercial doit voir son propre stock en main,
@@ -232,10 +250,19 @@ export default function Ventes() {
       ;(stockPerso || []).forEach((s) => { quantitesParProduit[s.produit_id] = s.quantite })
       setProduits((p || []).map((pr) => ({ ...pr, quantite_stock: quantitesParProduit[pr.id] ?? 0 })))
     } else {
-      setProduits((p || []).map((pr) => ({ ...pr, quantite_stock: pr.stocks?.[0]?.quantite ?? 0 })))
+      const depotParDefaut = (d || []).length === 1 ? d[0].id : null
+      setProduits((p || []).map((pr) => ({ ...pr, quantite_stock: depotParDefaut ? (parDepot[pr.id]?.[depotParDefaut] ?? 0) : 0 })))
     }
 
     setModalOuvert(true)
+  }
+
+  function changerDepot(nouveauDepotId) {
+    setDepotId(nouveauDepotId)
+    if (profil?.role === 'commercial') return // le commercial vend depuis son stock en main, pas un dépôt
+    setProduits((prev) =>
+      prev.map((pr) => ({ ...pr, quantite_stock: nouveauDepotId ? (stocksParDepot[pr.id]?.[nouveauDepotId] ?? 0) : 0 }))
+    )
   }
 
   function ajouterLigne() {
@@ -537,6 +564,16 @@ export default function Ventes() {
                   placeholder="Rechercher un client…"
                 />
               </div>
+
+              {profil?.role !== 'commercial' && depots.length > 1 && (
+                <div>
+                  <label className="label">Dépôt de vente *</label>
+                  <select className="input-field" value={depotId} onChange={(e) => changerDepot(e.target.value)}>
+                    <option value="">Sélectionner un dépôt…</option>
+                    {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <div className="flex items-center justify-between mb-2">
