@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProtectedRoute({ children }) {
-  const { estConnecte, loading, entreprise, profil, session } = useAuth()
+  const { estConnecte, loading, entreprise, profil, session, profilError, rechargerProfil, deconnexion } = useAuth()
 
   if (loading) {
     return (
@@ -18,8 +18,23 @@ export default function ProtectedRoute({ children }) {
 
   if (session?.user && !profil) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-canvas">
-        <div className="text-petrol-700 font-mono text-sm">Chargement du profil…</div>
+      <div className="min-h-screen flex items-center justify-center bg-canvas px-4">
+        <div className="card p-6 max-w-md text-center space-y-3">
+          {profilError ? (
+            <>
+              <p className="text-sm font-medium text-red-600">Impossible de charger votre profil</p>
+              <p className="text-xs text-petrol-600 font-mono break-words">{profilError}</p>
+            </>
+          ) : (
+            <div className="text-petrol-700 font-mono text-sm">Chargement du profil…</div>
+          )}
+          {profilError && (
+            <div className="flex gap-2 justify-center pt-1">
+              <button onClick={rechargerProfil} className="btn-primary text-xs">Réessayer</button>
+              <button onClick={deconnexion} className="btn-secondary text-xs">Se déconnecter</button>
+            </div>
+          )}
+        </div>
       </div>
     )
   }

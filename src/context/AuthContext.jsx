@@ -8,8 +8,27 @@ export function AuthProvider({ children }) {
   const [profil, setProfil] = useState(null) // { id, nom, role, entreprise_id }
   const [entreprise, setEntreprise] = useState(null) // { id, nom, plan, statut }
   const [loading, setLoading] = useState(true)
+  const [profilError, setProfilError] = useState('')
 
   const chargerProfil = useCallback(async (userId) => {
+    setProfilError('')
+    const delaiSecurite = (ms) =>
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Le serveur met trop de temps à répondre. Réessayez.')), ms))
+
+    try {
+      await Promise.race([chargerProfilInterne(userId), delaiSecurite(15000)])
+    } catch (e) {
+      // Panne réseau, requête qui a expiré, projet Supabase indisponible…
+      // — dans tous les cas on ne doit jamais laisser l'appli bloquée sans
+      // explication : on capture et on affiche l'erreur réelle.
+      console.error('Exception chargement profil:', e)
+      setProfilError(e?.message || 'Connexion au serveur impossible. Vérifiez votre réseau.')
+      setProfil(null)
+      setEntreprise(null)
+    }
+  }, [])
+
+  async function chargerProfilInterne(userId) {
     let { data: profilData, error: profilError } = await supabase
       .from('profils')
       .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees')
@@ -43,6 +62,7 @@ export function AuthProvider({ children }) {
 
     if (profilError || !profilData) {
       console.error('Erreur chargement profil:', profilError)
+      setProfilError(profilError?.message || 'Profil introuvable pour ce compte.')
       setProfil(null)
       setEntreprise(null)
       return
@@ -65,10 +85,11 @@ export function AuthProvider({ children }) {
 
     if (entrepriseError) {
       console.error('Erreur chargement entreprise:', entrepriseError)
+      setProfilError(entrepriseError.message || 'Impossible de charger les données de l\u2019entreprise.')
       return
     }
     setEntreprise(entrepriseData)
-  }, [])
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -76,6 +97,10 @@ export function AuthProvider({ children }) {
       if (session?.user) {
         await chargerProfil(session.user.id)
       }
+      setLoading(false)
+    }).catch((e) => {
+      console.error('Erreur getSession:', e)
+      setProfilError(e?.message || 'Connexion au serveur impossible.')
       setLoading(false)
     })
 
@@ -111,6 +136,7 @@ export function AuthProvider({ children }) {
     profil,
     entreprise,
     loading,
+    profilError,
     connexion,
     inscription,
     deconnexion,
