@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
-import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, formatMontantPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, genererFactureAvoir, formatMontantPDF } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
 
 export default function Ventes() {
@@ -155,15 +155,41 @@ export default function Ventes() {
     }
     setEnvoiAnnulation(true)
     setErreurAnnulation('')
+    const motif = motifAnnulation.trim()
     const { error } = await supabase.rpc('creer_avoir', {
       p_vente_id: venteOuverte,
-      p_motif: motifAnnulation.trim(),
+      p_motif: motif,
     })
     setEnvoiAnnulation(false)
     if (error) {
       setErreurAnnulation(`Erreur : ${error.message}`)
       return
     }
+
+    // Génère la facture d'avoir à partir de ce qu'on a déjà sous la main
+    // (détail de la vente encore ouvert) plutôt que de tout recharger.
+    const { data: avoir } = await supabase
+      .from('avoirs')
+      .select('id, montant, created_at')
+      .eq('vente_id', venteOuverte)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (avoir && detailVente) {
+      const doc = genererFactureAvoir({
+        entreprise,
+        client: detailVente.vente?.clients,
+        vente: detailVente.vente,
+        lignes: detailVente.lignes,
+        motif,
+        montant: avoir.montant,
+        date: avoir.created_at,
+        reference: avoir.id.slice(0, 8),
+      })
+      doc.save(`avoir-${avoir.id.slice(0, 8)}.pdf`)
+    }
+
     setModeAnnulation(false)
     setMotifAnnulation('')
     await ouvrirDetailVente(venteOuverte)
@@ -180,6 +206,29 @@ export default function Ventes() {
     if (!detailVente) return
     const doc = genererBonLivraison({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes })
     doc.save(`${detailVente.vente.numero_bl || 'bon-livraison-' + detailVente.vente.id.slice(0, 8)}.pdf`)
+  }
+
+  async function telechargerFactureAvoir() {
+    if (!detailVente) return
+    const { data: avoir } = await supabase
+      .from('avoirs')
+      .select('id, montant, motif, created_at')
+      .eq('vente_id', detailVente.vente.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+    if (!avoir) return
+    const doc = genererFactureAvoir({
+      entreprise,
+      client: detailVente.vente?.clients,
+      vente: detailVente.vente,
+      lignes: detailVente.lignes,
+      motif: avoir.motif,
+      montant: avoir.montant,
+      date: avoir.created_at,
+      reference: avoir.id.slice(0, 8),
+    })
+    doc.save(`avoir-${avoir.id.slice(0, 8)}.pdf`)
   }
 
   async function partagerRecu() {
@@ -857,8 +906,11 @@ export default function Ventes() {
                 </div>
 
                 {detailVente.vente?.statut === 'annulee' ? (
-                  <div className="no-print border border-red-200 bg-red-50 rounded-lg p-3">
+                  <div className="no-print border border-red-200 bg-red-50 rounded-lg p-3 space-y-2">
                     <p className="text-sm font-medium text-red-700">Cette vente a été annulée (avoir émis, stock remis en magasin).</p>
+                    <button onClick={telechargerFactureAvoir} className="text-xs text-red-700 underline">
+                      📄 Télécharger la facture d'avoir
+                    </button>
                   </div>
                 ) : modeAnnulation ? (
                   <div className="no-print border border-red-200 bg-red-50 rounded-lg p-3 space-y-2">

@@ -195,6 +195,81 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
 }
 
 /**
+ * Génère une facture d'avoir (annulation de vente) — atteste le montant
+ * crédité au client et la remise en stock des articles. Visuellement
+ * distinct des reçus (bandeau rouge) pour ne jamais être confondu avec un
+ * document de paiement.
+ */
+export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, montant, date, reference }) {
+  const doc = new jsPDF()
+  const y0 = ecrireEnTeteEntreprise(doc, entreprise)
+  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
+
+  doc.setFillColor(253, 232, 232)
+  doc.setDrawColor(190, 50, 50)
+  doc.rect(14, y0, 182, 9, 'FD')
+  doc.setFontSize(9)
+  doc.setTextColor(150, 20, 20)
+  doc.text(`AVOIR${reference ? ' — ' + reference : ''}`, 105, y0 + 6, { align: 'center' })
+
+  doc.setTextColor(0)
+  doc.setFontSize(10)
+  const yInfo = y0 + 18
+  doc.text(`Client : ${client?.nom || '—'}`, 14, yInfo)
+  if (client?.telephone) doc.text(`Téléphone : ${client.telephone}`, 14, yInfo + 6)
+  doc.text(`Date : ${new Date(date).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
+  if (vente?.numero_vente) doc.text(`Réf. vente annulée : ${vente.numero_vente}`, 120, yInfo + 6)
+
+  let y = yInfo + 18
+  if (motif) {
+    doc.setFontSize(9)
+    doc.setTextColor(90)
+    doc.text(`Motif : ${motif}`, 14, y)
+    y += 8
+  }
+
+  if (lignes && lignes.length > 0) {
+    autoTable(doc, {
+      startY: y,
+      head: [['Produit', 'Qté', 'PU (F CFA)', 'Sous-total (F CFA)']],
+      body: lignes.map((l) => [
+        l.produits?.nom || '',
+        String(l.quantite),
+        formatMontantPDF(l.prix_unitaire),
+        formatMontantPDF(l.sous_total),
+      ]),
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [10, 31, 38] },
+      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' } },
+      margin: { left: 14, right: 14 },
+    })
+    y = doc.lastAutoTable.finalY + 12
+  }
+
+  doc.setFillColor(253, 245, 245)
+  doc.setDrawColor(220, 200, 200)
+  doc.rect(14, y, 182, 22, 'FD')
+  doc.setFontSize(10)
+  doc.setTextColor(90)
+  doc.text('Montant crédité au client', 22, y + 9)
+  doc.setFontSize(18)
+  doc.setTextColor(150, 20, 20)
+  doc.setFont(undefined, 'bold')
+  doc.text('- ' + formatMontant(montant), 22, y + 18)
+  doc.setFont(undefined, 'normal')
+
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text(
+    'Ce document atteste l\u2019annulation de la vente ci-dessus et la remise en stock des articles concernés.',
+    14, 278
+  )
+  doc.text('Il ne constitue pas une facture normalisée DGI (FNE).', 14, 283)
+
+  return doc
+}
+
+/**
  * Génère un reçu de paiement (encaissement sur une vente à crédit).
  */
 export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde, total, date, numero, venteNumero, receptionnePar }) {
