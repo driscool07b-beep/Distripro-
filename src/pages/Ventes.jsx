@@ -132,7 +132,7 @@ export default function Ventes() {
     const [{ data: vente }, { data: lignes }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
+        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, montant_ht, montant_tva, montant_autres_taxes, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
         .eq('id', venteId)
         .single(),
       supabase
@@ -925,6 +925,13 @@ export default function Ventes() {
                   <div className="text-xs text-petrol-500">
                     {Number(detailVente.vente?.remise_montant) > 0 && (
                       <p className="text-blue-600">{t('detail.remiseAppliquee', { montant: formatXOF(detailVente.vente.remise_montant) })}</p>
+                    )}
+                    {(Number(detailVente.vente?.montant_tva) > 0 || Number(detailVente.vente?.montant_autres_taxes) > 0) && (
+                      <>
+                        <p>Total HT : {formatXOF(detailVente.vente.montant_ht)}</p>
+                        {Number(detailVente.vente.montant_tva) > 0 && <p>TVA : {formatXOF(detailVente.vente.montant_tva)}</p>}
+                        {Number(detailVente.vente.montant_autres_taxes) > 0 && <p>Autres taxes : {formatXOF(detailVente.vente.montant_autres_taxes)}</p>}
+                      </>
                     )}
                     <p>{t('detail.modeDePaiement')} : <span className="capitalize">{detailVente.vente?.mode_paiement}</span></p>
                     <p>{t('detail.statut')} : <span className="capitalize">{detailVente.vente?.statut}</span></p>

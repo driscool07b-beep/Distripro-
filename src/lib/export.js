@@ -163,12 +163,19 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
 
   const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
   const corpsRecap = []
+  const sousTotalBrut = lignes.reduce((s, l) => s + Number(l.sous_total || 0), 0)
+  const aDesTaxes = Number(vente.montant_tva) > 0 || Number(vente.montant_autres_taxes) > 0
+
   if (Number(vente.remise_montant) > 0) {
-    const sousTotal = lignes.reduce((s, l) => s + Number(l.sous_total || 0), 0)
-    corpsRecap.push(['Sous-total', formatMontant(sousTotal)])
+    corpsRecap.push(['Sous-total', formatMontant(sousTotalBrut)])
     corpsRecap.push(['Remise', '- ' + formatMontant(vente.remise_montant)])
   }
-  corpsRecap.push(['Total', formatMontant(vente.total)])
+  if (aDesTaxes) {
+    corpsRecap.push(['Total HT', formatMontant(vente.montant_ht)])
+    if (Number(vente.montant_tva) > 0) corpsRecap.push(['TVA', formatMontant(vente.montant_tva)])
+    if (Number(vente.montant_autres_taxes) > 0) corpsRecap.push(['Autres taxes', formatMontant(vente.montant_autres_taxes)])
+  }
+  corpsRecap.push(['Total' + (aDesTaxes ? ' TTC' : ''), formatMontant(vente.total)])
   corpsRecap.push(['Mode de paiement', `${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}${vente.mode_reglement ? ' — ' + LIBELLES_MODE[vente.mode_reglement] : ''}`])
   corpsRecap.push(['Montant réglé', formatMontant(vente.montant_regle)])
   if (soldeDu > 0) corpsRecap.push(['Reste dû', formatMontant(soldeDu)])

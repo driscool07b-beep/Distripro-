@@ -83,7 +83,7 @@ export function AuthProvider({ children }) {
 
     const { data: entrepriseData, error: entrepriseError } = await supabase
       .from('entreprises')
-      .select('id, nom, plan, statut, photo_rapport_obligatoire, adresse, telephone, email, ncc, rccm, seuil_remise_pourcentage, justificatif_stock_obligatoire')
+      .select('id, nom, plan, statut, photo_rapport_obligatoire, adresse, telephone, email, ncc, rccm, seuil_remise_pourcentage, justificatif_stock_obligatoire, assujetti_tva')
       .eq('id', profilData.entreprise_id)
       .single()
 

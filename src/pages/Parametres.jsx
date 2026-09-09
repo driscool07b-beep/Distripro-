@@ -28,6 +28,12 @@ export default function Parametres() {
   const [enregistrementInfos, setEnregistrementInfos] = useState(false)
   const [erreurInfos, setErreurInfos] = useState('')
   const [confirmationInfos, setConfirmationInfos] = useState(false)
+  const [assujettiTva, setAssujettiTva] = useState(false)
+  const [enregistrementTva, setEnregistrementTva] = useState(false)
+  const [taxes, setTaxes] = useState([])
+  const [nouvelleTaxe, setNouvelleTaxe] = useState({ nom: '', taux: '', base_calcul: 'ttc' })
+  const [erreurTaxe, setErreurTaxe] = useState('')
+  const [ajoutTaxeEnvoi, setAjoutTaxeEnvoi] = useState(false)
 
   useEffect(() => {
     if (entreprise) {
@@ -40,6 +46,7 @@ export default function Parametres() {
       })
       setSeuilRemise(String(entreprise.seuil_remise_pourcentage ?? 15))
       setJustificatifObligatoire(entreprise.justificatif_stock_obligatoire ?? true)
+      setAssujettiTva(entreprise.assujetti_tva ?? false)
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -62,6 +69,7 @@ export default function Parametres() {
     if (profil?.role === 'admin') {
       chargerChamps()
       chargerConcurrents()
+      chargerTaxes()
     }
     if (['admin', 'manager'].includes(profil?.role)) {
       chargerCaisses()
@@ -71,6 +79,54 @@ export default function Parametres() {
   async function chargerCaisses() {
     const { data } = await supabase.from('caisses').select('id, nom, actif').order('created_at')
     setCaisses(data || [])
+  }
+
+  async function basculerAssujettiTva(valeur) {
+    setEnregistrementTva(true)
+    const { error } = await supabase.rpc('configurer_assujettissement_tva', { p_assujetti: valeur })
+    setEnregistrementTva(false)
+    if (!error) {
+      setAssujettiTva(valeur)
+      rechargerProfil?.()
+    }
+  }
+
+  async function chargerTaxes() {
+    const { data } = await supabase.from('taxes_entreprise').select('id, nom, taux, base_calcul, actif').order('created_at')
+    setTaxes(data || [])
+  }
+
+  async function ajouterTaxe(e) {
+    e.preventDefault()
+    setErreurTaxe('')
+    if (!nouvelleTaxe.nom.trim() || !nouvelleTaxe.taux) {
+      setErreurTaxe('Le nom et le taux sont requis.')
+      return
+    }
+    setAjoutTaxeEnvoi(true)
+    const { error } = await supabase.rpc('creer_taxe_entreprise', {
+      p_nom: nouvelleTaxe.nom.trim(),
+      p_taux: Number(nouvelleTaxe.taux),
+      p_base_calcul: nouvelleTaxe.base_calcul,
+    })
+    setAjoutTaxeEnvoi(false)
+    if (error) {
+      setErreurTaxe(`Erreur : ${traduireErreur(error.message)}`)
+      return
+    }
+    setNouvelleTaxe({ nom: '', taux: '', base_calcul: 'ttc' })
+    chargerTaxes()
+  }
+
+  async function basculerActifTaxe(taxe) {
+    await supabase.rpc('modifier_taxe_entreprise', {
+      p_taxe_id: taxe.id,
+      p_nom: taxe.nom,
+      p_taux: taxe.taux,
+      p_base_calcul: taxe.base_calcul,
+      p_actif: !taxe.actif,
+    })
+    chargerTaxes()
   }
 
   async function ajouterCaisse() {
@@ -408,6 +464,91 @@ export default function Parametres() {
             Exiger un justificatif (photo/PDF) pour tout ajustement manuel de stock
           </label>
           {confirmationJustificatif && <p className="text-xs text-green-600 mt-2">Enregistré.</p>}
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">Facturation & taxes</h2>
+          <p className="text-xs text-petrol-500 mb-3">
+            À vérifier avec ton comptable avant de t'appuyer sur ces calculs pour de vraies factures.
+          </p>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={assujettiTva}
+              disabled={enregistrementTva}
+              onChange={(e) => basculerAssujettiTva(e.target.checked)}
+            />
+            Mon entreprise facture la TVA (régime réel normal ou simplifié)
+          </label>
+          <p className="text-xs text-petrol-500 mt-1 mb-4">
+            Une fois activé, chaque produit doit être configuré individuellement (TVA applicable ou non, et à quel
+            taux) depuis la page Stock — le taux varie souvent selon la nature de la marchandise.
+          </p>
+
+          {assujettiTva && (
+            <>
+              <h3 className="text-sm font-medium mb-2">Autres taxes (ex. AIRSI)</h3>
+              <div className="space-y-2 mb-3">
+                {taxes.length === 0 ? (
+                  <p className="text-xs text-petrol-500">Aucune autre taxe configurée.</p>
+                ) : (
+                  taxes.map((t) => (
+                    <div key={t.id} className="flex items-center justify-between border border-line rounded-lg px-3 py-2 text-sm">
+                      <div>
+                        <span className={t.actif ? '' : 'text-petrol-400 line-through'}>{t.nom} — {t.taux}%</span>
+                        <span className="text-xs text-petrol-500 ml-2">
+                          (sur {t.base_calcul === 'ht' ? 'le montant HT' : 'le montant + TVA'})
+                        </span>
+                      </div>
+                      <button type="button" onClick={() => basculerActifTaxe(t)} className="text-xs text-petrol-600 underline">
+                        {t.actif ? 'Désactiver' : 'Activer'}
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+              <form onSubmit={ajouterTaxe} className="grid grid-cols-3 gap-2 items-end">
+                <div>
+                  <label className="label">Nom</label>
+                  <input
+                    className="input-field text-sm"
+                    value={nouvelleTaxe.nom}
+                    onChange={(e) => setNouvelleTaxe({ ...nouvelleTaxe, nom: e.target.value })}
+                    placeholder="Ex. AIRSI"
+                  />
+                </div>
+                <div>
+                  <label className="label">Taux (%)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="input-field text-sm"
+                    value={nouvelleTaxe.taux}
+                    onChange={(e) => setNouvelleTaxe({ ...nouvelleTaxe, taux: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="label">Calculée sur</label>
+                  <select
+                    className="input-field text-sm"
+                    value={nouvelleTaxe.base_calcul}
+                    onChange={(e) => setNouvelleTaxe({ ...nouvelleTaxe, base_calcul: e.target.value })}
+                  >
+                    <option value="ttc">Montant + TVA</option>
+                    <option value="ht">Montant HT</option>
+                  </select>
+                </div>
+                <div className="col-span-3">
+                  <button type="submit" disabled={ajoutTaxeEnvoi} className="btn-secondary text-sm">
+                    {ajoutTaxeEnvoi ? '…' : '+ Ajouter cette taxe'}
+                  </button>
+                </div>
+              </form>
+              {erreurTaxe && <p className="text-xs text-red-600 mt-2">{erreurTaxe}</p>}
+            </>
+          )}
         </div>
       )}
 

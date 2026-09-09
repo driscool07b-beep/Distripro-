@@ -7,7 +7,7 @@ import { exporterExcel, exporterPDF, formatMontantPDF } from '../lib/export'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 
-const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
+const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '' }
 
 export default function Stock() {
   const { t } = useTranslation('stock')
@@ -72,7 +72,7 @@ export default function Stock() {
     setChargement(true)
     const { data, error } = await supabase
       .from('produits')
-      .select('id, nom, categorie, prix_vente, seuil_alerte, created_at, stocks(quantite, depot_id)')
+      .select('id, nom, categorie, prix_vente, seuil_alerte, created_at, tva_applicable, taux_tva, stocks(quantite, depot_id)')
       .order('created_at', { ascending: false })
     if (!error) {
       setProduits(
@@ -103,6 +103,10 @@ export default function Stock() {
       setErreur(t('formProduit.erreurNomPrix'))
       return
     }
+    if (formulaire.tva_applicable && !formulaire.taux_tva) {
+      setErreur('Indiquez le taux de TVA.')
+      return
+    }
     setEnregistrement(true)
 
     let error
@@ -113,6 +117,8 @@ export default function Stock() {
         p_categorie: formulaire.categorie.trim() || null,
         p_prix_vente: Number(formulaire.prix_vente),
         p_seuil_alerte: Number(formulaire.seuil_alerte || 0),
+        p_tva_applicable: formulaire.tva_applicable,
+        p_taux_tva: formulaire.tva_applicable ? Number(formulaire.taux_tva) : null,
       })
       error = resultat.error
     } else {
@@ -122,6 +128,8 @@ export default function Stock() {
         p_prix_vente: Number(formulaire.prix_vente),
         p_seuil_alerte: Number(formulaire.seuil_alerte || 0),
         p_quantite_initiale: Number(formulaire.quantite_initiale || 0),
+        p_tva_applicable: formulaire.tva_applicable,
+        p_taux_tva: formulaire.tva_applicable ? Number(formulaire.taux_tva) : null,
       })
       error = resultat.error
     }
@@ -146,6 +154,8 @@ export default function Stock() {
       prix_vente: String(produit.prix_vente || ''),
       seuil_alerte: String(produit.seuil_alerte ?? '10'),
       quantite_initiale: '0',
+      tva_applicable: produit.tva_applicable || false,
+      taux_tva: produit.taux_tva != null ? String(produit.taux_tva) : '',
     })
     setErreur('')
     setModalProduit(true)
@@ -691,6 +701,32 @@ export default function Stock() {
                     value={formulaire.quantite_initiale}
                     onChange={(e) => setFormulaire({ ...formulaire, quantite_initiale: e.target.value })}
                   />
+                </div>
+              )}
+
+              {entreprise?.assujetti_tva && (
+                <div className="border border-line rounded-lg p-3">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={formulaire.tva_applicable}
+                      onChange={(e) => setFormulaire({ ...formulaire, tva_applicable: e.target.checked })}
+                    />
+                    Ce produit est soumis à la TVA
+                  </label>
+                  {formulaire.tva_applicable && (
+                    <div className="mt-2">
+                      <label className="label">Taux de TVA (%)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="input-field font-mono"
+                        value={formulaire.taux_tva}
+                        onChange={(e) => setFormulaire({ ...formulaire, taux_tva: e.target.value })}
+                        placeholder="Ex. 18"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
