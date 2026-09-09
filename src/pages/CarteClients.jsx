@@ -100,7 +100,7 @@ export default function CarteClients() {
           Aucun client n'a de position GPS enregistrée pour le moment.
         </p>
       ) : (
-        <div className="rounded-lg overflow-hidden border border-line" style={{ height: '70vh' }}>
+        <div className="rounded-lg overflow-hidden border border-line relative isolate" style={{ height: '70vh', zIndex: 0 }}>
           <MapContainer center={CENTRE_CI} zoom={7} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
