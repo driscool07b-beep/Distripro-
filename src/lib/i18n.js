@@ -10,6 +10,10 @@ import dashboardFr from '../locales/fr/dashboard.json'
 import dashboardEn from '../locales/en/dashboard.json'
 import dashboardAr from '../locales/ar/dashboard.json'
 import dashboardZh from '../locales/zh/dashboard.json'
+import ventesFr from '../locales/fr/ventes.json'
+import ventesEn from '../locales/en/ventes.json'
+import ventesAr from '../locales/ar/ventes.json'
+import ventesZh from '../locales/zh/ventes.json'
 
 // Langues dont le contenu est réellement traduit. L'arabe et le chinois
 // sont préparés dans la structure (RTL, sélecteur) mais leur contenu
@@ -32,14 +36,14 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      fr: { commun: communFr, dashboard: dashboardFr },
-      en: { commun: communEn, dashboard: dashboardEn },
-      ar: { commun: communAr, dashboard: dashboardAr },
-      zh: { commun: communZh, dashboard: dashboardZh },
+      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr },
+      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn },
+      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr },
+      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh },
     },
     fallbackLng: 'fr',
     supportedLngs: LANGUES.map((l) => l.code),
-    ns: ['commun', 'dashboard'],
+    ns: ['commun', 'dashboard', 'ventes'],
     defaultNS: 'commun',
     interpolation: { escapeValue: false }, // React échappe déjà par défaut
     detection: {
