@@ -26,7 +26,12 @@ export default function Stock() {
   const [resultatImport, setResultatImport] = useState(null)
   const [modalMouvement, setModalMouvement] = useState(null) // produit sélectionné
   const [modalTransfert, setModalTransfert] = useState(null) // produit sélectionné
-  const [depots, setDepots] = useState([])
+  const [depots, setDepots] = useState([]) // dépôts sur lesquels l'utilisateur est habilité (source des mouvements)
+  const [tousLesDepots, setTousLesDepots] = useState([]) // tous les dépôts actifs de l'entreprise (choix d'une destination)
+  const [transfertsEnAttente, setTransfertsEnAttente] = useState([])
+  const [modalReception, setModalReception] = useState(null) // transfert sélectionné
+  const [reception, setReception] = useState({ quantite_recue: '', note: '' })
+  const [fichierJustificatifReception, setFichierJustificatifReception] = useState(null)
   const [fichierJustificatif, setFichierJustificatif] = useState(null)
   const [fichierJustificatifTransfert, setFichierJustificatifTransfert] = useState(null)
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
@@ -39,6 +44,26 @@ export default function Stock() {
     chargerProduits()
     chargerDepots()
   }, [profil?.id])
+
+  useEffect(() => {
+    if (depots.length > 0) chargerTransfertsEnAttente()
+  }, [depots])
+
+  async function chargerTransfertsEnAttente() {
+    const { data } = await supabase
+      .from('transferts_stock')
+      .select(`
+        id, quantite_envoyee, motif, envoye_at,
+        produit:produits(nom),
+        depot_source:depots!transferts_stock_depot_source_id_fkey(nom),
+        depot_destination:depots!transferts_stock_depot_destination_id_fkey(nom, id),
+        envoye_par_profil:profils!envoye_par(nom)
+      `)
+      .eq('statut', 'en_transit')
+      .in('depot_destination_id', depots.map((d) => d.id))
+      .order('envoye_at', { ascending: true })
+    setTransfertsEnAttente(data || [])
+  }
 
   async function chargerProduits() {
     setChargement(true)
@@ -58,12 +83,13 @@ export default function Stock() {
   }
 
   async function chargerDepots() {
+    const { data: actifs } = await supabase.from('depots').select('id, nom').eq('actif', true).order('nom')
+    setTousLesDepots(actifs || [])
     if (profil?.role === 'gestionnaire_stock') {
       const { data } = await supabase.from('gestionnaire_depots').select('depot:depots(id, nom)').eq('profil_id', profil.id)
       setDepots((data || []).map((d) => d.depot).filter(Boolean))
     } else {
-      const { data } = await supabase.from('depots').select('id, nom').eq('actif', true).order('nom')
-      setDepots(data || [])
+      setDepots(actifs || [])
     }
   }
 
@@ -325,7 +351,7 @@ export default function Stock() {
       return
     }
     setEnregistrement(true)
-    const { data: mouvementIds, error } = await supabase.rpc('transferer_stock', {
+    const { data: resultat, error } = await supabase.rpc('transferer_stock', {
       p_produit_id: modalTransfert.id,
       p_depot_source_id: transfert.depot_source_id,
       p_depot_destination_id: transfert.depot_destination_id,
@@ -342,25 +368,22 @@ export default function Stock() {
       return
     }
 
-    if (fichierJustificatifTransfert && mouvementIds) {
+    if (fichierJustificatifTransfert && resultat?.mouvement_sortie_id) {
       const extension = fichierJustificatifTransfert.name.split('.').pop()
-      // Même justificatif joint aux deux mouvements générés (sortie + entrée),
-      // puisqu'un seul document (bordereau de transfert) couvre l'opération.
-      for (const idMouvement of [mouvementIds.mouvement_sortie_id, mouvementIds.mouvement_entree_id]) {
-        const chemin = `${entreprise.id}/mouvements-stock/${idMouvement}.${extension}`
-        const { error: erreurUpload } = await supabase.storage
-          .from('justificatifs-stock')
-          .upload(chemin, fichierJustificatifTransfert, { upsert: true })
-        if (!erreurUpload) {
-          await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: idMouvement, p_chemin: chemin })
-        } else {
-          console.error('Erreur upload justificatif transfert:', erreurUpload)
-        }
+      const chemin = `${entreprise.id}/mouvements-stock/${resultat.mouvement_sortie_id}.${extension}`
+      const { error: erreurUpload } = await supabase.storage
+        .from('justificatifs-stock')
+        .upload(chemin, fichierJustificatifTransfert, { upsert: true })
+      if (!erreurUpload) {
+        await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: resultat.mouvement_sortie_id, p_chemin: chemin })
+      } else {
+        console.error('Erreur upload justificatif transfert:', erreurUpload)
       }
     }
 
     setEnregistrement(false)
     chargerProduits()
+    chargerTransfertsEnAttente()
     fermerModalTransfert()
   }
 
@@ -369,6 +392,63 @@ export default function Stock() {
     setTransfert({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
     setFichierJustificatifTransfert(null)
     setErreur('')
+  }
+
+  function ouvrirModalReception(t) {
+    setModalReception(t)
+    setReception({ quantite_recue: String(t.quantite_envoyee), note: '' })
+    setFichierJustificatifReception(null)
+    setErreur('')
+  }
+
+  function fermerModalReception() {
+    setModalReception(null)
+    setReception({ quantite_recue: '', note: '' })
+    setFichierJustificatifReception(null)
+    setErreur('')
+  }
+
+  async function enregistrerReception(e) {
+    e.preventDefault()
+    setErreur('')
+    const qte = Number(reception.quantite_recue)
+    if (reception.quantite_recue === '' || Number.isNaN(qte) || qte < 0) {
+      setErreur('Indiquez la quantité réellement reçue (0 si rien n\u2019est arrivé).')
+      return
+    }
+    if (entreprise?.justificatif_stock_obligatoire && !fichierJustificatifReception) {
+      setErreur('Un justificatif (photo ou PDF) est obligatoire pour valider une réception.')
+      return
+    }
+    setEnregistrement(true)
+    const { data: mouvementEntreeId, error } = await supabase.rpc('receptionner_transfert', {
+      p_transfert_id: modalReception.id,
+      p_quantite_recue: qte,
+      p_note: reception.note.trim() || null,
+    })
+    if (error) {
+      setEnregistrement(false)
+      setErreur(`Erreur : ${error.message}`)
+      return
+    }
+
+    if (fichierJustificatifReception && mouvementEntreeId) {
+      const extension = fichierJustificatifReception.name.split('.').pop()
+      const chemin = `${entreprise.id}/mouvements-stock/${mouvementEntreeId}.${extension}`
+      const { error: erreurUpload } = await supabase.storage
+        .from('justificatifs-stock')
+        .upload(chemin, fichierJustificatifReception, { upsert: true })
+      if (!erreurUpload) {
+        await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: mouvementEntreeId, p_chemin: chemin })
+      } else {
+        console.error('Erreur upload justificatif réception:', erreurUpload)
+      }
+    }
+
+    setEnregistrement(false)
+    chargerProduits()
+    chargerTransfertsEnAttente()
+    fermerModalReception()
   }
 
   const produitsFiltres = produits
@@ -441,6 +521,30 @@ export default function Stock() {
         </div>
       </header>
 
+      {transfertsEnAttente.length > 0 && (
+        <div className="card p-4 mb-4 border-amber-200 bg-amber-50">
+          <p className="text-sm font-semibold text-amber-800 mb-2">
+            📦 {transfertsEnAttente.length} transfert(s) en attente de réception
+          </p>
+          <div className="space-y-2">
+            {transfertsEnAttente.map((t) => (
+              <div key={t.id} className="flex items-center justify-between bg-white rounded-lg border border-amber-200 px-3 py-2 text-sm gap-2">
+                <div>
+                  <p className="font-medium">{t.produit?.nom} — {t.quantite_envoyee} unité(s)</p>
+                  <p className="text-xs text-petrol-500">
+                    {t.depot_source?.nom} → {t.depot_destination?.nom} · envoyé par {t.envoye_par_profil?.nom || '—'} le{' '}
+                    {new Date(t.envoye_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                  </p>
+                </div>
+                <button className="btn-primary text-xs shrink-0" onClick={() => ouvrirModalReception(t)}>
+                  Réceptionner
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <input
         type="text"
         placeholder="Rechercher un produit…"
@@ -505,7 +609,7 @@ export default function Stock() {
                           >
                             Ajuster le stock
                           </button>
-                          {depots.length > 1 && (
+                          {tousLesDepots.length > 1 && depots.length > 0 && (
                             <button
                               className="text-xs font-medium text-petrol-700 hover:text-amber-600"
                               onClick={() => ouvrirModalTransfert(p)}
@@ -745,10 +849,13 @@ export default function Stock() {
                   onChange={(e) => setTransfert({ ...transfert, depot_destination_id: e.target.value })}
                 >
                   <option value="">Sélectionner…</option>
-                  {depots
+                  {tousLesDepots
                     .filter((d) => d.id !== transfert.depot_source_id)
                     .map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
                 </select>
+                <p className="text-xs text-petrol-500 mt-1">
+                  Le stock du dépôt destination ne sera crédité qu'après validation de la réception par son responsable.
+                </p>
               </div>
               <div>
                 <label className="label">Quantité</label>
@@ -790,7 +897,72 @@ export default function Stock() {
                   Annuler
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? 'Enregistrement…' : 'Transférer'}
+                  {enregistrement ? 'Enregistrement…' : 'Envoyer'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {modalReception && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h2 className="font-semibold text-lg mb-1">Réceptionner le transfert</h2>
+            <p className="text-sm text-petrol-600 mb-4">
+              {modalReception.produit?.nom} — {modalReception.depot_source?.nom} → {modalReception.depot_destination?.nom}
+              <br />
+              Quantité envoyée : <span className="font-mono">{modalReception.quantite_envoyee}</span>
+            </p>
+            <form onSubmit={enregistrerReception} className="space-y-3">
+              <div>
+                <label className="label">Quantité réellement reçue (après contrôle) *</label>
+                <input
+                  type="number"
+                  min="0"
+                  className="input-field font-mono"
+                  value={reception.quantite_recue}
+                  onChange={(e) => setReception({ ...reception, quantite_recue: e.target.value })}
+                  autoFocus
+                />
+                {Number(reception.quantite_recue) !== modalReception.quantite_envoyee && reception.quantite_recue !== '' && (
+                  <p className="text-xs text-amber-700 mt-1">
+                    ⚠️ Écart avec la quantité envoyée ({modalReception.quantite_envoyee}) — l'écart sera tracé dans le journal.
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="label">Note (optionnel)</label>
+                <input
+                  className="input-field"
+                  value={reception.note}
+                  onChange={(e) => setReception({ ...reception, note: e.target.value })}
+                  placeholder="Raison de l'écart, état de la marchandise…"
+                />
+              </div>
+              <div>
+                <label className="label">
+                  Justificatif (photo ou PDF){entreprise?.justificatif_stock_obligatoire ? ' *' : ' (optionnel)'}
+                </label>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={(e) => setFichierJustificatifReception(e.target.files?.[0] || null)}
+                  className="input-field"
+                />
+                <p className="text-xs text-petrol-500 mt-1">
+                  {entreprise?.justificatif_stock_obligatoire ? 'Obligatoire' : 'Facultatif'} — photo de la marchandise reçue, bon signé…
+                </p>
+              </div>
+
+              {erreur && <div className="text-sm text-red-600">{erreur}</div>}
+
+              <div className="flex gap-2 pt-2">
+                <button type="button" className="btn-secondary flex-1" onClick={fermerModalReception}>
+                  Annuler
+                </button>
+                <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
+                  {enregistrement ? 'Enregistrement…' : 'Valider la réception'}
                 </button>
               </div>
             </form>
