@@ -1,0 +1,63 @@
+{
+  "menu": {
+    "tableauDeBord": "Tableau de bord",
+    "clients": "Clients",
+    "groupesClients": "Groupes de clients",
+    "carteClients": "Carte des clients",
+    "produitsStock": "Produits & Stock",
+    "magasinsStockage": "Magasins de stockage",
+    "journalStock": "Journal de stock",
+    "ventes": "Ventes",
+    "commandes": "Commandes",
+    "tournees": "Tournées",
+    "rapportsVisite": "Rapports de visite",
+    "creances": "Créances",
+    "localiserProduit": "Localiser un produit",
+    "versements": "Versements",
+    "mesVersements": "Mes versements",
+    "equipe": "Équipe",
+    "parametres": "Paramètres",
+    "deconnexion": "Se déconnecter"
+  },
+  "actions": {
+    "annuler": "Annuler",
+    "valider": "Valider",
+    "enregistrer": "Enregistrer",
+    "enregistrement": "Enregistrement…",
+    "modifier": "Modifier",
+    "supprimer": "Supprimer",
+    "fermer": "Fermer",
+    "retour": "Retour",
+    "reessayer": "Réessayer",
+    "rechercher": "Rechercher…",
+    "telecharger": "Télécharger",
+    "imprimer": "Imprimer",
+    "partager": "Partager",
+    "ajouter": "Ajouter",
+    "confirmer": "Confirmer"
+  },
+  "commun": {
+    "chargement": "Chargement…",
+    "chargementProfil": "Chargement du profil…",
+    "aucunResultat": "Aucun résultat.",
+    "erreur": "Erreur",
+    "erreurInconnue": "Erreur inconnue.",
+    "champObligatoire": "Ce champ est requis.",
+    "total": "Total",
+    "date": "Date",
+    "statut": "Statut",
+    "client": "Client",
+    "produit": "Produit",
+    "quantite": "Quantité",
+    "montant": "Montant",
+    "oui": "Oui",
+    "non": "Non"
+  },
+  "langue": {
+    "selectionner": "Langue",
+    "fr": "Français",
+    "en": "Anglais",
+    "ar": "Arabe",
+    "zh": "Chinois"
+  }
+}

@@ -1,4 +1,7 @@
+import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Routes, Route } from 'react-router-dom'
+import { direction } from './lib/i18n'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
@@ -29,6 +32,13 @@ import CarteClients from './pages/CarteClients'
 import MesVersements from './pages/MesVersements'
 
 export default function App() {
+  const { i18n } = useTranslation()
+
+  useEffect(() => {
+    document.documentElement.dir = direction(i18n.language)
+    document.documentElement.lang = i18n.language
+  }, [i18n.language])
+
   return (
     <Routes>
       <Route path="/connexion" element={<Login />} />

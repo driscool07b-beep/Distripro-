@@ -1,0 +1,63 @@
+{
+  "menu": {
+    "tableauDeBord": "Dashboard",
+    "clients": "Clients",
+    "groupesClients": "Client Groups",
+    "carteClients": "Client Map",
+    "produitsStock": "Products & Stock",
+    "magasinsStockage": "Warehouses",
+    "journalStock": "Stock Log",
+    "ventes": "Sales",
+    "commandes": "Orders",
+    "tournees": "Routes",
+    "rapportsVisite": "Visit Reports",
+    "creances": "Receivables",
+    "localiserProduit": "Locate a Product",
+    "versements": "Deposits",
+    "mesVersements": "My Deposits",
+    "equipe": "Team",
+    "parametres": "Settings",
+    "deconnexion": "Sign out"
+  },
+  "actions": {
+    "annuler": "Cancel",
+    "valider": "Confirm",
+    "enregistrer": "Save",
+    "enregistrement": "Saving…",
+    "modifier": "Edit",
+    "supprimer": "Delete",
+    "fermer": "Close",
+    "retour": "Back",
+    "reessayer": "Retry",
+    "rechercher": "Search…",
+    "telecharger": "Download",
+    "imprimer": "Print",
+    "partager": "Share",
+    "ajouter": "Add",
+    "confirmer": "Confirm"
+  },
+  "commun": {
+    "chargement": "Loading…",
+    "chargementProfil": "Loading profile…",
+    "aucunResultat": "No results.",
+    "erreur": "Error",
+    "erreurInconnue": "Unknown error.",
+    "champObligatoire": "This field is required.",
+    "total": "Total",
+    "date": "Date",
+    "statut": "Status",
+    "client": "Client",
+    "produit": "Product",
+    "quantite": "Quantity",
+    "montant": "Amount",
+    "oui": "Yes",
+    "non": "No"
+  },
+  "langue": {
+    "selectionner": "Language",
+    "fr": "French",
+    "en": "English",
+    "ar": "Arabic",
+    "zh": "Chinese"
+  }
+}
