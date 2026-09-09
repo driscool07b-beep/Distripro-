@@ -1,0 +1,89 @@
+{
+  "erreur": "Error",
+  "titre": "Orders",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "nouvelleCommande": "+ New order",
+  "accesRefuse": "This page isn't accessible for your role.",
+  "chargementCommandes": "Loading orders…",
+
+  "statuts": {
+    "brouillon": "Draft",
+    "confirmee": "Confirmed",
+    "en_preparation": "In preparation",
+    "livree": "Delivered",
+    "annulee": "Cancelled",
+    "toutes": "All"
+  },
+
+  "recap": {
+    "titre": "📦 Pending orders summary — {{unites}} unit(s), {{valeur}}",
+    "produit": "Product",
+    "quantite": "Quantity",
+    "valeurEstimee": "Estimated value"
+  },
+
+  "liste": {
+    "articles": "{{n}} item(s)",
+    "aucuneCommande": "No orders.",
+    "aucuneCommandeStatut": "No orders with status \"{{statut}}\"."
+  },
+
+  "form": {
+    "titre": "New order",
+    "client": "Client",
+    "rechercherClient": "Search a client…",
+    "commercial": "Sales rep (optional)",
+    "aucun": "— None —",
+    "depotLivraison": "Delivery warehouse",
+    "articles": "Items",
+    "produitPlaceholder": "— Product —",
+    "ajouterArticle": "+ Add an item",
+    "modePaiement": "Payment method",
+    "cash": "Cash",
+    "credit": "Credit",
+    "acompteVerse": "Deposit paid (optional)",
+    "dateLivraison": "Requested delivery date",
+    "notes": "Notes",
+    "positionCapturee": "📍 Order-taking position captured.",
+    "positionIndisponible": "⚠️ Position unavailable.",
+    "capture": "Capturing…",
+    "recapturerPosition": "Recapture my position",
+    "total": "Total",
+    "annuler": "Cancel",
+    "enregistrement": "Saving…",
+    "creerCommande": "Create order",
+    "erreurSelectionnerClient": "Select a client.",
+    "erreurArticleValide": "Add at least one valid item."
+  },
+
+  "detail": {
+    "chargement": "Loading…",
+    "commercial": "Sales rep",
+    "livraisonSouhaitee": "Requested delivery: {{date}}",
+    "bonCommandeClient": "Client's purchase order (supporting document)",
+    "referencePlaceholder": "Purchase order reference (e.g. PO-4521)",
+    "voirDocument": "📎 View attached document",
+    "aucunDocument": "No document attached yet.",
+    "erreurEnvoi": "Upload error",
+    "erreurEnregistrement": "Save error",
+    "envoiEnCours": "Uploading…",
+    "produit": "Product",
+    "commande": "Ordered",
+    "livre": "Delivered",
+    "quantitesLivrees": "Delivered quantities (partial delivery possible)",
+    "cmdAbrege": "ord.",
+    "montantSupplementaire": "Additional amount collected",
+    "modeDePaiement": "Payment method",
+    "facturePropforma": "📄 Proforma invoice",
+    "confirmer": "Confirm",
+    "demarrerPreparation": "Start preparation",
+    "enregistrerLivraison": "Record delivery",
+    "envoi": "Sending…",
+    "validerLivraison": "Confirm delivery",
+    "annulerCommande": "Cancel order",
+    "historique": "History",
+    "par": "by",
+    "impossibleChargerDetail": "Unable to load details."
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "erreur": "Erreur",
+  "titre": "Commandes",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "nouvelleCommande": "+ Nouvelle commande",
+  "accesRefuse": "Cette page n'est pas accessible pour votre rôle.",
+  "chargementCommandes": "Chargement des commandes…",
+
+  "statuts": {
+    "brouillon": "Brouillon",
+    "confirmee": "Confirmée",
+    "en_preparation": "En préparation",
+    "livree": "Livrée",
+    "annulee": "Annulée",
+    "toutes": "Toutes"
+  },
+
+  "recap": {
+    "titre": "📦 Récap commandes en cours — {{unites}} unité(s), {{valeur}}",
+    "produit": "Produit",
+    "quantite": "Quantité",
+    "valeurEstimee": "Valeur estimée"
+  },
+
+  "liste": {
+    "articles": "{{n}} article(s)",
+    "aucuneCommande": "Aucune commande.",
+    "aucuneCommandeStatut": "Aucune commande au statut \"{{statut}}\"."
+  },
+
+  "form": {
+    "titre": "Nouvelle commande",
+    "client": "Client",
+    "rechercherClient": "Rechercher un client…",
+    "commercial": "Commercial (optionnel)",
+    "aucun": "— Aucun —",
+    "depotLivraison": "Dépôt de livraison",
+    "articles": "Articles",
+    "produitPlaceholder": "— Produit —",
+    "ajouterArticle": "+ Ajouter un article",
+    "modePaiement": "Mode de paiement",
+    "cash": "Cash",
+    "credit": "Crédit",
+    "acompteVerse": "Acompte versé (optionnel)",
+    "dateLivraison": "Date de livraison souhaitée",
+    "notes": "Notes",
+    "positionCapturee": "📍 Position de prise de commande capturée.",
+    "positionIndisponible": "⚠️ Position indisponible.",
+    "capture": "Capture…",
+    "recapturerPosition": "Recapturer ma position",
+    "total": "Total",
+    "annuler": "Annuler",
+    "enregistrement": "Enregistrement…",
+    "creerCommande": "Créer la commande",
+    "erreurSelectionnerClient": "Sélectionnez un client.",
+    "erreurArticleValide": "Ajoutez au moins un article valide."
+  },
+
+  "detail": {
+    "chargement": "Chargement…",
+    "commercial": "Commercial",
+    "livraisonSouhaitee": "Livraison souhaitée : {{date}}",
+    "bonCommandeClient": "Bon de commande du client (justificatif)",
+    "referencePlaceholder": "Référence du bon de commande (ex. BC-4521)",
+    "voirDocument": "📎 Voir le document joint",
+    "aucunDocument": "Aucun document joint pour le moment.",
+    "erreurEnvoi": "Erreur envoi",
+    "erreurEnregistrement": "Erreur enregistrement",
+    "envoiEnCours": "Envoi en cours…",
+    "produit": "Produit",
+    "commande": "Commandé",
+    "livre": "Livré",
+    "quantitesLivrees": "Quantités livrées (rupture possible)",
+    "cmdAbrege": "cmd.",
+    "montantSupplementaire": "Montant supplémentaire encaissé",
+    "modeDePaiement": "Mode de paiement",
+    "facturePropforma": "📄 Facture proforma",
+    "confirmer": "Confirmer",
+    "demarrerPreparation": "Démarrer la préparation",
+    "enregistrerLivraison": "Enregistrer la livraison",
+    "envoi": "Envoi…",
+    "validerLivraison": "Valider la livraison",
+    "annulerCommande": "Annuler la commande",
+    "historique": "Historique",
+    "par": "par",
+    "impossibleChargerDetail": "Impossible de charger le détail."
+  }
+}

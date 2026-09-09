@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
@@ -6,12 +7,14 @@ import { exporterExcel, exporterPDF, genererFactureProforma } from '../lib/expor
 import SelectRecherche from '../components/SelectRecherche'
 import { traduireErreur } from '../lib/erreurs'
 
-const LIBELLES_STATUT = {
-  brouillon: 'Brouillon',
-  confirmee: 'Confirmée',
-  en_preparation: 'En préparation',
-  livree: 'Livrée',
-  annulee: 'Annulée',
+function libellesStatut(t) {
+  return {
+    brouillon: t('statuts.brouillon'),
+    confirmee: t('statuts.confirmee'),
+    en_preparation: t('statuts.en_preparation'),
+    livree: t('statuts.livree'),
+    annulee: t('statuts.annulee'),
+  }
 }
 
 const COULEURS_STATUT = {
@@ -25,7 +28,9 @@ const COULEURS_STATUT = {
 const LIGNE_VIDE = { produit_id: '', quantite: 1, prix_unitaire: 0 }
 
 export default function Commandes() {
+  const { t } = useTranslation('commandes')
   const { entreprise, profil } = useAuth()
+  const LIBELLES_STATUT = libellesStatut(t)
   const [commandes, setCommandes] = useState([])
   const [clients, setClients] = useState([])
   const [produits, setProduits] = useState([])
@@ -182,12 +187,12 @@ export default function Commandes() {
     e.preventDefault()
     setErreur('')
     if (!clientId) {
-      setErreur('Sélectionnez un client.')
+      setErreur(t('form.erreurSelectionnerClient'))
       return
     }
     const lignesValides = lignes.filter((l) => l.produit_id && Number(l.quantite) > 0)
     if (lignesValides.length === 0) {
-      setErreur('Ajoutez au moins un article valide.')
+      setErreur(t('form.erreurArticleValide'))
       return
     }
     setEnregistrement(true)
@@ -209,7 +214,7 @@ export default function Commandes() {
     })
     setEnregistrement(false)
     if (error) {
-      setErreur(`Erreur : ${traduireErreur(error.message)}`)
+      setErreur(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setModalOuvert(false)
@@ -267,7 +272,7 @@ export default function Commandes() {
       .from('commandes')
       .update({ bon_commande_client_reference: refBonCommande.trim() || null })
       .eq('id', commandeOuverte)
-    if (error) setErreurBonCommande(`Erreur : ${traduireErreur(error.message)}`)
+    if (error) setErreurBonCommande(`${t('erreur')} : ${traduireErreur(error.message)}`)
   }
 
   async function envoyerBonCommande(e) {
@@ -285,7 +290,7 @@ export default function Commandes() {
 
     if (erreurUpload) {
       setEnvoiBonCommande(false)
-      setErreurBonCommande(`Erreur envoi : ${erreurUpload.message}`)
+      setErreurBonCommande(`${t('detail.erreurEnvoi')} : ${erreurUpload.message}`)
       return
     }
 
@@ -296,7 +301,7 @@ export default function Commandes() {
 
     setEnvoiBonCommande(false)
     if (erreurMaj) {
-      setErreurBonCommande(`Erreur enregistrement : ${erreurMaj.message}`)
+      setErreurBonCommande(`${t('detail.erreurEnregistrement')} : ${erreurMaj.message}`)
       return
     }
 
@@ -313,7 +318,7 @@ export default function Commandes() {
     })
     setActionEnvoi(false)
     if (error) {
-      setErreurAction(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurAction(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     await ouvrirDetail(commandeOuverte)
@@ -335,7 +340,7 @@ export default function Commandes() {
     })
     setActionEnvoi(false)
     if (error) {
-      setErreurAction(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurAction(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     await ouvrirDetail(commandeOuverte)
@@ -364,28 +369,28 @@ export default function Commandes() {
   if (!accesAutorise('commandes', profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
 
   if (chargement) {
-    return <div className="p-4 text-center text-petrol-500">Chargement des commandes…</div>
+    return <div className="p-4 text-center text-petrol-500">{t('chargementCommandes')}</div>
   }
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h1 className="text-xl font-bold">Commandes</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex flex-wrap gap-2">
           <button className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterExcel('commandes', COLONNES_EXPORT, donneesExport())}>
-            📊 Excel
+            📊 {t('excel')}
           </button>
           <button className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterPDF('commandes', 'Commandes', null, COLONNES_EXPORT, donneesExport(), undefined, undefined, entreprise)}>
-            📄 PDF
+            📄 {t('pdf')}
           </button>
           <button onClick={ouvrirModal} className="btn-primary text-sm">
-            + Nouvelle commande
+            {t('nouvelleCommande')}
           </button>
         </div>
       </div>
@@ -397,7 +402,7 @@ export default function Commandes() {
             className="w-full flex items-center justify-between"
           >
             <span className="font-semibold text-sm">
-              📦 Récap commandes en cours — {recap.lignes.reduce((s, l) => s + l.quantite, 0)} unité(s), {formatXOF(recap.totalValeur)}
+              {t('recap.titre', { unites: recap.lignes.reduce((s, l) => s + l.quantite, 0), valeur: formatXOF(recap.totalValeur) })}
             </span>
             <span className="text-petrol-400 text-xs">{recapOuvert ? '▲' : '▼'}</span>
           </button>
@@ -405,9 +410,9 @@ export default function Commandes() {
             <table className="w-full text-xs mt-3">
               <thead>
                 <tr className="text-left text-petrol-500 border-b border-line">
-                  <th className="pb-1.5">Produit</th>
-                  <th className="pb-1.5 text-right">Quantité</th>
-                  <th className="pb-1.5 text-right">Valeur estimée</th>
+                  <th className="pb-1.5">{t('recap.produit')}</th>
+                  <th className="pb-1.5 text-right">{t('recap.quantite')}</th>
+                  <th className="pb-1.5 text-right">{t('recap.valeurEstimee')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -429,7 +434,7 @@ export default function Commandes() {
           onClick={() => setFiltreStatut('')}
           className={`text-xs px-3 py-1.5 rounded-full border ${!filtreStatut ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
         >
-          Toutes
+          {t('statuts.toutes')}
         </button>
         {Object.entries(LIBELLES_STATUT).map(([val, lib]) => (
           <button
@@ -452,7 +457,7 @@ export default function Commandes() {
             <div>
               <p className="font-medium text-sm">{c.numero} — {c.clients?.nom || 'Client'}</p>
               <p className="text-xs text-petrol-500">
-                {c.lignes_commande?.length || 0} article(s) — {new Date(c.created_at).toLocaleDateString('fr-FR')}
+                {t('liste.articles', { n: c.lignes_commande?.length || 0 })} — {new Date(c.created_at).toLocaleDateString('fr-FR')}
                 {c.profils?.nom ? ` — ${c.profils.nom}` : ''}
               </p>
             </div>
@@ -462,39 +467,41 @@ export default function Commandes() {
           </button>
         ))}
         {commandes.length === 0 && (
-          <p className="text-petrol-400 text-center py-8">Aucune commande {filtreStatut ? `au statut "${LIBELLES_STATUT[filtreStatut]}"` : ''}.</p>
+          <p className="text-petrol-400 text-center py-8">
+            {filtreStatut ? t('liste.aucuneCommandeStatut', { statut: LIBELLES_STATUT[filtreStatut] }) : t('liste.aucuneCommande')}
+          </p>
         )}
       </div>
 
       {modalOuvert && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-4">Nouvelle commande</h2>
+            <h2 className="font-semibold text-lg mb-4">{t('form.titre')}</h2>
             <form onSubmit={validerCommande} className="space-y-3">
               <div>
-                <label className="label">Client</label>
-                <SelectRecherche options={clients} value={clientId} onChange={setClientId} placeholder="Rechercher un client…" />
+                <label className="label">{t('form.client')}</label>
+                <SelectRecherche options={clients} value={clientId} onChange={setClientId} placeholder={t('form.rechercherClient')} />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Commercial (optionnel)</label>
+                  <label className="label">{t('form.commercial')}</label>
                   <select className="input-field" value={commercialId} onChange={(e) => setCommercialId(e.target.value)}>
-                    <option value="">— Aucun —</option>
+                    <option value="">{t('form.aucun')}</option>
                     {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="label">Dépôt de livraison</label>
+                  <label className="label">{t('form.depotLivraison')}</label>
                   <select className="input-field" value={depotId} onChange={(e) => setDepotId(e.target.value)}>
-                    <option value="">— Aucun —</option>
+                    <option value="">{t('form.aucun')}</option>
                     {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="label">Articles</label>
+                <label className="label">{t('form.articles')}</label>
                 <div className="space-y-2">
                   {lignes.map((l, i) => (
                     <div key={i} className="flex gap-2 items-start">
@@ -503,7 +510,7 @@ export default function Commandes() {
                         value={l.produit_id}
                         onChange={(e) => majLigne(i, 'produit_id', e.target.value)}
                       >
-                        <option value="">— Produit —</option>
+                        <option value="">{t('form.produitPlaceholder')}</option>
                         {produits.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
                       </select>
                       <input
@@ -520,20 +527,20 @@ export default function Commandes() {
                   ))}
                 </div>
                 <button type="button" onClick={ajouterLigne} className="text-xs text-petrol-600 underline mt-2">
-                  + Ajouter un article
+                  {t('form.ajouterArticle')}
                 </button>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Mode de paiement</label>
+                  <label className="label">{t('form.modePaiement')}</label>
                   <select className="input-field" value={modePaiement} onChange={(e) => setModePaiement(e.target.value)}>
-                    <option value="cash">Cash</option>
-                    <option value="credit">Crédit</option>
+                    <option value="cash">{t('form.cash')}</option>
+                    <option value="credit">{t('form.credit')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="label">Acompte versé (optionnel)</label>
+                  <label className="label">{t('form.acompteVerse')}</label>
                   <input
                     type="number"
                     min="0"
@@ -547,34 +554,34 @@ export default function Commandes() {
               </div>
 
               <div>
-                <label className="label">Date de livraison souhaitée</label>
+                <label className="label">{t('form.dateLivraison')}</label>
                 <input type="date" className="input-field" value={dateLivraison} onChange={(e) => setDateLivraison(e.target.value)} />
               </div>
 
               <div>
-                <label className="label">Notes</label>
+                <label className="label">{t('form.notes')}</label>
                 <textarea className="input-field" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
               </div>
 
               <div className="text-xs flex items-center gap-2 flex-wrap">
-                {captureGps === 'ok' && <span className="text-green-600">📍 Position de prise de commande capturée.</span>}
-                {captureGps === 'echec' && <span className="text-amber-600">⚠️ Position indisponible.</span>}
+                {captureGps === 'ok' && <span className="text-green-600">{t('form.positionCapturee')}</span>}
+                {captureGps === 'echec' && <span className="text-amber-600">{t('form.positionIndisponible')}</span>}
                 <button type="button" onClick={capturerPosition} className="underline text-petrol-600">
-                  {captureGps === 'en_cours' ? 'Capture…' : 'Recapturer ma position'}
+                  {captureGps === 'en_cours' ? t('form.capture') : t('form.recapturerPosition')}
                 </button>
               </div>
 
               <div className="flex items-center justify-between border-t border-line pt-3">
-                <span className="text-sm font-medium text-petrol-700">Total</span>
+                <span className="text-sm font-medium text-petrol-700">{t('form.total')}</span>
                 <span className="font-mono text-lg font-semibold">{formatXOF(totalCommande)}</span>
               </div>
 
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>Annuler</button>
+                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('form.annuler')}</button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? 'Enregistrement…' : 'Créer la commande'}
+                  {enregistrement ? t('form.enregistrement') : t('form.creerCommande')}
                 </button>
               </div>
             </form>
@@ -586,7 +593,7 @@ export default function Commandes() {
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-5 w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-3">
             {chargementDetail ? (
-              <p className="text-sm text-petrol-500 text-center py-8">Chargement…</p>
+              <p className="text-sm text-petrol-500 text-center py-8">{t('detail.chargement')}</p>
             ) : detail ? (
               <>
                 <div className="flex justify-between items-start">
@@ -594,7 +601,7 @@ export default function Commandes() {
                     <h2 className="font-semibold text-lg">{detail.commande?.numero}</h2>
                     <p className="text-sm text-petrol-700">{detail.commande?.clients?.nom}</p>
                     {detail.commande?.profils?.nom && (
-                      <p className="text-xs text-petrol-500">Commercial : {detail.commande.profils.nom}</p>
+                      <p className="text-xs text-petrol-500">{t('detail.commercial')} : {detail.commande.profils.nom}</p>
                     )}
                   </div>
                   <button onClick={fermerDetail} className="text-petrol-400 text-xl leading-none">✕</button>
@@ -607,16 +614,16 @@ export default function Commandes() {
                 {detail.commande?.notes && <p className="text-sm text-petrol-600">{detail.commande.notes}</p>}
                 {detail.commande?.date_livraison_souhaitee && (
                   <p className="text-xs text-petrol-500">
-                    Livraison souhaitée : {new Date(detail.commande.date_livraison_souhaitee).toLocaleDateString('fr-FR')}
+                    {t('detail.livraisonSouhaitee', { date: new Date(detail.commande.date_livraison_souhaitee).toLocaleDateString('fr-FR') })}
                   </p>
                 )}
 
                 <div className="border-t border-line pt-3">
-                  <label className="label">Bon de commande du client (justificatif)</label>
+                  <label className="label">{t('detail.bonCommandeClient')}</label>
                   <div className="flex gap-2 mb-2">
                     <input
                       className="input-field flex-1 text-sm"
-                      placeholder="Référence du bon de commande (ex. BC-4521)"
+                      placeholder={t('detail.referencePlaceholder')}
                       value={refBonCommande}
                       onChange={(e) => setRefBonCommande(e.target.value)}
                       onBlur={enregistrerReferenceBonCommande}
@@ -624,10 +631,10 @@ export default function Commandes() {
                   </div>
                   {urlBonCommande ? (
                     <a href={urlBonCommande} target="_blank" rel="noreferrer" className="text-blue-600 text-sm underline">
-                      📎 Voir le document joint
+                      {t('detail.voirDocument')}
                     </a>
                   ) : (
-                    <p className="text-xs text-petrol-400 mb-1">Aucun document joint pour le moment.</p>
+                    <p className="text-xs text-petrol-400 mb-1">{t('detail.aucunDocument')}</p>
                   )}
                   <div className="mt-2">
                     <input
@@ -646,9 +653,9 @@ export default function Commandes() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-left text-xs text-petrol-500 border-b border-line">
-                        <th className="pb-2">Produit</th>
-                        <th className="pb-2 text-right">Commandé</th>
-                        <th className="pb-2 text-right">Livré</th>
+                        <th className="pb-2">{t('detail.produit')}</th>
+                        <th className="pb-2 text-right">{t('detail.commande')}</th>
+                        <th className="pb-2 text-right">{t('detail.livre')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -663,11 +670,11 @@ export default function Commandes() {
                   </table>
                 ) : (
                   <div>
-                    <p className="text-sm font-medium mb-2">Quantités livrées (rupture possible)</p>
+                    <p className="text-sm font-medium mb-2">{t('detail.quantitesLivrees')}</p>
                     <div className="space-y-2">
                       {detail.lignes.map((l) => (
                         <div key={l.id} className="flex items-center justify-between gap-3">
-                          <span className="text-sm">{l.produits?.nom} <span className="text-petrol-400">(cmd. {l.quantite})</span></span>
+                          <span className="text-sm">{l.produits?.nom} <span className="text-petrol-400">({t('detail.cmdAbrege')} {l.quantite})</span></span>
                           <input
                             type="number"
                             min="0"
@@ -681,7 +688,7 @@ export default function Commandes() {
                     </div>
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       <div>
-                        <label className="label">Montant supplémentaire encaissé</label>
+                        <label className="label">{t('detail.montantSupplementaire')}</label>
                         <input
                           type="number"
                           min="0"
@@ -692,10 +699,10 @@ export default function Commandes() {
                         />
                       </div>
                       <div>
-                        <label className="label">Mode de paiement</label>
+                        <label className="label">{t('detail.modeDePaiement')}</label>
                         <select className="input-field" value={modePaiementLivraison} onChange={(e) => setModePaiementLivraison(e.target.value)}>
-                          <option value="cash">Cash</option>
-                          <option value="credit">Crédit</option>
+                          <option value="cash">{t('form.cash')}</option>
+                          <option value="credit">{t('form.credit')}</option>
                         </select>
                       </div>
                     </div>
@@ -706,49 +713,49 @@ export default function Commandes() {
 
                 <div className="flex flex-wrap gap-2 pt-2 border-t border-line">
                   <button onClick={telechargerProforma} className="btn-secondary text-sm">
-                    📄 Facture proforma
+                    {t('detail.facturePropforma')}
                   </button>
 
                   {detail.commande?.statut === 'brouillon' && (
                     <button onClick={() => changerStatut('confirmee')} disabled={actionEnvoi} className="bg-blue-600 text-white px-3 py-2 rounded text-sm">
-                      Confirmer
+                      {t('detail.confirmer')}
                     </button>
                   )}
                   {detail.commande?.statut === 'confirmee' && (
                     <button onClick={() => changerStatut('en_preparation')} disabled={actionEnvoi} className="bg-purple-600 text-white px-3 py-2 rounded text-sm">
-                      Démarrer la préparation
+                      {t('detail.demarrerPreparation')}
                     </button>
                   )}
                   {detail.commande?.statut === 'en_preparation' && !modeLivraison && (
                     <button onClick={() => setModeLivraison(true)} className="bg-green-600 text-white px-3 py-2 rounded text-sm">
-                      Enregistrer la livraison
+                      {t('detail.enregistrerLivraison')}
                     </button>
                   )}
                   {modeLivraison && (
                     <button onClick={confirmerLivraison} disabled={actionEnvoi} className="bg-green-600 text-white px-3 py-2 rounded text-sm">
-                      {actionEnvoi ? 'Envoi…' : 'Valider la livraison'}
+                      {actionEnvoi ? t('detail.envoi') : t('detail.validerLivraison')}
                     </button>
                   )}
                   {!['livree', 'annulee'].includes(detail.commande?.statut) && !modeLivraison && (
                     <button onClick={() => changerStatut('annulee')} disabled={actionEnvoi} className="text-red-600 text-sm px-3 py-2">
-                      Annuler la commande
+                      {t('detail.annulerCommande')}
                     </button>
                   )}
                 </div>
 
                 {detail.historique.length > 0 && (
                   <div className="border-t border-line pt-2">
-                    <p className="text-xs font-medium text-petrol-600 mb-1">Historique</p>
+                    <p className="text-xs font-medium text-petrol-600 mb-1">{t('detail.historique')}</p>
                     {detail.historique.map((h, i) => (
                       <p key={i} className="text-xs text-petrol-500">
-                        {new Date(h.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })} — {LIBELLES_STATUT[h.nouveau_statut] || h.nouveau_statut} par {h.profils?.nom || '—'}
+                        {new Date(h.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })} — {LIBELLES_STATUT[h.nouveau_statut] || h.nouveau_statut} {t('detail.par')} {h.profils?.nom || '—'}
                       </p>
                     ))}
                   </div>
                 )}
               </>
             ) : (
-              <p className="text-sm text-red-600 text-center py-8">Impossible de charger le détail.</p>
+              <p className="text-sm text-red-600 text-center py-8">{t('detail.impossibleChargerDetail')}</p>
             )}
           </div>
         </div>
