@@ -373,6 +373,7 @@ export default function Ventes() {
       p_commercial_id: commercialVendeurId || null,
       p_remise_montant: remiseEffective,
       p_motif_remise: remiseEffective > 0 ? motifRemise.trim() : null,
+      p_depot_id: depotId || null,
     })
     setEnregistrement(false)
 
