@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
@@ -29,6 +30,7 @@ const CLIENT_VIDE = {
 }
 
 export default function Clients() {
+  const { t } = useTranslation('clients')
   const { profil } = useAuth()
   const [clients, setClients] = useState([])
   const [recherche, setRecherche] = useState('')
@@ -143,7 +145,7 @@ export default function Clients() {
   async function ajouterTarif() {
     setErreurTarif('')
     if (!nouveauTarifProduit || !nouveauTarifPrix) {
-      setErreurTarif('Choisissez un produit et un prix.')
+      setErreurTarif(t('form.erreurTarifChoix'))
       return
     }
     const { data, error } = await supabase
@@ -267,9 +269,9 @@ export default function Clients() {
           }))
           .filter((l) => l.nom)
         setLignesImport(lignesValides)
-        if (lignesValides.length === 0) setErreurImport('Aucune ligne valide trouvée (le nom est obligatoire).')
+        if (lignesValides.length === 0) setErreurImport(t('import.erreurAucuneLigne'))
       } catch (err) {
-        setErreurImport(`Fichier illisible : ${err.message}`)
+        setErreurImport(t('import.erreurFichierIllisible', { message: err.message }))
       }
     }
     lecteur.readAsArrayBuffer(fichier)
@@ -352,11 +354,11 @@ export default function Clients() {
     setErreurRemboursement('')
     const montant = Number(montantRemboursement)
     if (!montant || montant <= 0) {
-      setErreurRemboursement('Indiquez un montant valide.')
+      setErreurRemboursement(t('remboursement.erreurMontantValide'))
       return
     }
     if (montant > Number(modalRemboursement.solde_credit)) {
-      setErreurRemboursement('Le montant dépasse le crédit disponible.')
+      setErreurRemboursement(t('remboursement.erreurMontantDepasse'))
       return
     }
     setEnvoiRemboursement(true)
@@ -378,11 +380,11 @@ export default function Clients() {
     e.preventDefault()
     setErreur('')
     if (!formulaire.nom.trim()) {
-      setErreur('Le nom du client est requis.')
+      setErreur(t('form.erreurNomRequis'))
       return
     }
     if (!profil?.entreprise_id) {
-      setErreur('Profil non chargé. Réessayez dans un instant.')
+      setErreur(t('form.erreurProfilNonCharge'))
       return
     }
     setEnregistrement(true)
@@ -396,7 +398,7 @@ export default function Clients() {
         .single()
       if (erreurGroupe) {
         setEnregistrement(false)
-        setErreur(`Erreur création du groupe : ${erreurGroupe.message}`)
+        setErreur(`${t('form.erreurCreationGroupe')} : ${erreurGroupe.message}`)
         return
       }
       groupeIdFinal = nouveauGroupe.id
@@ -450,7 +452,7 @@ export default function Clients() {
   if (!accesAutorise('clients', profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
@@ -459,22 +461,22 @@ export default function Clients() {
     <div className="p-8 max-w-6xl">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-semibold">Clients</h1>
-          <p className="text-sm text-petrol-700 mt-1">{clients.length} client(s) enregistré(s)</p>
+          <h1 className="text-2xl font-semibold">{t('titre')}</h1>
+          <p className="text-sm text-petrol-700 mt-1">{t('compteur', { n: clients.length })}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button className="btn-secondary" onClick={ouvrirModalImport}>
-            📥 Importer
+            📥 {t('importer')}
           </button>
           <button className="btn-primary" onClick={ouvrirNouveauClient}>
-            + Nouveau client
+            {t('nouveauClient')}
           </button>
         </div>
       </header>
 
       <input
         type="text"
-        placeholder="Rechercher un client…"
+        placeholder={t('rechercherClient')}
         value={recherche}
         onChange={(e) => setRecherche(e.target.value)}
         className="input-field max-w-sm mb-4"
@@ -484,19 +486,19 @@ export default function Clients() {
         <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
-              <th className="px-4 py-3 font-medium">Nom</th>
-              <th className="px-4 py-3 font-medium">Téléphone</th>
-              <th className="px-4 py-3 font-medium">Ville</th>
-              <th className="px-4 py-3 font-medium">Type</th>
-              <th className="px-4 py-3 font-medium">Segment</th>
-              <th className="px-4 py-3 font-medium">Actions</th>
+              <th className="px-4 py-3 font-medium">{t('table.nom')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.telephone')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.ville')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.type')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.segment')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.actions')}</th>
             </tr>
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
             ) : clientsFiltres.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Aucun client trouvé.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.aucunClient')}</td></tr>
             ) : (
               clientsFiltres.map((c) => (
                 <tr key={c.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
@@ -507,9 +509,9 @@ export default function Clients() {
                         type="button"
                         onClick={() => ouvrirModalRemboursement(c)}
                         className="ml-2 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded hover:bg-green-200"
-                        title="Crédit disponible pour ce client — cliquer pour rembourser"
+                        title={t('table.creditTitle')}
                       >
-                        crédit {formatXOF(c.solde_credit)}
+                        {t('table.credit', { montant: formatXOF(c.solde_credit) })}
                       </button>
                     )}
                   </td>
@@ -528,7 +530,7 @@ export default function Clients() {
                         onClick={() => ouvrirEditionClient(c)}
                         className="text-petrol-700 underline"
                       >
-                        Modifier
+                        {t('table.modifier')}
                       </button>
                       <button
                         type="button"
@@ -539,12 +541,12 @@ export default function Clients() {
                             ? 'text-petrol-500 cursor-not-allowed'
                             : 'text-blue-600 underline'
                         }
-                        title={c.latitude == null ? 'Pas de position GPS enregistrée' : 'Ouvrir dans Google Maps'}
+                        title={c.latitude == null ? t('table.itinerairePasPosition') : t('table.itineraireOuvrir')}
                       >
-                        📍 Itinéraire
+                        {t('table.itineraire')}
                       </button>
                       <Link to={`/grand-livre?client=${c.id}`} className="text-petrol-700 underline">
-                        Grand livre
+                        {t('table.grandLivre')}
                       </Link>
                     </div>
                   </td>
@@ -559,11 +561,11 @@ export default function Clients() {
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <h2 className="font-semibold text-lg mb-4">
-              {clientEnEdition ? 'Modifier le client' : 'Nouveau client'}
+              {clientEnEdition ? t('form.titreModifier') : t('form.titreNouveau')}
             </h2>
             <form onSubmit={enregistrerClient} className="space-y-3">
               <div>
-                <label className="label">Nom *</label>
+                <label className="label">{t('form.nom')}</label>
                 <input
                   className="input-field"
                   value={formulaire.nom}
@@ -572,7 +574,7 @@ export default function Clients() {
                 />
               </div>
               <div>
-                <label className="label">Téléphone</label>
+                <label className="label">{t('form.telephone')}</label>
                 <input
                   className="input-field"
                   value={formulaire.telephone}
@@ -580,7 +582,7 @@ export default function Clients() {
                 />
               </div>
               <div>
-                <label className="label">Adresse</label>
+                <label className="label">{t('form.adresse')}</label>
                 <input
                   className="input-field"
                   value={formulaire.adresse}
@@ -589,7 +591,7 @@ export default function Clients() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Email</label>
+                  <label className="label">{t('form.email')}</label>
                   <input
                     type="email"
                     className="input-field"
@@ -598,7 +600,7 @@ export default function Clients() {
                   />
                 </div>
                 <div>
-                  <label className="label">Ville</label>
+                  <label className="label">{t('form.ville')}</label>
                   <input
                     className="input-field"
                     value={formulaire.ville}
@@ -608,7 +610,7 @@ export default function Clients() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Type de client</label>
+                  <label className="label">{t('form.typeClient')}</label>
                   {!ajoutTypeOuvert ? (
                     <select
                       className="input-field"
@@ -621,24 +623,24 @@ export default function Clients() {
                         }
                       }}
                     >
-                      <option value="">— Sélectionner —</option>
-                      {typesClient.map((t) => (
-                        <option key={t.id} value={t.libelle}>{t.libelle}</option>
+                      <option value="">{t('form.selectionner')}</option>
+                      {typesClient.map((t2) => (
+                        <option key={t2.id} value={t2.libelle}>{t2.libelle}</option>
                       ))}
-                      <option value="__nouveau__">+ Ajouter un type…</option>
+                      <option value="__nouveau__">{t('form.ajouterType')}</option>
                     </select>
                   ) : (
                     <div className="flex gap-2">
                       <input
                         className="input-field"
                         autoFocus
-                        placeholder="Nom du nouveau type"
+                        placeholder={t('form.nouveauTypePlaceholder')}
                         value={nouveauType}
                         onChange={(e) => setNouveauType(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), ajouterTypeClient())}
                       />
                       <button type="button" className="btn-secondary" onClick={ajouterTypeClient}>
-                        OK
+                        {t('form.ok')}
                       </button>
                       <button
                         type="button"
@@ -654,22 +656,22 @@ export default function Clients() {
                   )}
                 </div>
                 <div>
-                  <label className="label">Segment</label>
+                  <label className="label">{t('form.segment')}</label>
                   <select
                     className="input-field"
                     value={formulaire.segment}
                     onChange={(e) => setFormulaire({ ...formulaire, segment: e.target.value })}
                   >
-                    <option value="nouveau">Nouveau</option>
-                    <option value="actif">Actif</option>
-                    <option value="vip">VIP</option>
-                    <option value="a_relancer">À relancer</option>
-                    <option value="inactif">Inactif</option>
+                    <option value="nouveau">{t('form.segmentNouveau')}</option>
+                    <option value="actif">{t('form.segmentActif')}</option>
+                    <option value="vip">{t('form.segmentVip')}</option>
+                    <option value="a_relancer">{t('form.segmentARelancer')}</option>
+                    <option value="inactif">{t('form.segmentInactif')}</option>
                   </select>
                 </div>
               </div>
               <div>
-                <label className="label">Groupe (chaîne de magasins, optionnel)</label>
+                <label className="label">{t('form.groupe')}</label>
                 <div className="flex gap-2">
                   <select
                     className="input-field flex-1"
@@ -677,22 +679,22 @@ export default function Clients() {
                     onChange={(e) => { setGroupeId(e.target.value); setNouveauGroupeNom('') }}
                     disabled={!!nouveauGroupeNom}
                   >
-                    <option value="">— Aucun —</option>
+                    <option value="">{t('form.aucunGroupe')}</option>
                     {groupes.map((g) => <option key={g.id} value={g.id}>{g.nom}</option>)}
                   </select>
                   <input
                     className="input-field flex-1"
-                    placeholder="Ou créer un nouveau groupe"
+                    placeholder={t('form.creerGroupePlaceholder')}
                     value={nouveauGroupeNom}
                     onChange={(e) => { setNouveauGroupeNom(e.target.value); setGroupeId('') }}
                   />
                 </div>
                 <p className="text-xs text-petrol-500 mt-1">
-                  Regrouper les magasins d'une même enseigne pour un récap de livraisons consolidé.
+                  {t('form.groupeAide')}
                 </p>
               </div>
               <div>
-                <label className="label">Limite de crédit (F CFA)</label>
+                <label className="label">{t('form.limiteCredit')}</label>
                 <input
                   type="number"
                   min="0"
@@ -703,7 +705,7 @@ export default function Clients() {
                 />
               </div>
               <div>
-                <label className="label">Notes</label>
+                <label className="label">{t('form.notes')}</label>
                 <textarea
                   className="input-field"
                   rows={2}
@@ -713,15 +715,15 @@ export default function Clients() {
               </div>
               {clientEnEdition && (profil?.role === 'admin' || profil?.role === 'manager') && (
                 <div>
-                  <label className="label">Tarifs négociés (remise contractuelle)</label>
+                  <label className="label">{t('form.tarifsNegocies')}</label>
                   {tarifs.length > 0 && (
                     <div className="space-y-1 mb-2">
-                      {tarifs.map((t) => (
-                        <div key={t.id} className="flex items-center justify-between text-xs border border-line rounded px-2 py-1.5">
-                          <span>{t.produits?.nom}</span>
+                      {tarifs.map((t3) => (
+                        <div key={t3.id} className="flex items-center justify-between text-xs border border-line rounded px-2 py-1.5">
+                          <span>{t3.produits?.nom}</span>
                           <span className="flex items-center gap-2">
-                            <span className="font-mono">{Number(t.prix_negocie).toLocaleString('fr-FR')} F CFA</span>
-                            <button type="button" onClick={() => retirerTarif(t.id)} className="text-red-600">✕</button>
+                            <span className="font-mono">{Number(t3.prix_negocie).toLocaleString('fr-FR')} F CFA</span>
+                            <button type="button" onClick={() => retirerTarif(t3.id)} className="text-red-600">✕</button>
                           </span>
                         </div>
                       ))}
@@ -733,13 +735,13 @@ export default function Clients() {
                       value={nouveauTarifProduit}
                       onChange={(e) => setNouveauTarifProduit(e.target.value)}
                     >
-                      <option value="">— Produit —</option>
+                      <option value="">{t('form.produitPlaceholder')}</option>
                       {produitsCatalogue.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
                     </select>
                     <input
                       type="number"
                       min="0"
-                      placeholder="Prix"
+                      placeholder={t('form.prixPlaceholder')}
                       className="input-field w-24"
                       value={nouveauTarifPrix}
                       onChange={(e) => setNouveauTarifPrix(e.target.value)}
@@ -751,7 +753,7 @@ export default function Clients() {
               )}
               {clientEnEdition ? (
                 <div>
-                  <label className="label">Photo de la devanture / enseigne</label>
+                  <label className="label">{t('form.photoDevanture')}</label>
                   {photoUrl && (
                     <img
                       src={photoUrl}
@@ -767,33 +769,33 @@ export default function Clients() {
                     disabled={photoEnvoi}
                     className="text-sm"
                   />
-                  {photoEnvoi && <p className="text-xs text-petrol-600 mt-1">Envoi en cours…</p>}
+                  {photoEnvoi && <p className="text-xs text-petrol-600 mt-1">{t('form.envoiEnCours')}</p>}
                   {photoErreur && <p className="text-xs text-red-600 mt-1">{photoErreur}</p>}
                 </div>
               ) : (
                 <p className="text-xs text-petrol-500">
-                  📷 La photo de la devanture pourra être ajoutée après l'enregistrement, via "Modifier".
+                  {t('form.photoApresEnregistrement')}
                 </p>
               )}
               <div className="text-xs flex items-center gap-2 flex-wrap">
                 {captureGps === 'en_cours' && (
-                  <span className="text-petrol-600">📍 Capture de votre position en cours…</span>
+                  <span className="text-petrol-600">{t('form.captureEnCours')}</span>
                 )}
                 {captureGps === 'ok' && (
-                  <span className="text-green-600">📍 Position capturée automatiquement.</span>
+                  <span className="text-green-600">{t('form.captureOk')}</span>
                 )}
                 {captureGps === 'echec' && (
-                  <span className="text-amber-600">⚠️ Position indisponible — saisissez-la manuellement.</span>
+                  <span className="text-amber-600">{t('form.captureEchec')}</span>
                 )}
                 {captureGps !== 'en_cours' && (
                   <button type="button" onClick={capturerPositionActuelle} className="underline text-petrol-600">
-                    {clientEnEdition ? '📍 Recapturer ma position actuelle' : 'Réessayer la capture'}
+                    {clientEnEdition ? t('form.recapturer') : t('form.reessayerCapture')}
                   </button>
                 )}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Latitude</label>
+                  <label className="label">{t('form.latitude')}</label>
                   <input
                     className="input-field font-mono"
                     value={formulaire.latitude}
@@ -802,7 +804,7 @@ export default function Clients() {
                   />
                 </div>
                 <div>
-                  <label className="label">Longitude</label>
+                  <label className="label">{t('form.longitude')}</label>
                   <input
                     className="input-field font-mono"
                     value={formulaire.longitude}
@@ -830,14 +832,14 @@ export default function Clients() {
                     setPhotoErreur('')
                   }}
                 >
-                  Annuler
+                  {t('form.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
                   {enregistrement
-                    ? 'Enregistrement…'
+                    ? t('form.enregistrement')
                     : clientEnEdition
-                    ? 'Modifier'
-                    : 'Enregistrer'}
+                    ? t('form.modifierBtn')
+                    : t('form.enregistrer')}
                 </button>
               </div>
             </form>
@@ -849,19 +851,19 @@ export default function Clients() {
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-4">
-              <h2 className="font-semibold text-lg">Importer des clients (Excel)</h2>
+              <h2 className="font-semibold text-lg">{t('import.titre')}</h2>
               <button onClick={() => setModalImportOuvert(false)} className="text-petrol-400 text-xl leading-none">✕</button>
             </div>
 
             <p className="text-sm text-petrol-600 mb-3">
-              Téléchargez le modèle, remplissez-le en gardant l'ordre des colonnes, puis importez-le.
+              {t('import.consigne')}
             </p>
             <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
-              📄 Télécharger le modèle
+              {t('import.telechargerModele')}
             </button>
 
             <div className="mb-4">
-              <label className="label">Fichier Excel (.xlsx)</label>
+              <label className="label">{t('import.fichierExcel')}</label>
               <input type="file" accept=".xlsx,.xls" onChange={lireFichierImport} className="text-sm" />
             </div>
 
@@ -869,14 +871,14 @@ export default function Clients() {
 
             {lignesImport.length > 0 && (
               <>
-                <p className="text-sm font-medium mb-2">{lignesImport.length} client(s) prêt(s) à importer</p>
+                <p className="text-sm font-medium mb-2">{t('import.clientsPrets', { n: lignesImport.length })}</p>
                 <div className="border border-line rounded-lg overflow-y-auto max-h-48 mb-4">
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="bg-canvas text-left">
-                        <th className="px-2 py-1.5">Nom</th>
-                        <th className="px-2 py-1.5">Téléphone</th>
-                        <th className="px-2 py-1.5">Ville</th>
+                        <th className="px-2 py-1.5">{t('import.nom')}</th>
+                        <th className="px-2 py-1.5">{t('import.telephone')}</th>
+                        <th className="px-2 py-1.5">{t('import.ville')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -890,18 +892,18 @@ export default function Clients() {
                     </tbody>
                   </table>
                   {lignesImport.length > 20 && (
-                    <p className="text-xs text-petrol-400 text-center py-1.5">… et {lignesImport.length - 20} de plus</p>
+                    <p className="text-xs text-petrol-400 text-center py-1.5">{t('import.etDePlus', { n: lignesImport.length - 20 })}</p>
                   )}
                 </div>
                 <button onClick={confirmerImport} disabled={importEnCours} className="btn-primary w-full">
-                  {importEnCours ? 'Import en cours…' : `Importer ${lignesImport.length} client(s)`}
+                  {importEnCours ? t('import.importEnCours') : t('import.importerN', { n: lignesImport.length })}
                 </button>
               </>
             )}
 
             {resultatImport && (
               <p className="text-sm text-green-700 mt-3">
-                ✓ {resultatImport.importes} client(s) importé(s) sur {resultatImport.total}.
+                {t('import.resultatImportes', { importes: resultatImport.importes, total: resultatImport.total })}
               </p>
             )}
           </div>
@@ -911,13 +913,13 @@ export default function Clients() {
       {modalRemboursement && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-sm">
-            <h2 className="font-semibold text-lg mb-1">Rembourser le crédit client</h2>
+            <h2 className="font-semibold text-lg mb-1">{t('remboursement.titre')}</h2>
             <p className="text-sm text-petrol-600 mb-4">
-              {modalRemboursement.nom} — crédit disponible : <span className="font-mono">{formatXOF(modalRemboursement.solde_credit)}</span>
+              {modalRemboursement.nom} — {t('remboursement.creditDisponible')} : <span className="font-mono">{formatXOF(modalRemboursement.solde_credit)}</span>
             </p>
             <form onSubmit={confirmerRemboursement} className="space-y-3">
               <div>
-                <label className="label">Montant à rembourser</label>
+                <label className="label">{t('remboursement.montant')}</label>
                 <input
                   type="number"
                   min="0"
@@ -929,20 +931,20 @@ export default function Clients() {
                 />
               </div>
               <div>
-                <label className="label">Mode</label>
+                <label className="label">{t('remboursement.mode')}</label>
                 <select className="input-field" value={modeRemboursement} onChange={(e) => setModeRemboursement(e.target.value)}>
-                  <option value="espece">Espèces</option>
-                  <option value="mobile_money">Mobile Money</option>
-                  <option value="virement">Virement bancaire</option>
+                  <option value="espece">{t('remboursement.especes')}</option>
+                  <option value="mobile_money">{t('remboursement.mobileMoney')}</option>
+                  <option value="virement">{t('remboursement.virement')}</option>
                 </select>
               </div>
               {erreurRemboursement && <p className="text-sm text-red-600">{erreurRemboursement}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="button" className="btn-secondary flex-1" onClick={() => setModalRemboursement(null)}>
-                  Annuler
+                  {t('remboursement.annuler')}
                 </button>
                 <button type="submit" disabled={envoiRemboursement} className="btn-primary flex-1">
-                  {envoiRemboursement ? 'Enregistrement…' : 'Confirmer le remboursement'}
+                  {envoiRemboursement ? t('remboursement.enregistrement') : t('remboursement.confirmer')}
                 </button>
               </div>
             </form>

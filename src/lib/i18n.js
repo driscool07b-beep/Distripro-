@@ -18,6 +18,10 @@ import stockFr from '../locales/fr/stock.json'
 import stockEn from '../locales/en/stock.json'
 import stockAr from '../locales/ar/stock.json'
 import stockZh from '../locales/zh/stock.json'
+import clientsFr from '../locales/fr/clients.json'
+import clientsEn from '../locales/en/clients.json'
+import clientsAr from '../locales/ar/clients.json'
+import clientsZh from '../locales/zh/clients.json'
 
 // Langues dont le contenu est réellement traduit. L'arabe et le chinois
 // sont préparés dans la structure (RTL, sélecteur) mais leur contenu
@@ -40,14 +44,14 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr },
-      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn },
-      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr },
-      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh },
+      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr, clients: clientsFr },
+      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn, clients: clientsEn },
+      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr, clients: clientsAr },
+      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh, clients: clientsZh },
     },
     fallbackLng: 'fr',
     supportedLngs: LANGUES.map((l) => l.code),
-    ns: ['commun', 'dashboard', 'ventes', 'stock'],
+    ns: ['commun', 'dashboard', 'ventes', 'stock', 'clients'],
     defaultNS: 'commun',
     interpolation: { escapeValue: false }, // React échappe déjà par défaut
     detection: {
