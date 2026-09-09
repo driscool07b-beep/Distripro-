@@ -1,28 +1,32 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
 
 const TOUS_ROLES = ['admin', 'manager', 'commercial', 'comptable', 'gestionnaire_stock', 'agent_recouvrement']
 
-const NAV_ITEMS = [
-  { to: '/', label: 'Tableau de bord', icon: DashIcon, end: true, roles: TOUS_ROLES },
-  { to: '/clients', label: 'Clients', icon: ClientsIcon, roles: ROLES_PAGES.clients },
-  { to: '/groupes', label: 'Groupes de clients', icon: GroupesIcon, roles: ROLES_PAGES.groupes },
-  { to: '/carte-clients', label: 'Carte des clients', icon: CarteIcon, roles: ROLES_PAGES.carteClients },
-  { to: '/stock', label: 'Produits & Stock', icon: StockIcon, roles: ['admin', 'manager', 'gestionnaire_stock', 'commercial'] },
-  { to: '/depots', label: 'Magasins de stockage', icon: DepotsIcon, roles: ['admin', 'manager'] },
-  { to: '/mouvements-stock', label: 'Journal de stock', icon: JournalIcon, roles: ['admin', 'manager', 'gestionnaire_stock'] },
-  { to: '/ventes', label: 'Ventes', icon: VentesIcon, roles: ROLES_PAGES.ventes },
-  { to: '/commandes', label: 'Commandes', icon: CommandesIcon, roles: ROLES_PAGES.commandes },
-  { to: '/tournees', label: 'Tournées', icon: VentesIcon, roles: ROLES_PAGES.tournees },
-  { to: '/rapports', label: 'Rapports de visite', icon: RapportsIcon, roles: ROLES_PAGES.rapports },
-  { to: '/creances', label: 'Créances', icon: CreancesIcon, roles: ROLES_PAGES.creances },
-  { to: '/localiser-stock', label: 'Localiser un produit', icon: LocaliserIcon, roles: ['admin', 'manager', 'commercial', 'gestionnaire_stock'] },
-]
+function navItems(t) {
+  return [
+    { to: '/', label: t('menu.tableauDeBord'), icon: DashIcon, end: true, roles: TOUS_ROLES },
+    { to: '/clients', label: t('menu.clients'), icon: ClientsIcon, roles: ROLES_PAGES.clients },
+    { to: '/groupes', label: t('menu.groupesClients'), icon: GroupesIcon, roles: ROLES_PAGES.groupes },
+    { to: '/carte-clients', label: t('menu.carteClients'), icon: CarteIcon, roles: ROLES_PAGES.carteClients },
+    { to: '/stock', label: t('menu.produitsStock'), icon: StockIcon, roles: ['admin', 'manager', 'gestionnaire_stock', 'commercial'] },
+    { to: '/depots', label: t('menu.magasinsStockage'), icon: DepotsIcon, roles: ['admin', 'manager'] },
+    { to: '/mouvements-stock', label: t('menu.journalStock'), icon: JournalIcon, roles: ['admin', 'manager', 'gestionnaire_stock'] },
+    { to: '/ventes', label: t('menu.ventes'), icon: VentesIcon, roles: ROLES_PAGES.ventes },
+    { to: '/commandes', label: t('menu.commandes'), icon: CommandesIcon, roles: ROLES_PAGES.commandes },
+    { to: '/tournees', label: t('menu.tournees'), icon: VentesIcon, roles: ROLES_PAGES.tournees },
+    { to: '/rapports', label: t('menu.rapportsVisite'), icon: RapportsIcon, roles: ROLES_PAGES.rapports },
+    { to: '/creances', label: t('menu.creances'), icon: CreancesIcon, roles: ROLES_PAGES.creances },
+    { to: '/localiser-stock', label: t('menu.localiserProduit'), icon: LocaliserIcon, roles: ['admin', 'manager', 'commercial', 'gestionnaire_stock'] },
+  ]
+}
 
 export default function Layout() {
+  const { t } = useTranslation()
   const { profil, entreprise, deconnexion } = useAuth()
   const [menuOuvert, setMenuOuvert] = useState(false)
 
@@ -48,14 +52,14 @@ export default function Layout() {
           <button
             onClick={() => setMenuOuvert(false)}
             className="md:hidden text-white/70 hover:text-white p-1"
-            aria-label="Fermer le menu"
+            aria-label={t('menu.fermerMenu')}
           >
             ✕
           </button>
         </div>
 
         <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
-          {NAV_ITEMS.filter((item) => item.roles.includes(profil?.role)).map((item) => {
+          {navItems(t).filter((item) => item.roles.includes(profil?.role)).map((item) => {
             return (
               <NavLink
                 key={item.to}
@@ -88,7 +92,7 @@ export default function Layout() {
               }
             >
               <AnalytiqueIcon className="w-4 h-4 shrink-0" />
-              Analytique
+              {t('menu.analytique')}
             </NavLink>
           )}
           {['admin', 'manager'].includes(profil?.role) && (
@@ -104,7 +108,7 @@ export default function Layout() {
               }
             >
               <ObjectifsIcon className="w-4 h-4 shrink-0" />
-              Objectifs
+              {t('menu.objectifs')}
             </NavLink>
           )}
           {['admin', 'manager'].includes(profil?.role) && (
@@ -120,7 +124,7 @@ export default function Layout() {
               }
             >
               <AnalyseIAIcon className="w-4 h-4 shrink-0" />
-              Analyse IA
+              {t('menu.analyseIA')}
             </NavLink>
           )}
           {['admin', 'manager', 'gestionnaire_stock', 'commercial'].includes(profil?.role) && (
@@ -136,7 +140,7 @@ export default function Layout() {
               }
             >
               <StockCommercialIcon className="w-4 h-4 shrink-0" />
-              {profil?.role === 'commercial' ? 'Mon stock en main' : 'Stock des commerciaux'}
+              {profil?.role === 'commercial' ? t('menu.monStockEnMain') : t('menu.stockCommerciaux')}
             </NavLink>
           )}
           {profil?.role === 'commercial' && (
@@ -152,7 +156,7 @@ export default function Layout() {
               }
             >
               <VersementsIcon className="w-4 h-4 shrink-0" />
-              Mes versements
+              {t('menu.mesVersements')}
             </NavLink>
           )}
           {['admin', 'manager', 'comptable'].includes(profil?.role) && (
@@ -168,7 +172,7 @@ export default function Layout() {
               }
             >
               <VersementsIcon className="w-4 h-4 shrink-0" />
-              Versements
+              {t('menu.versements')}
             </NavLink>
           )}
           {profil?.role === 'admin' && (
@@ -184,7 +188,7 @@ export default function Layout() {
               }
             >
               <EquipeIcon className="w-4 h-4 shrink-0" />
-              Équipe
+              {t('menu.equipe')}
             </NavLink>
           )}
           {profil?.role === 'admin' && (
@@ -200,7 +204,7 @@ export default function Layout() {
               }
             >
               <SettingsIcon className="w-4 h-4 shrink-0" />
-              Paramètres
+              {t('menu.parametres')}
             </NavLink>
           )}
         </nav>
@@ -217,7 +221,7 @@ export default function Layout() {
             onClick={deconnexion}
             className="w-full text-left px-3 py-2 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors"
           >
-            Déconnexion
+            {t('menu.deconnexion')}
           </button>
         </div>
       </aside>
@@ -227,7 +231,7 @@ export default function Layout() {
           <button
             onClick={() => setMenuOuvert(true)}
             className="text-petrol-800 p-1"
-            aria-label="Ouvrir le menu"
+            aria-label={t('menu.ouvrirMenu')}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
               <path d="M3 6h18M3 12h18M3 18h18" />

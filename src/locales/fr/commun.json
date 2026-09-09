@@ -17,7 +17,14 @@
     "mesVersements": "Mes versements",
     "equipe": "Équipe",
     "parametres": "Paramètres",
-    "deconnexion": "Se déconnecter"
+    "deconnexion": "Se déconnecter",
+    "analytique": "Analytique",
+    "objectifs": "Objectifs",
+    "analyseIA": "Analyse IA",
+    "monStockEnMain": "Mon stock en main",
+    "stockCommerciaux": "Stock des commerciaux",
+    "fermerMenu": "Fermer le menu",
+    "ouvrirMenu": "Ouvrir le menu"
   },
   "actions": {
     "annuler": "Annuler",
@@ -59,5 +66,47 @@
     "en": "Anglais",
     "ar": "Arabe",
     "zh": "Chinois"
+  },
+  "auth": {
+    "profilImpossible": "Impossible de charger votre profil",
+    "compteSuspenduTitre": "Compte suspendu",
+    "compteSuspenduTexte": "L'abonnement de votre entreprise est actuellement suspendu. Contactez le support DistribPro pour régulariser votre situation."
+  },
+  "connexion": {
+    "tagline": "Gestion commerciale & distribution",
+    "email": "Adresse email",
+    "motDePasse": "Mot de passe",
+    "erreurIdentifiants": "Email ou mot de passe incorrect.",
+    "enCours": "Connexion…",
+    "seConnecter": "Se connecter",
+    "inviteRejoindre": "Invité(e) à rejoindre une équipe ?",
+    "creerCompte": "Créer votre compte",
+    "nouvelleEntreprise": "Nouvelle entreprise ?",
+    "creerEspace": "Créer votre espace DistribPro"
+  },
+  "inscription": {
+    "mdpMinLength": "Le mot de passe doit contenir au moins 6 caractères.",
+    "mdpMismatch": "Les mots de passe ne correspondent pas.",
+    "compteCree": "Compte créé",
+    "verifierEmail": "Vérifiez votre email pour confirmer votre compte, puis connectez-vous.",
+    "allerConnexion": "Aller à la connexion",
+    "creerVotreCompte": "Créer votre compte",
+    "utiliserEmailInvitation": "Utilisez l'adresse email sur laquelle vous avez été invité(e) par votre administrateur.",
+    "confirmerMotDePasse": "Confirmer le mot de passe",
+    "enCours": "Création…",
+    "creerMonCompte": "Créer mon compte",
+    "dejaCompte": "Déjà un compte ?"
+  },
+  "creerEntreprise": {
+    "champsRequis": "Le nom de l'entreprise et votre nom complet sont requis.",
+    "verifierEmail": "Vérifiez votre email pour confirmer votre compte, puis connectez-vous — votre entreprise sera automatiquement créée.",
+    "titre": "Créer votre entreprise",
+    "nomEntreprise": "Nom de votre entreprise",
+    "placeholderEntreprise": "Ex. Rama Cereal",
+    "votreNomComplet": "Votre nom complet",
+    "enCours": "Création…",
+    "creerMonEntreprise": "Créer mon entreprise",
+    "inviteRejoindreEquipe": "Invité(e) à rejoindre une équipe existante ?",
+    "cliquezIci": "Cliquez ici"
   }
 }

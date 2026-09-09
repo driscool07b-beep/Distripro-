@@ -17,7 +17,14 @@
     "mesVersements": "My Deposits",
     "equipe": "Team",
     "parametres": "Settings",
-    "deconnexion": "Sign out"
+    "deconnexion": "Sign out",
+    "analytique": "Analytics",
+    "objectifs": "Targets",
+    "analyseIA": "AI Analysis",
+    "monStockEnMain": "My stock on hand",
+    "stockCommerciaux": "Sales reps' stock",
+    "fermerMenu": "Close menu",
+    "ouvrirMenu": "Open menu"
   },
   "actions": {
     "annuler": "Cancel",
@@ -59,5 +66,47 @@
     "en": "English",
     "ar": "Arabic",
     "zh": "Chinese"
+  },
+  "auth": {
+    "profilImpossible": "Unable to load your profile",
+    "compteSuspenduTitre": "Account suspended",
+    "compteSuspenduTexte": "Your company's subscription is currently suspended. Contact DistribPro support to resolve this."
+  },
+  "connexion": {
+    "tagline": "Sales & distribution management",
+    "email": "Email address",
+    "motDePasse": "Password",
+    "erreurIdentifiants": "Incorrect email or password.",
+    "enCours": "Signing in…",
+    "seConnecter": "Sign in",
+    "inviteRejoindre": "Invited to join a team?",
+    "creerCompte": "Create your account",
+    "nouvelleEntreprise": "New company?",
+    "creerEspace": "Create your DistribPro space"
+  },
+  "inscription": {
+    "mdpMinLength": "Password must be at least 6 characters long.",
+    "mdpMismatch": "Passwords do not match.",
+    "compteCree": "Account created",
+    "verifierEmail": "Check your email to confirm your account, then sign in.",
+    "allerConnexion": "Go to sign in",
+    "creerVotreCompte": "Create your account",
+    "utiliserEmailInvitation": "Use the email address you were invited with by your administrator.",
+    "confirmerMotDePasse": "Confirm password",
+    "enCours": "Creating…",
+    "creerMonCompte": "Create my account",
+    "dejaCompte": "Already have an account?"
+  },
+  "creerEntreprise": {
+    "champsRequis": "Company name and your full name are required.",
+    "verifierEmail": "Check your email to confirm your account, then sign in — your company will be created automatically.",
+    "titre": "Create your company",
+    "nomEntreprise": "Your company name",
+    "placeholderEntreprise": "E.g. Rama Cereal",
+    "votreNomComplet": "Your full name",
+    "enCours": "Creating…",
+    "creerMonEntreprise": "Create my company",
+    "inviteRejoindreEquipe": "Invited to join an existing team?",
+    "cliquezIci": "Click here"
   }
 }
