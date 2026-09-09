@@ -39,6 +39,8 @@ export default function Utilisateurs() {
   const [depotsMembre, setDepotsMembre] = useState([]) // array d'ids de dépôts sélectionnés
   const [telephoneMembre, setTelephoneMembre] = useState('')
   const [envoiMembre, setEnvoiMembre] = useState(false)
+  const [renvoiEnCours, setRenvoiEnCours] = useState(null) // id de l'invitation en cours de renvoi
+  const [erreurRenvoi, setErreurRenvoi] = useState('')
   const [erreurMembre, setErreurMembre] = useState('')
 
   useEffect(() => {
@@ -100,6 +102,7 @@ export default function Utilisateurs() {
     setEnvoi(true)
 
     let error
+    let invitationId = invitationEnEdition?.id
     if (invitationEnEdition) {
       const resultat = await supabase
         .from('invitations')
@@ -114,15 +117,43 @@ export default function Utilisateurs() {
         p_zone: zone.trim() || null,
       })
       error = resultat.error
+      invitationId = resultat.data
     }
 
-    setEnvoi(false)
     if (error) {
+      setEnvoi(false)
       setErreur(`Erreur : ${error.message}`)
       return
     }
+
+    if (invitationId) {
+      const { error: erreurEmail } = await supabase.functions.invoke('envoyer-invitation', {
+        body: { invitation_id: invitationId },
+      })
+      if (erreurEmail) {
+        console.error('Erreur envoi email invitation:', erreurEmail)
+        setEnvoi(false)
+        setErreur(
+          "L'invitation a bien été créée, mais l'email n'a pas pu être envoyé automatiquement. Fermez cette fenêtre puis utilisez \u00ab Renvoyer l'email \u00bb depuis la liste des invitations en attente."
+        )
+        charger()
+        return
+      }
+    }
+
+    setEnvoi(false)
     setModalOuvert(false)
     charger()
+  }
+
+  async function renvoyerEmailInvitation(id) {
+    setErreurRenvoi('')
+    setRenvoiEnCours(id)
+    const { error } = await supabase.functions.invoke('envoyer-invitation', { body: { invitation_id: id } })
+    setRenvoiEnCours(null)
+    if (error) {
+      setErreurRenvoi("Impossible d'envoyer l'email pour le moment. Réessayez plus tard.")
+    }
   }
 
   async function annulerInvitation(id) {
@@ -229,6 +260,7 @@ export default function Utilisateurs() {
           {invitationsEnAttente.length > 0 && (
             <div className="mb-6">
               <p className="text-sm font-medium mb-2">Invitations en attente</p>
+              {erreurRenvoi && <p className="text-xs text-red-600 mb-2">{erreurRenvoi}</p>}
               <div className="space-y-2">
                 {invitationsEnAttente.map((inv) => (
                   <div key={inv.id} className="border border-amber-200 bg-amber-50 rounded-lg p-3 flex justify-between items-center">
@@ -240,6 +272,13 @@ export default function Utilisateurs() {
                       </p>
                     </div>
                     <div className="flex gap-3 shrink-0">
+                      <button
+                        onClick={() => renvoyerEmailInvitation(inv.id)}
+                        disabled={renvoiEnCours === inv.id}
+                        className="text-xs text-petrol-600 underline disabled:opacity-50"
+                      >
+                        {renvoiEnCours === inv.id ? 'Envoi…' : "Renvoyer l'email"}
+                      </button>
                       <button onClick={() => ouvrirModal(inv)} className="text-xs text-petrol-600 underline">
                         Modifier
                       </button>

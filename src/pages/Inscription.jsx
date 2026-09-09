@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Navigate, Link } from 'react-router-dom'
+import { Navigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Inscription() {
   const { inscription, estConnecte } = useAuth()
-  const [email, setEmail] = useState('')
+  const [searchParams] = useSearchParams()
+  const emailPredefini = searchParams.get('email') || ''
+  const [email, setEmail] = useState(emailPredefini)
   const [motDePasse, setMotDePasse] = useState('')
   const [confirmation, setConfirmation] = useState('')
   const [erreur, setErreur] = useState('')
@@ -72,9 +74,10 @@ export default function Inscription() {
             <input
               type="email"
               required
+              readOnly={!!emailPredefini}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
+              className={`input-field ${emailPredefini ? 'bg-canvas text-petrol-600' : ''}`}
               placeholder="vous@entreprise.com"
               autoComplete="email"
             />
