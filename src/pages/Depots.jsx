@@ -7,6 +7,7 @@ const LIBELLES_TYPE = {
   principal: 'Principal',
   secondaire: 'Secondaire',
   mobile: 'Mobile',
+  usine: 'Usine',
 }
 
 export default function Depots() {
@@ -153,6 +154,7 @@ export default function Depots() {
                   <option value="principal">Principal</option>
                   <option value="secondaire">Secondaire</option>
                   <option value="mobile">Mobile</option>
+                  <option value="usine">Usine</option>
                 </select>
               </div>
               <div>

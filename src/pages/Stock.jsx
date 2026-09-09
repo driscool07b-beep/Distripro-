@@ -269,7 +269,7 @@ export default function Stock() {
     setErreur('')
   }
 
-  const RAISONS_ENTREE = ['Réception fournisseur', 'Production (usine)', 'Retour client', 'Inventaire (régularisation)', 'Autre']
+  const RAISONS_ENTREE = ['Réception fournisseur', 'Retour client', 'Inventaire (régularisation)', 'Autre']
   const RAISONS_SORTIE = ['Casse / perte', 'Reconditionnement', 'Périmé / invendable', 'Inventaire (régularisation)', 'Autre']
 
   async function enregistrerMouvement(e) {
