@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { traduireErreur } from '../lib/erreurs'
 
 export default function AnalyseIA() {
   const { profil, entreprise } = useAuth()
@@ -36,7 +37,7 @@ export default function AnalyseIA() {
     const { data, error } = await supabase.functions.invoke('analyse-ia')
     setGeneration(false)
     if (error || data?.erreur) {
-      setErreur(data?.erreur || error?.message || 'Erreur lors de la génération.')
+      setErreur(data?.erreur || traduireErreur(error?.message) || 'Erreur lors de la génération.')
       return
     }
     await chargerHistorique()

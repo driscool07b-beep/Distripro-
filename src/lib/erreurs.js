@@ -24,6 +24,7 @@ const MOTIFS = [
   [/JSON object requested, multiple \(or no\) rows returned|0 rows|no rows/i, 'Aucun résultat trouvé.'],
   [/timeout|timed out/i, 'Le serveur met trop de temps à répondre. Réessayez.'],
   [/rate limit/i, 'Trop de tentatives — patientez un instant avant de réessayer.'],
+  [/Failed to send a request to the Edge Function/i, "Impossible de contacter la fonction serveur — elle n'est peut-être pas encore déployée."],
   [/already registered/i, 'Un compte existe déjà avec cet email.'],
 ]
 
