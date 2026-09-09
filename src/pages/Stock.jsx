@@ -617,17 +617,17 @@ export default function Stock() {
                       {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && !(profil?.role === 'gestionnaire_stock' && depots.length === 0) && (
                         <div className="flex flex-col items-end gap-1">
                           <button
-                            className="text-xs font-medium text-petrol-700 hover:text-amber-600"
+                            className="text-xs font-medium text-amber-700 hover:text-amber-800"
                             onClick={() => ouvrirModalMouvement(p)}
                           >
-                            {t('table.ajusterStock')}
+                            📦 {t('table.ajusterStock')}
                           </button>
                           {tousLesDepots.length > 1 && depots.length > 0 && (
                             <button
-                              className="text-xs font-medium text-petrol-700 hover:text-amber-600"
+                              className="text-xs font-medium text-blue-600 hover:text-blue-700"
                               onClick={() => ouvrirModalTransfert(p)}
                             >
-                              {t('table.transfererDepots')}
+                              🔁 {t('table.transfererDepots')}
                             </button>
                           )}
                           <div className="flex gap-2">
