@@ -26,6 +26,7 @@ import MouvementsStock from './pages/MouvementsStock'
 import Utilisateurs from './pages/Utilisateurs'
 import Objectifs from './pages/Objectifs'
 import CarteClients from './pages/CarteClients'
+import MesVersements from './pages/MesVersements'
 
 export default function App() {
   return (
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="analyse-ia" element={<AnalyseIA />} />
         <Route path="stock-commercial" element={<StockCommercial />} />
         <Route path="versements" element={<Versements />} />
+        <Route path="mes-versements" element={<MesVersements />} />
         <Route path="groupes" element={<Groupes />} />
         <Route path="utilisateurs" element={<Utilisateurs />} />
         <Route path="objectifs" element={<Objectifs />} />

@@ -138,6 +138,22 @@ export default function Layout() {
               {profil?.role === 'commercial' ? 'Mon stock en main' : 'Stock des commerciaux'}
             </NavLink>
           )}
+          {profil?.role === 'commercial' && (
+            <NavLink
+              to="/mes-versements"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <VersementsIcon className="w-4 h-4 shrink-0" />
+              Mes versements
+            </NavLink>
+          )}
           {['admin', 'manager', 'comptable'].includes(profil?.role) && (
             <NavLink
               to="/versements"

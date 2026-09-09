@@ -192,6 +192,7 @@ function DashboardCommercial() {
     stockEnMain: 0,
     creances: 0,
     resteAVerser: 0,
+    commandesEnCours: 0,
   })
   const [ventes7j, setVentes7j] = useState([])
   const [objectif, setObjectif] = useState(null)
@@ -221,6 +222,7 @@ function DashboardCommercial() {
       { data: versementsJour },
       { data: histo },
       { data: objectifs },
+      { count: commandesEnCoursCount },
     ] = await Promise.all([
       supabase.from('ventes').select('total, montant_regle, mode_paiement').eq('commercial_id', profil.id).neq('statut', 'annulee').gte('created_at', debutJour.toISOString()).lt('created_at', finJourISO),
       supabase.from('ventes').select('total, created_at').eq('commercial_id', profil.id).neq('statut', 'annulee').gte('created_at', debutMois.toISOString()),
@@ -230,6 +232,7 @@ function DashboardCommercial() {
       supabase.from('versements_caisse').select('montant').eq('commercial_id', profil.id).eq('date_versement', aujourdhui),
       supabase.from('ventes').select('total, created_at').eq('commercial_id', profil.id).neq('statut', 'annulee').gte('created_at', new Date(Date.now() - 7 * 86400000).toISOString()),
       supabase.from('objectifs').select('montant_cible, periode_debut, periode_fin').eq('commercial_id', profil.id).lte('periode_debut', aujourdhui).gte('periode_fin', aujourdhui).not('montant_cible', 'is', null).limit(1),
+      supabase.from('commandes').select('id', { count: 'exact', head: true }).eq('commercial_id', profil.id).in('statut', ['recue', 'confirmee', 'en_preparation']),
     ])
 
     const caJour = (ventesJour || []).reduce((s, v) => s + Number(v.total || 0), 0)
@@ -256,7 +259,7 @@ function DashboardCommercial() {
       setObjectif(null)
     }
 
-    setKpi({ caJour, caMois, stockEnMain, creances: totalCreances, resteAVerser })
+    setKpi({ caJour, caMois, stockEnMain, creances: totalCreances, resteAVerser, commandesEnCours: commandesEnCoursCount || 0 })
     setVentes7j(Object.entries(parJour).map(([jour, total]) => ({ jour, total })))
     setChargement(false)
   }
@@ -278,11 +281,13 @@ function DashboardCommercial() {
         <CarteKpi label="Mon stock en main" valeur={formatXOF(kpi.stockEnMain)} to="/stock-commercial" />
         <CarteKpi label="Mes créances en cours" valeur={formatXOF(kpi.creances)} to="/creances" />
       </div>
-      <div className="grid grid-cols-1 mb-8">
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <CarteKpi label="Mes commandes en cours" valeur={String(kpi.commandesEnCours)} to="/commandes" />
         <CarteKpi
           label="Reste à verser aujourd'hui"
           valeur={formatXOF(kpi.resteAVerser)}
           alerte={kpi.resteAVerser > 0}
+          to="/mes-versements"
         />
       </div>
 
