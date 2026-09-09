@@ -12,6 +12,7 @@ export default function Creances() {
   const [searchParams, setSearchParams] = useSearchParams()
   const filtre = searchParams.get('filtre') || 'ouvertes' // ouvertes | echues | encaissees | toutes
   const [toutesLesCreances, setToutesLesCreances] = useState([])
+  const [avancesCommandes, setAvancesCommandes] = useState([])
   const [chargement, setChargement] = useState(true)
   const [periode, setPeriode] = useState('tout') // tout | jour | mois | personnalise
   const [dateDebut, setDateDebut] = useState('')
@@ -34,9 +35,32 @@ export default function Creances() {
   const [erreurPaiement, setErreurPaiement] = useState('')
 
   useEffect(() => {
-    if (profil) chargerCreances()
+    if (profil) {
+      chargerCreances()
+      chargerAvancesCommandes()
+    }
     supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom').then(({ data }) => setCommerciaux(data || []))
   }, [profil])
+
+  async function chargerAvancesCommandes() {
+    // Avances déjà encaissées sur des commandes pas encore livrées ni
+    // annulées : cet argent n'est ni une créance classique (le client ne
+    // doit rien), ni du chiffre d'affaires (rien n'est encore livré) —
+    // c'est un crédit en attente en faveur du client.
+    let requete = supabase
+      .from('commandes')
+      .select('id, montant_ttc, montant_paye, statut, created_at, clients(nom, telephone)')
+      .in('statut', ['brouillon', 'confirmee', 'en_preparation'])
+      .gt('montant_paye', 0)
+      .order('created_at', { ascending: false })
+
+    if (profil?.role === 'commercial' && !profil?.acces_etendu) {
+      requete = requete.eq('commercial_id', profil.id)
+    }
+
+    const { data } = await requete
+    setAvancesCommandes(data || [])
+  }
 
   async function chargerCreances() {
     setChargement(true)
@@ -304,6 +328,29 @@ export default function Creances() {
           )}
         </div>
       </div>
+
+      {avancesCommandes.length > 0 && (
+        <div className="card p-4 mb-4 border-blue-200 bg-blue-50">
+          <p className="text-sm font-semibold text-blue-800 mb-1">
+            💰 Avances reçues sur commandes non livrées — {formatXOF(avancesCommandes.reduce((s, c) => s + Number(c.montant_paye || 0), 0))}
+          </p>
+          <p className="text-xs text-blue-700 mb-2">
+            Cet argent a été encaissé mais rien n'a encore été livré — c'est un crédit en faveur du client, pas une créance.
+          </p>
+          <div className="space-y-1.5">
+            {avancesCommandes.map((c) => (
+              <div key={c.id} className="flex items-center justify-between bg-white rounded-lg border border-blue-200 px-3 py-2 text-sm">
+                <div>
+                  <p className="font-medium">{c.clients?.nom || '—'}</p>
+                  <p className="text-xs text-petrol-500 capitalize">{c.statut.replace('_', ' ')}</p>
+                </div>
+                <span className="font-mono text-blue-700">{formatXOF(c.montant_paye)} / {formatXOF(c.montant_ttc)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-wrap items-end gap-3 mb-4">
         <div>
           <label className="label">Statut</label>
