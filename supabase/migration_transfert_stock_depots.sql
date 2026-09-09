@@ -15,6 +15,8 @@
 --
 -- À exécuter dans l'éditeur SQL de Supabase.
 
+drop function if exists transferer_stock(uuid, uuid, uuid, integer, text);
+
 create or replace function transferer_stock(
   p_produit_id uuid,
   p_depot_source_id uuid,
