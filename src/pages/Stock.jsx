@@ -784,6 +784,20 @@ export default function Stock() {
                   {t('mouvement.sortie')}
                 </button>
               </div>
+              {tousLesDepots.length > 1 && (
+                <div className="border border-amber-300 bg-amber-50 rounded-lg p-3">
+                  <p className="text-xs text-amber-800">
+                    {t('mouvement.avertissementTransfert')}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => { fermerModalMouvement(); ouvrirModalTransfert(modalMouvement) }}
+                    className="text-xs font-medium text-blue-700 underline mt-1"
+                  >
+                    🔁 {t('mouvement.ouvrirTransfertPlutot')}
+                  </button>
+                </div>
+              )}
               <div>
                 <label className="label">{t('mouvement.quantite')}</label>
                 <input

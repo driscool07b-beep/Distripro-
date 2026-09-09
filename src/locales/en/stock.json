@@ -57,6 +57,8 @@
 
   "mouvement": {
     "titre": "Adjust stock",
+    "avertissementTransfert": "⚠️ To move stock to another warehouse, don't use \"Out\" — use \"Transfer between warehouses\", which tracks the movement and requires a receipt confirmation on arrival.",
+    "ouvrirTransfertPlutot": "Open warehouse transfer instead",
     "stockActuel": "current stock",
     "entree": "In",
     "sortie": "Out",

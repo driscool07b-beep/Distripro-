@@ -57,6 +57,8 @@
 
   "mouvement": {
     "titre": "Ajuster le stock",
+    "avertissementTransfert": "⚠️ Pour déplacer du stock vers un autre dépôt, n'utilisez pas \"Sortie\" — utilisez \"Transférer entre dépôts\", qui trace le mouvement et exige une confirmation de réception à l'arrivée.",
+    "ouvrirTransfertPlutot": "Ouvrir le transfert entre dépôts à la place",
     "stockActuel": "stock actuel",
     "entree": "Entrée",
     "sortie": "Sortie",
