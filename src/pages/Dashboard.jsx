@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -14,6 +15,7 @@ export default function Dashboard() {
 }
 
 function DashboardEntreprise() {
+  const { t } = useTranslation('dashboard')
   const { profil } = useAuth()
   const [kpi, setKpi] = useState({
     caJour: 0,
@@ -107,32 +109,32 @@ function DashboardEntreprise() {
   return (
     <div className="p-8 max-w-6xl">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold">Bonjour {profil?.nom?.split(' ')[0] || ''} 👋</h1>
-        <p className="text-sm text-petrol-700 mt-1">Voici l'activité de votre entreprise aujourd'hui.</p>
+        <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
+        <p className="text-sm text-petrol-700 mt-1">{t('entreprise.sousTitre')}</p>
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-        <CarteKpi label="Ventes du jour" valeur={formatXOF(kpi.caJour)} accent to="/ventes?periode=jour" />
-        <CarteKpi label="Ventes du mois" valeur={formatXOF(kpi.caMois)} to="/ventes?periode=mois" />
-        <CarteKpi label="Clients actifs" valeur={`${kpi.nbClientsActifs}/${kpi.nbClientsTotal}`} to="/clients" />
-        <CarteKpi label="Valeur du stock" valeur={formatXOF(kpi.valeurStock)} to="/stock" />
+        <CarteKpi label={t('entreprise.ventesJour')} valeur={formatXOF(kpi.caJour)} accent to="/ventes?periode=jour" />
+        <CarteKpi label={t('entreprise.ventesMois')} valeur={formatXOF(kpi.caMois)} to="/ventes?periode=mois" />
+        <CarteKpi label={t('entreprise.clientsActifs')} valeur={`${kpi.nbClientsActifs}/${kpi.nbClientsTotal}`} to="/clients" />
+        <CarteKpi label={t('entreprise.valeurStock')} valeur={formatXOF(kpi.valeurStock)} to="/stock" />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         <CarteKpi
-          label="Alertes stock"
+          label={t('entreprise.alertesStock')}
           valeur={kpi.alertesStock}
           alerte={kpi.alertesStock > 0}
           to="/stock?filtre=alertes"
         />
-        <CarteKpi label="Créances en cours" valeur={formatXOF(kpi.creances)} to="/creances" />
+        <CarteKpi label={t('entreprise.creancesEnCours')} valeur={formatXOF(kpi.creances)} to="/creances" />
         <CarteKpi
-          label="Créances échues"
+          label={t('entreprise.creancesEchues')}
           valeur={formatXOF(kpi.creancesEchues)}
           alerte={kpi.creancesEchues > 0}
           to="/creances?filtre=echues"
         />
         <CarteKpi
-          label="Commandes en attente"
+          label={t('entreprise.commandesEnAttente')}
           valeur={kpi.commandesEnAttente}
           alerte={kpi.commandesEnAttente > 0}
           to="/commandes"
@@ -141,12 +143,12 @@ function DashboardEntreprise() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="card p-6 lg:col-span-2">
-          <h2 className="font-semibold mb-4">Ventes des 7 derniers jours</h2>
+          <h2 className="font-semibold mb-4">{t('entreprise.ventes7jTitre')}</h2>
           {chargement ? (
-            <div className="h-64 flex items-center justify-center text-sm text-petrol-500">Chargement…</div>
+            <div className="h-64 flex items-center justify-center text-sm text-petrol-500">{t('chargement')}</div>
           ) : ventes7j.length === 0 ? (
             <div className="h-64 flex items-center justify-center text-sm text-petrol-500">
-              Aucune vente enregistrée sur cette période.
+              {t('entreprise.aucuneVentePeriode')}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
@@ -162,9 +164,9 @@ function DashboardEntreprise() {
         </div>
 
         <div className="card p-6">
-          <h2 className="font-semibold mb-4">Produits en alerte</h2>
+          <h2 className="font-semibold mb-4">{t('entreprise.produitsEnAlerte')}</h2>
           {alertes.length === 0 ? (
-            <p className="text-sm text-petrol-500">Aucun produit sous le seuil d'alerte.</p>
+            <p className="text-sm text-petrol-500">{t('entreprise.aucunProduitSeuil')}</p>
           ) : (
             <ul className="space-y-3">
               {alertes.map((a, i) => (
@@ -174,7 +176,7 @@ function DashboardEntreprise() {
                   className="flex items-center justify-between text-sm hover:underline"
                 >
                   <span className="truncate">{a.produits?.nom}</span>
-                  <span className="font-mono text-amber-600 shrink-0 ml-2">{a.quantite} restants</span>
+                  <span className="font-mono text-amber-600 shrink-0 ml-2">{a.quantite} {t('restants')}</span>
                 </Link>
               ))}
             </ul>
@@ -186,6 +188,7 @@ function DashboardEntreprise() {
 }
 
 function DashboardCommercial() {
+  const { t } = useTranslation('dashboard')
   const { profil } = useAuth()
   const [kpi, setKpi] = useState({
     caJour: 0,
@@ -270,22 +273,22 @@ function DashboardCommercial() {
   return (
     <div className="p-4 sm:p-8 max-w-4xl">
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Bonjour {profil?.nom?.split(' ')[0] || ''} 👋</h1>
-        <p className="text-sm text-petrol-700 mt-1">Voici votre activité personnelle.</p>
+        <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
+        <p className="text-sm text-petrol-700 mt-1">{t('commercial.sousTitre')}</p>
       </header>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <CarteKpi label="Mes ventes du jour" valeur={formatXOF(kpi.caJour)} accent to="/ventes" />
-        <CarteKpi label="Mes ventes du mois" valeur={formatXOF(kpi.caMois)} to="/ventes" />
+        <CarteKpi label={t('commercial.mesVentesJour')} valeur={formatXOF(kpi.caJour)} accent to="/ventes" />
+        <CarteKpi label={t('commercial.mesVentesMois')} valeur={formatXOF(kpi.caMois)} to="/ventes" />
       </div>
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <CarteKpi label="Mon stock en main" valeur={formatXOF(kpi.stockEnMain)} to="/stock-commercial" />
-        <CarteKpi label="Mes créances en cours" valeur={formatXOF(kpi.creances)} to="/creances" />
+        <CarteKpi label={t('commercial.monStockEnMain')} valeur={formatXOF(kpi.stockEnMain)} to="/stock-commercial" />
+        <CarteKpi label={t('commercial.mesCreancesEnCours')} valeur={formatXOF(kpi.creances)} to="/creances" />
       </div>
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <CarteKpi label="Mes commandes en cours" valeur={String(kpi.commandesEnCours)} to="/commandes" />
+        <CarteKpi label={t('commercial.mesCommandesEnCours')} valeur={String(kpi.commandesEnCours)} to="/commandes" />
         <CarteKpi
-          label="Reste à verser aujourd'hui"
+          label={t('commercial.resteAVerserAujourdhui')}
           valeur={formatXOF(kpi.resteAVerser)}
           alerte={kpi.resteAVerser > 0}
           to="/mes-versements"
@@ -294,7 +297,7 @@ function DashboardCommercial() {
 
       {objectif && (
         <div className="card p-5 mb-6">
-          <h2 className="font-semibold mb-2 text-sm">Mon objectif du mois</h2>
+          <h2 className="font-semibold mb-2 text-sm">{t('commercial.monObjectifMois')}</h2>
           <div className="flex justify-between text-xs text-petrol-600 mb-1">
             <span>{formatXOF(objectif.realise)} / {formatXOF(objectif.cible)}</span>
             <span className="font-medium">{pctObjectif}%</span>
@@ -309,12 +312,12 @@ function DashboardCommercial() {
       )}
 
       <div className="card p-6">
-        <h2 className="font-semibold mb-4">Mes ventes des 7 derniers jours</h2>
+        <h2 className="font-semibold mb-4">{t('commercial.mesVentes7j')}</h2>
         {chargement ? (
-          <div className="h-56 flex items-center justify-center text-sm text-petrol-500">Chargement…</div>
+          <div className="h-56 flex items-center justify-center text-sm text-petrol-500">{t('chargement')}</div>
         ) : ventes7j.length === 0 ? (
           <div className="h-56 flex items-center justify-center text-sm text-petrol-500">
-            Aucune vente enregistrée sur cette période.
+            {t('entreprise.aucuneVentePeriode')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={220}>
@@ -333,6 +336,7 @@ function DashboardCommercial() {
 }
 
 function DashboardComptable() {
+  const { t } = useTranslation('dashboard')
   const { profil } = useAuth()
   const [kpi, setKpi] = useState({
     ventesCashJour: 0,
@@ -375,25 +379,25 @@ function DashboardComptable() {
   return (
     <div className="p-4 sm:p-8 max-w-4xl">
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Bonjour {profil?.nom?.split(' ')[0] || ''} 👋</h1>
-        <p className="text-sm text-petrol-700 mt-1">Voici la situation financière du jour.</p>
+        <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
+        <p className="text-sm text-petrol-700 mt-1">{t('comptable.sousTitre')}</p>
       </header>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <CarteKpi label="Total à verser aujourd'hui" valeur={formatXOF(totalAttendu)} accent to="/versements" />
-            <CarteKpi label="Créances en cours" valeur={formatXOF(kpi.creances)} to="/creances" />
+            <CarteKpi label={t('comptable.totalAVerserAujourdhui')} valeur={formatXOF(totalAttendu)} accent to="/versements" />
+            <CarteKpi label={t('comptable.creancesEnCours')} valeur={formatXOF(kpi.creances)} to="/creances" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <CarteKpi label="Ventes cash du jour" valeur={formatXOF(kpi.ventesCashJour)} to="/versements" />
-            <CarteKpi label="Recouvrement du jour" valeur={formatXOF(kpi.recouvrementJour)} to="/versements" />
+            <CarteKpi label={t('comptable.ventesCashJour')} valeur={formatXOF(kpi.ventesCashJour)} to="/versements" />
+            <CarteKpi label={t('comptable.recouvrementJour')} valeur={formatXOF(kpi.recouvrementJour)} to="/versements" />
           </div>
           <div className="grid grid-cols-1">
             <CarteKpi
-              label="Créances échues"
+              label={t('comptable.creancesEchues')}
               valeur={formatXOF(kpi.creancesEchues)}
               alerte={kpi.creancesEchues > 0}
               to="/creances?filtre=echues"
@@ -406,6 +410,7 @@ function DashboardComptable() {
 }
 
 function DashboardAgentRecouvrement() {
+  const { t } = useTranslation('dashboard')
   const { profil } = useAuth()
   const [kpi, setKpi] = useState({
     creances: 0,
@@ -466,32 +471,32 @@ function DashboardAgentRecouvrement() {
   return (
     <div className="p-4 sm:p-8 max-w-4xl">
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Bonjour {profil?.nom?.split(' ')[0] || ''} 👋</h1>
-        <p className="text-sm text-petrol-700 mt-1">Voici le suivi des créances clients.</p>
+        <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
+        <p className="text-sm text-petrol-700 mt-1">{t('agentRecouvrement.sousTitre')}</p>
       </header>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <CarteKpi label="Créances en cours" valeur={formatXOF(kpi.creances)} to="/creances" />
+            <CarteKpi label={t('agentRecouvrement.creancesEnCours')} valeur={formatXOF(kpi.creances)} to="/creances" />
             <CarteKpi
-              label="Créances échues"
+              label={t('agentRecouvrement.creancesEchues')}
               valeur={formatXOF(kpi.creancesEchues)}
               alerte={kpi.creancesEchues > 0}
               to="/creances?filtre=echues"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-            <CarteKpi label="Encaissé aujourd'hui" valeur={formatXOF(kpi.encaisseJour)} accent to="/creances?filtre=encaissees" />
-            <CarteKpi label="Encaissé ce mois" valeur={formatXOF(kpi.encaisseMois)} to="/creances?filtre=encaissees" />
+            <CarteKpi label={t('agentRecouvrement.encaisseAujourdhui')} valeur={formatXOF(kpi.encaisseJour)} accent to="/creances?filtre=encaissees" />
+            <CarteKpi label={t('agentRecouvrement.encaisseMois')} valeur={formatXOF(kpi.encaisseMois)} to="/creances?filtre=encaissees" />
           </div>
 
           <div className="card p-5">
-            <h2 className="font-semibold mb-3 text-sm">Créances échues les plus urgentes</h2>
+            <h2 className="font-semibold mb-3 text-sm">{t('agentRecouvrement.creancesUrgentes')}</h2>
             {prioritaires.length === 0 ? (
-              <p className="text-sm text-petrol-500">Aucune créance échue — bon travail 👍</p>
+              <p className="text-sm text-petrol-500">{t('agentRecouvrement.aucuneCreanceEchue')}</p>
             ) : (
               <div className="space-y-2">
                 {prioritaires.map((p, i) => (
@@ -500,7 +505,7 @@ function DashboardAgentRecouvrement() {
                       <p className="font-medium">{p.client}</p>
                       <p className="text-xs text-petrol-500">
                         {p.ville}{p.ville && p.telephone ? ' — ' : ''}{p.telephone}
-                        {' — échéance '}
+                        {' — ' + t('agentRecouvrement.echeance') + ' '}
                         {new Date(p.echeance).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </p>
                     </div>
@@ -510,7 +515,7 @@ function DashboardAgentRecouvrement() {
               </div>
             )}
             <Link to="/creances?filtre=echues" className="text-xs text-petrol-600 underline mt-3 inline-block">
-              Voir toutes les créances échues →
+              {t('agentRecouvrement.voirToutesEchues')}
             </Link>
           </div>
         </>
@@ -520,6 +525,7 @@ function DashboardAgentRecouvrement() {
 }
 
 function DashboardGestionnaireStock() {
+  const { t } = useTranslation('dashboard')
   const { profil } = useAuth()
   const [kpi, setKpi] = useState({
     valeurStock: 0,
@@ -552,19 +558,19 @@ function DashboardGestionnaireStock() {
   return (
     <div className="p-4 sm:p-8 max-w-4xl">
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Bonjour {profil?.nom?.split(' ')[0] || ''} 👋</h1>
-        <p className="text-sm text-petrol-700 mt-1">Voici la situation du stock.</p>
+        <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
+        <p className="text-sm text-petrol-700 mt-1">{t('gestionnaireStock.sousTitre')}</p>
       </header>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <CarteKpi label="Valeur du stock magasin" valeur={formatXOF(kpi.valeurStock)} accent to="/stock" />
-            <CarteKpi label="Valeur en main (commerciaux)" valeur={formatXOF(kpi.valeurStockCommerciaux)} to="/stock-commercial" />
+            <CarteKpi label={t('gestionnaireStock.valeurStockMagasin')} valeur={formatXOF(kpi.valeurStock)} accent to="/stock" />
+            <CarteKpi label={t('gestionnaireStock.valeurEnMainCommerciaux')} valeur={formatXOF(kpi.valeurStockCommerciaux)} to="/stock-commercial" />
             <CarteKpi
-              label="Alertes stock"
+              label={t('gestionnaireStock.alertesStock')}
               valeur={kpi.alertesStock}
               alerte={kpi.alertesStock > 0}
               to="/stock?filtre=alertes"
@@ -572,9 +578,9 @@ function DashboardGestionnaireStock() {
           </div>
 
           <div className="card p-6">
-            <h2 className="font-semibold mb-4">Produits en alerte</h2>
+            <h2 className="font-semibold mb-4">{t('gestionnaireStock.produitsEnAlerte')}</h2>
             {alertes.length === 0 ? (
-              <p className="text-sm text-petrol-500">Aucun produit sous le seuil d'alerte.</p>
+              <p className="text-sm text-petrol-500">{t('gestionnaireStock.aucunProduitSeuil')}</p>
             ) : (
               <ul className="space-y-3">
                 {alertes.map((a, i) => (
@@ -584,7 +590,7 @@ function DashboardGestionnaireStock() {
                     className="flex items-center justify-between text-sm hover:underline"
                   >
                     <span className="truncate">{a.produits?.nom}</span>
-                    <span className="font-mono text-amber-600 shrink-0 ml-2">{a.quantite} restants</span>
+                    <span className="font-mono text-amber-600 shrink-0 ml-2">{a.quantite} {t('restants')}</span>
                   </Link>
                 ))}
               </ul>

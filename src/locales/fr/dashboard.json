@@ -1,0 +1,63 @@
+{
+  "bonjour": "Bonjour {{prenom}} 👋",
+  "restants": "restants",
+  "chargement": "Chargement…",
+
+  "entreprise": {
+    "sousTitre": "Voici l'activité de votre entreprise aujourd'hui.",
+    "ventesJour": "Ventes du jour",
+    "ventesMois": "Ventes du mois",
+    "clientsActifs": "Clients actifs",
+    "valeurStock": "Valeur du stock",
+    "alertesStock": "Alertes stock",
+    "creancesEnCours": "Créances en cours",
+    "creancesEchues": "Créances échues",
+    "commandesEnAttente": "Commandes en attente",
+    "ventes7jTitre": "Ventes des 7 derniers jours",
+    "aucuneVentePeriode": "Aucune vente enregistrée sur cette période.",
+    "produitsEnAlerte": "Produits en alerte",
+    "aucunProduitSeuil": "Aucun produit sous le seuil d'alerte."
+  },
+
+  "commercial": {
+    "sousTitre": "Voici votre activité personnelle.",
+    "mesVentesJour": "Mes ventes du jour",
+    "mesVentesMois": "Mes ventes du mois",
+    "monStockEnMain": "Mon stock en main",
+    "mesCreancesEnCours": "Mes créances en cours",
+    "mesCommandesEnCours": "Mes commandes en cours",
+    "resteAVerserAujourdhui": "Reste à verser aujourd'hui",
+    "monObjectifMois": "Mon objectif du mois",
+    "mesVentes7j": "Mes ventes des 7 derniers jours"
+  },
+
+  "comptable": {
+    "sousTitre": "Voici la situation financière du jour.",
+    "totalAVerserAujourdhui": "Total à verser aujourd'hui",
+    "creancesEnCours": "Créances en cours",
+    "ventesCashJour": "Ventes cash du jour",
+    "recouvrementJour": "Recouvrement du jour",
+    "creancesEchues": "Créances échues"
+  },
+
+  "agentRecouvrement": {
+    "sousTitre": "Voici le suivi des créances clients.",
+    "creancesEnCours": "Créances en cours",
+    "creancesEchues": "Créances échues",
+    "encaisseAujourdhui": "Encaissé aujourd'hui",
+    "encaisseMois": "Encaissé ce mois",
+    "creancesUrgentes": "Créances échues les plus urgentes",
+    "aucuneCreanceEchue": "Aucune créance échue — bon travail 👍",
+    "echeance": "échéance",
+    "voirToutesEchues": "Voir toutes les créances échues →"
+  },
+
+  "gestionnaireStock": {
+    "sousTitre": "Voici la situation du stock.",
+    "valeurStockMagasin": "Valeur du stock magasin",
+    "valeurEnMainCommerciaux": "Valeur en main (commerciaux)",
+    "alertesStock": "Alertes stock",
+    "produitsEnAlerte": "Produits en alerte",
+    "aucunProduitSeuil": "Aucun produit sous le seuil d'alerte."
+  }
+}

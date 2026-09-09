@@ -6,6 +6,10 @@ import communFr from '../locales/fr/commun.json'
 import communEn from '../locales/en/commun.json'
 import communAr from '../locales/ar/commun.json'
 import communZh from '../locales/zh/commun.json'
+import dashboardFr from '../locales/fr/dashboard.json'
+import dashboardEn from '../locales/en/dashboard.json'
+import dashboardAr from '../locales/ar/dashboard.json'
+import dashboardZh from '../locales/zh/dashboard.json'
 
 // Langues dont le contenu est réellement traduit. L'arabe et le chinois
 // sont préparés dans la structure (RTL, sélecteur) mais leur contenu
@@ -28,14 +32,14 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      fr: { commun: communFr },
-      en: { commun: communEn },
-      ar: { commun: communAr },
-      zh: { commun: communZh },
+      fr: { commun: communFr, dashboard: dashboardFr },
+      en: { commun: communEn, dashboard: dashboardEn },
+      ar: { commun: communAr, dashboard: dashboardAr },
+      zh: { commun: communZh, dashboard: dashboardZh },
     },
     fallbackLng: 'fr',
     supportedLngs: LANGUES.map((l) => l.code),
-    ns: ['commun'],
+    ns: ['commun', 'dashboard'],
     defaultNS: 'commun',
     interpolation: { escapeValue: false }, // React échappe déjà par défaut
     detection: {

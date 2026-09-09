@@ -1,0 +1,63 @@
+{
+  "bonjour": "Hi {{prenom}} 👋",
+  "restants": "left",
+  "chargement": "Loading…",
+
+  "entreprise": {
+    "sousTitre": "Here's your company's activity today.",
+    "ventesJour": "Today's sales",
+    "ventesMois": "This month's sales",
+    "clientsActifs": "Active clients",
+    "valeurStock": "Stock value",
+    "alertesStock": "Stock alerts",
+    "creancesEnCours": "Open receivables",
+    "creancesEchues": "Overdue receivables",
+    "commandesEnAttente": "Pending orders",
+    "ventes7jTitre": "Sales over the last 7 days",
+    "aucuneVentePeriode": "No sales recorded for this period.",
+    "produitsEnAlerte": "Products in alert",
+    "aucunProduitSeuil": "No product below the alert threshold."
+  },
+
+  "commercial": {
+    "sousTitre": "Here's your personal activity.",
+    "mesVentesJour": "My sales today",
+    "mesVentesMois": "My sales this month",
+    "monStockEnMain": "My stock on hand",
+    "mesCreancesEnCours": "My open receivables",
+    "mesCommandesEnCours": "My pending orders",
+    "resteAVerserAujourdhui": "Left to deposit today",
+    "monObjectifMois": "My monthly target",
+    "mesVentes7j": "My sales over the last 7 days"
+  },
+
+  "comptable": {
+    "sousTitre": "Here's today's financial situation.",
+    "totalAVerserAujourdhui": "Total to deposit today",
+    "creancesEnCours": "Open receivables",
+    "ventesCashJour": "Cash sales today",
+    "recouvrementJour": "Collections today",
+    "creancesEchues": "Overdue receivables"
+  },
+
+  "agentRecouvrement": {
+    "sousTitre": "Here's the receivables follow-up.",
+    "creancesEnCours": "Open receivables",
+    "creancesEchues": "Overdue receivables",
+    "encaisseAujourdhui": "Collected today",
+    "encaisseMois": "Collected this month",
+    "creancesUrgentes": "Most urgent overdue receivables",
+    "aucuneCreanceEchue": "No overdue receivables — nice work 👍",
+    "echeance": "due",
+    "voirToutesEchues": "View all overdue receivables →"
+  },
+
+  "gestionnaireStock": {
+    "sousTitre": "Here's the stock situation.",
+    "valeurStockMagasin": "Warehouse stock value",
+    "valeurEnMainCommerciaux": "On hand (sales reps)",
+    "alertesStock": "Stock alerts",
+    "produitsEnAlerte": "Products in alert",
+    "aucunProduitSeuil": "No product below the alert threshold."
+  }
+}
