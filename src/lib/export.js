@@ -197,7 +197,7 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
 /**
  * Génère un reçu de paiement (encaissement sur une vente à crédit).
  */
-export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde, total, date, numero, venteNumero }) {
+export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde, total, date, numero, venteNumero, receptionnePar }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
   const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
@@ -216,6 +216,7 @@ export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde,
   if (client?.telephone) doc.text(`Téléphone : ${client.telephone}`, 14, yInfo + 7)
   doc.text(`Date : ${new Date(date).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 130, yInfo)
   if (venteNumero) doc.text(`Réf. vente : ${venteNumero}`, 130, yInfo + 7)
+  if (receptionnePar) doc.text(`Reçu par : ${receptionnePar}`, 130, yInfo + 14)
 
   const yBoite = yInfo + 20
   doc.setFillColor(247, 247, 245)

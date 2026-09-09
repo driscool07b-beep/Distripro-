@@ -3,7 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { ROLES_PAGES } from '../lib/accesRole'
 
-const TOUS_ROLES = ['admin', 'manager', 'commercial', 'comptable', 'gestionnaire_stock']
+const TOUS_ROLES = ['admin', 'manager', 'commercial', 'comptable', 'gestionnaire_stock', 'agent_recouvrement']
 
 const NAV_ITEMS = [
   { to: '/', label: 'Tableau de bord', icon: DashIcon, end: true, roles: TOUS_ROLES },

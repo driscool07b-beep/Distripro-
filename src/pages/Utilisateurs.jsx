@@ -8,6 +8,7 @@ const LIBELLES_ROLE = {
   commercial: 'Commercial',
   comptable: 'Comptable',
   gestionnaire_stock: 'Gestionnaire de stock',
+  agent_recouvrement: 'Agent de recouvrement',
 }
 
 export default function Utilisateurs() {
@@ -389,6 +390,7 @@ export default function Utilisateurs() {
                   <option value="manager">Manager</option>
                   <option value="comptable">Comptable</option>
                   <option value="gestionnaire_stock">Gestionnaire de stock</option>
+                  <option value="agent_recouvrement">Agent de recouvrement</option>
                   <option value="admin">Administrateur</option>
                 </select>
               </div>
@@ -446,6 +448,7 @@ export default function Utilisateurs() {
                   <option value="manager">Manager</option>
                   <option value="comptable">Comptable</option>
                   <option value="gestionnaire_stock">Gestionnaire de stock</option>
+                  <option value="agent_recouvrement">Agent de recouvrement</option>
                   <option value="admin">Administrateur</option>
                 </select>
               </div>

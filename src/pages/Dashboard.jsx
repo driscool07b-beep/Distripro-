@@ -9,6 +9,7 @@ export default function Dashboard() {
   if (profil?.role === 'commercial') return <DashboardCommercial />
   if (profil?.role === 'comptable') return <DashboardComptable />
   if (profil?.role === 'gestionnaire_stock') return <DashboardGestionnaireStock />
+  if (profil?.role === 'agent_recouvrement') return <DashboardAgentRecouvrement />
   return <DashboardEntreprise />
 }
 
@@ -397,6 +398,120 @@ function DashboardComptable() {
               alerte={kpi.creancesEchues > 0}
               to="/creances?filtre=echues"
             />
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function DashboardAgentRecouvrement() {
+  const { profil } = useAuth()
+  const [kpi, setKpi] = useState({
+    creances: 0,
+    creancesEchues: 0,
+    encaisseJour: 0,
+    encaisseMois: 0,
+  })
+  const [prioritaires, setPrioritaires] = useState([])
+  const [chargement, setChargement] = useState(true)
+
+  useEffect(() => {
+    chargerDonnees()
+  }, [])
+
+  async function chargerDonnees() {
+    setChargement(true)
+    const debutJour = new Date()
+    debutJour.setHours(0, 0, 0, 0)
+    const debutMois = new Date()
+    debutMois.setDate(1)
+    debutMois.setHours(0, 0, 0, 0)
+    const aujourdhui = new Date().toISOString().split('T')[0]
+
+    const [{ data: creancesData }, { data: reglementsJour }, { data: reglementsMois }] = await Promise.all([
+      supabase
+        .from('ventes')
+        .select('id, total, montant_regle, date_echeance, clients(nom, telephone, ville)')
+        .eq('mode_paiement', 'credit')
+        .neq('statut', 'annulee'),
+      supabase.from('reglements').select('montant').gte('created_at', debutJour.toISOString()),
+      supabase.from('reglements').select('montant').gte('created_at', debutMois.toISOString()),
+    ])
+
+    const creancesOuvertes = (creancesData || []).filter((v) => Number(v.montant_regle) < Number(v.total))
+    const totalCreances = creancesOuvertes.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
+    const creancesEchues = creancesOuvertes.filter((v) => v.date_echeance && v.date_echeance < aujourdhui)
+    const totalCreancesEchues = creancesEchues.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
+
+    const encaisseJour = (reglementsJour || []).reduce((s, p) => s + Number(p.montant || 0), 0)
+    const encaisseMois = (reglementsMois || []).reduce((s, p) => s + Number(p.montant || 0), 0)
+
+    const prioritairesListe = creancesEchues
+      .map((v) => ({
+        client: v.clients?.nom || '—',
+        ville: v.clients?.ville || '',
+        telephone: v.clients?.telephone || '',
+        solde: Number(v.total) - Number(v.montant_regle),
+        echeance: v.date_echeance,
+      }))
+      .sort((a, b) => a.echeance.localeCompare(b.echeance))
+      .slice(0, 10)
+
+    setKpi({ creances: totalCreances, creancesEchues: totalCreancesEchues, encaisseJour, encaisseMois })
+    setPrioritaires(prioritairesListe)
+    setChargement(false)
+  }
+
+  return (
+    <div className="p-4 sm:p-8 max-w-4xl">
+      <header className="mb-6">
+        <h1 className="text-2xl font-semibold">Bonjour {profil?.nom?.split(' ')[0] || ''} 👋</h1>
+        <p className="text-sm text-petrol-700 mt-1">Voici le suivi des créances clients.</p>
+      </header>
+
+      {chargement ? (
+        <p className="text-sm text-petrol-500">Chargement…</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <CarteKpi label="Créances en cours" valeur={formatXOF(kpi.creances)} to="/creances" />
+            <CarteKpi
+              label="Créances échues"
+              valeur={formatXOF(kpi.creancesEchues)}
+              alerte={kpi.creancesEchues > 0}
+              to="/creances?filtre=echues"
+            />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <CarteKpi label="Encaissé aujourd'hui" valeur={formatXOF(kpi.encaisseJour)} accent to="/creances?filtre=encaissees" />
+            <CarteKpi label="Encaissé ce mois" valeur={formatXOF(kpi.encaisseMois)} to="/creances?filtre=encaissees" />
+          </div>
+
+          <div className="card p-5">
+            <h2 className="font-semibold mb-3 text-sm">Créances échues les plus urgentes</h2>
+            {prioritaires.length === 0 ? (
+              <p className="text-sm text-petrol-500">Aucune créance échue — bon travail 👍</p>
+            ) : (
+              <div className="space-y-2">
+                {prioritaires.map((p, i) => (
+                  <div key={i} className="flex items-center justify-between text-sm border-b border-line last:border-0 pb-2 last:pb-0">
+                    <div>
+                      <p className="font-medium">{p.client}</p>
+                      <p className="text-xs text-petrol-500">
+                        {p.ville}{p.ville && p.telephone ? ' — ' : ''}{p.telephone}
+                        {' — échéance '}
+                        {new Date(p.echeance).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                      </p>
+                    </div>
+                    <span className="font-mono text-amber-700 shrink-0">{formatXOF(p.solde)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Link to="/creances?filtre=echues" className="text-xs text-petrol-600 underline mt-3 inline-block">
+              Voir toutes les créances échues →
+            </Link>
           </div>
         </>
       )}

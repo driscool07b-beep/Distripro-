@@ -8,9 +8,9 @@ import * as XLSX from 'xlsx'
 
 export default function Creances() {
   const { entreprise, profil } = useAuth()
-  const [searchParams] = useSearchParams()
-  const filtreEchues = searchParams.get('filtre') === 'echues'
-  const [creances, setCreances] = useState([])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filtre = searchParams.get('filtre') || 'ouvertes' // ouvertes | echues | encaissees | toutes
+  const [toutesLesCreances, setToutesLesCreances] = useState([])
   const [chargement, setChargement] = useState(true)
 
   const [venteOuverte, setVenteOuverte] = useState(null)
@@ -49,17 +49,20 @@ export default function Creances() {
 
     const { data, error } = await requete
 
-    if (!error) {
-      const ouvertes = (data || []).filter((v) => Number(v.montant_regle) < Number(v.total))
-      setCreances(ouvertes)
-    }
+    if (!error) setToutesLesCreances(data || [])
     setChargement(false)
   }
 
   const aujourdhui = new Date().toISOString().split('T')[0]
-  const estEchue = (v) => v.date_echeance && v.date_echeance < aujourdhui
+  const estEchue = (v) => v.date_echeance && v.date_echeance < aujourdhui && Number(v.montant_regle) < Number(v.total)
+  const estEncaissee = (v) => Number(v.montant_regle) >= Number(v.total)
+  const estOuverte = (v) => Number(v.montant_regle) < Number(v.total)
 
-  const creancesAffichees = filtreEchues ? creances.filter(estEchue) : creances
+  const creancesAffichees =
+    filtre === 'echues' ? toutesLesCreances.filter(estEchue) :
+    filtre === 'encaissees' ? toutesLesCreances.filter(estEncaissee) :
+    filtre === 'toutes' ? toutesLesCreances :
+    toutesLesCreances.filter(estOuverte) // 'ouvertes' par défaut
   const totalAffiche = creancesAffichees.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
 
   const COLONNES_EXPORT = [
@@ -101,7 +104,11 @@ export default function Creances() {
         .eq('id', venteId)
         .single(),
       supabase.from('ventes_lignes').select('quantite, prix_unitaire, sous_total, produits(nom)').eq('vente_id', venteId),
-      supabase.from('reglements').select('montant, mode, created_at').eq('vente_id', venteId).order('created_at'),
+      supabase
+        .from('reglements')
+        .select('montant, mode, created_at, commercial:profils!commercial_id(nom), enregistre_par:profils!created_by(nom)')
+        .eq('vente_id', venteId)
+        .order('created_at'),
     ])
 
     setDetail({ vente, lignes: lignes || [], paiements: paiements || [] })
@@ -227,6 +234,10 @@ export default function Creances() {
 
     const { data: reglement } = await supabase.from('reglements').select('numero').eq('id', reglementId).single()
 
+    const nomRecouvrement = commercialRecouvrement
+      ? commerciaux.find((c) => c.id === commercialRecouvrement)?.nom || null
+      : profil?.nom || null
+
     const nouveauSolde = resteDu - montant
     const doc = genererRecuPaiement({
       entreprise,
@@ -237,6 +248,7 @@ export default function Creances() {
       date: new Date().toISOString(),
       numero: reglement?.numero,
       venteNumero: detail.vente.numero_vente,
+      receptionnePar: nomRecouvrement,
     })
     doc.save(`${reglement?.numero || 'recu-paiement-' + venteOuverte.slice(0, 8)}.pdf`)
 
@@ -274,10 +286,21 @@ export default function Creances() {
           )}
         </div>
       </div>
-      <p className="text-sm text-petrol-500 mb-4">
-        {filtreEchues ? 'Créances échues' : 'Toutes les créances en cours'} — {creancesAffichees.length} —{' '}
-        <span className="font-mono font-medium">{formatXOF(totalAffiche)}</span>
-      </p>
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <select
+          className="input-field text-sm w-auto"
+          value={filtre}
+          onChange={(e) => setSearchParams(e.target.value === 'ouvertes' ? {} : { filtre: e.target.value })}
+        >
+          <option value="ouvertes">En cours</option>
+          <option value="echues">Échues</option>
+          <option value="encaissees">Encaissées</option>
+          <option value="toutes">Toutes</option>
+        </select>
+        <p className="text-sm text-petrol-500">
+          {creancesAffichees.length} — <span className="font-mono font-medium">{formatXOF(totalAffiche)}</span>
+        </p>
+      </div>
 
       <div className="space-y-2">
         {creancesAffichees.map((v) => {
@@ -295,6 +318,7 @@ export default function Creances() {
                 <p className="font-medium text-sm">
                   {v.clients?.nom || 'Client'}
                   {v.solde_report && <span className="ml-2 text-xs bg-petrol-100 text-petrol-600 px-1.5 py-0.5 rounded">Solde reporté</span>}
+                  {estEncaissee(v) && <span className="ml-2 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">Encaissée</span>}
                 </p>
                 <p className="text-xs text-petrol-500">
                   Commercial : {v.profils?.nom || '—'}
@@ -311,7 +335,7 @@ export default function Creances() {
           )
         })}
         {creancesAffichees.length === 0 && (
-          <p className="text-petrol-400 text-center py-8">Aucune créance {filtreEchues ? 'échue' : ''} pour le moment.</p>
+          <p className="text-petrol-400 text-center py-8">Aucune créance pour ce filtre.</p>
         )}
       </div>
 
@@ -377,9 +401,15 @@ export default function Creances() {
                   <div className="border-t border-line pt-2">
                     <p className="text-xs font-medium text-petrol-600 mb-1">Paiements reçus</p>
                     {detail.paiements.map((p, i) => (
-                      <p key={i} className="text-xs text-petrol-600 flex justify-between">
-                        <span>{new Date(p.created_at).toLocaleDateString('fr-FR')}</span>
-                        <span className="font-mono">{formatXOF(p.montant)}</span>
+                      <p key={i} className="text-xs text-petrol-600 flex justify-between gap-2">
+                        <span>
+                          {new Date(p.created_at).toLocaleDateString('fr-FR')}
+                          {' — '}
+                          <span className="text-petrol-500">
+                            {p.commercial?.nom || p.enregistre_par?.nom || 'inconnu'}
+                          </span>
+                        </span>
+                        <span className="font-mono shrink-0">{formatXOF(p.montant)}</span>
                       </p>
                     ))}
                   </div>
