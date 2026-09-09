@@ -121,7 +121,7 @@ export function exporterPDF(nomFichier, titre, sousTitre, colonnes, lignes, tota
 /**
  * Génère un reçu/facture interne pour une vente.
  */
-export function genererRecuVente({ entreprise, vente, lignes }) {
+export function genererRecuVente({ entreprise, vente, lignes, autresTaxes }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
 
@@ -172,8 +172,27 @@ export function genererRecuVente({ entreprise, vente, lignes }) {
   }
   if (aDesTaxes) {
     corpsRecap.push(['Total HT', formatMontant(vente.montant_ht)])
-    if (Number(vente.montant_tva) > 0) corpsRecap.push(['TVA', formatMontant(vente.montant_tva)])
-    if (Number(vente.montant_autres_taxes) > 0) corpsRecap.push(['Autres taxes', formatMontant(vente.montant_autres_taxes)])
+
+    // TVA : détail par taux (obligation légale — pas juste un total TVA).
+    // Le taux réduit proportionnellement à la remise, comme calculé côté
+    // serveur (montant_ht / sous-total brut = même facteur pour tous les taux).
+    const facteurRemise = sousTotalBrut > 0 ? Number(vente.montant_ht) / sousTotalBrut : 1
+    const tvaParTaux = {}
+    lignes.forEach((l) => {
+      const taux = Number(l.taux_tva || 0)
+      if (taux > 0) tvaParTaux[taux] = (tvaParTaux[taux] || 0) + Number(l.montant_tva || 0)
+    })
+    Object.entries(tvaParTaux)
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .forEach(([taux, montantBrut]) => {
+        corpsRecap.push([`TVA (${taux}%)`, formatMontant(montantBrut * facteurRemise)])
+      })
+
+    // Autres taxes (AIRSI…) : nom + taux de chacune, dans l'ordre où elles
+    // ont été enregistrées à la vente.
+    ;(autresTaxes || []).forEach((tx) => {
+      corpsRecap.push([`${tx.nom} (${tx.taux}%)`, formatMontant(tx.montant)])
+    })
   }
   corpsRecap.push(['Total' + (aDesTaxes ? ' TTC' : ''), formatMontant(vente.total)])
   corpsRecap.push(['Mode de paiement', `${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}${vente.mode_reglement ? ' — ' + LIBELLES_MODE[vente.mode_reglement] : ''}`])

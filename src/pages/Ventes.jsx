@@ -129,7 +129,7 @@ export default function Ventes() {
     setChargementDetail(true)
     setDetailVente(null)
 
-    const [{ data: vente }, { data: lignes }] = await Promise.all([
+    const [{ data: vente }, { data: lignes }, { data: autresTaxes }] = await Promise.all([
       supabase
         .from('ventes')
         .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, montant_ht, montant_tva, montant_autres_taxes, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
@@ -137,11 +137,15 @@ export default function Ventes() {
         .single(),
       supabase
         .from('ventes_lignes')
-        .select('quantite, prix_unitaire, sous_total, produits(nom)')
+        .select('quantite, prix_unitaire, sous_total, taux_tva, montant_tva, produits(nom)')
+        .eq('vente_id', venteId),
+      supabase
+        .from('ventes_taxes')
+        .select('nom, taux, montant, base_calcul')
         .eq('vente_id', venteId),
     ])
 
-    setDetailVente({ vente, lignes: lignes || [] })
+    setDetailVente({ vente, lignes: lignes || [], autresTaxes: autresTaxes || [] })
     setChargementDetail(false)
   }
 
@@ -203,7 +207,7 @@ export default function Ventes() {
 
   function telechargerRecu() {
     if (!detailVente) return
-    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes })
+    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes, autresTaxes: detailVente.autresTaxes })
     doc.save(`recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`)
   }
 
@@ -238,7 +242,7 @@ export default function Ventes() {
 
   async function partagerRecu() {
     if (!detailVente) return
-    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes })
+    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes, autresTaxes: detailVente.autresTaxes })
     const blob = doc.output('blob')
     const fichier = new File([blob], `recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`, { type: 'application/pdf' })
 
@@ -929,12 +933,28 @@ export default function Ventes() {
                     {(Number(detailVente.vente?.montant_tva) > 0 || Number(detailVente.vente?.montant_autres_taxes) > 0) && (
                       <>
                         <p>Total HT : {formatXOF(detailVente.vente.montant_ht)}</p>
-                        {Number(detailVente.vente.montant_tva) > 0 && <p>TVA : {formatXOF(detailVente.vente.montant_tva)}</p>}
-                        {Number(detailVente.vente.montant_autres_taxes) > 0 && <p>Autres taxes : {formatXOF(detailVente.vente.montant_autres_taxes)}</p>}
+                        {(() => {
+                          const sousTotalBrut = detailVente.lignes.reduce((s, l) => s + Number(l.sous_total || 0), 0)
+                          const facteurRemise = sousTotalBrut > 0 ? Number(detailVente.vente.montant_ht) / sousTotalBrut : 1
+                          const tvaParTaux = {}
+                          detailVente.lignes.forEach((l) => {
+                            const taux = Number(l.taux_tva || 0)
+                            if (taux > 0) tvaParTaux[taux] = (tvaParTaux[taux] || 0) + Number(l.montant_tva || 0)
+                          })
+                          return Object.entries(tvaParTaux)
+                            .sort(([a], [b]) => Number(a) - Number(b))
+                            .map(([taux, montantBrut]) => (
+                              <p key={taux}>TVA ({taux}%) : {formatXOF(montantBrut * facteurRemise)}</p>
+                            ))
+                        })()}
+                        {(detailVente.autresTaxes || []).map((tx, i) => (
+                          <p key={i}>{tx.nom} ({tx.taux}%) : {formatXOF(tx.montant)}</p>
+                        ))}
                       </>
                     )}
                     <p>{t('detail.modeDePaiement')} : <span className="capitalize">{detailVente.vente?.mode_paiement}</span></p>
                     <p>{t('detail.statut')} : <span className="capitalize">{detailVente.vente?.statut}</span></p>
+                    <p>Montant réglé : {formatXOF(detailVente.vente?.montant_regle)}</p>
                     {detailVente.vente?.montant_regle < detailVente.vente?.total && (
                       <p className="text-amber-600 font-medium">
                         {t('detail.resteARegler', { montant: formatXOF(detailVente.vente.total - detailVente.vente.montant_regle) })}
