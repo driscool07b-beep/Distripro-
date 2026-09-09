@@ -48,6 +48,10 @@
     "annuler": "Annuler",
     "enregistrement": "Enregistrement…",
     "enregistrer": "Enregistrer",
+    "tvaApplicable": "Ce produit est soumis à la TVA",
+    "tauxTva": "Taux de TVA (%)",
+    "tauxTvaPlaceholder": "Ex. 18",
+    "erreurTauxTva": "Indiquez le taux de TVA.",
     "erreurNomPrix": "Le nom et le prix unitaire sont requis."
   },
 

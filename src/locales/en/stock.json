@@ -48,6 +48,10 @@
     "annuler": "Cancel",
     "enregistrement": "Saving…",
     "enregistrer": "Save",
+    "tvaApplicable": "This product is subject to VAT",
+    "tauxTva": "VAT rate (%)",
+    "tauxTvaPlaceholder": "E.g. 18",
+    "erreurTauxTva": "Enter the VAT rate.",
     "erreurNomPrix": "Name and unit price are required."
   },
 

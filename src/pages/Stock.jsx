@@ -104,7 +104,7 @@ export default function Stock() {
       return
     }
     if (formulaire.tva_applicable && !formulaire.taux_tva) {
-      setErreur('Indiquez le taux de TVA.')
+      setErreur(t('formProduit.erreurTauxTva'))
       return
     }
     setEnregistrement(true)
@@ -215,9 +215,9 @@ export default function Stock() {
           }))
           .filter((l) => l.nom && l.prix_vente > 0)
         setLignesImport(lignesValides)
-        if (lignesValides.length === 0) setErreurImport('Aucune ligne valide (nom et prix de vente obligatoires).')
+        if (lignesValides.length === 0) setErreurImport(t('import.erreurAucuneLigne'))
       } catch (err) {
-        setErreurImport(`Fichier illisible : ${err.message}`)
+        setErreurImport(t('import.erreurFichierIllisible', { message: err.message }))
       }
     }
     lecteur.readAsArrayBuffer(fichier)
@@ -277,7 +277,7 @@ export default function Stock() {
     setErreur('')
     const qte = Number(mouvement.quantite)
     if (!qte || qte <= 0) {
-      setErreur('Indiquez une quantité valide.')
+      setErreur(t('mouvement.erreurQuantite'))
       return
     }
     if (depots.length > 1 && !mouvement.depot_id) {
@@ -309,10 +309,10 @@ export default function Stock() {
       setEnregistrement(false)
       setErreur(
         error.message?.includes('stock insuffisant')
-          ? 'Stock insuffisant pour cette sortie.'
+          ? t('mouvement.erreurStockInsuffisant')
           : error.message?.includes('plusieurs dépôts')
-          ? 'Plusieurs dépôts existent — cette fonctionnalité de sélection arrive bientôt, contactez un administrateur.'
-          : `Erreur : ${traduireErreur(error.message)}`
+          ? t('mouvement.erreurPlusieursDepots')
+          : `${t('erreur')} : ${traduireErreur(error.message)}`
       )
       return
     }
@@ -348,19 +348,19 @@ export default function Stock() {
     setErreur('')
     const qte = Number(transfert.quantite)
     if (!qte || qte <= 0) {
-      setErreur('Indiquez une quantité valide.')
+      setErreur(t('transfert.erreurQuantite'))
       return
     }
     if (!transfert.depot_source_id || !transfert.depot_destination_id) {
-      setErreur('Sélectionnez le dépôt source et le dépôt destination.')
+      setErreur(t('transfert.erreurDepots'))
       return
     }
     if (transfert.depot_source_id === transfert.depot_destination_id) {
-      setErreur('Le dépôt source et le dépôt destination doivent être différents.')
+      setErreur(t('transfert.erreurDepotsDifferents'))
       return
     }
     if (entreprise?.justificatif_stock_obligatoire && !fichierJustificatifTransfert) {
-      setErreur('Un justificatif (photo ou PDF) est obligatoire pour tout transfert de stock.')
+      setErreur(t('transfert.erreurJustificatifObligatoire'))
       return
     }
     setEnregistrement(true)
@@ -375,8 +375,8 @@ export default function Stock() {
       setEnregistrement(false)
       setErreur(
         error.message?.includes('stock insuffisant')
-          ? 'Stock insuffisant dans le dépôt source.'
-          : `Erreur : ${traduireErreur(error.message)}`
+          ? t('transfert.erreurStockInsuffisant')
+          : `${t('erreur')} : ${traduireErreur(error.message)}`
       )
       return
     }
@@ -426,11 +426,11 @@ export default function Stock() {
     setErreur('')
     const qte = Number(reception.quantite_recue)
     if (reception.quantite_recue === '' || Number.isNaN(qte) || qte < 0) {
-      setErreur('Indiquez la quantité réellement reçue (0 si rien n\u2019est arrivé).')
+      setErreur(t('reception.erreurQuantite'))
       return
     }
     if (entreprise?.justificatif_stock_obligatoire && !fichierJustificatifReception) {
-      setErreur('Un justificatif (photo ou PDF) est obligatoire pour valider une réception.')
+      setErreur(t('reception.erreurJustificatifObligatoire'))
       return
     }
     setEnregistrement(true)
@@ -497,37 +497,37 @@ export default function Stock() {
     <div className="p-8 max-w-6xl">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-semibold">Produits &amp; Stock</h1>
+          <h1 className="text-2xl font-semibold">{t('titre')}</h1>
           <p className="text-sm text-petrol-700 mt-1">
-            {produits.length} produit(s) — {nbAlertes > 0 ? (
-              <span className="text-amber-600 font-medium">{nbAlertes} en alerte de stock</span>
+            {produits.length} {t('compteur_produitS')} — {nbAlertes > 0 ? (
+              <span className="text-amber-600 font-medium">{t('enAlerteDeStock', { n: nbAlertes })}</span>
             ) : (
-              'stock sain'
+              t('stockSain')
             )}
           </p>
           <p className="text-sm text-petrol-700 mt-0.5">
-            Valeur totale du stock : <span className="font-mono font-medium">{formatXOF(valeurTotaleStock)}</span>
+            {t('valeurTotaleStock')} : <span className="font-mono font-medium">{formatXOF(valeurTotaleStock)}</span>
           </p>
           {profil?.role === 'gestionnaire_stock' && depots.length === 0 && (
             <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5 mt-2">
-              Aucun dépôt ne vous a été attribué — contactez un administrateur pour pouvoir enregistrer des mouvements de stock.
+              {t('aucunDepotAttribue')}
             </p>
           )}
         </div>
         <div className="flex flex-wrap gap-2">
           <button className="btn-secondary text-sm" onClick={exportExcel} disabled={produitsFiltres.length === 0}>
-            📊 Excel
+            📊 {t('excel')}
           </button>
           <button className="btn-secondary text-sm" onClick={exportPDF} disabled={produitsFiltres.length === 0}>
-            📄 PDF
+            📄 {t('pdf')}
           </button>
           {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && (
             <>
               <button className="btn-secondary text-sm" onClick={ouvrirModalImport}>
-                📥 Importer
+                📥 {t('importer')}
               </button>
               <button className="btn-primary" onClick={() => { setProduitEnEdition(null); setFormulaire(PRODUIT_VIDE); setModalProduit(true) }}>
-                + Nouveau produit
+                {t('nouveauProduit')}
               </button>
             </>
           )}
@@ -537,20 +537,20 @@ export default function Stock() {
       {transfertsEnAttente.length > 0 && (
         <div className="card p-4 mb-4 border-amber-200 bg-amber-50">
           <p className="text-sm font-semibold text-amber-800 mb-2">
-            📦 {transfertsEnAttente.length} transfert(s) en attente de réception
+            📦 {t('transfertsEnAttente', { n: transfertsEnAttente.length })}
           </p>
           <div className="space-y-2">
-            {transfertsEnAttente.map((t) => (
-              <div key={t.id} className="flex items-center justify-between bg-white rounded-lg border border-amber-200 px-3 py-2 text-sm gap-2">
+            {transfertsEnAttente.map((t2) => (
+              <div key={t2.id} className="flex items-center justify-between bg-white rounded-lg border border-amber-200 px-3 py-2 text-sm gap-2">
                 <div>
-                  <p className="font-medium">{t.produit?.nom} — {t.quantite_envoyee} unité(s)</p>
+                  <p className="font-medium">{t2.produit?.nom} — {t2.quantite_envoyee} {t('unites')}</p>
                   <p className="text-xs text-petrol-500">
-                    {t.depot_source?.nom} → {t.depot_destination?.nom} · envoyé par {t.envoye_par_profil?.nom || '—'} le{' '}
-                    {new Date(t.envoye_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    {t2.depot_source?.nom} → {t2.depot_destination?.nom} · {t('envoyePar')} {t2.envoye_par_profil?.nom || '—'} {t('le')}{' '}
+                    {new Date(t2.envoye_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </p>
                 </div>
-                <button className="btn-primary text-xs shrink-0" onClick={() => ouvrirModalReception(t)}>
-                  Réceptionner
+                <button className="btn-primary text-xs shrink-0" onClick={() => ouvrirModalReception(t2)}>
+                  {t('receptionner')}
                 </button>
               </div>
             ))}
@@ -560,7 +560,7 @@ export default function Stock() {
 
       <input
         type="text"
-        placeholder="Rechercher un produit…"
+        placeholder={t('rechercherProduit')}
         value={recherche}
         onChange={(e) => setRecherche(e.target.value)}
         className="input-field max-w-sm mb-4"
@@ -569,13 +569,13 @@ export default function Stock() {
       {filtreAlertes && (
         <div className="mb-4 flex items-center gap-2 text-sm">
           <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">
-            Filtré : produits en alerte de stock
+            {t('filtreAlertes')}
           </span>
           <button
             onClick={() => setSearchParams({})}
             className="text-petrol-500 underline text-xs"
           >
-            Retirer le filtre
+            {t('retirerFiltre')}
           </button>
         </div>
       )}
@@ -584,19 +584,19 @@ export default function Stock() {
         <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
-              <th className="px-4 py-3 font-medium">Produit</th>
-              <th className="px-4 py-3 font-medium">Catégorie</th>
-              <th className="px-4 py-3 font-medium">Prix unitaire</th>
-              <th className="px-4 py-3 font-medium">Stock</th>
-              <th className="px-4 py-3 font-medium">Valeur</th>
-              <th className="px-4 py-3 font-medium text-right">Actions</th>
+              <th className="px-4 py-3 font-medium">{t('table.produit')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.categorie')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.prixUnitaire')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.stock')}</th>
+              <th className="px-4 py-3 font-medium">{t('table.valeur')}</th>
+              <th className="px-4 py-3 font-medium text-right">{t('table.actions')}</th>
             </tr>
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Chargement…</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
             ) : produitsFiltres.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">Aucun produit trouvé.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.aucunProduit')}</td></tr>
             ) : (
               produitsFiltres.map((p) => {
                 const enAlerte = p.quantite <= (p.seuil_alerte ?? 0)
@@ -620,22 +620,22 @@ export default function Stock() {
                             className="text-xs font-medium text-petrol-700 hover:text-amber-600"
                             onClick={() => ouvrirModalMouvement(p)}
                           >
-                            Ajuster le stock
+                            {t('table.ajusterStock')}
                           </button>
                           {tousLesDepots.length > 1 && depots.length > 0 && (
                             <button
                               className="text-xs font-medium text-petrol-700 hover:text-amber-600"
                               onClick={() => ouvrirModalTransfert(p)}
                             >
-                              Transférer entre dépôts
+                              {t('table.transfererDepots')}
                             </button>
                           )}
                           <div className="flex gap-2">
                             <button className="text-xs text-petrol-500 underline" onClick={() => ouvrirModalEdition(p)}>
-                              Modifier
+                              {t('table.modifier')}
                             </button>
                             <button className="text-xs text-petrol-500 underline" onClick={() => ouvrirHistorique(p)}>
-                              Historique
+                              {t('table.historique')}
                             </button>
                           </div>
                         </div>
@@ -652,10 +652,10 @@ export default function Stock() {
       {modalProduit && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-4">{produitEnEdition ? 'Modifier le produit' : 'Nouveau produit'}</h2>
+            <h2 className="font-semibold text-lg mb-4">{produitEnEdition ? t('formProduit.titreModifier') : t('formProduit.titreNouveau')}</h2>
             <form onSubmit={enregistrerProduit} className="space-y-3">
               <div>
-                <label className="label">Nom *</label>
+                <label className="label">{t('formProduit.nom')}</label>
                 <input
                   className="input-field"
                   value={formulaire.nom}
@@ -664,17 +664,17 @@ export default function Stock() {
                 />
               </div>
               <div>
-                <label className="label">Catégorie</label>
+                <label className="label">{t('formProduit.categorie')}</label>
                 <input
                   className="input-field"
                   value={formulaire.categorie}
                   onChange={(e) => setFormulaire({ ...formulaire, categorie: e.target.value })}
-                  placeholder="Céréales, Farines, Épices…"
+                  placeholder={t('formProduit.categoriePlaceholder')}
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Prix unitaire (F CFA) *</label>
+                  <label className="label">{t('formProduit.prixUnitaire')}</label>
                   <input
                     type="number"
                     className="input-field font-mono"
@@ -683,7 +683,7 @@ export default function Stock() {
                   />
                 </div>
                 <div>
-                  <label className="label">Seuil d'alerte</label>
+                  <label className="label">{t('formProduit.seuilAlerte')}</label>
                   <input
                     type="number"
                     className="input-field font-mono"
@@ -694,7 +694,7 @@ export default function Stock() {
               </div>
               {!produitEnEdition && (
                 <div>
-                  <label className="label">Quantité initiale en stock</label>
+                  <label className="label">{t('formProduit.quantiteInitiale')}</label>
                   <input
                     type="number"
                     className="input-field font-mono"
@@ -712,18 +712,18 @@ export default function Stock() {
                       checked={formulaire.tva_applicable}
                       onChange={(e) => setFormulaire({ ...formulaire, tva_applicable: e.target.checked })}
                     />
-                    Ce produit est soumis à la TVA
+                    {t('formProduit.tvaApplicable')}
                   </label>
                   {formulaire.tva_applicable && (
                     <div className="mt-2">
-                      <label className="label">Taux de TVA (%)</label>
+                      <label className="label">{t('formProduit.tauxTva')}</label>
                       <input
                         type="number"
                         step="0.01"
                         className="input-field font-mono"
                         value={formulaire.taux_tva}
                         onChange={(e) => setFormulaire({ ...formulaire, taux_tva: e.target.value })}
-                        placeholder="Ex. 18"
+                        placeholder={t('formProduit.tauxTvaPlaceholder')}
                       />
                     </div>
                   )}
@@ -743,10 +743,10 @@ export default function Stock() {
                     setErreur('')
                   }}
                 >
-                  Annuler
+                  {t('formProduit.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? 'Enregistrement…' : 'Enregistrer'}
+                  {enregistrement ? t('formProduit.enregistrement') : t('formProduit.enregistrer')}
                 </button>
               </div>
             </form>
@@ -757,8 +757,8 @@ export default function Stock() {
       {modalMouvement && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-1">Ajuster le stock</h2>
-            <p className="text-sm text-petrol-600 mb-4">{modalMouvement.nom} — stock actuel : {modalMouvement.quantite}</p>
+            <h2 className="font-semibold text-lg mb-1">{t('mouvement.titre')}</h2>
+            <p className="text-sm text-petrol-600 mb-4">{modalMouvement.nom} — {t('mouvement.stockActuel')} : {modalMouvement.quantite}</p>
             <form onSubmit={enregistrerMouvement} className="space-y-3">
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -770,7 +770,7 @@ export default function Stock() {
                       : 'border-line text-petrol-700'
                   }`}
                 >
-                  Entrée
+                  {t('mouvement.entree')}
                 </button>
                 <button
                   type="button"
@@ -781,11 +781,11 @@ export default function Stock() {
                       : 'border-line text-petrol-700'
                   }`}
                 >
-                  Sortie
+                  {t('mouvement.sortie')}
                 </button>
               </div>
               <div>
-                <label className="label">Quantité</label>
+                <label className="label">{t('mouvement.quantite')}</label>
                 <input
                   type="number"
                   className="input-field font-mono"
@@ -796,42 +796,42 @@ export default function Stock() {
               </div>
               {depots.length > 1 && (
                 <div>
-                  <label className="label">Dépôt *</label>
+                  <label className="label">{t('mouvement.depot')}</label>
                   <select
                     className="input-field"
                     value={mouvement.depot_id}
                     onChange={(e) => setMouvement({ ...mouvement, depot_id: e.target.value })}
                   >
-                    <option value="">Sélectionner un dépôt…</option>
+                    <option value="">{t('mouvement.selectionnerDepot')}</option>
                     {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
                   </select>
                 </div>
               )}
               <div>
-                <label className="label">Raison *</label>
+                <label className="label">{t('mouvement.raison')}</label>
                 <select
                   className="input-field"
                   value={mouvement.raison}
                   onChange={(e) => setMouvement({ ...mouvement, raison: e.target.value })}
                 >
-                  <option value="">Sélectionner…</option>
+                  <option value="">{t('mouvement.selectionner')}</option>
                   {(mouvement.type === 'entree' ? RAISONS_ENTREE : RAISONS_SORTIE).map((r) => (
                     <option key={r} value={r}>{r}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="label">Détail {mouvement.raison === 'Autre' ? '*' : '(optionnel)'}</label>
+                <label className="label">{t('mouvement.detail')} {mouvement.raison === 'Autre' ? '*' : t('mouvement.optionnel')}</label>
                 <input
                   className="input-field"
                   value={mouvement.motif}
                   onChange={(e) => setMouvement({ ...mouvement, motif: e.target.value })}
-                  placeholder="Nom du fournisseur, numéro de bon, précision…"
+                  placeholder={t('mouvement.detailPlaceholder')}
                 />
               </div>
               <div>
                 <label className="label">
-                  Justificatif (photo ou PDF){entreprise?.justificatif_stock_obligatoire ? ' *' : ' (optionnel)'}
+                  {t('mouvement.justificatif')}{entreprise?.justificatif_stock_obligatoire ? ' *' : ` ${t('mouvement.optionnel')}`}
                 </label>
                 <input
                   type="file"
@@ -840,7 +840,7 @@ export default function Stock() {
                   className="input-field"
                 />
                 <p className="text-xs text-petrol-500 mt-1">
-                  {entreprise?.justificatif_stock_obligatoire ? 'Obligatoire' : 'Facultatif'} — bon d'approvisionnement, photo de la casse, feuille d'inventaire…
+                  {entreprise?.justificatif_stock_obligatoire ? t('mouvement.obligatoire') : t('mouvement.facultatif')} — {t('mouvement.justificatifAideMouvement')}
                 </p>
               </div>
 
@@ -852,10 +852,10 @@ export default function Stock() {
                   className="btn-secondary flex-1"
                   onClick={fermerModalMouvement}
                 >
-                  Annuler
+                  {t('mouvement.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? 'Enregistrement…' : 'Valider'}
+                  {enregistrement ? t('mouvement.enregistrement') : t('mouvement.valider')}
                 </button>
               </div>
             </form>
@@ -866,38 +866,38 @@ export default function Stock() {
       {modalTransfert && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-1">Transférer entre dépôts</h2>
-            <p className="text-sm text-petrol-600 mb-4">{modalTransfert.nom} — stock total : {modalTransfert.quantite}</p>
+            <h2 className="font-semibold text-lg mb-1">{t('transfert.titre')}</h2>
+            <p className="text-sm text-petrol-600 mb-4">{modalTransfert.nom} — {t('transfert.stockTotal')} : {modalTransfert.quantite}</p>
             <form onSubmit={enregistrerTransfert} className="space-y-3">
               <div>
-                <label className="label">Dépôt source *</label>
+                <label className="label">{t('transfert.depotSource')}</label>
                 <select
                   className="input-field"
                   value={transfert.depot_source_id}
                   onChange={(e) => setTransfert({ ...transfert, depot_source_id: e.target.value })}
                 >
-                  <option value="">Sélectionner…</option>
+                  <option value="">{t('transfert.selectionner')}</option>
                   {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
                 </select>
               </div>
               <div>
-                <label className="label">Dépôt destination *</label>
+                <label className="label">{t('transfert.depotDestination')}</label>
                 <select
                   className="input-field"
                   value={transfert.depot_destination_id}
                   onChange={(e) => setTransfert({ ...transfert, depot_destination_id: e.target.value })}
                 >
-                  <option value="">Sélectionner…</option>
+                  <option value="">{t('transfert.selectionner')}</option>
                   {tousLesDepots
                     .filter((d) => d.id !== transfert.depot_source_id)
                     .map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
                 </select>
                 <p className="text-xs text-petrol-500 mt-1">
-                  Le stock du dépôt destination ne sera crédité qu'après validation de la réception par son responsable.
+                  {t('transfert.creditApresReception')}
                 </p>
               </div>
               <div>
-                <label className="label">Quantité</label>
+                <label className="label">{t('transfert.quantite')}</label>
                 <input
                   type="number"
                   className="input-field font-mono"
@@ -906,17 +906,17 @@ export default function Stock() {
                 />
               </div>
               <div>
-                <label className="label">Détail (optionnel)</label>
+                <label className="label">{t('transfert.detail')}</label>
                 <input
                   className="input-field"
                   value={transfert.motif}
                   onChange={(e) => setTransfert({ ...transfert, motif: e.target.value })}
-                  placeholder="Numéro de bordereau, raison du transfert…"
+                  placeholder={t('transfert.detailPlaceholder')}
                 />
               </div>
               <div>
                 <label className="label">
-                  Justificatif (photo ou PDF){entreprise?.justificatif_stock_obligatoire ? ' *' : ' (optionnel)'}
+                  {t('transfert.justificatif')}{entreprise?.justificatif_stock_obligatoire ? ' *' : ` ${t('mouvement.optionnel')}`}
                 </label>
                 <input
                   type="file"
@@ -925,7 +925,7 @@ export default function Stock() {
                   className="input-field"
                 />
                 <p className="text-xs text-petrol-500 mt-1">
-                  {entreprise?.justificatif_stock_obligatoire ? 'Obligatoire' : 'Facultatif'} — bordereau de transfert, bon de sortie…
+                  {entreprise?.justificatif_stock_obligatoire ? t('mouvement.obligatoire') : t('mouvement.facultatif')} — {t('transfert.justificatifAideTransfert')}
                 </p>
               </div>
 
@@ -933,10 +933,10 @@ export default function Stock() {
 
               <div className="flex gap-2 pt-2">
                 <button type="button" className="btn-secondary flex-1" onClick={fermerModalTransfert}>
-                  Annuler
+                  {t('transfert.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? 'Enregistrement…' : 'Envoyer'}
+                  {enregistrement ? t('transfert.enregistrement') : t('transfert.envoyer')}
                 </button>
               </div>
             </form>
@@ -947,15 +947,15 @@ export default function Stock() {
       {modalReception && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-1">Réceptionner le transfert</h2>
+            <h2 className="font-semibold text-lg mb-1">{t('reception.titre')}</h2>
             <p className="text-sm text-petrol-600 mb-4">
               {modalReception.produit?.nom} — {modalReception.depot_source?.nom} → {modalReception.depot_destination?.nom}
               <br />
-              Quantité envoyée : <span className="font-mono">{modalReception.quantite_envoyee}</span>
+              {t('reception.quantiteEnvoyee')} : <span className="font-mono">{modalReception.quantite_envoyee}</span>
             </p>
             <form onSubmit={enregistrerReception} className="space-y-3">
               <div>
-                <label className="label">Quantité réellement reçue (après contrôle) *</label>
+                <label className="label">{t('reception.quantiteRecue')}</label>
                 <input
                   type="number"
                   min="0"
@@ -966,22 +966,22 @@ export default function Stock() {
                 />
                 {Number(reception.quantite_recue) !== modalReception.quantite_envoyee && reception.quantite_recue !== '' && (
                   <p className="text-xs text-amber-700 mt-1">
-                    ⚠️ Écart avec la quantité envoyée ({modalReception.quantite_envoyee}) — l'écart sera tracé dans le journal.
+                    {t('reception.ecart', { quantite: modalReception.quantite_envoyee })}
                   </p>
                 )}
               </div>
               <div>
-                <label className="label">Note (optionnel)</label>
+                <label className="label">{t('reception.note')}</label>
                 <input
                   className="input-field"
                   value={reception.note}
                   onChange={(e) => setReception({ ...reception, note: e.target.value })}
-                  placeholder="Raison de l'écart, état de la marchandise…"
+                  placeholder={t('reception.notePlaceholder')}
                 />
               </div>
               <div>
                 <label className="label">
-                  Justificatif (photo ou PDF){entreprise?.justificatif_stock_obligatoire ? ' *' : ' (optionnel)'}
+                  {t('reception.justificatif')}{entreprise?.justificatif_stock_obligatoire ? ' *' : ` ${t('mouvement.optionnel')}`}
                 </label>
                 <input
                   type="file"
@@ -990,7 +990,7 @@ export default function Stock() {
                   className="input-field"
                 />
                 <p className="text-xs text-petrol-500 mt-1">
-                  {entreprise?.justificatif_stock_obligatoire ? 'Obligatoire' : 'Facultatif'} — photo de la marchandise reçue, bon signé…
+                  {entreprise?.justificatif_stock_obligatoire ? t('mouvement.obligatoire') : t('mouvement.facultatif')} — {t('reception.justificatifAideReception')}
                 </p>
               </div>
 
@@ -998,10 +998,10 @@ export default function Stock() {
 
               <div className="flex gap-2 pt-2">
                 <button type="button" className="btn-secondary flex-1" onClick={fermerModalReception}>
-                  Annuler
+                  {t('reception.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? 'Enregistrement…' : 'Valider la réception'}
+                  {enregistrement ? t('reception.enregistrement') : t('reception.validerReception')}
                 </button>
               </div>
             </form>
@@ -1013,19 +1013,19 @@ export default function Stock() {
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-4">
-              <h2 className="font-semibold text-lg">Importer des produits (Excel)</h2>
+              <h2 className="font-semibold text-lg">{t('import.titre')}</h2>
               <button onClick={() => setModalImportOuvert(false)} className="text-petrol-400 text-xl leading-none">✕</button>
             </div>
 
             <p className="text-sm text-petrol-600 mb-3">
-              Téléchargez le modèle, remplissez-le en gardant l'ordre des colonnes, puis importez-le.
+              {t('import.consigne')}
             </p>
             <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
-              📄 Télécharger le modèle
+              {t('import.telechargerModele')}
             </button>
 
             <div className="mb-4">
-              <label className="label">Fichier Excel (.xlsx)</label>
+              <label className="label">{t('import.fichierExcel')}</label>
               <input type="file" accept=".xlsx,.xls" onChange={lireFichierImport} className="text-sm" />
             </div>
 
@@ -1033,14 +1033,14 @@ export default function Stock() {
 
             {lignesImport.length > 0 && (
               <>
-                <p className="text-sm font-medium mb-2">{lignesImport.length} produit(s) prêt(s) à importer</p>
+                <p className="text-sm font-medium mb-2">{t('import.produitsPrets', { n: lignesImport.length })}</p>
                 <div className="border border-line rounded-lg overflow-y-auto max-h-48 mb-4">
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="bg-canvas text-left">
-                        <th className="px-2 py-1.5">Nom</th>
-                        <th className="px-2 py-1.5 text-right">Prix</th>
-                        <th className="px-2 py-1.5 text-right">Stock initial</th>
+                        <th className="px-2 py-1.5">{t('import.nom')}</th>
+                        <th className="px-2 py-1.5 text-right">{t('import.prix')}</th>
+                        <th className="px-2 py-1.5 text-right">{t('import.stockInitial')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1054,11 +1054,11 @@ export default function Stock() {
                     </tbody>
                   </table>
                   {lignesImport.length > 20 && (
-                    <p className="text-xs text-petrol-400 text-center py-1.5">… et {lignesImport.length - 20} de plus</p>
+                    <p className="text-xs text-petrol-400 text-center py-1.5">{t('import.etDePlus', { n: lignesImport.length - 20 })}</p>
                   )}
                 </div>
                 <button onClick={confirmerImport} disabled={importEnCours} className="btn-primary w-full">
-                  {importEnCours ? `Import en cours… (${progressionImport}/${lignesImport.length})` : `Importer ${lignesImport.length} produit(s)`}
+                  {importEnCours ? t('import.importEnCours', { fait: progressionImport, total: lignesImport.length }) : t('import.importerN', { n: lignesImport.length })}
                 </button>
               </>
             )}
@@ -1066,7 +1066,7 @@ export default function Stock() {
             {resultatImport && (
               <div className="mt-3">
                 <p className="text-sm text-green-700">
-                  ✓ {resultatImport.reussis} produit(s) importé(s) sur {resultatImport.total}.
+                  {t('import.resultatReussis', { reussis: resultatImport.reussis, total: resultatImport.total })}
                 </p>
                 {resultatImport.echecs.length > 0 && (
                   <div className="text-xs text-red-600 mt-2">
@@ -1082,10 +1082,10 @@ export default function Stock() {
       {modalHistorique && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-1">Historique des prix</h2>
+            <h2 className="font-semibold text-lg mb-1">{t('historiquePrix.titre')}</h2>
             <p className="text-sm text-petrol-600 mb-4">{modalHistorique.nom}</p>
             {historiquePrix.length === 0 ? (
-              <p className="text-sm text-petrol-400">Aucun changement de prix enregistré.</p>
+              <p className="text-sm text-petrol-400">{t('historiquePrix.aucunChangement')}</p>
             ) : (
               <div className="space-y-2">
                 {historiquePrix.map((h, i) => (
@@ -1102,7 +1102,7 @@ export default function Stock() {
               </div>
             )}
             <button className="btn-secondary w-full mt-4" onClick={() => setModalHistorique(null)}>
-              Fermer
+              {t('historiquePrix.fermer')}
             </button>
           </div>
         </div>
