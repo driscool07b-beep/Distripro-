@@ -34,6 +34,11 @@ export default function Clients() {
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
   const [modalOuvert, setModalOuvert] = useState(false)
+  const [modalRemboursement, setModalRemboursement] = useState(null) // client sélectionné
+  const [montantRemboursement, setMontantRemboursement] = useState('')
+  const [modeRemboursement, setModeRemboursement] = useState('espece')
+  const [envoiRemboursement, setEnvoiRemboursement] = useState(false)
+  const [erreurRemboursement, setErreurRemboursement] = useState('')
   const [formulaire, setFormulaire] = useState(CLIENT_VIDE)
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
@@ -329,10 +334,44 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, email, adresse, ville, type_client, segment, limite_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, groupes_clients(nom)')
+      .select('id, nom, telephone, email, adresse, ville, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, groupes_clients(nom)')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
+  }
+
+  function ouvrirModalRemboursement(client) {
+    setModalRemboursement(client)
+    setMontantRemboursement(String(client.solde_credit))
+    setModeRemboursement('espece')
+    setErreurRemboursement('')
+  }
+
+  async function confirmerRemboursement(e) {
+    e.preventDefault()
+    setErreurRemboursement('')
+    const montant = Number(montantRemboursement)
+    if (!montant || montant <= 0) {
+      setErreurRemboursement('Indiquez un montant valide.')
+      return
+    }
+    if (montant > Number(modalRemboursement.solde_credit)) {
+      setErreurRemboursement('Le montant dépasse le crédit disponible.')
+      return
+    }
+    setEnvoiRemboursement(true)
+    const { error } = await supabase.rpc('rembourser_credit_client', {
+      p_client_id: modalRemboursement.id,
+      p_montant: montant,
+      p_mode: modeRemboursement,
+    })
+    setEnvoiRemboursement(false)
+    if (error) {
+      setErreurRemboursement(`Erreur : ${traduireErreur(error.message)}`)
+      return
+    }
+    setModalRemboursement(null)
+    chargerClients()
   }
 
   async function enregistrerClient(e) {
@@ -461,7 +500,19 @@ export default function Clients() {
             ) : (
               clientsFiltres.map((c) => (
                 <tr key={c.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
-                  <td className="px-4 py-3 font-medium">{c.nom}</td>
+                  <td className="px-4 py-3 font-medium">
+                    {c.nom}
+                    {Number(c.solde_credit) > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => ouvrirModalRemboursement(c)}
+                        className="ml-2 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded hover:bg-green-200"
+                        title="Crédit disponible pour ce client — cliquer pour rembourser"
+                      >
+                        crédit {formatXOF(c.solde_credit)}
+                      </button>
+                    )}
+                  </td>
                   <td className="px-4 py-3 font-mono text-petrol-700">{c.telephone || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700">{c.ville || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700 capitalize">{c.type_client || '—'}</td>
@@ -856,6 +907,52 @@ export default function Clients() {
           </div>
         </div>
       )}
+
+      {modalRemboursement && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-sm">
+            <h2 className="font-semibold text-lg mb-1">Rembourser le crédit client</h2>
+            <p className="text-sm text-petrol-600 mb-4">
+              {modalRemboursement.nom} — crédit disponible : <span className="font-mono">{formatXOF(modalRemboursement.solde_credit)}</span>
+            </p>
+            <form onSubmit={confirmerRemboursement} className="space-y-3">
+              <div>
+                <label className="label">Montant à rembourser</label>
+                <input
+                  type="number"
+                  min="0"
+                  max={modalRemboursement.solde_credit}
+                  className="input-field font-mono"
+                  value={montantRemboursement}
+                  onChange={(e) => setMontantRemboursement(e.target.value)}
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="label">Mode</label>
+                <select className="input-field" value={modeRemboursement} onChange={(e) => setModeRemboursement(e.target.value)}>
+                  <option value="espece">Espèces</option>
+                  <option value="mobile_money">Mobile Money</option>
+                  <option value="virement">Virement bancaire</option>
+                </select>
+              </div>
+              {erreurRemboursement && <p className="text-sm text-red-600">{erreurRemboursement}</p>}
+              <div className="flex gap-2 pt-2">
+                <button type="button" className="btn-secondary flex-1" onClick={() => setModalRemboursement(null)}>
+                  Annuler
+                </button>
+                <button type="submit" disabled={envoiRemboursement} className="btn-primary flex-1">
+                  {envoiRemboursement ? 'Enregistrement…' : 'Confirmer le remboursement'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
+}
+
+function formatXOF(n) {
+  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
 }

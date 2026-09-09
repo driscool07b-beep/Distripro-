@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF } from '../lib/export'
@@ -9,6 +10,7 @@ import { traduireErreur } from '../lib/erreurs'
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
 
 export default function Stock() {
+  const { t } = useTranslation('stock')
   const { entreprise, profil } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const filtreAlertes = searchParams.get('filtre') === 'alertes'
@@ -98,7 +100,7 @@ export default function Stock() {
     e.preventDefault()
     setErreur('')
     if (!formulaire.nom.trim() || !formulaire.prix_vente) {
-      setErreur('Le nom et le prix unitaire sont requis.')
+      setErreur(t('formProduit.erreurNomPrix'))
       return
     }
     setEnregistrement(true)
@@ -127,7 +129,7 @@ export default function Stock() {
     setEnregistrement(false)
     if (error) {
       console.error('Erreur enregistrerProduit:', error)
-      setErreur(`Erreur : ${traduireErreur(error.message)}`)
+      setErreur(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setModalProduit(false)
@@ -269,19 +271,19 @@ export default function Stock() {
       return
     }
     if (depots.length > 1 && !mouvement.depot_id) {
-      setErreur('Sélectionnez un dépôt.')
+      setErreur(t('mouvement.erreurDepot'))
       return
     }
     if (!mouvement.raison) {
-      setErreur('Sélectionnez une raison.')
+      setErreur(t('mouvement.erreurRaison'))
       return
     }
     if (mouvement.raison === 'Autre' && !mouvement.motif.trim()) {
-      setErreur('Précisez le motif pour "Autre".')
+      setErreur(t('mouvement.erreurMotifAutre'))
       return
     }
     if (entreprise?.justificatif_stock_obligatoire && !fichierJustificatif) {
-      setErreur('Un justificatif (photo ou PDF) est obligatoire pour tout ajustement de stock.')
+      setErreur(t('mouvement.erreurJustificatifObligatoire'))
       return
     }
     const motifComplet = mouvement.raison + (mouvement.motif.trim() ? ' — ' + mouvement.motif.trim() : '')
@@ -429,7 +431,7 @@ export default function Stock() {
     })
     if (error) {
       setEnregistrement(false)
-      setErreur(`Erreur : ${traduireErreur(error.message)}`)
+      setErreur(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
 

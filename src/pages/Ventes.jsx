@@ -43,6 +43,8 @@ export default function Ventes() {
 
   const [clientId, setClientId] = useState('')
   const [tarifsClient, setTarifsClient] = useState({}) // { produit_id: prix_negocie }
+  const [creditDisponible, setCreditDisponible] = useState(0)
+  const [creditUtilise, setCreditUtilise] = useState('')
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
   const [depotId, setDepotId] = useState('')
   const [stocksParDepot, setStocksParDepot] = useState({}) // { produit_id: { depot_id: quantite } }
@@ -259,6 +261,8 @@ export default function Ventes() {
   async function ouvrirModal() {
     setErreur('')
     setClientId('')
+    setCreditDisponible(0)
+    setCreditUtilise('')
     setTarifsClient({})
     setMontantPaye('')
     setRemisePourcentage('')
@@ -327,11 +331,17 @@ export default function Ventes() {
 
   async function changerClient(nouveauClientId) {
     setClientId(nouveauClientId)
+    setCreditUtilise('')
     if (!nouveauClientId) {
       setTarifsClient({})
+      setCreditDisponible(0)
       return
     }
-    const { data } = await supabase.from('tarifs_client').select('produit_id, prix_negocie').eq('client_id', nouveauClientId)
+    const [{ data }, { data: clientData }] = await Promise.all([
+      supabase.from('tarifs_client').select('produit_id, prix_negocie').eq('client_id', nouveauClientId),
+      supabase.from('clients').select('solde_credit').eq('id', nouveauClientId).single(),
+    ])
+    setCreditDisponible(Number(clientData?.solde_credit || 0))
     const carte = {}
     ;(data || []).forEach((t) => { carte[t.produit_id] = Number(t.prix_negocie) })
     setTarifsClient(carte)
@@ -359,6 +369,7 @@ export default function Ventes() {
   const remisePourcentageEffectif = Math.min(Math.max(Number(remisePourcentage || 0), 0), 100)
   const remiseEffective = Math.round(sousTotal * (remisePourcentageEffectif / 100))
   const total = sousTotal - remiseEffective
+  const creditEffectif = Math.min(Math.max(Number(creditUtilise || 0), 0), creditDisponible, total)
   const totalFiltre = ventes.reduce((s, v) => (v.statut === 'annulee' ? s : s + Number(v.total || 0)), 0)
 
   const COLONNES_EXPORT = [
@@ -407,8 +418,9 @@ export default function Ventes() {
       return
     }
 
-    const montantPayeEffectif = montantPaye === '' ? total : Math.min(Number(montantPaye), total)
-    const resteAPayer = total - montantPayeEffectif
+    const restantApresCredit = Math.max(0, total - creditEffectif)
+    const montantPayeEffectif = montantPaye === '' ? restantApresCredit : Math.min(Number(montantPaye), restantApresCredit)
+    const resteAPayer = restantApresCredit - montantPayeEffectif
 
     setEnregistrement(true)
     const { data: nouvelleVenteId, error } = await supabase.rpc('creer_vente', {
@@ -426,6 +438,7 @@ export default function Ventes() {
       p_remise_montant: remiseEffective,
       p_motif_remise: remiseEffective > 0 ? motifRemise.trim() : null,
       p_depot_id: depotId || null,
+      p_credit_utilise: creditEffectif,
     })
     setEnregistrement(false)
 
@@ -760,23 +773,40 @@ export default function Ventes() {
                 )}
               </div>
 
+              {creditDisponible > 0 && (
+                <div className="border border-green-200 bg-green-50 rounded-lg p-3">
+                  <label className="label">{t('form.creditDisponible', { montant: formatXOF(creditDisponible) })}</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max={Math.min(creditDisponible, total)}
+                    className="input-field"
+                    value={creditUtilise}
+                    onChange={(e) => setCreditUtilise(e.target.value)}
+                    placeholder="0"
+                  />
+                  <p className="text-xs text-petrol-600 mt-1">{t('form.creditAide')}</p>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label">{t('form.montantPayeMaintenant')}</label>
                   <input
                     type="number"
                     min="0"
-                    max={total}
+                    max={Math.max(0, total - creditEffectif)}
                     className="input-field"
                     value={montantPaye}
                     onChange={(e) => setMontantPaye(e.target.value)}
-                    placeholder={t('form.totalPlaceholder', { montant: formatXOF(total) })}
+                    placeholder={t('form.totalPlaceholder', { montant: formatXOF(Math.max(0, total - creditEffectif)) })}
                   />
                   <p className="text-xs text-petrol-500 mt-1">{t('form.laisserVide')}</p>
                 </div>
                 {(() => {
-                  const montantPayeEffectif = montantPaye === '' ? total : Math.min(Number(montantPaye), total)
-                  const resteAPayer = total - montantPayeEffectif
+                  const restantApresCredit = Math.max(0, total - creditEffectif)
+                  const montantPayeEffectif = montantPaye === '' ? restantApresCredit : Math.min(Number(montantPaye), restantApresCredit)
+                  const resteAPayer = restantApresCredit - montantPayeEffectif
                   return resteAPayer > 0 ? (
                     <div>
                       <label className="label">{t('form.soldeAPayer', { montant: formatXOF(resteAPayer) })}</label>

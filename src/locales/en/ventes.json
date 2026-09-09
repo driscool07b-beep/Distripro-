@@ -51,6 +51,8 @@
     "tarifNegocieApplique": "Negotiated rate applied",
     "stockInsuffisant": "low stock!",
     "sousTotal": "Subtotal",
+    "creditDisponible": "Available client credit: {{montant}} — apply to this sale",
+    "creditAide": "Reduces the amount the client needs to pay on this sale.",
     "remisePourcentage": "Discount (%)",
     "soitMoins": "That's -{{montant}}",
     "motifRemise": "Discount reason",
