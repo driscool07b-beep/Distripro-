@@ -12,6 +12,9 @@ export default function Creances() {
   const filtre = searchParams.get('filtre') || 'ouvertes' // ouvertes | echues | encaissees | toutes
   const [toutesLesCreances, setToutesLesCreances] = useState([])
   const [chargement, setChargement] = useState(true)
+  const [periode, setPeriode] = useState('tout') // tout | jour | mois | personnalise
+  const [dateDebut, setDateDebut] = useState('')
+  const [dateFin, setDateFin] = useState('')
 
   const [venteOuverte, setVenteOuverte] = useState(null)
   const [modalImportOuvert, setModalImportOuvert] = useState(false)
@@ -58,11 +61,25 @@ export default function Creances() {
   const estEncaissee = (v) => Number(v.montant_regle) >= Number(v.total)
   const estOuverte = (v) => Number(v.montant_regle) < Number(v.total)
 
-  const creancesAffichees =
+  function dansLaPeriode(v) {
+    if (periode === 'tout') return true
+    const dateVente = v.created_at.split('T')[0]
+    if (periode === 'jour') return dateVente === aujourdhui
+    if (periode === 'mois') return dateVente.slice(0, 7) === aujourdhui.slice(0, 7)
+    if (periode === 'personnalise') {
+      if (dateDebut && dateVente < dateDebut) return false
+      if (dateFin && dateVente > dateFin) return false
+      return true
+    }
+    return true
+  }
+
+  const creancesAffichees = (
     filtre === 'echues' ? toutesLesCreances.filter(estEchue) :
     filtre === 'encaissees' ? toutesLesCreances.filter(estEncaissee) :
     filtre === 'toutes' ? toutesLesCreances :
     toutesLesCreances.filter(estOuverte) // 'ouvertes' par défaut
+  ).filter(dansLaPeriode)
   const totalAffiche = creancesAffichees.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
 
   const COLONNES_EXPORT = [
@@ -286,18 +303,42 @@ export default function Creances() {
           )}
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-2 mb-4">
-        <select
-          className="input-field text-sm w-auto"
-          value={filtre}
-          onChange={(e) => setSearchParams(e.target.value === 'ouvertes' ? {} : { filtre: e.target.value })}
-        >
-          <option value="ouvertes">En cours</option>
-          <option value="echues">Échues</option>
-          <option value="encaissees">Encaissées</option>
-          <option value="toutes">Toutes</option>
-        </select>
-        <p className="text-sm text-petrol-500">
+      <div className="flex flex-wrap items-end gap-3 mb-4">
+        <div>
+          <label className="label">Statut</label>
+          <select
+            className="input-field text-sm w-auto"
+            value={filtre}
+            onChange={(e) => setSearchParams(e.target.value === 'ouvertes' ? {} : { filtre: e.target.value })}
+          >
+            <option value="ouvertes">En cours</option>
+            <option value="echues">Échues</option>
+            <option value="encaissees">Encaissées</option>
+            <option value="toutes">Toutes</option>
+          </select>
+        </div>
+        <div>
+          <label className="label">Période</label>
+          <select className="input-field text-sm w-auto" value={periode} onChange={(e) => setPeriode(e.target.value)}>
+            <option value="tout">Tout</option>
+            <option value="jour">Aujourd'hui</option>
+            <option value="mois">Ce mois</option>
+            <option value="personnalise">Personnalisée…</option>
+          </select>
+        </div>
+        {periode === 'personnalise' && (
+          <>
+            <div>
+              <label className="label">Du</label>
+              <input type="date" className="input-field text-sm" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Au</label>
+              <input type="date" className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
+            </div>
+          </>
+        )}
+        <p className="text-sm text-petrol-500 pb-2">
           {creancesAffichees.length} — <span className="font-mono font-medium">{formatXOF(totalAffiche)}</span>
         </p>
       </div>
