@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, genererAccuseVersement, formatMontantPDF } from '../lib/export'
+import { traduireErreur } from '../lib/erreurs'
 
 export default function Versements() {
   const { profil, entreprise } = useAuth()
@@ -113,7 +114,7 @@ export default function Versements() {
     })
     setEnvoiVersement(false)
     if (error) {
-      setErreurVersement(`Erreur : ${error.message}`)
+      setErreurVersement(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
 

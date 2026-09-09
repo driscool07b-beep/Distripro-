@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { traduireErreur } from '../lib/erreurs'
 
 const TYPES_CHAMP = [
   { value: 'texte', label: 'Texte libre' },
@@ -81,7 +82,7 @@ export default function Parametres() {
       .select('id, nom, actif')
       .single()
     if (error) {
-      setErreurCaisse(`Erreur : ${error.message}`)
+      setErreurCaisse(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setCaisses((prev) => [...prev, data])
@@ -118,7 +119,7 @@ export default function Parametres() {
     })
     setAjoutConcurrentEnvoi(false)
     if (error) {
-      setErreurConcurrent(`Erreur : ${error.message}`)
+      setErreurConcurrent(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setNouveauConcurrent({ nom: '', marque: '' })
@@ -164,7 +165,7 @@ export default function Parametres() {
       .eq('id', entreprise.id)
     setEnregistrement(false)
     if (error) {
-      setErreur(`Erreur : ${error.message}`)
+      setErreur(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     await rechargerProfil()
@@ -189,7 +190,7 @@ export default function Parametres() {
       .eq('id', entreprise.id)
     setEnregistrementInfos(false)
     if (error) {
-      setErreurInfos(`Erreur : ${error.message}`)
+      setErreurInfos(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     await rechargerProfil()
@@ -210,7 +211,7 @@ export default function Parametres() {
     const { error } = await supabase.from('entreprises').update({ seuil_remise_pourcentage: valeur }).eq('id', entreprise.id)
     setEnregistrementSeuil(false)
     if (error) {
-      setErreurSeuil(`Erreur : ${error.message}`)
+      setErreurSeuil(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     await rechargerProfil()
@@ -254,7 +255,7 @@ export default function Parametres() {
     })
     setAjoutChampEnvoi(false)
     if (error) {
-      setErreurChamp(`Erreur : ${error.message}`)
+      setErreurChamp(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setNouveauChamp(CHAMP_VIDE)

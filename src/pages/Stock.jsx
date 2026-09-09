@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF } from '../lib/export'
 import * as XLSX from 'xlsx'
+import { traduireErreur } from '../lib/erreurs'
 
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0' }
 
@@ -126,7 +127,7 @@ export default function Stock() {
     setEnregistrement(false)
     if (error) {
       console.error('Erreur enregistrerProduit:', error)
-      setErreur(`Erreur : ${error.message || 'inconnue'}`)
+      setErreur(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setModalProduit(false)
@@ -226,7 +227,7 @@ export default function Stock() {
         p_seuil_alerte: l.seuil_alerte,
         p_quantite_initiale: l.quantite_initiale,
       })
-      if (error) echecs.push(`${l.nom} : ${error.message}`)
+      if (error) echecs.push(`${l.nom} : ${traduireErreur(error.message)}`)
       else reussis++
       setProgressionImport(i + 1)
     }
@@ -299,7 +300,7 @@ export default function Stock() {
           ? 'Stock insuffisant pour cette sortie.'
           : error.message?.includes('plusieurs dépôts')
           ? 'Plusieurs dépôts existent — cette fonctionnalité de sélection arrive bientôt, contactez un administrateur.'
-          : `Erreur : ${error.message}`
+          : `Erreur : ${traduireErreur(error.message)}`
       )
       return
     }
@@ -363,7 +364,7 @@ export default function Stock() {
       setErreur(
         error.message?.includes('stock insuffisant')
           ? 'Stock insuffisant dans le dépôt source.'
-          : `Erreur : ${error.message}`
+          : `Erreur : ${traduireErreur(error.message)}`
       )
       return
     }
@@ -428,7 +429,7 @@ export default function Stock() {
     })
     if (error) {
       setEnregistrement(false)
-      setErreur(`Erreur : ${error.message}`)
+      setErreur(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
 

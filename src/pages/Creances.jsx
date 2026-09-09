@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF } from '../lib/export'
 import * as XLSX from 'xlsx'
+import { traduireErreur } from '../lib/erreurs'
 
 export default function Creances() {
   const { entreprise, profil } = useAuth()
@@ -213,7 +214,7 @@ export default function Creances() {
         p_date_echeance: l.echeance,
         p_notes: l.notes,
       })
-      if (error) echecs.push(`${l.clientNom} : ${error.message}`)
+      if (error) echecs.push(`${l.clientNom} : ${traduireErreur(error.message)}`)
       else reussis++
       setProgressionImport(i + 1)
     }
@@ -245,7 +246,7 @@ export default function Creances() {
     })
     setEnvoiPaiement(false)
     if (error) {
-      setErreurPaiement(`Erreur : ${error.message}`)
+      setErreurPaiement(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
 

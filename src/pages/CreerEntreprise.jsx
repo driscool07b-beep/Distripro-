@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { traduireErreur } from '../lib/erreurs'
 
 export default function CreerEntreprise() {
   const { inscription, estConnecte } = useAuth()
@@ -41,7 +42,7 @@ export default function CreerEntreprise() {
 
     if (error) {
       setChargement(false)
-      setErreur(error.message?.includes('already registered') ? 'Un compte existe déjà avec cet email.' : `Erreur : ${error.message}`)
+      setErreur(traduireErreur(error.message))
       return
     }
 

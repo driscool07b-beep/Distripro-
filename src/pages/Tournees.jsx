@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { accesAutorise } from '../lib/accesRole';
+import { traduireErreur } from '../lib/erreurs'
 
 export default function Tournees() {
   const { profil, entreprise } = useAuth();
@@ -153,7 +154,7 @@ export default function Tournees() {
     });
 
     if (error) {
-      alert('Erreur lors de la création : ' + error.message);
+      alert('Erreur lors de la création : ' + traduireErreur(error.message));
       console.error(error);
       return;
     }
@@ -181,7 +182,7 @@ export default function Tournees() {
         });
 
         if (error) {
-          alert('Erreur : ' + error.message);
+          alert('Erreur : ' + traduireErreur(error.message));
           return;
         }
 
@@ -294,7 +295,7 @@ export default function Tournees() {
 
     if (error) {
       setRapportEnvoi(false);
-      setRapportErreur(`Erreur enregistrement rapport : ${error.message}`);
+      setRapportErreur(`Erreur enregistrement rapport : ${traduireErreur(error.message)}`);
       return;
     }
 

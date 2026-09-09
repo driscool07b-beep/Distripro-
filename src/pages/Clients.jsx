@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import * as XLSX from 'xlsx'
+import { traduireErreur } from '../lib/erreurs'
 
 const COULEURS_SEGMENT = {
   actif: 'bg-green-50 text-green-700 border-green-200',
@@ -149,7 +150,7 @@ export default function Clients() {
       .select('id, produit_id, prix_negocie, produits(nom)')
       .single()
     if (error) {
-      setErreurTarif(`Erreur : ${error.message}`)
+      setErreurTarif(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setTarifs((prev) => [...prev.filter((t) => t.produit_id !== nouveauTarifProduit), data])
@@ -291,7 +292,7 @@ export default function Clients() {
 
     setImportEnCours(false)
     if (error) {
-      setErreurImport(`Erreur : ${error.message}`)
+      setErreurImport(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setResultatImport({ importes: data?.length || 0, total: lignesImport.length })
@@ -389,7 +390,7 @@ export default function Clients() {
     setEnregistrement(false)
     if (error) {
       console.error('Erreur enregistrement client:', error)
-      setErreur(`Erreur : ${error.message || 'inconnue'}`)
+      setErreur(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setModalOuvert(false)

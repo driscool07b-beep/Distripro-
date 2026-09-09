@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, genererFactureAvoir, formatMontantPDF } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
+import { traduireErreur } from '../lib/erreurs'
 
 export default function Ventes() {
   const { entreprise, profil } = useAuth()
@@ -162,7 +163,7 @@ export default function Ventes() {
     })
     setEnvoiAnnulation(false)
     if (error) {
-      setErreurAnnulation(`Erreur : ${error.message}`)
+      setErreurAnnulation(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
 
@@ -428,7 +429,7 @@ export default function Ventes() {
 
     if (error) {
       console.error('Erreur creer_vente:', error)
-      setErreur(`Erreur (création vente) : ${error.message || 'inconnue'}`)
+      setErreur(`Erreur (création vente) : ${traduireErreur(error.message)}`)
       return
     }
     setModalOuvert(false)

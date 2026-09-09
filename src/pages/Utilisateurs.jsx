@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { traduireErreur } from '../lib/erreurs'
 
 const LIBELLES_ROLE = {
   admin: 'Administrateur',
@@ -123,7 +124,7 @@ export default function Utilisateurs() {
 
     if (error) {
       setEnvoi(false)
-      setErreur(`Erreur : ${error.message}`)
+      setErreur(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
 
@@ -197,7 +198,7 @@ export default function Utilisateurs() {
     })
     if (error) {
       setEnvoiMembre(false)
-      setErreurMembre(`Erreur : ${error.message}`)
+      setErreurMembre(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
 

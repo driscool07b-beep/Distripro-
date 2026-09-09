@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { traduireErreur } from '../lib/erreurs'
 
 export default function Objectifs() {
   const { profil } = useAuth()
@@ -140,7 +141,7 @@ export default function Objectifs() {
     })
     setEnvoi(false)
     if (error) {
-      setErreur(`Erreur : ${error.message}`)
+      setErreur(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setModalOuvert(false)

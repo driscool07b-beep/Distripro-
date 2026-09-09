@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Navigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { traduireErreur } from '../lib/erreurs'
 
 export default function Inscription() {
   const { inscription, estConnecte } = useAuth()
@@ -33,7 +34,7 @@ export default function Inscription() {
     setChargement(false)
 
     if (error) {
-      setErreur(error.message?.includes('already registered') ? 'Un compte existe déjà avec cet email.' : `Erreur : ${error.message}`)
+      setErreur(traduireErreur(error.message))
       return
     }
 

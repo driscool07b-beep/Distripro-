@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererFactureProforma } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
+import { traduireErreur } from '../lib/erreurs'
 
 const LIBELLES_STATUT = {
   brouillon: 'Brouillon',
@@ -208,7 +209,7 @@ export default function Commandes() {
     })
     setEnregistrement(false)
     if (error) {
-      setErreur(`Erreur : ${error.message}`)
+      setErreur(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setModalOuvert(false)
@@ -266,7 +267,7 @@ export default function Commandes() {
       .from('commandes')
       .update({ bon_commande_client_reference: refBonCommande.trim() || null })
       .eq('id', commandeOuverte)
-    if (error) setErreurBonCommande(`Erreur : ${error.message}`)
+    if (error) setErreurBonCommande(`Erreur : ${traduireErreur(error.message)}`)
   }
 
   async function envoyerBonCommande(e) {
@@ -312,7 +313,7 @@ export default function Commandes() {
     })
     setActionEnvoi(false)
     if (error) {
-      setErreurAction(`Erreur : ${error.message}`)
+      setErreurAction(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     await ouvrirDetail(commandeOuverte)
@@ -334,7 +335,7 @@ export default function Commandes() {
     })
     setActionEnvoi(false)
     if (error) {
-      setErreurAction(`Erreur : ${error.message}`)
+      setErreurAction(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     await ouvrirDetail(commandeOuverte)

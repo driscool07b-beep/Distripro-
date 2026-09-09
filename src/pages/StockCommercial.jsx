@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { traduireErreur } from '../lib/erreurs'
 
 export default function StockCommercial() {
   const { profil } = useAuth()
@@ -193,7 +194,7 @@ function SortiesRetours() {
     })
     setEnregistrement(false)
     if (error) {
-      setErreur(`Erreur : ${error.message}`)
+      setErreur(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     setModalOuvert(false)
@@ -265,7 +266,7 @@ function SortiesRetours() {
     })
     setActionEnvoi(false)
     if (error) {
-      setErreurAction(`Erreur : ${error.message}`)
+      setErreurAction(`Erreur : ${traduireErreur(error.message)}`)
       return
     }
     await ouvrirDetailSortie(sortieOuverte)
