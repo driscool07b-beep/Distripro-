@@ -25,31 +25,40 @@ export default function Stock() {
   const [progressionImport, setProgressionImport] = useState(0)
   const [resultatImport, setResultatImport] = useState(null)
   const [modalMouvement, setModalMouvement] = useState(null) // produit sélectionné
+  const [modalTransfert, setModalTransfert] = useState(null) // produit sélectionné
+  const [depots, setDepots] = useState([])
   const [fichierJustificatif, setFichierJustificatif] = useState(null)
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
-  const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', motif: '' })
+  const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '' })
+  const [transfert, setTransfert] = useState({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
 
   useEffect(() => {
     chargerProduits()
+    chargerDepots()
   }, [])
 
   async function chargerProduits() {
     setChargement(true)
     const { data, error } = await supabase
       .from('produits')
-      .select('id, nom, categorie, prix_vente, seuil_alerte, created_at, stocks(quantite)')
+      .select('id, nom, categorie, prix_vente, seuil_alerte, created_at, stocks(quantite, depot_id)')
       .order('created_at', { ascending: false })
     if (!error) {
       setProduits(
         (data || []).map((p) => ({
           ...p,
-          quantite: p.stocks?.[0]?.quantite ?? 0,
+          quantite: (p.stocks || []).reduce((s, x) => s + (x.quantite || 0), 0),
         }))
       )
     }
     setChargement(false)
+  }
+
+  async function chargerDepots() {
+    const { data } = await supabase.from('depots').select('id, nom').eq('actif', true).order('nom')
+    setDepots(data || [])
   }
 
   async function enregistrerProduit(e) {
@@ -196,6 +205,27 @@ export default function Stock() {
     chargerProduits()
   }
 
+  function ouvrirModalMouvement(produit) {
+    setModalMouvement(produit)
+    setMouvement({
+      type: 'entree',
+      quantite: '',
+      raison: '',
+      motif: '',
+      depot_id: depots.length === 1 ? depots[0].id : '',
+    })
+    setErreur('')
+  }
+
+  function ouvrirModalTransfert(produit) {
+    setModalTransfert(produit)
+    setTransfert({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
+    setErreur('')
+  }
+
+  const RAISONS_ENTREE = ['Réception fournisseur', 'Production (usine)', 'Retour client', 'Inventaire (régularisation)', 'Autre']
+  const RAISONS_SORTIE = ['Casse / perte', 'Reconditionnement', 'Périmé / invendable', 'Inventaire (régularisation)', 'Autre']
+
   async function enregistrerMouvement(e) {
     e.preventDefault()
     setErreur('')
@@ -204,16 +234,30 @@ export default function Stock() {
       setErreur('Indiquez une quantité valide.')
       return
     }
+    if (depots.length > 1 && !mouvement.depot_id) {
+      setErreur('Sélectionnez un dépôt.')
+      return
+    }
+    if (!mouvement.raison) {
+      setErreur('Sélectionnez une raison.')
+      return
+    }
+    if (mouvement.raison === 'Autre' && !mouvement.motif.trim()) {
+      setErreur('Précisez le motif pour "Autre".')
+      return
+    }
     if (entreprise?.justificatif_stock_obligatoire && !fichierJustificatif) {
       setErreur('Un justificatif (photo ou PDF) est obligatoire pour tout ajustement de stock.')
       return
     }
+    const motifComplet = mouvement.raison + (mouvement.motif.trim() ? ' — ' + mouvement.motif.trim() : '')
     setEnregistrement(true)
     const { data: mouvementId, error } = await supabase.rpc('ajuster_stock', {
       p_produit_id: modalMouvement.id,
       p_type: mouvement.type,
       p_quantite: qte,
-      p_motif: mouvement.motif.trim() || null,
+      p_motif: motifComplet,
+      p_depot_id: mouvement.depot_id || null,
     })
     if (error) {
       setEnregistrement(false)
@@ -248,8 +292,51 @@ export default function Stock() {
 
   function fermerModalMouvement() {
     setModalMouvement(null)
-    setMouvement({ type: 'entree', quantite: '', motif: '' })
+    setMouvement({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '' })
     setFichierJustificatif(null)
+    setErreur('')
+  }
+
+  async function enregistrerTransfert(e) {
+    e.preventDefault()
+    setErreur('')
+    const qte = Number(transfert.quantite)
+    if (!qte || qte <= 0) {
+      setErreur('Indiquez une quantité valide.')
+      return
+    }
+    if (!transfert.depot_source_id || !transfert.depot_destination_id) {
+      setErreur('Sélectionnez le dépôt source et le dépôt destination.')
+      return
+    }
+    if (transfert.depot_source_id === transfert.depot_destination_id) {
+      setErreur('Le dépôt source et le dépôt destination doivent être différents.')
+      return
+    }
+    setEnregistrement(true)
+    const { error } = await supabase.rpc('transferer_stock', {
+      p_produit_id: modalTransfert.id,
+      p_depot_source_id: transfert.depot_source_id,
+      p_depot_destination_id: transfert.depot_destination_id,
+      p_quantite: qte,
+      p_motif: transfert.motif.trim() || null,
+    })
+    setEnregistrement(false)
+    if (error) {
+      setErreur(
+        error.message?.includes('stock insuffisant')
+          ? 'Stock insuffisant dans le dépôt source.'
+          : `Erreur : ${error.message}`
+      )
+      return
+    }
+    chargerProduits()
+    fermerModalTransfert()
+  }
+
+  function fermerModalTransfert() {
+    setModalTransfert(null)
+    setTransfert({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
     setErreur('')
   }
 
@@ -378,10 +465,18 @@ export default function Stock() {
                         <div className="flex flex-col items-end gap-1">
                           <button
                             className="text-xs font-medium text-petrol-700 hover:text-amber-600"
-                            onClick={() => setModalMouvement(p)}
+                            onClick={() => ouvrirModalMouvement(p)}
                           >
                             Ajuster le stock
                           </button>
+                          {depots.length > 1 && (
+                            <button
+                              className="text-xs font-medium text-petrol-700 hover:text-amber-600"
+                              onClick={() => ouvrirModalTransfert(p)}
+                            >
+                              Transférer entre dépôts
+                            </button>
+                          )}
                           <div className="flex gap-2">
                             <button className="text-xs text-petrol-500 underline" onClick={() => ouvrirModalEdition(p)}>
                               Modifier
@@ -489,7 +584,7 @@ export default function Stock() {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => setMouvement({ ...mouvement, type: 'entree' })}
+                  onClick={() => setMouvement({ ...mouvement, type: 'entree', raison: '' })}
                   className={`py-2 rounded-lg text-sm font-medium border ${
                     mouvement.type === 'entree'
                       ? 'bg-petrol-800 text-white border-petrol-800'
@@ -500,7 +595,7 @@ export default function Stock() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMouvement({ ...mouvement, type: 'sortie' })}
+                  onClick={() => setMouvement({ ...mouvement, type: 'sortie', raison: '' })}
                   className={`py-2 rounded-lg text-sm font-medium border ${
                     mouvement.type === 'sortie'
                       ? 'bg-petrol-800 text-white border-petrol-800'
@@ -520,13 +615,39 @@ export default function Stock() {
                   autoFocus
                 />
               </div>
+              {depots.length > 1 && (
+                <div>
+                  <label className="label">Dépôt *</label>
+                  <select
+                    className="input-field"
+                    value={mouvement.depot_id}
+                    onChange={(e) => setMouvement({ ...mouvement, depot_id: e.target.value })}
+                  >
+                    <option value="">Sélectionner un dépôt…</option>
+                    {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+                  </select>
+                </div>
+              )}
               <div>
-                <label className="label">Motif</label>
+                <label className="label">Raison *</label>
+                <select
+                  className="input-field"
+                  value={mouvement.raison}
+                  onChange={(e) => setMouvement({ ...mouvement, raison: e.target.value })}
+                >
+                  <option value="">Sélectionner…</option>
+                  {(mouvement.type === 'entree' ? RAISONS_ENTREE : RAISONS_SORTIE).map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="label">Détail {mouvement.raison === 'Autre' ? '*' : '(optionnel)'}</label>
                 <input
                   className="input-field"
                   value={mouvement.motif}
                   onChange={(e) => setMouvement({ ...mouvement, motif: e.target.value })}
-                  placeholder="Réception fournisseur, casse, inventaire…"
+                  placeholder="Nom du fournisseur, numéro de bon, précision…"
                 />
               </div>
               <div>
@@ -556,6 +677,70 @@ export default function Stock() {
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
                   {enregistrement ? 'Enregistrement…' : 'Valider'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {modalTransfert && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h2 className="font-semibold text-lg mb-1">Transférer entre dépôts</h2>
+            <p className="text-sm text-petrol-600 mb-4">{modalTransfert.nom} — stock total : {modalTransfert.quantite}</p>
+            <form onSubmit={enregistrerTransfert} className="space-y-3">
+              <div>
+                <label className="label">Dépôt source *</label>
+                <select
+                  className="input-field"
+                  value={transfert.depot_source_id}
+                  onChange={(e) => setTransfert({ ...transfert, depot_source_id: e.target.value })}
+                >
+                  <option value="">Sélectionner…</option>
+                  {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="label">Dépôt destination *</label>
+                <select
+                  className="input-field"
+                  value={transfert.depot_destination_id}
+                  onChange={(e) => setTransfert({ ...transfert, depot_destination_id: e.target.value })}
+                >
+                  <option value="">Sélectionner…</option>
+                  {depots
+                    .filter((d) => d.id !== transfert.depot_source_id)
+                    .map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="label">Quantité</label>
+                <input
+                  type="number"
+                  className="input-field font-mono"
+                  value={transfert.quantite}
+                  onChange={(e) => setTransfert({ ...transfert, quantite: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="label">Détail (optionnel)</label>
+                <input
+                  className="input-field"
+                  value={transfert.motif}
+                  onChange={(e) => setTransfert({ ...transfert, motif: e.target.value })}
+                  placeholder="Numéro de bordereau, raison du transfert…"
+                />
+              </div>
+
+              {erreur && <div className="text-sm text-red-600">{erreur}</div>}
+
+              <div className="flex gap-2 pt-2">
+                <button type="button" className="btn-secondary flex-1" onClick={fermerModalTransfert}>
+                  Annuler
+                </button>
+                <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
+                  {enregistrement ? 'Enregistrement…' : 'Transférer'}
                 </button>
               </div>
             </form>
