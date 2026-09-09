@@ -38,7 +38,7 @@ export default function Stock() {
   useEffect(() => {
     chargerProduits()
     chargerDepots()
-  }, [])
+  }, [profil?.id])
 
   async function chargerProduits() {
     setChargement(true)
@@ -58,8 +58,13 @@ export default function Stock() {
   }
 
   async function chargerDepots() {
-    const { data } = await supabase.from('depots').select('id, nom').eq('actif', true).order('nom')
-    setDepots(data || [])
+    if (profil?.role === 'gestionnaire_stock') {
+      const { data } = await supabase.from('gestionnaire_depots').select('depot:depots(id, nom)').eq('profil_id', profil.id)
+      setDepots((data || []).map((d) => d.depot).filter(Boolean))
+    } else {
+      const { data } = await supabase.from('depots').select('id, nom').eq('actif', true).order('nom')
+      setDepots(data || [])
+    }
   }
 
   async function enregistrerProduit(e) {
@@ -410,6 +415,11 @@ export default function Stock() {
           <p className="text-sm text-petrol-700 mt-0.5">
             Valeur totale du stock : <span className="font-mono font-medium">{formatXOF(valeurTotaleStock)}</span>
           </p>
+          {profil?.role === 'gestionnaire_stock' && depots.length === 0 && (
+            <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5 mt-2">
+              Aucun dépôt ne vous a été attribué — contactez un administrateur pour pouvoir enregistrer des mouvements de stock.
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
           <button className="btn-secondary text-sm" onClick={exportExcel} disabled={produitsFiltres.length === 0}>
@@ -487,7 +497,7 @@ export default function Stock() {
                       {formatXOF(p.quantite * (p.prix_vente || 0))}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && (
+                      {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && !(profil?.role === 'gestionnaire_stock' && depots.length === 0) && (
                         <div className="flex flex-col items-end gap-1">
                           <button
                             className="text-xs font-medium text-petrol-700 hover:text-amber-600"

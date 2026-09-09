@@ -15,6 +15,8 @@ export default function Utilisateurs() {
   const [membres, setMembres] = useState([])
   const [invitationsEnAttente, setInvitationsEnAttente] = useState([])
   const [journal, setJournal] = useState([])
+  const [depots, setDepots] = useState([])
+  const [depotsParMembre, setDepotsParMembre] = useState({}) // { profil_id: [{id, nom}] }
   const [chargement, setChargement] = useState(true)
 
   const [modalOuvert, setModalOuvert] = useState(false)
@@ -34,6 +36,7 @@ export default function Utilisateurs() {
   const [accesEtenduMembre, setAccesEtenduMembre] = useState(false)
   const [lectureSeuleMembre, setLectureSeuleMembre] = useState(false)
   const [responsableTourneesMembre, setResponsableTourneesMembre] = useState(false)
+  const [depotsMembre, setDepotsMembre] = useState([]) // array d'ids de dépôts sélectionnés
   const [telephoneMembre, setTelephoneMembre] = useState('')
   const [envoiMembre, setEnvoiMembre] = useState(false)
   const [erreurMembre, setErreurMembre] = useState('')
@@ -44,7 +47,7 @@ export default function Utilisateurs() {
 
   async function charger() {
     setChargement(true)
-    const [{ data: m }, { data: inv }, { data: j }] = await Promise.all([
+    const [{ data: m }, { data: inv }, { data: j }, { data: d }, { data: gd }] = await Promise.all([
       supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu, lecture_seule, responsable_tournees').order('nom'),
       supabase.from('invitations').select('id, email, nom_complet, role, zone, statut, created_at').eq('statut', 'en_attente').order('created_at', { ascending: false }),
       supabase
@@ -52,10 +55,20 @@ export default function Utilisateurs() {
         .select('id, action, details, created_at, effectue_par:profils!effectue_par(nom), cible:profils!cible_profil_id(nom)')
         .order('created_at', { ascending: false })
         .limit(30),
+      supabase.from('depots').select('id, nom').eq('actif', true).order('nom'),
+      supabase.from('gestionnaire_depots').select('profil_id, depot:depots(id, nom)'),
     ])
     setMembres(m || [])
     setInvitationsEnAttente(inv || [])
     setJournal(j || [])
+    setDepots(d || [])
+    const carte = {}
+    ;(gd || []).forEach((row) => {
+      if (!row.depot) return
+      if (!carte[row.profil_id]) carte[row.profil_id] = []
+      carte[row.profil_id].push(row.depot)
+    })
+    setDepotsParMembre(carte)
     setChargement(false)
   }
 
@@ -126,6 +139,7 @@ export default function Utilisateurs() {
     setAccesEtenduMembre(membre.acces_etendu || false)
     setLectureSeuleMembre(membre.lecture_seule || false)
     setResponsableTourneesMembre(membre.responsable_tournees || false)
+    setDepotsMembre((depotsParMembre[membre.id] || []).map((d) => d.id))
     setErreurMembre('')
     setModalMembreOuvert(true)
   }
@@ -149,11 +163,28 @@ export default function Utilisateurs() {
       p_lecture_seule: lectureSeuleMembre,
       p_responsable_tournees: responsableTourneesMembre,
     })
-    setEnvoiMembre(false)
     if (error) {
+      setEnvoiMembre(false)
       setErreurMembre(`Erreur : ${error.message}`)
       return
     }
+
+    // Attribution des dépôts : seulement pertinent pour un gestionnaire de
+    // stock. Si le rôle vient de changer et n'est plus gestionnaire_stock,
+    // on nettoie les attributions existantes.
+    if (roleMembre === 'gestionnaire_stock') {
+      await supabase.rpc('assigner_depots_gestionnaire', {
+        p_profil_id: membreEnEdition.id,
+        p_depot_ids: depotsMembre,
+      })
+    } else if (membreEnEdition.role === 'gestionnaire_stock') {
+      await supabase.rpc('assigner_depots_gestionnaire', {
+        p_profil_id: membreEnEdition.id,
+        p_depot_ids: [],
+      })
+    }
+
+    setEnvoiMembre(false)
     setModalMembreOuvert(false)
     charger()
   }
@@ -238,6 +269,13 @@ export default function Utilisateurs() {
                     )}
                     {m.responsable_tournees && (
                       <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">Responsable tournées</span>
+                    )}
+                    {m.role === 'gestionnaire_stock' && depots.length > 1 && (
+                      <span className="ml-2 text-xs bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded">
+                        {(depotsParMembre[m.id] || []).length === 0
+                          ? 'Aucun dépôt attribué'
+                          : (depotsParMembre[m.id] || []).map((d) => d.nom).join(', ')}
+                      </span>
                     )}
                   </p>
                   <p className="text-xs text-petrol-500">
@@ -408,6 +446,30 @@ export default function Utilisateurs() {
                 />
                 Responsable des tournées (peut programmer et modifier les tournées des commerciaux)
               </label>
+              {roleMembre === 'gestionnaire_stock' && depots.length > 1 && (
+                <div className="border border-line rounded-lg p-3">
+                  <p className="label mb-2">Dépôts attribués</p>
+                  <p className="text-xs text-petrol-500 mb-2">
+                    Ce membre ne pourra enregistrer de mouvements que sur les dépôts cochés ci-dessous. Aucune case cochée = aucun accès.
+                  </p>
+                  <div className="space-y-1.5">
+                    {depots.map((d) => (
+                      <label key={d.id} className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={depotsMembre.includes(d.id)}
+                          onChange={(e) =>
+                            setDepotsMembre((prev) =>
+                              e.target.checked ? [...prev, d.id] : prev.filter((id) => id !== d.id)
+                            )
+                          }
+                        />
+                        {d.nom}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
               {erreurMembre && <p className="text-sm text-red-600">{erreurMembre}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="button" className="btn-secondary flex-1" onClick={() => setModalMembreOuvert(false)}>
