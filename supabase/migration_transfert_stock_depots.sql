@@ -6,8 +6,12 @@
 -- car il doit débiter l'un et créditer l'autre de façon atomique).
 --
 -- La table mouvements_stock n'autorise que 'entree'/'sortie' (pas de type
--- 'transfert') : on enregistre donc deux mouvements liés par une même
--- référence dans reference_doc.
+-- 'transfert') : on enregistre donc deux mouvements distincts, reliés
+-- par leur texte de motif ("Transfert vers X" / "Transfert depuis X").
+-- La colonne reference_doc reste volontairement inutilisée ici : c'est
+-- celle où attacher_justificatif_mouvement stocke le fichier joint, donc
+-- on ne doit pas s'en servir pour autre chose (un justificatif peut être
+-- joint à chacun des deux mouvements du transfert).
 --
 -- À exécuter dans l'éditeur SQL de Supabase.
 
@@ -18,7 +22,7 @@ create or replace function transferer_stock(
   p_quantite integer,
   p_motif text default null
 )
-returns text
+returns jsonb
 language plpgsql
 security definer
 set search_path to 'public'
@@ -29,7 +33,8 @@ declare
   v_nom_source text;
   v_nom_destination text;
   v_stock_source integer;
-  v_reference text;
+  v_mouvement_sortie_id uuid;
+  v_mouvement_entree_id uuid;
 begin
   if v_entreprise_id is null then
     raise exception 'utilisateur non rattaché à une entreprise';
@@ -80,21 +85,22 @@ begin
   on conflict (produit_id, depot_id)
   do update set quantite = stocks.quantite + excluded.quantite, updated_at = now();
 
-  v_reference := 'TRANSFERT-' || gen_random_uuid();
-
-  insert into mouvements_stock (entreprise_id, produit_id, depot_id, type_mouvement, quantite, reference_doc, motif, effectue_par)
+  insert into mouvements_stock (entreprise_id, produit_id, depot_id, type_mouvement, quantite, motif, effectue_par)
   values (
-    v_entreprise_id, p_produit_id, p_depot_source_id, 'sortie', p_quantite, v_reference,
+    v_entreprise_id, p_produit_id, p_depot_source_id, 'sortie', p_quantite,
     'Transfert vers ' || v_nom_destination || case when p_motif is not null and trim(p_motif) <> '' then ' — ' || trim(p_motif) else '' end,
     auth.uid()
-  );
-  insert into mouvements_stock (entreprise_id, produit_id, depot_id, type_mouvement, quantite, reference_doc, motif, effectue_par)
+  )
+  returning id into v_mouvement_sortie_id;
+
+  insert into mouvements_stock (entreprise_id, produit_id, depot_id, type_mouvement, quantite, motif, effectue_par)
   values (
-    v_entreprise_id, p_produit_id, p_depot_destination_id, 'entree', p_quantite, v_reference,
+    v_entreprise_id, p_produit_id, p_depot_destination_id, 'entree', p_quantite,
     'Transfert depuis ' || v_nom_source || case when p_motif is not null and trim(p_motif) <> '' then ' — ' || trim(p_motif) else '' end,
     auth.uid()
-  );
+  )
+  returning id into v_mouvement_entree_id;
 
-  return v_reference;
+  return jsonb_build_object('mouvement_sortie_id', v_mouvement_sortie_id, 'mouvement_entree_id', v_mouvement_entree_id);
 end;
 $$;

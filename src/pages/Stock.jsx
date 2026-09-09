@@ -28,6 +28,7 @@ export default function Stock() {
   const [modalTransfert, setModalTransfert] = useState(null) // produit sélectionné
   const [depots, setDepots] = useState([])
   const [fichierJustificatif, setFichierJustificatif] = useState(null)
+  const [fichierJustificatifTransfert, setFichierJustificatifTransfert] = useState(null)
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
   const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '' })
   const [transfert, setTransfert] = useState({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
@@ -220,6 +221,7 @@ export default function Stock() {
   function ouvrirModalTransfert(produit) {
     setModalTransfert(produit)
     setTransfert({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
+    setFichierJustificatifTransfert(null)
     setErreur('')
   }
 
@@ -313,16 +315,20 @@ export default function Stock() {
       setErreur('Le dépôt source et le dépôt destination doivent être différents.')
       return
     }
+    if (entreprise?.justificatif_stock_obligatoire && !fichierJustificatifTransfert) {
+      setErreur('Un justificatif (photo ou PDF) est obligatoire pour tout transfert de stock.')
+      return
+    }
     setEnregistrement(true)
-    const { error } = await supabase.rpc('transferer_stock', {
+    const { data: mouvementIds, error } = await supabase.rpc('transferer_stock', {
       p_produit_id: modalTransfert.id,
       p_depot_source_id: transfert.depot_source_id,
       p_depot_destination_id: transfert.depot_destination_id,
       p_quantite: qte,
       p_motif: transfert.motif.trim() || null,
     })
-    setEnregistrement(false)
     if (error) {
+      setEnregistrement(false)
       setErreur(
         error.message?.includes('stock insuffisant')
           ? 'Stock insuffisant dans le dépôt source.'
@@ -330,6 +336,25 @@ export default function Stock() {
       )
       return
     }
+
+    if (fichierJustificatifTransfert && mouvementIds) {
+      const extension = fichierJustificatifTransfert.name.split('.').pop()
+      // Même justificatif joint aux deux mouvements générés (sortie + entrée),
+      // puisqu'un seul document (bordereau de transfert) couvre l'opération.
+      for (const idMouvement of [mouvementIds.mouvement_sortie_id, mouvementIds.mouvement_entree_id]) {
+        const chemin = `${entreprise.id}/mouvements-stock/${idMouvement}.${extension}`
+        const { error: erreurUpload } = await supabase.storage
+          .from('justificatifs-stock')
+          .upload(chemin, fichierJustificatifTransfert, { upsert: true })
+        if (!erreurUpload) {
+          await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: idMouvement, p_chemin: chemin })
+        } else {
+          console.error('Erreur upload justificatif transfert:', erreurUpload)
+        }
+      }
+    }
+
+    setEnregistrement(false)
     chargerProduits()
     fermerModalTransfert()
   }
@@ -337,6 +362,7 @@ export default function Stock() {
   function fermerModalTransfert() {
     setModalTransfert(null)
     setTransfert({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
+    setFichierJustificatifTransfert(null)
     setErreur('')
   }
 
@@ -731,6 +757,20 @@ export default function Stock() {
                   onChange={(e) => setTransfert({ ...transfert, motif: e.target.value })}
                   placeholder="Numéro de bordereau, raison du transfert…"
                 />
+              </div>
+              <div>
+                <label className="label">
+                  Justificatif (photo ou PDF){entreprise?.justificatif_stock_obligatoire ? ' *' : ' (optionnel)'}
+                </label>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={(e) => setFichierJustificatifTransfert(e.target.files?.[0] || null)}
+                  className="input-field"
+                />
+                <p className="text-xs text-petrol-500 mt-1">
+                  {entreprise?.justificatif_stock_obligatoire ? 'Obligatoire' : 'Facultatif'} — bordereau de transfert, bon de sortie…
+                </p>
               </div>
 
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
