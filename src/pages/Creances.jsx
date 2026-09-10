@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
@@ -8,6 +9,7 @@ import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 
 export default function Creances() {
+  const { t } = useTranslation('creances')
   const { entreprise, profil } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const filtre = searchParams.get('filtre') || 'ouvertes' // ouvertes | echues | encaissees | toutes
@@ -214,9 +216,9 @@ export default function Creances() {
             }
           })
         setLignesImport(lignesTraitees)
-        if (lignesTraitees.length === 0) setErreurImport('Aucune ligne valide trouvée.')
+        if (lignesTraitees.length === 0) setErreurImport(t('import.erreurAucuneLigne'))
       } catch (err) {
-        setErreurImport(`Fichier illisible : ${err.message}`)
+        setErreurImport(t('import.erreurFichierIllisible', { message: err.message }))
       }
     }
     lecteur.readAsArrayBuffer(fichier)
@@ -253,12 +255,12 @@ export default function Creances() {
     setErreurPaiement('')
     const montant = Number(montantPaiement)
     if (!montant || montant <= 0) {
-      setErreurPaiement('Indiquez un montant valide.')
+      setErreurPaiement(t('detail.erreurMontantValide'))
       return
     }
     const resteDu = Number(detail.vente.total) - Number(detail.vente.montant_regle)
     if (montant > resteDu) {
-      setErreurPaiement(`Le montant dépasse le solde restant dû (${formatXOF(resteDu)}).`)
+      setErreurPaiement(t('detail.erreurMontantDepasseSolde', { solde: formatXOF(resteDu) }))
       return
     }
     setEnvoiPaiement(true)
@@ -270,7 +272,7 @@ export default function Creances() {
     })
     setEnvoiPaiement(false)
     if (error) {
-      setErreurPaiement(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurPaiement(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
 
@@ -301,29 +303,29 @@ export default function Creances() {
   if (!accesAutorise('creances', profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
 
   if (chargement) {
-    return <div className="p-4 text-center text-petrol-500">Chargement des créances…</div>
+    return <div className="p-4 text-center text-petrol-500">{t('chargementCreances')}</div>
   }
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <h1 className="text-xl font-bold">Créances clients</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex flex-wrap gap-2">
           <button className="btn-secondary text-xs" onClick={exportExcel} disabled={creancesAffichees.length === 0}>
-            📊 Excel
+            📊 {t('excel')}
           </button>
           <button className="btn-secondary text-xs" onClick={exportPDF} disabled={creancesAffichees.length === 0}>
-            📄 PDF
+            📄 {t('pdf')}
           </button>
           {['admin', 'manager'].includes(profil?.role) && (
             <button className="btn-secondary text-xs" onClick={ouvrirModalImport}>
-              📥 Importer
+              📥 {t('importer')}
             </button>
           )}
         </div>
@@ -332,10 +334,10 @@ export default function Creances() {
       {avancesCommandes.length > 0 && (
         <div className="card p-4 mb-4 border-blue-200 bg-blue-50">
           <p className="text-sm font-semibold text-blue-800 mb-1">
-            💰 Avances reçues sur commandes non livrées — {formatXOF(avancesCommandes.reduce((s, c) => s + Number(c.montant_paye || 0), 0))}
+            {t('avancesTitre', { montant: formatXOF(avancesCommandes.reduce((s, c) => s + Number(c.montant_paye || 0), 0)) })}
           </p>
           <p className="text-xs text-blue-700 mb-2">
-            Cet argent a été encaissé mais rien n'a encore été livré — c'est un crédit en faveur du client, pas une créance.
+            {t('avancesExplication')}
           </p>
           <div className="space-y-1.5">
             {avancesCommandes.map((c) => (
@@ -353,35 +355,35 @@ export default function Creances() {
 
       <div className="flex flex-wrap items-end gap-3 mb-4">
         <div>
-          <label className="label">Statut</label>
+          <label className="label">{t('statut')}</label>
           <select
             className="input-field text-sm w-auto"
             value={filtre}
             onChange={(e) => setSearchParams(e.target.value === 'ouvertes' ? {} : { filtre: e.target.value })}
           >
-            <option value="ouvertes">En cours</option>
-            <option value="echues">Échues</option>
-            <option value="encaissees">Encaissées</option>
-            <option value="toutes">Toutes</option>
+            <option value="ouvertes">{t('statutEnCours')}</option>
+            <option value="echues">{t('statutEchues')}</option>
+            <option value="encaissees">{t('statutEncaissees')}</option>
+            <option value="toutes">{t('statutToutes')}</option>
           </select>
         </div>
         <div>
-          <label className="label">Période</label>
+          <label className="label">{t('periode')}</label>
           <select className="input-field text-sm w-auto" value={periode} onChange={(e) => setPeriode(e.target.value)}>
-            <option value="tout">Tout</option>
-            <option value="jour">Aujourd'hui</option>
-            <option value="mois">Ce mois</option>
-            <option value="personnalise">Personnalisée…</option>
+            <option value="tout">{t('periodeTout')}</option>
+            <option value="jour">{t('periodeAujourdhui')}</option>
+            <option value="mois">{t('periodeCeMois')}</option>
+            <option value="personnalise">{t('periodePersonnalisee')}</option>
           </select>
         </div>
         {periode === 'personnalise' && (
           <>
             <div>
-              <label className="label">Du</label>
+              <label className="label">{t('du')}</label>
               <input type="date" className="input-field text-sm" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
             </div>
             <div>
-              <label className="label">Au</label>
+              <label className="label">{t('au')}</label>
               <input type="date" className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
             </div>
           </>
@@ -406,15 +408,15 @@ export default function Creances() {
               <div>
                 <p className="font-medium text-sm">
                   {v.clients?.nom || 'Client'}
-                  {v.solde_report && <span className="ml-2 text-xs bg-petrol-100 text-petrol-600 px-1.5 py-0.5 rounded">Solde reporté</span>}
-                  {estEncaissee(v) && <span className="ml-2 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">Encaissée</span>}
+                  {v.solde_report && <span className="ml-2 text-xs bg-petrol-100 text-petrol-600 px-1.5 py-0.5 rounded">{t('soldeReporte')}</span>}
+                  {estEncaissee(v) && <span className="ml-2 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">{t('encaissee')}</span>}
                 </p>
                 <p className="text-xs text-petrol-500">
-                  Commercial : {v.profils?.nom || '—'}
+                  {t('commercial')} : {v.profils?.nom || '—'}
                   {v.date_echeance && (
                     <>
-                      {' '}— Échéance : {new Date(v.date_echeance).toLocaleDateString('fr-FR')}
-                      {echue && <span className="text-red-600 font-medium"> (en retard)</span>}
+                      {' '}— {t('echeance')} : {new Date(v.date_echeance).toLocaleDateString('fr-FR')}
+                      {echue && <span className="text-red-600 font-medium"> {t('enRetard')}</span>}
                     </>
                   )}
                 </p>
@@ -424,7 +426,7 @@ export default function Creances() {
           )
         })}
         {creancesAffichees.length === 0 && (
-          <p className="text-petrol-400 text-center py-8">Aucune créance pour ce filtre.</p>
+          <p className="text-petrol-400 text-center py-8">{t('aucuneCreance')}</p>
         )}
       </div>
 
@@ -432,14 +434,14 @@ export default function Creances() {
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-5 w-full max-w-md max-h-[90vh] overflow-y-auto space-y-3">
             {chargementDetail ? (
-              <p className="text-sm text-petrol-500 text-center py-8">Chargement…</p>
+              <p className="text-sm text-petrol-500 text-center py-8">{t('detail.chargement')}</p>
             ) : detail ? (
               <>
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="font-semibold text-lg">{detail.vente?.clients?.nom}</h2>
                     <p className="text-xs text-petrol-500">
-                      Vente du {new Date(detail.vente?.created_at).toLocaleDateString('fr-FR')} — Commercial : {detail.vente?.profils?.nom || '—'}
+                      {t('detail.venteDu', { date: new Date(detail.vente?.created_at).toLocaleDateString('fr-FR'), commercial: detail.vente?.profils?.nom || '—' })}
                     </p>
                   </div>
                   <button onClick={fermerDetail} className="text-petrol-400 hover:text-petrol-700 text-xl leading-none">✕</button>
@@ -447,16 +449,16 @@ export default function Creances() {
 
                 {detail.vente?.solde_report ? (
                   <div className="border border-line rounded-lg p-3 bg-canvas">
-                    <p className="text-sm font-medium">Solde reporté (import)</p>
+                    <p className="text-sm font-medium">{t('detail.soldeReporteImport')}</p>
                     {detail.vente?.notes && <p className="text-xs text-petrol-500 mt-1">{detail.vente.notes}</p>}
                   </div>
                 ) : (
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-left text-xs text-petrol-500 border-b border-line">
-                        <th className="font-medium pb-2">Produit</th>
-                        <th className="font-medium pb-2 text-right">Qté</th>
-                        <th className="font-medium pb-2 text-right">Sous-total</th>
+                        <th className="font-medium pb-2">{t('detail.produit')}</th>
+                        <th className="font-medium pb-2 text-right">{t('detail.qte')}</th>
+                        <th className="font-medium pb-2 text-right">{t('detail.sousTotal')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -472,15 +474,15 @@ export default function Creances() {
                 )}
 
                 <div className="flex justify-between text-sm border-t border-line pt-2">
-                  <span>Total</span>
+                  <span>{t('detail.total')}</span>
                   <span className="font-mono font-medium">{formatXOF(detail.vente?.total)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Déjà réglé</span>
+                  <span>{t('detail.dejaRegle')}</span>
                   <span className="font-mono">{formatXOF(detail.vente?.montant_regle)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-medium text-amber-700">
-                  <span>Reste dû</span>
+                  <span>{t('detail.resteDu')}</span>
                   <span className="font-mono">
                     {formatXOF(Number(detail.vente?.total) - Number(detail.vente?.montant_regle))}
                   </span>
@@ -488,14 +490,14 @@ export default function Creances() {
 
                 {detail.paiements.length > 0 && (
                   <div className="border-t border-line pt-2">
-                    <p className="text-xs font-medium text-petrol-600 mb-1">Paiements reçus</p>
+                    <p className="text-xs font-medium text-petrol-600 mb-1">{t('detail.paiementsRecus')}</p>
                     {detail.paiements.map((p, i) => (
                       <p key={i} className="text-xs text-petrol-600 flex justify-between gap-2">
                         <span>
                           {new Date(p.created_at).toLocaleDateString('fr-FR')}
                           {' — '}
                           <span className="text-petrol-500">
-                            {p.commercial?.nom || p.enregistre_par?.nom || 'inconnu'}
+                            {p.commercial?.nom || p.enregistre_par?.nom || t('detail.inconnu')}
                           </span>
                         </span>
                         <span className="font-mono shrink-0">{formatXOF(p.montant)}</span>
@@ -506,7 +508,7 @@ export default function Creances() {
 
                 {Number(detail.vente?.montant_regle) < Number(detail.vente?.total) && (
                   <div className="border-t border-line pt-3">
-                    <label className="block text-sm font-medium mb-1">Enregistrer un paiement</label>
+                    <label className="block text-sm font-medium mb-1">{t('detail.enregistrerPaiement')}</label>
                     <div className="flex gap-2 mb-2">
                       <input
                         type="number"
@@ -514,30 +516,30 @@ export default function Creances() {
                         className="flex-1 border rounded px-3 py-2 text-sm"
                         value={montantPaiement}
                         onChange={(e) => setMontantPaiement(e.target.value)}
-                        placeholder="Montant en F CFA"
+                        placeholder={t('detail.montantPlaceholder')}
                       />
                       <select
                         className="border rounded px-2 py-2 text-sm"
                         value={modePaiementCreance}
                         onChange={(e) => setModePaiementCreance(e.target.value)}
                       >
-                        <option value="espece">Espèces</option>
-                        <option value="cheque">Chèque</option>
-                        <option value="mobile_money">Mobile Money</option>
-                        <option value="virement">Virement</option>
+                        <option value="espece">{t('detail.especes')}</option>
+                        <option value="cheque">{t('detail.cheque')}</option>
+                        <option value="mobile_money">{t('detail.mobileMoney')}</option>
+                        <option value="virement">{t('detail.virement')}</option>
                       </select>
                     </div>
                     <div className="mb-2">
-                      <label className="text-xs text-petrol-500">Recouvrement effectué par (commercial, optionnel)</label>
+                      <label className="text-xs text-petrol-500">{t('detail.recouvrementParLabel')}</label>
                       {profil?.role === 'commercial' ? (
-                        <p className="text-sm text-petrol-600 border border-line rounded px-2 py-1.5 mt-1">Vous-même</p>
+                        <p className="text-sm text-petrol-600 border border-line rounded px-2 py-1.5 mt-1">{t('detail.vousMeme')}</p>
                       ) : (
                         <select
                           className="input-field mt-1"
                           value={commercialRecouvrement}
                           onChange={(e) => setCommercialRecouvrement(e.target.value)}
                         >
-                          <option value="">Aucun (recouvrement de bureau)</option>
+                          <option value="">{t('detail.aucunRecouvrementBureau')}</option>
                           {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
                         </select>
                       )}
@@ -547,14 +549,14 @@ export default function Creances() {
                       disabled={envoiPaiement}
                       className="bg-blue-600 text-white px-4 py-2 rounded text-sm disabled:opacity-50 w-full"
                     >
-                      {envoiPaiement ? '…' : 'Valider'}
+                      {envoiPaiement ? '…' : t('detail.valider')}
                     </button>
                     {erreurPaiement && <p className="text-xs text-red-600 mt-1">{erreurPaiement}</p>}
                   </div>
                 )}
               </>
             ) : (
-              <p className="text-sm text-red-600 text-center py-8">Impossible de charger le détail.</p>
+              <p className="text-sm text-red-600 text-center py-8">{t('detail.impossibleChargerDetail')}</p>
             )}
           </div>
         </div>
@@ -564,20 +566,19 @@ export default function Creances() {
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-4">
-              <h2 className="font-semibold text-lg">Importer des soldes de créances</h2>
+              <h2 className="font-semibold text-lg">{t('import.titre')}</h2>
               <button onClick={() => setModalImportOuvert(false)} className="text-petrol-400 text-xl leading-none">✕</button>
             </div>
 
             <p className="text-sm text-petrol-600 mb-3">
-              Le nom du client doit correspondre exactement à un client déjà enregistré. Créez d'abord les clients
-              manquants (page Clients) avant l'import.
+              {t('import.consigne')}
             </p>
             <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
-              📄 Télécharger le modèle
+              {t('import.telechargerModele')}
             </button>
 
             <div className="mb-4">
-              <label className="label">Fichier Excel (.xlsx)</label>
+              <label className="label">{t('import.fichierExcel')}</label>
               <input type="file" accept=".xlsx,.xls" onChange={lireFichierImport} className="text-sm" />
             </div>
 
@@ -586,15 +587,15 @@ export default function Creances() {
             {lignesImport.length > 0 && (
               <>
                 <p className="text-sm font-medium mb-2">
-                  {lignesImport.filter((l) => l.clientId).length} client(s) reconnu(s) sur {lignesImport.length}
+                  {t('import.clientsReconnus', { reconnus: lignesImport.filter((l) => l.clientId).length, total: lignesImport.length })}
                 </p>
                 <div className="border border-line rounded-lg overflow-y-auto max-h-48 mb-4">
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="bg-canvas text-left">
-                        <th className="px-2 py-1.5">Client</th>
-                        <th className="px-2 py-1.5 text-right">Montant</th>
-                        <th className="px-2 py-1.5">Statut</th>
+                        <th className="px-2 py-1.5">{t('import.client')}</th>
+                        <th className="px-2 py-1.5 text-right">{t('import.montant')}</th>
+                        <th className="px-2 py-1.5">{t('import.statutCol')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -604,9 +605,9 @@ export default function Creances() {
                           <td className="px-2 py-1.5 text-right font-mono">{l.montant}</td>
                           <td className="px-2 py-1.5">
                             {l.clientId ? (
-                              <span className="text-green-600">✓ trouvé</span>
+                              <span className="text-green-600">{t('import.trouve')}</span>
                             ) : (
-                              <span className="text-red-600">✗ client introuvable</span>
+                              <span className="text-red-600">{t('import.introuvable')}</span>
                             )}
                           </td>
                         </tr>
@@ -620,8 +621,8 @@ export default function Creances() {
                   className="btn-primary w-full"
                 >
                   {importEnCours
-                    ? `Import en cours… (${progressionImport}/${lignesImport.filter((l) => l.clientId).length})`
-                    : `Importer ${lignesImport.filter((l) => l.clientId).length} solde(s)`}
+                    ? t('import.importEnCours', { fait: progressionImport, total: lignesImport.filter((l) => l.clientId).length })
+                    : t('import.importerN', { n: lignesImport.filter((l) => l.clientId).length })}
                 </button>
               </>
             )}
@@ -629,7 +630,7 @@ export default function Creances() {
             {resultatImport && (
               <div className="mt-3">
                 <p className="text-sm text-green-700">
-                  ✓ {resultatImport.reussis} solde(s) importé(s) sur {resultatImport.total}.
+                  {t('import.resultatReussis', { reussis: resultatImport.reussis, total: resultatImport.total })}
                 </p>
                 {resultatImport.echecs.length > 0 && (
                   <div className="text-xs text-red-600 mt-2">
