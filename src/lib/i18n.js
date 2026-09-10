@@ -26,6 +26,10 @@ import commandesFr from '../locales/fr/commandes.json'
 import commandesEn from '../locales/en/commandes.json'
 import commandesAr from '../locales/ar/commandes.json'
 import commandesZh from '../locales/zh/commandes.json'
+import tourneesFr from '../locales/fr/tournees.json'
+import tourneesEn from '../locales/en/tournees.json'
+import tourneesAr from '../locales/ar/tournees.json'
+import tourneesZh from '../locales/zh/tournees.json'
 
 // Langues dont le contenu est réellement traduit. L'arabe et le chinois
 // sont préparés dans la structure (RTL, sélecteur) mais leur contenu
@@ -48,14 +52,14 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr, clients: clientsFr, commandes: commandesFr },
-      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn, clients: clientsEn, commandes: commandesEn },
-      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr, clients: clientsAr, commandes: commandesAr },
-      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh, clients: clientsZh, commandes: commandesZh },
+      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr, clients: clientsFr, commandes: commandesFr, tournees: tourneesFr },
+      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn, clients: clientsEn, commandes: commandesEn, tournees: tourneesEn },
+      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr, clients: clientsAr, commandes: commandesAr, tournees: tourneesAr },
+      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh, clients: clientsZh, commandes: commandesZh, tournees: tourneesZh },
     },
     fallbackLng: 'fr',
     supportedLngs: LANGUES.map((l) => l.code),
-    ns: ['commun', 'dashboard', 'ventes', 'stock', 'clients', 'commandes'],
+    ns: ['commun', 'dashboard', 'ventes', 'stock', 'clients', 'commandes', 'tournees'],
     defaultNS: 'commun',
     interpolation: { escapeValue: false }, // React échappe déjà par défaut
     detection: {

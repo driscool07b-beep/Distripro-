@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { accesAutorise } from '../lib/accesRole';
 import { traduireErreur } from '../lib/erreurs'
 
 export default function Tournees() {
+  const { t } = useTranslation('tournees');
   const { profil, entreprise } = useAuth();
   const entrepriseId = profil?.entreprise_id;
   const [tournees, setTournees] = useState([]);
@@ -143,7 +145,7 @@ export default function Tournees() {
   const creerTournee = async (e) => {
     e.preventDefault();
     if (formData.clients_selectionnes.length === 0) {
-      alert('Sélectionnez au moins un client');
+      alert(t('erreurs.selectionnerClient'));
       return;
     }
 
@@ -154,7 +156,7 @@ export default function Tournees() {
     });
 
     if (error) {
-      alert('Erreur lors de la création : ' + traduireErreur(error.message));
+      alert(t('erreurs.creation', { message: traduireErreur(error.message) }));
       console.error(error);
       return;
     }
@@ -169,7 +171,7 @@ export default function Tournees() {
 
   const marquerVisitee = async (ligne) => {
     if (!navigator.geolocation) {
-      alert("La géolocalisation n'est pas disponible sur cet appareil/navigateur.");
+      alert(t('erreurs.geolocNonDisponible'));
       return;
     }
 
@@ -182,14 +184,14 @@ export default function Tournees() {
         });
 
         if (error) {
-          alert('Erreur : ' + traduireErreur(error.message));
+          alert(t('erreurs.validationVisite', { message: traduireErreur(error.message) }));
           return;
         }
 
         if (!data?.succes) {
           alert(
             data?.message ||
-              `Vous semblez trop éloigné du client (${data?.distance_metres ?? '?'} m) pour valider cette visite.`
+              t('erreurs.tropEloigne', { distance: data?.distance_metres ?? '?' })
           );
           return;
         }
@@ -206,7 +208,7 @@ export default function Tournees() {
         setRapportPresenceConcurrents({});
       },
       () => {
-        alert("Impossible d'obtenir votre position. Autorisez la géolocalisation pour valider une visite.");
+        alert(t('erreurs.impossibleObtenirPosition'));
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -257,7 +259,7 @@ export default function Tournees() {
 
   const envoyerRapport = async () => {
     if (entreprise?.photo_rapport_obligatoire && rapportPhotos.length === 0) {
-      setRapportErreur('Au moins une photo est requise pour ce rapport (réglage entreprise).');
+      setRapportErreur(t('erreurs.photoRequise'));
       return;
     }
     setRapportEnvoi(true);
@@ -273,7 +275,7 @@ export default function Tournees() {
         .upload(chemin, file, { upsert: true });
       if (erreurUpload) {
         setRapportEnvoi(false);
-        setRapportErreur(`Erreur envoi photo ${i + 1} : ${erreurUpload.message}`);
+        setRapportErreur(t('erreurs.envoiPhoto', { n: i + 1, message: erreurUpload.message }));
         return;
       }
       cheminsPhotos.push(chemin);
@@ -295,7 +297,7 @@ export default function Tournees() {
 
     if (error) {
       setRapportEnvoi(false);
-      setRapportErreur(`Erreur enregistrement rapport : ${traduireErreur(error.message)}`);
+      setRapportErreur(t('erreurs.enregistrementRapport', { message: traduireErreur(error.message) }));
       return;
     }
 
@@ -310,7 +312,7 @@ export default function Tournees() {
       const { error: erreurLignes } = await supabase.from('rapport_visite_produits').insert(lignes);
       if (erreurLignes) {
         setRapportEnvoi(false);
-        setRapportErreur(`Rapport enregistré, mais erreur sur les lignes produits : ${erreurLignes.message}`);
+        setRapportErreur(t('erreurs.rapportErreurLignes', { message: erreurLignes.message }));
         return;
       }
     }
@@ -328,7 +330,7 @@ export default function Tournees() {
         .insert(lignesChamps);
       if (erreurChamps) {
         setRapportEnvoi(false);
-        setRapportErreur(`Rapport enregistré, mais erreur sur les champs personnalisés : ${erreurChamps.message}`);
+        setRapportErreur(t('erreurs.rapportErreurChamps', { message: erreurChamps.message }));
         return;
       }
     }
@@ -346,7 +348,7 @@ export default function Tournees() {
         .insert(lignesConcurrents);
       if (erreurConcurrents) {
         setRapportEnvoi(false);
-        setRapportErreur(`Rapport enregistré, mais erreur sur les produits concurrents : ${erreurConcurrents.message}`);
+        setRapportErreur(t('erreurs.rapportErreurConcurrents', { message: erreurConcurrents.message }));
         return;
       }
     }
@@ -372,13 +374,13 @@ export default function Tournees() {
   if (!accesAutorise('tournees', profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     );
   }
 
   if (loading) {
-    return <div className="p-4 text-center text-gray-500">Chargement des tournées...</div>;
+    return <div className="p-4 text-center text-gray-500">{t('chargementTournees')}</div>;
   }
 
   if (selectedTournee) {
@@ -388,14 +390,14 @@ export default function Tournees() {
           onClick={() => setSelectedTournee(null)}
           className="mb-4 text-blue-600 flex items-center gap-1"
         >
-          ← Retour aux tournées
+          {t('detail.retour')}
         </button>
 
         <h1 className="text-xl font-bold mb-1">
-          Tournée du {new Date(selectedTournee.date_tournee).toLocaleDateString('fr-FR')}
+          {t('detail.titreTourneeDu', { date: new Date(selectedTournee.date_tournee).toLocaleDateString('fr-FR') })}
         </h1>
         <p className="text-sm text-gray-500 mb-4">
-          {visites.length} visite(s) planifiée(s)
+          {t('detail.compteurVisites', { n: visites.length })}
         </p>
 
         {(() => {
@@ -403,14 +405,14 @@ export default function Tournees() {
           return prochaine && prochaine.clients?.latitude != null ? (
             <div className="border border-blue-200 bg-blue-50 rounded-lg p-3 mb-4 flex items-center justify-between">
               <div>
-                <p className="text-xs text-blue-700 font-medium mb-0.5">Prochain arrêt</p>
+                <p className="text-xs text-blue-700 font-medium mb-0.5">{t('detail.prochainArret')}</p>
                 <p className="font-medium text-sm">{prochaine.clients?.nom || 'Client'}</p>
               </div>
               <button
                 onClick={() => ouvrirItineraire(prochaine)}
                 className="bg-blue-600 text-white px-3 py-2 rounded text-sm shrink-0"
               >
-                📍 M'y guider
+                {t('detail.meGuider')}
               </button>
             </div>
           ) : null;
@@ -429,7 +431,7 @@ export default function Tournees() {
                   {index + 1}. {ligne.clients?.nom || 'Client'}
                 </p>
                 <p className="text-xs text-gray-500">
-                  Statut : {ligne.statut === 'visite' ? '✅ Visitée' : '⏳ À visiter'}
+                  {t('detail.statutLabel')} : {ligne.statut === 'visite' ? t('detail.visitee') : t('detail.aVisiter')}
                 </p>
               </div>
               {ligne.statut !== 'visite' && (
@@ -437,23 +439,23 @@ export default function Tournees() {
                   <button
                     onClick={() => ouvrirItineraire(ligne)}
                     disabled={ligne.clients?.latitude == null}
-                    title={ligne.clients?.latitude == null ? 'Pas de position GPS enregistrée pour ce client' : "Ouvrir l'itinéraire Google Maps"}
+                    title={ligne.clients?.latitude == null ? t('detail.pasPositionGPS') : t('detail.ouvrirItineraireGoogle')}
                     className="border border-blue-600 text-blue-600 px-3 py-1.5 rounded text-sm disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    📍 Itinéraire
+                    {t('detail.itineraire')}
                   </button>
                   <button
                     onClick={() => marquerVisitee(ligne)}
                     className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm"
                   >
-                    Marquer visitée (vérif. GPS)
+                    {t('detail.marquerVisitee')}
                   </button>
                   {autoriseProgrammer && (
                     <button
                       onClick={() => retirerClient(ligne.id)}
                       className="border border-red-500 text-red-600 px-3 py-1.5 rounded text-sm"
                     >
-                      Retirer
+                      {t('detail.retirer')}
                     </button>
                   )}
                 </div>
@@ -461,20 +463,20 @@ export default function Tournees() {
             </div>
           ))}
           {visites.length === 0 && (
-            <p className="text-gray-400 text-center py-8">Aucune visite pour cette tournée</p>
+            <p className="text-gray-400 text-center py-8">{t('detail.aucuneVisite')}</p>
           )}
         </div>
 
         {autoriseProgrammer && (
           <div className="border rounded-lg p-4 mt-4 bg-gray-50">
-            <p className="text-sm font-medium mb-2">Ajouter un client à cette tournée</p>
+            <p className="text-sm font-medium mb-2">{t('detail.ajouterClientTournee')}</p>
             <div className="flex gap-2">
               <select
                 value={clientAAjouter}
                 onChange={(e) => setClientAAjouter(e.target.value)}
                 className="flex-1 border rounded-lg px-3 py-2 text-sm"
               >
-                <option value="">— Sélectionner un client —</option>
+                <option value="">{t('detail.selectionnerClient')}</option>
                 {clients
                   .filter((c) => !visites.some((v) => v.client_id === c.id))
                   .map((c) => (
@@ -486,7 +488,7 @@ export default function Tournees() {
                 disabled={!clientAAjouter}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-40"
               >
-                + Ajouter
+                {t('ajouter')}
               </button>
             </div>
           </div>
@@ -498,13 +500,13 @@ export default function Tournees() {
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">Tournées</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         {autoriseProgrammer && (
           <button
             onClick={() => setShowForm(!showForm)}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
           >
-            {showForm ? 'Annuler' : '+ Nouvelle tournée'}
+            {showForm ? t('annuler') : t('nouvelleTournee')}
           </button>
         )}
       </div>
@@ -512,7 +514,7 @@ export default function Tournees() {
       {showForm && autoriseProgrammer && (
         <form onSubmit={creerTournee} className="border rounded-lg p-4 mb-4 bg-gray-50 space-y-3">
           <div>
-            <label className="block text-sm font-medium mb-1">Date de la tournée</label>
+            <label className="block text-sm font-medium mb-1">{t('dateTournee')}</label>
             <input
               type="date"
               value={formData.date_tournee}
@@ -524,7 +526,7 @@ export default function Tournees() {
 
           <div>
             <label className="block text-sm font-medium mb-1">
-              Clients à visiter ({formData.clients_selectionnes.length} sélectionné(s))
+              {t('clientsAVisiter', { n: formData.clients_selectionnes.length })}
             </label>
             <div className="max-h-48 overflow-y-auto border rounded divide-y">
               {clients.map((client) => (
@@ -541,7 +543,7 @@ export default function Tournees() {
                 </label>
               ))}
               {clients.length === 0 && (
-                <p className="p-2 text-gray-400 text-sm">Aucun client disponible</p>
+                <p className="p-2 text-gray-400 text-sm">{t('aucunClientDisponible')}</p>
               )}
             </div>
           </div>
@@ -550,7 +552,7 @@ export default function Tournees() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium"
           >
-            Créer la tournée (itinéraire optimisé)
+            {t('creerTourneeOptimisee')}
           </button>
         </form>
       )}
@@ -566,55 +568,55 @@ export default function Tournees() {
               <p className="font-medium">
                 {new Date(tournee.date_tournee).toLocaleDateString('fr-FR')}
               </p>
-              <p className="text-xs text-gray-500">Statut : {tournee.statut || 'planifiée'}</p>
+              <p className="text-xs text-gray-500">{t('detail.statutLabel')} : {tournee.statut || t('statutPlanifiee')}</p>
             </div>
             <span className="text-gray-400">→</span>
           </button>
         ))}
         {tournees.length === 0 && (
-          <p className="text-gray-400 text-center py-8">Aucune tournée créée pour le moment</p>
+          <p className="text-gray-400 text-center py-8">{t('aucuneTournee')}</p>
         )}
       </div>
 
       {rapportLigne && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-5 w-full max-w-md max-h-[90vh] overflow-y-auto space-y-3">
-            <h2 className="font-semibold text-lg">Rapport de visite</h2>
+            <h2 className="font-semibold text-lg">{t('rapport.titre')}</h2>
             <p className="text-sm text-gray-500">
-              {rapportLigne.clients?.nom || 'Client'} — visite validée ✅
+              {t('rapport.visiteValidee', { nom: rapportLigne.clients?.nom || 'Client' })}
             </p>
 
             <div>
-              <label className="block text-sm font-medium mb-1">État du stock en rayon</label>
+              <label className="block text-sm font-medium mb-1">{t('rapport.etatStockRayon')}</label>
               <textarea
                 className="w-full border rounded px-3 py-2 text-sm"
                 rows={2}
                 value={rapportNotesRayon}
                 onChange={(e) => setRapportNotesRayon(e.target.value)}
-                placeholder="Ex : rupture sur le Bacca mil 550g, bien fourni sinon"
+                placeholder={t('rapport.placeholderRayon')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">État du stock en réserve</label>
+              <label className="block text-sm font-medium mb-1">{t('rapport.etatStockReserve')}</label>
               <textarea
                 className="w-full border rounded px-3 py-2 text-sm"
                 rows={2}
                 value={rapportNotesReserve}
                 onChange={(e) => setRapportNotesReserve(e.target.value)}
-                placeholder="Ex : 20 cartons en réserve, stock suffisant pour 2 semaines"
+                placeholder={t('rapport.placeholderReserve')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Stock par produit</label>
+              <label className="block text-sm font-medium mb-1">{t('rapport.stockParProduit')}</label>
               <div className="flex gap-2 mb-2">
                 <select
                   className="flex-1 border rounded px-2 py-1.5 text-sm"
                   value={produitAjoutSelection}
                   onChange={(e) => setProduitAjoutSelection(e.target.value)}
                 >
-                  <option value="">— Choisir un produit —</option>
+                  <option value="">{t('rapport.choisirProduit')}</option>
                   {catalogueProduits
                     .filter((p) => !rapportLignesProduits.some((l) => l.produit_id === p.id))
                     .map((p) => (
@@ -626,7 +628,7 @@ export default function Tournees() {
                   onClick={ajouterLigneProduit}
                   className="bg-petrol-800 text-white px-3 rounded text-sm"
                 >
-                  + Ajouter
+                  {t('ajouter')}
                 </button>
               </div>
               {rapportLignesProduits.length > 0 && (
@@ -636,18 +638,18 @@ export default function Tournees() {
                     return (
                       <div key={ligne.produit_id} className="border rounded-lg p-2">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-medium">{produit?.nom || 'Produit'}</p>
+                          <p className="text-sm font-medium">{produit?.nom || t('rapport.produitDefaut')}</p>
                           <button
                             type="button"
                             onClick={() => retirerLigneProduit(ligne.produit_id)}
                             className="text-red-600 text-xs"
                           >
-                            Retirer
+                            {t('rapport.retirer')}
                           </button>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <div>
-                            <label className="text-xs text-gray-500">Qté rayon</label>
+                            <label className="text-xs text-gray-500">{t('rapport.qteRayon')}</label>
                             <input
                               type="number"
                               min="0"
@@ -657,7 +659,7 @@ export default function Tournees() {
                             />
                           </div>
                           <div>
-                            <label className="text-xs text-gray-500">Qté réserve</label>
+                            <label className="text-xs text-gray-500">{t('rapport.qteReserve')}</label>
                             <input
                               type="number"
                               min="0"
@@ -676,9 +678,9 @@ export default function Tournees() {
 
             <div>
               <label className="block text-sm font-medium mb-1">
-                Photos ({rapportPhotos.length}/3)
+                {t('rapport.photos', { n: rapportPhotos.length })}
                 {entreprise?.photo_rapport_obligatoire && (
-                  <span className="text-red-500"> — au moins 1 requise</span>
+                  <span className="text-red-500"> {t('rapport.auMoinsUnePhoto')}</span>
                 )}
               </label>
               <div className="flex gap-2 flex-wrap">
@@ -744,8 +746,8 @@ export default function Tournees() {
                         }
                       >
                         <option value="">—</option>
-                        <option value="oui">Oui</option>
-                        <option value="non">Non</option>
+                        <option value="oui">{t('rapport.oui')}</option>
+                        <option value="non">{t('rapport.non')}</option>
                       </select>
                     )}
                     {champ.type_champ === 'choix_multiple' && (
@@ -770,7 +772,7 @@ export default function Tournees() {
             {concurrents.length > 0 && (
               <div className="border-t pt-3">
                 <label className="block text-sm font-medium mb-2">
-                  Présence des produits concurrents en rayon
+                  {t('rapport.presenceConcurrents')}
                 </label>
                 <div className="space-y-1.5">
                   {concurrents.map((c) => (
@@ -797,7 +799,7 @@ export default function Tournees() {
                   disabled={rapportEnvoi}
                   className="flex-1 border rounded-lg py-2 text-sm font-medium disabled:opacity-50"
                 >
-                  Passer
+                  {t('rapport.passer')}
                 </button>
               )}
               <button
@@ -806,7 +808,7 @@ export default function Tournees() {
                 disabled={rapportEnvoi}
                 className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50"
               >
-                {rapportEnvoi ? 'Envoi…' : 'Enregistrer le rapport'}
+                {rapportEnvoi ? t('rapport.envoi') : t('rapport.enregistrerRapport')}
               </button>
             </div>
           </div>
