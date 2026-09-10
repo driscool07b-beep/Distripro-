@@ -42,6 +42,18 @@ import mouvementsstockFr from '../locales/fr/mouvementsstock.json'
 import mouvementsstockEn from '../locales/en/mouvementsstock.json'
 import mouvementsstockAr from '../locales/ar/mouvementsstock.json'
 import mouvementsstockZh from '../locales/zh/mouvementsstock.json'
+import carteclientsFr from '../locales/fr/carteclients.json'
+import carteclientsEn from '../locales/en/carteclients.json'
+import carteclientsAr from '../locales/ar/carteclients.json'
+import carteclientsZh from '../locales/zh/carteclients.json'
+import grandlivreFr from '../locales/fr/grandlivre.json'
+import grandlivreEn from '../locales/en/grandlivre.json'
+import grandlivreAr from '../locales/ar/grandlivre.json'
+import grandlivreZh from '../locales/zh/grandlivre.json'
+import depotsFr from '../locales/fr/depots.json'
+import depotsEn from '../locales/en/depots.json'
+import depotsAr from '../locales/ar/depots.json'
+import depotsZh from '../locales/zh/depots.json'
 
 // Langues dont le contenu est réellement traduit. L'arabe et le chinois
 // sont préparés dans la structure (RTL, sélecteur) mais leur contenu
@@ -64,14 +76,14 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr, clients: clientsFr, commandes: commandesFr, tournees: tourneesFr, analyseia: analyseiaFr, mesversements: mesversementsFr, mouvementsstock: mouvementsstockFr },
-      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn, clients: clientsEn, commandes: commandesEn, tournees: tourneesEn, analyseia: analyseiaEn, mesversements: mesversementsEn, mouvementsstock: mouvementsstockEn },
-      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr, clients: clientsAr, commandes: commandesAr, tournees: tourneesAr, analyseia: analyseiaAr, mesversements: mesversementsAr, mouvementsstock: mouvementsstockAr },
-      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh, clients: clientsZh, commandes: commandesZh, tournees: tourneesZh, analyseia: analyseiaZh, mesversements: mesversementsZh, mouvementsstock: mouvementsstockZh },
+      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr, clients: clientsFr, commandes: commandesFr, tournees: tourneesFr, analyseia: analyseiaFr, mesversements: mesversementsFr, mouvementsstock: mouvementsstockFr, carteclients: carteclientsFr, grandlivre: grandlivreFr, depots: depotsFr },
+      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn, clients: clientsEn, commandes: commandesEn, tournees: tourneesEn, analyseia: analyseiaEn, mesversements: mesversementsEn, mouvementsstock: mouvementsstockEn, carteclients: carteclientsEn, grandlivre: grandlivreEn, depots: depotsEn },
+      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr, clients: clientsAr, commandes: commandesAr, tournees: tourneesAr, analyseia: analyseiaAr, mesversements: mesversementsAr, mouvementsstock: mouvementsstockAr, carteclients: carteclientsAr, grandlivre: grandlivreAr, depots: depotsAr },
+      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh, clients: clientsZh, commandes: commandesZh, tournees: tourneesZh, analyseia: analyseiaZh, mesversements: mesversementsZh, mouvementsstock: mouvementsstockZh, carteclients: carteclientsZh, grandlivre: grandlivreZh, depots: depotsZh },
     },
     fallbackLng: 'fr',
     supportedLngs: LANGUES.map((l) => l.code),
-    ns: ['commun', 'dashboard', 'ventes', 'stock', 'clients', 'commandes', 'tournees', 'analyseia', 'mesversements', 'mouvementsstock'],
+    ns: ['commun', 'dashboard', 'ventes', 'stock', 'clients', 'commandes', 'tournees', 'analyseia', 'mesversements', 'mouvementsstock', 'carteclients', 'grandlivre', 'depots'],
     defaultNS: 'commun',
     interpolation: { escapeValue: false }, // React échappe déjà par défaut
     detection: {

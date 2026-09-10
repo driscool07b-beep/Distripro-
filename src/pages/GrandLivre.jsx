@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
 export default function GrandLivre() {
+  const { t } = useTranslation('grandlivre')
   const { entreprise } = useAuth()
   const [searchParams] = useSearchParams()
   const clientId = searchParams.get('client')
@@ -51,7 +53,7 @@ export default function GrandLivre() {
     const lignesVentes = (ventes || []).map((v) => ({
       type: 'vente',
       date: v.created_at,
-      libelle: `Vente${v.mode_paiement === 'credit' ? ' (crédit)' : ' (comptant)'}`,
+      libelle: v.mode_paiement === 'credit' ? t('venteCredit') : t('venteComptant'),
       debit: Number(v.total),
       credit: 0,
     }))
@@ -62,14 +64,14 @@ export default function GrandLivre() {
       .map((v) => ({
         type: 'paiement',
         date: v.created_at,
-        libelle: 'Règlement comptant',
+        libelle: t('reglementComptant'),
         debit: 0,
         credit: Number(v.montant_regle),
       }))
     const lignesPaiements = paiements.map((p) => ({
       type: 'paiement',
       date: p.created_at,
-      libelle: 'Paiement reçu',
+      libelle: t('paiementRecu'),
       debit: 0,
       credit: Number(p.montant),
     }))
@@ -94,16 +96,16 @@ export default function GrandLivre() {
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="no-print flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold">Grand livre client</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         {client && (
           <button onClick={() => window.print()} className="btn-secondary text-sm">
-            🖨️ Imprimer
+            {t('imprimer')}
           </button>
         )}
       </div>
 
       <div className="no-print mb-4">
-        <label className="label">Choisir un client</label>
+        <label className="label">{t('choisirClient')}</label>
         <select
           className="input-field max-w-sm"
           value={clientId || ''}
@@ -112,36 +114,36 @@ export default function GrandLivre() {
             window.location.href = url
           }}
         >
-          <option value="">— Sélectionner —</option>
+          <option value="">{t('selectionner')}</option>
           {clients.map((c) => (
             <option key={c.id} value={c.id}>{c.nom}</option>
           ))}
         </select>
       </div>
 
-      {chargement && <p className="text-sm text-petrol-500">Chargement…</p>}
+      {chargement && <p className="text-sm text-petrol-500">{t('chargement')}</p>}
 
       {client && !chargement && (
         <div>
           <div className="mb-4 pb-4 border-b border-line">
             <h2 className="font-semibold text-lg">{entreprise?.nom}</h2>
-            <p className="text-xs text-petrol-500 mb-2">Relevé de compte</p>
+            <p className="text-xs text-petrol-500 mb-2">{t('releveDeCompte')}</p>
             <p className="font-medium">{client.nom}</p>
             {client.telephone && <p className="text-sm text-petrol-600">{client.telephone}</p>}
             {client.adresse && <p className="text-sm text-petrol-600">{client.adresse}{client.ville ? `, ${client.ville}` : ''}</p>}
             {client.limite_credit > 0 && (
-              <p className="text-xs text-petrol-500 mt-1">Limite de crédit : {formatXOF(client.limite_credit)}</p>
+              <p className="text-xs text-petrol-500 mt-1">{t('limiteCredit', { montant: formatXOF(client.limite_credit) })}</p>
             )}
           </div>
 
           <table className="w-full text-sm mb-4">
             <thead>
               <tr className="text-left text-xs text-petrol-500 border-b border-line">
-                <th className="font-medium pb-2">Date</th>
-                <th className="font-medium pb-2">Libellé</th>
-                <th className="font-medium pb-2 text-right">Débit</th>
-                <th className="font-medium pb-2 text-right">Crédit</th>
-                <th className="font-medium pb-2 text-right">Solde</th>
+                <th className="font-medium pb-2">{t('date')}</th>
+                <th className="font-medium pb-2">{t('libelle')}</th>
+                <th className="font-medium pb-2 text-right">{t('debit')}</th>
+                <th className="font-medium pb-2 text-right">{t('credit')}</th>
+                <th className="font-medium pb-2 text-right">{t('solde')}</th>
               </tr>
             </thead>
             <tbody>
@@ -156,7 +158,7 @@ export default function GrandLivre() {
               ))}
               {mouvements.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-petrol-400">Aucun mouvement pour ce client.</td>
+                  <td colSpan={5} className="py-8 text-center text-petrol-400">{t('aucunMouvement')}</td>
                 </tr>
               )}
             </tbody>
@@ -164,7 +166,7 @@ export default function GrandLivre() {
 
           <div className="flex justify-end">
             <div className="text-right">
-              <p className="text-xs text-petrol-500">Solde final</p>
+              <p className="text-xs text-petrol-500">{t('soldeFinal')}</p>
               <p className={`font-mono text-xl font-semibold ${soldeFinal > 0 ? 'text-amber-700' : 'text-petrol-900'}`}>
                 {formatXOF(soldeFinal)}
               </p>
@@ -174,7 +176,7 @@ export default function GrandLivre() {
       )}
 
       {!client && !chargement && (
-        <p className="text-petrol-400 text-sm no-print">Sélectionnez un client pour voir son historique.</p>
+        <p className="text-petrol-400 text-sm no-print">{t('selectionnezClient')}</p>
       )}
     </div>
   )

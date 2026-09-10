@@ -1,0 +1,21 @@
+{
+  "titre": "Client ledger",
+  "imprimer": "🖨️ Print",
+  "choisirClient": "Choose a client",
+  "selectionner": "— Select —",
+  "chargement": "Loading…",
+  "releveDeCompte": "Account statement",
+  "limiteCredit": "Credit limit: {{montant}}",
+  "date": "Date",
+  "libelle": "Description",
+  "debit": "Debit",
+  "credit": "Credit",
+  "solde": "Balance",
+  "aucunMouvement": "No movements for this client.",
+  "soldeFinal": "Final balance",
+  "selectionnezClient": "Select a client to see their history.",
+  "venteCredit": "Sale (credit)",
+  "venteComptant": "Sale (cash)",
+  "reglementComptant": "Cash payment",
+  "paiementRecu": "Payment received"
+}

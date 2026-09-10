@@ -1,0 +1,14 @@
+{
+  "accesRefuse": "Cette page n'est pas accessible pour votre rôle.",
+  "chargementCarte": "Chargement de la carte…",
+  "titre": "Carte des clients",
+  "compteur": "{{n}} client(s) positionné(s) — zoomez pour passer de la vue Côte d'Ivoire à Abidjan.",
+  "aucunePosition": "Aucun client n'a de position GPS enregistrée pour le moment.",
+  "segments": {
+    "actif": "Actif",
+    "vip": "VIP",
+    "nouveau": "Nouveau",
+    "a_relancer": "À relancer",
+    "inactif": "Inactif"
+  }
+}

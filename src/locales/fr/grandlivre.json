@@ -1,0 +1,21 @@
+{
+  "titre": "Grand livre client",
+  "imprimer": "🖨️ Imprimer",
+  "choisirClient": "Choisir un client",
+  "selectionner": "— Sélectionner —",
+  "chargement": "Chargement…",
+  "releveDeCompte": "Relevé de compte",
+  "limiteCredit": "Limite de crédit : {{montant}}",
+  "date": "Date",
+  "libelle": "Libellé",
+  "debit": "Débit",
+  "credit": "Crédit",
+  "solde": "Solde",
+  "aucunMouvement": "Aucun mouvement pour ce client.",
+  "soldeFinal": "Solde final",
+  "selectionnezClient": "Sélectionnez un client pour voir son historique.",
+  "venteCredit": "Vente (crédit)",
+  "venteComptant": "Vente (comptant)",
+  "reglementComptant": "Règlement comptant",
+  "paiementRecu": "Paiement reçu"
+}

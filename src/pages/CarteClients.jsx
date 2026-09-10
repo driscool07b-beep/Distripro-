@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
@@ -14,18 +15,22 @@ const COULEURS_SEGMENT_HEX = {
 }
 const COULEUR_DEFAUT = '#64748b'
 
-const LIBELLES_SEGMENT = {
-  actif: 'Actif',
-  vip: 'VIP',
-  nouveau: 'Nouveau',
-  a_relancer: 'À relancer',
-  inactif: 'Inactif',
+function libellesSegment(t) {
+  return {
+    actif: t('segments.actif'),
+    vip: t('segments.vip'),
+    nouveau: t('segments.nouveau'),
+    a_relancer: t('segments.a_relancer'),
+    inactif: t('segments.inactif'),
+  }
 }
 
 const CENTRE_CI = [7.54, -5.55]
 
 export default function CarteClients() {
+  const { t } = useTranslation('carteclients')
   const { profil } = useAuth()
+  const LIBELLES_SEGMENT = libellesSegment(t)
   const [clients, setClients] = useState([])
   const [chargement, setChargement] = useState(true)
   const [segmentsVisibles, setSegmentsVisibles] = useState({
@@ -64,20 +69,20 @@ export default function CarteClients() {
   if (!accesAutorise('carteClients', profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
 
   if (chargement) {
-    return <div className="p-4 text-center text-petrol-500">Chargement de la carte…</div>
+    return <div className="p-4 text-center text-petrol-500">{t('chargementCarte')}</div>
   }
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-xl font-bold mb-1">Carte des clients</h1>
+      <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-3">
-        {clientsAffiches.length} client(s) positionné(s) — zoomez pour passer de la vue Côte d'Ivoire à Abidjan.
+        {t('compteur', { n: clientsAffiches.length })}
       </p>
 
       <div className="flex flex-wrap gap-2 mb-3">
@@ -97,7 +102,7 @@ export default function CarteClients() {
 
       {clients.length === 0 ? (
         <p className="text-petrol-400 text-center py-12 text-sm border border-line rounded-lg">
-          Aucun client n'a de position GPS enregistrée pour le moment.
+          {t('aucunePosition')}
         </p>
       ) : (
         <div className="rounded-lg overflow-hidden border border-line relative isolate" style={{ height: '70vh', zIndex: 0 }}>

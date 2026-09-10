@@ -1,0 +1,14 @@
+{
+  "accesRefuse": "This page isn't accessible for your role.",
+  "chargementCarte": "Loading map…",
+  "titre": "Client map",
+  "compteur": "{{n}} client(s) positioned — zoom in to go from the Côte d'Ivoire view to Abidjan.",
+  "aucunePosition": "No client has a saved GPS position yet.",
+  "segments": {
+    "actif": "Active",
+    "vip": "VIP",
+    "nouveau": "New",
+    "a_relancer": "Needs follow-up",
+    "inactif": "Inactive"
+  }
+}
