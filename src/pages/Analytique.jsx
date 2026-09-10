@@ -1,24 +1,26 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF } from '../lib/export'
 
-const ONGLETS = [
-  { id: 'recap', label: 'Récap quotidien' },
-  { id: 'rotation', label: 'Taux de rotation' },
-  { id: 'presence', label: 'Taux de présence' },
-  { id: 'manque', label: 'Manque à gagner' },
-]
-
 export default function Analytique() {
+  const { t } = useTranslation('analytique')
   const { profil, entreprise } = useAuth()
   const [onglet, setOnglet] = useState('recap')
+
+  const ONGLETS = [
+    { id: 'recap', label: t('onglets.recap') },
+    { id: 'rotation', label: t('onglets.rotation') },
+    { id: 'presence', label: t('onglets.presence') },
+    { id: 'manque', label: t('onglets.manque') },
+  ]
 
   if (!['admin', 'manager'].includes(profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
         <p className="text-petrol-500">
-          Cette page est réservée aux responsables commerciaux et à la direction.
+          {t('accesRefuse')}
         </p>
       </div>
     )
@@ -26,7 +28,7 @@ export default function Analytique() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-xl font-bold mb-1">Tableau analytique</h1>
+      <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-4">{entreprise?.nom}</p>
 
       <div className="flex gap-2 mb-4 flex-wrap">
@@ -52,6 +54,7 @@ export default function Analytique() {
 }
 
 function RecapQuotidien({ entreprise }) {
+  const { t } = useTranslation('analytique')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [chargement, setChargement] = useState(true)
   const [lignes, setLignes] = useState([])
@@ -119,29 +122,29 @@ function RecapQuotidien({ entreprise }) {
           disabled={lignes.length === 0}
           onClick={() => exporterExcel(`recap-${date}`, COLONNES, lignes)}
         >
-          📊 Excel
+          📊 {t('excel')}
         </button>
         <button
           className="btn-secondary text-xs"
           disabled={lignes.length === 0}
-          onClick={() => exporterPDF(`recap-${date}`, 'Récap quotidien', date, COLONNES, lignes, undefined, undefined, entreprise)}
+          onClick={() => exporterPDF(`recap-${date}`, t('onglets.recap'), date, COLONNES, lignes, undefined, undefined, entreprise)}
         >
-          📄 PDF
+          📄 {t('pdf')}
         </button>
       </div>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm min-w-[560px]">
             <thead>
               <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
-                <th className="px-4 py-3 font-medium">Commercial</th>
-                <th className="px-4 py-3 font-medium text-right">Visites faites</th>
-                <th className="px-4 py-3 font-medium text-right">Visites prévues</th>
-                <th className="px-4 py-3 font-medium text-right">Distance (km)</th>
-                <th className="px-4 py-3 font-medium text-right">Rapports</th>
+                <th className="px-4 py-3 font-medium">{t('recap.commercial')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('recap.visitesFaites')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('recap.visitesPrevues')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('recap.distanceKm')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('recap.rapports')}</th>
               </tr>
             </thead>
             <tbody>
@@ -160,7 +163,7 @@ function RecapQuotidien({ entreprise }) {
                 </tr>
               ))}
               {lignes.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-petrol-400">Aucun commercial ou aucune tournée ce jour-là.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-petrol-400">{t('recap.aucunCommercial')}</td></tr>
               )}
             </tbody>
           </table>
@@ -171,6 +174,7 @@ function RecapQuotidien({ entreprise }) {
 }
 
 function TauxRotation({ entreprise }) {
+  const { t } = useTranslation('analytique')
   const [chargement, setChargement] = useState(true)
   const [lignes, setLignes] = useState([])
 
@@ -233,28 +237,27 @@ function TauxRotation({ entreprise }) {
   return (
     <div>
       <p className="text-xs text-petrol-500 mb-3">
-        Calculé à partir des relevés de stock rayon successifs saisis dans les rapports de visite,
-        chez un même client. Nécessite au moins 2 relevés pour un même couple produit/client.
+        {t('rotation.explication')}
       </p>
       <div className="flex gap-2 mb-4">
         <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterExcel('taux-rotation', COLONNES, lignes)}>
-          📊 Excel
+          📊 {t('excel')}
         </button>
-        <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterPDF('taux-rotation', 'Taux de rotation', null, COLONNES, lignes, undefined, undefined, entreprise)}>
-          📄 PDF
+        <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterPDF('taux-rotation', t('onglets.rotation'), null, COLONNES, lignes, undefined, undefined, entreprise)}>
+          📄 {t('pdf')}
         </button>
       </div>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm min-w-[480px]">
             <thead>
               <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
-                <th className="px-4 py-3 font-medium">Produit</th>
-                <th className="px-4 py-3 font-medium text-right">Observations</th>
-                <th className="px-4 py-3 font-medium text-right">Rotation moy. (unités/jour)</th>
+                <th className="px-4 py-3 font-medium">{t('rotation.produit')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('rotation.observations')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('rotation.rotationMoyenne')}</th>
               </tr>
             </thead>
             <tbody>
@@ -266,7 +269,7 @@ function TauxRotation({ entreprise }) {
                 </tr>
               ))}
               {lignes.length === 0 && (
-                <tr><td colSpan={3} className="px-4 py-8 text-center text-petrol-400">Pas encore assez de données (au moins 2 relevés par produit/client nécessaires).</td></tr>
+                <tr><td colSpan={3} className="px-4 py-8 text-center text-petrol-400">{t('rotation.pasAssezDeDonnees')}</td></tr>
               )}
             </tbody>
           </table>
@@ -277,6 +280,7 @@ function TauxRotation({ entreprise }) {
 }
 
 function TauxPresence({ entreprise }) {
+  const { t } = useTranslation('analytique')
   const [chargement, setChargement] = useState(true)
   const [propres, setPropres] = useState([])
   const [concurrents, setConcurrents] = useState([])
@@ -329,18 +333,17 @@ function TauxPresence({ entreprise }) {
   return (
     <div>
       <p className="text-xs text-petrol-500 mb-4">
-        Basé uniquement sur les visites où le produit a été explicitement relevé (rayon ou checklist
-        concurrent) — un produit jamais relevé n'entre pas dans le calcul.
+        {t('presence.explication')}
       </p>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="font-semibold text-sm">Nos produits</h2>
+            <h2 className="font-semibold text-sm">{t('presence.nosProduits')}</h2>
             <div className="flex gap-1">
-              <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterExcel('presence-nos-produits', COLONNES, propres)}>Excel</button>
+              <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterExcel('presence-nos-produits', COLONNES, propres)}>{t('excel')}</button>
               <span className="text-petrol-300">·</span>
-              <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterPDF('presence-nos-produits', 'Taux de présence — nos produits', null, COLONNES, propres, undefined, undefined, entreprise)}>PDF</button>
+              <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterPDF('presence-nos-produits', `${t('onglets.presence')} — ${t('presence.nosProduits')}`, null, COLONNES, propres, undefined, undefined, entreprise)}>{t('pdf')}</button>
             </div>
           </div>
           <TableauPresence lignes={propres} />
@@ -348,30 +351,31 @@ function TauxPresence({ entreprise }) {
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="font-semibold text-sm">Produits concurrents</h2>
+            <h2 className="font-semibold text-sm">{t('presence.produitsConcurrents')}</h2>
             <div className="flex gap-1">
-              <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterExcel('presence-concurrents', COLONNES, concurrents)}>Excel</button>
+              <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterExcel('presence-concurrents', COLONNES, concurrents)}>{t('excel')}</button>
               <span className="text-petrol-300">·</span>
-              <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterPDF('presence-concurrents', 'Taux de présence — concurrents', null, COLONNES, concurrents, undefined, undefined, entreprise)}>PDF</button>
+              <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterPDF('presence-concurrents', `${t('onglets.presence')} — ${t('presence.produitsConcurrents')}`, null, COLONNES, concurrents, undefined, undefined, entreprise)}>{t('pdf')}</button>
             </div>
           </div>
           <TableauPresence lignes={concurrents} />
         </div>
       </div>
 
-      {chargement && <p className="text-sm text-petrol-500 mt-4">Chargement…</p>}
+      {chargement && <p className="text-sm text-petrol-500 mt-4">{t('chargement')}</p>}
     </div>
   )
 }
 
 function TableauPresence({ lignes }) {
+  const { t } = useTranslation('analytique')
   return (
     <div className="card overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
-            <th className="px-3 py-2 font-medium">Produit</th>
-            <th className="px-3 py-2 font-medium text-right">Taux</th>
+            <th className="px-3 py-2 font-medium">{t('presence.produit')}</th>
+            <th className="px-3 py-2 font-medium text-right">{t('presence.taux')}</th>
           </tr>
         </thead>
         <tbody>
@@ -387,7 +391,7 @@ function TableauPresence({ lignes }) {
             </tr>
           ))}
           {lignes.length === 0 && (
-            <tr><td colSpan={2} className="px-3 py-6 text-center text-petrol-400 text-xs">Aucune donnée.</td></tr>
+            <tr><td colSpan={2} className="px-3 py-6 text-center text-petrol-400 text-xs">{t('presence.aucuneDonnee')}</td></tr>
           )}
         </tbody>
       </table>
@@ -396,6 +400,7 @@ function TableauPresence({ lignes }) {
 }
 
 function ManqueAGagner({ entreprise }) {
+  const { t } = useTranslation('analytique')
   const [chargement, setChargement] = useState(true)
   const [annulees, setAnnulees] = useState([])
   const [livraisonsPartielles, setLivraisonsPartielles] = useState([])
@@ -479,27 +484,27 @@ function ManqueAGagner({ entreprise }) {
     { cle: 'manqueValeur', titre: 'Valeur manquante (F CFA)', alignDroite: true },
   ]
 
-  if (chargement) return <p className="text-sm text-petrol-500">Chargement…</p>
+  if (chargement) return <p className="text-sm text-petrol-500">{t('chargement')}</p>
 
   return (
     <div className="space-y-6">
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="font-semibold text-sm">Commandes annulées</h2>
+          <h2 className="font-semibold text-sm">{t('manque.commandesAnnulees')}</h2>
           <div className="flex gap-2">
-            <button className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterExcel('commandes-annulees', COLONNES_ANNULEES, annulees)}>Excel</button>
-            <button className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterPDF('commandes-annulees', 'Commandes annulées', null, COLONNES_ANNULEES, annulees, 'Total perdu', formatXOF(totalAnnule), entreprise)}>PDF</button>
+            <button className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterExcel('commandes-annulees', COLONNES_ANNULEES, annulees)}>{t('excel')}</button>
+            <button className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterPDF('commandes-annulees', t('manque.commandesAnnulees'), null, COLONNES_ANNULEES, annulees, t('manque.valeurTotalePerdue'), formatXOF(totalAnnule), entreprise)}>{t('pdf')}</button>
           </div>
         </div>
-        <p className="text-xs text-petrol-500 mb-2">Valeur totale perdue : <span className="font-semibold text-red-600">{formatXOF(totalAnnule)}</span></p>
+        <p className="text-xs text-petrol-500 mb-2">{t('manque.valeurTotalePerdue')} : <span className="font-semibold text-red-600">{formatXOF(totalAnnule)}</span></p>
         <div className="card overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-line bg-canvas text-left text-petrol-600">
-                <th className="px-3 py-2">Commande</th>
-                <th className="px-3 py-2">Client</th>
-                <th className="px-3 py-2">Date</th>
-                <th className="px-3 py-2 text-right">Montant</th>
+                <th className="px-3 py-2">{t('manque.commande')}</th>
+                <th className="px-3 py-2">{t('manque.client')}</th>
+                <th className="px-3 py-2">{t('manque.date')}</th>
+                <th className="px-3 py-2 text-right">{t('manque.montant')}</th>
               </tr>
             </thead>
             <tbody>
@@ -511,7 +516,7 @@ function ManqueAGagner({ entreprise }) {
                   <td className="px-3 py-2 text-right font-mono">{formatXOF(c.montant)}</td>
                 </tr>
               ))}
-              {annulees.length === 0 && <tr><td colSpan={4} className="px-3 py-6 text-center text-petrol-400">Aucune commande annulée.</td></tr>}
+              {annulees.length === 0 && <tr><td colSpan={4} className="px-3 py-6 text-center text-petrol-400">{t('manque.aucuneCommandeAnnulee')}</td></tr>}
             </tbody>
           </table>
         </div>
@@ -519,22 +524,22 @@ function ManqueAGagner({ entreprise }) {
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="font-semibold text-sm">Livraisons partielles (rupture)</h2>
+          <h2 className="font-semibold text-sm">{t('manque.livraisonsPartielles')}</h2>
           <div className="flex gap-2">
-            <button className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterExcel('livraisons-partielles', COLONNES_ECARTS, livraisonsPartielles)}>Excel</button>
-            <button className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterPDF('livraisons-partielles', 'Livraisons partielles', null, COLONNES_ECARTS, livraisonsPartielles, 'Total manque à gagner', formatXOF(totalManque), entreprise)}>PDF</button>
+            <button className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterExcel('livraisons-partielles', COLONNES_ECARTS, livraisonsPartielles)}>{t('excel')}</button>
+            <button className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterPDF('livraisons-partielles', t('manque.livraisonsPartielles'), null, COLONNES_ECARTS, livraisonsPartielles, t('manque.manqueAGagnerTotal'), formatXOF(totalManque), entreprise)}>{t('pdf')}</button>
           </div>
         </div>
-        <p className="text-xs text-petrol-500 mb-2">Manque à gagner total : <span className="font-semibold text-amber-600">{formatXOF(totalManque)}</span></p>
+        <p className="text-xs text-petrol-500 mb-2">{t('manque.manqueAGagnerTotal')} : <span className="font-semibold text-amber-600">{formatXOF(totalManque)}</span></p>
         <div className="card overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-line bg-canvas text-left text-petrol-600">
-                <th className="px-3 py-2">Commande</th>
-                <th className="px-3 py-2">Client</th>
-                <th className="px-3 py-2">Produit</th>
-                <th className="px-3 py-2 text-right">Qté manquante</th>
-                <th className="px-3 py-2 text-right">Valeur</th>
+                <th className="px-3 py-2">{t('manque.commande')}</th>
+                <th className="px-3 py-2">{t('manque.client')}</th>
+                <th className="px-3 py-2">{t('manque.produit')}</th>
+                <th className="px-3 py-2 text-right">{t('manque.qteManquante')}</th>
+                <th className="px-3 py-2 text-right">{t('manque.valeur')}</th>
               </tr>
             </thead>
             <tbody>
@@ -547,27 +552,27 @@ function ManqueAGagner({ entreprise }) {
                   <td className="px-3 py-2 text-right font-mono">{formatXOF(l.manqueValeur)}</td>
                 </tr>
               ))}
-              {livraisonsPartielles.length === 0 && <tr><td colSpan={5} className="px-3 py-6 text-center text-petrol-400">Aucune rupture détectée.</td></tr>}
+              {livraisonsPartielles.length === 0 && <tr><td colSpan={5} className="px-3 py-6 text-center text-petrol-400">{t('manque.aucuneRupture')}</td></tr>}
             </tbody>
           </table>
         </div>
       </div>
 
       <div>
-        <h2 className="font-semibold text-sm mb-2">Délais de livraison</h2>
+        <h2 className="font-semibold text-sm mb-2">{t('manque.delaisLivraison')}</h2>
         {retardMoyen !== null && (
           <p className="text-xs text-petrol-500 mb-2">
-            Retard moyen : <span className={`font-semibold ${retardMoyen > 0 ? 'text-red-600' : 'text-green-600'}`}>{retardMoyen > 0 ? `+${retardMoyen}` : retardMoyen} jour(s)</span>
-            {' — '}{enRetard} commande(s) livrée(s) en retard sur {delais.length}
+            {t('manque.retardMoyen')} : <span className={`font-semibold ${retardMoyen > 0 ? 'text-red-600' : 'text-green-600'}`}>{retardMoyen > 0 ? `+${retardMoyen}` : retardMoyen} {t('manque.jours')}</span>
+            {' — '}{t('manque.commandesLivreesEnRetard', { enRetard, total: delais.length })}
           </p>
         )}
         <div className="card overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-line bg-canvas text-left text-petrol-600">
-                <th className="px-3 py-2">Commande</th>
-                <th className="px-3 py-2">Client</th>
-                <th className="px-3 py-2 text-right">Écart vs souhaité</th>
+                <th className="px-3 py-2">{t('manque.commande')}</th>
+                <th className="px-3 py-2">{t('manque.client')}</th>
+                <th className="px-3 py-2 text-right">{t('manque.ecartVsSouhaite')}</th>
               </tr>
             </thead>
             <tbody>
@@ -576,11 +581,11 @@ function ManqueAGagner({ entreprise }) {
                   <td className="px-3 py-2">{d.numero}</td>
                   <td className="px-3 py-2">{d.client}</td>
                   <td className={`px-3 py-2 text-right font-mono ${d.jours > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                    {d.jours > 0 ? `+${d.jours} j` : d.jours === 0 ? 'À temps' : `${d.jours} j`}
+                    {d.jours > 0 ? `+${d.jours} j` : d.jours === 0 ? t('manque.aTemps') : `${d.jours} j`}
                   </td>
                 </tr>
               ))}
-              {delais.length === 0 && <tr><td colSpan={3} className="px-3 py-6 text-center text-petrol-400">Pas assez de données (date de livraison souhaitée requise).</td></tr>}
+              {delais.length === 0 && <tr><td colSpan={3} className="px-3 py-6 text-center text-petrol-400">{t('manque.pasAssezDeDonneesDelai')}</td></tr>}
             </tbody>
           </table>
         </div>

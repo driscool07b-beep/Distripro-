@@ -1,0 +1,62 @@
+{
+  "accesRefuse": "This page is reserved for sales managers and leadership.",
+  "titre": "Analytics",
+  "onglets": {
+    "recap": "Daily summary",
+    "rotation": "Turnover rate",
+    "presence": "Shelf presence rate",
+    "manque": "Lost revenue"
+  },
+  "excel": "Excel",
+  "pdf": "PDF",
+  "chargement": "Loading…",
+
+  "recap": {
+    "commercial": "Sales rep",
+    "visitesFaites": "Visits done",
+    "visitesPrevues": "Visits planned",
+    "distanceKm": "Distance (km)",
+    "rapports": "Reports",
+    "aucunCommercial": "No sales rep or no route that day."
+  },
+
+  "rotation": {
+    "explication": "Computed from successive shelf-stock readings recorded in visit reports, at the same client. Requires at least 2 readings for the same product/client pair.",
+    "produit": "Product",
+    "observations": "Observations",
+    "rotationMoyenne": "Avg. turnover (units/day)",
+    "pasAssezDeDonnees": "Not enough data yet (at least 2 readings per product/client required)."
+  },
+
+  "presence": {
+    "explication": "Based only on visits where the product was explicitly recorded (shelf or competitor checklist) — a product never recorded doesn't enter the calculation.",
+    "nosProduits": "Our products",
+    "produitsConcurrents": "Competitor products",
+    "produit": "Product",
+    "taux": "Rate",
+    "aucuneDonnee": "No data."
+  },
+
+  "manque": {
+    "commandesAnnulees": "Cancelled orders",
+    "valeurTotalePerdue": "Total value lost",
+    "commande": "Order",
+    "client": "Client",
+    "date": "Date",
+    "montant": "Amount",
+    "aucuneCommandeAnnulee": "No cancelled orders.",
+    "livraisonsPartielles": "Partial deliveries (stock-outs)",
+    "manqueAGagnerTotal": "Total lost revenue",
+    "produit": "Product",
+    "qteManquante": "Missing qty",
+    "valeur": "Value",
+    "aucuneRupture": "No stock-out detected.",
+    "delaisLivraison": "Delivery delays",
+    "retardMoyen": "Average delay",
+    "jours": "day(s)",
+    "commandesLivreesEnRetard": "{{enRetard}} order(s) delivered late out of {{total}}",
+    "ecartVsSouhaite": "Gap vs requested",
+    "aTemps": "On time",
+    "pasAssezDeDonneesDelai": "Not enough data (requested delivery date required)."
+  }
+}

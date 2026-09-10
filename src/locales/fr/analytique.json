@@ -1,0 +1,62 @@
+{
+  "accesRefuse": "Cette page est réservée aux responsables commerciaux et à la direction.",
+  "titre": "Tableau analytique",
+  "onglets": {
+    "recap": "Récap quotidien",
+    "rotation": "Taux de rotation",
+    "presence": "Taux de présence",
+    "manque": "Manque à gagner"
+  },
+  "excel": "Excel",
+  "pdf": "PDF",
+  "chargement": "Chargement…",
+
+  "recap": {
+    "commercial": "Commercial",
+    "visitesFaites": "Visites faites",
+    "visitesPrevues": "Visites prévues",
+    "distanceKm": "Distance (km)",
+    "rapports": "Rapports",
+    "aucunCommercial": "Aucun commercial ou aucune tournée ce jour-là."
+  },
+
+  "rotation": {
+    "explication": "Calculé à partir des relevés de stock rayon successifs saisis dans les rapports de visite, chez un même client. Nécessite au moins 2 relevés pour un même couple produit/client.",
+    "produit": "Produit",
+    "observations": "Observations",
+    "rotationMoyenne": "Rotation moy. (unités/jour)",
+    "pasAssezDeDonnees": "Pas encore assez de données (au moins 2 relevés par produit/client nécessaires)."
+  },
+
+  "presence": {
+    "explication": "Basé uniquement sur les visites où le produit a été explicitement relevé (rayon ou checklist concurrent) — un produit jamais relevé n'entre pas dans le calcul.",
+    "nosProduits": "Nos produits",
+    "produitsConcurrents": "Produits concurrents",
+    "produit": "Produit",
+    "taux": "Taux",
+    "aucuneDonnee": "Aucune donnée."
+  },
+
+  "manque": {
+    "commandesAnnulees": "Commandes annulées",
+    "valeurTotalePerdue": "Valeur totale perdue",
+    "commande": "Commande",
+    "client": "Client",
+    "date": "Date",
+    "montant": "Montant",
+    "aucuneCommandeAnnulee": "Aucune commande annulée.",
+    "livraisonsPartielles": "Livraisons partielles (rupture)",
+    "manqueAGagnerTotal": "Manque à gagner total",
+    "produit": "Produit",
+    "qteManquante": "Qté manquante",
+    "valeur": "Valeur",
+    "aucuneRupture": "Aucune rupture détectée.",
+    "delaisLivraison": "Délais de livraison",
+    "retardMoyen": "Retard moyen",
+    "jours": "jour(s)",
+    "commandesLivreesEnRetard": "{{enRetard}} commande(s) livrée(s) en retard sur {{total}}",
+    "ecartVsSouhaite": "Écart vs souhaité",
+    "aTemps": "À temps",
+    "pasAssezDeDonneesDelai": "Pas assez de données (date de livraison souhaitée requise)."
+  }
+}
