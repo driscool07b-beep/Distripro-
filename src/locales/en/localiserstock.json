@@ -1,0 +1,23 @@
+{
+  "titre": "Locate a product",
+  "sousTitre": "Combines field visit records and recent deliveries — useful when a client calls to ask where to find it.",
+  "produitRecherche": "Product searched",
+  "selectionner": "— Select —",
+  "positionCapturee": "📍 Position captured — results sorted by proximity.",
+  "positionIndisponible": "⚠️ Position unavailable — results sorted by date.",
+  "captureEnCours": "Capturing…",
+  "utiliserPosition": "📍 Use my current position",
+  "recherche": "Searching…",
+  "rechercher": "Search",
+  "compteurResultats": "{{n}} client(s) where this product was recorded in stock — based on field visits, not a real-time inventory.",
+  "localisationNonPrecisee": "Location not specified",
+  "livree": "delivered",
+  "vueEnRayon": "seen on shelf",
+  "livre": "delivered",
+  "releve": "recorded",
+  "itineraire": "📍 Directions",
+  "aucunReleve": "No recent record of this product in stock at a client.",
+  "aujourdhui": "today",
+  "hier": "yesterday",
+  "ilYaJours": "{{n}} days ago"
+}

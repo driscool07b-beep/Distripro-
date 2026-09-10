@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 
 export default function LocaliserStock() {
+  const { t } = useTranslation('localiserstock')
   const [produits, setProduits] = useState([])
   const [produitId, setProduitId] = useState('')
   const [chargement, setChargement] = useState(false)
@@ -120,71 +122,69 @@ export default function LocaliserStock() {
 
   function joursDepuis(date) {
     const jours = Math.floor((Date.now() - new Date(date)) / 86400000)
-    if (jours === 0) return "aujourd'hui"
-    if (jours === 1) return 'hier'
-    return `il y a ${jours} jours`
+    if (jours === 0) return t('aujourdhui')
+    if (jours === 1) return t('hier')
+    return t('ilYaJours', { n: jours })
   }
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <h1 className="text-xl font-bold mb-1">Localiser un produit</h1>
+      <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-4">
-        Combine les relevés de visite terrain et les livraisons récentes —
-        utile quand un client appelle pour savoir où en trouver.
+        {t('sousTitre')}
       </p>
 
       <div className="card p-4 mb-4 space-y-3">
         <div>
-          <label className="label">Produit recherché</label>
+          <label className="label">{t('produitRecherche')}</label>
           <select className="input-field" value={produitId} onChange={(e) => setProduitId(e.target.value)}>
-            <option value="">— Sélectionner —</option>
+            <option value="">{t('selectionner')}</option>
             {produits.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
           </select>
         </div>
 
         <div className="text-xs flex items-center gap-2 flex-wrap">
-          {captureGps === 'ok' && <span className="text-green-600">📍 Position capturée — résultats triés par proximité.</span>}
-          {captureGps === 'echec' && <span className="text-amber-600">⚠️ Position indisponible — résultats triés par date.</span>}
+          {captureGps === 'ok' && <span className="text-green-600">{t('positionCapturee')}</span>}
+          {captureGps === 'echec' && <span className="text-amber-600">{t('positionIndisponible')}</span>}
           <button type="button" onClick={capturerPosition} className="underline text-petrol-600">
-            {captureGps === 'en_cours' ? 'Capture en cours…' : '📍 Utiliser ma position actuelle'}
+            {captureGps === 'en_cours' ? t('captureEnCours') : t('utiliserPosition')}
           </button>
         </div>
 
         <button onClick={rechercher} disabled={!produitId || chargement} className="btn-primary w-full">
-          {chargement ? 'Recherche…' : 'Rechercher'}
+          {chargement ? t('recherche') : t('rechercher')}
         </button>
       </div>
 
       {resultats && (
         <div className="space-y-2">
           <p className="text-xs text-petrol-500">
-            {resultats.length} client(s) où ce produit a été relevé en stock — donnée basée sur les
-            visites terrain, pas un inventaire en temps réel.
+            {t('compteurResultats', { n: resultats.length })}
           </p>
           {resultats.map((c) => (
             <div key={c.clientId} className="border border-line rounded-lg p-3 flex justify-between items-start gap-3">
               <div>
                 <p className="font-medium text-sm">{c.nom}</p>
                 <p className="text-xs text-petrol-500">
-                  {c.ville || c.adresse || 'Localisation non précisée'}
+                  {c.ville || c.adresse || t('localisationNonPrecisee')}
                   {c.distanceKm != null && ` — ${c.distanceKm.toFixed(1)} km`}
                 </p>
                 <p className="text-xs text-petrol-500">
-                  {c.quantite} unité(s) {c.source === 'livraison' ? 'livrée(s)' : 'vue(s) en rayon'} —{' '}
-                  {c.source === 'livraison' ? 'livré' : 'relevé'} {joursDepuis(c.dateReleve)}
+                  {c.quantite} {t('unites', { ns: 'stock' })} {c.source === 'livraison' ? t('livree') : t('vueEnRayon')} —{' '}
+                  {c.source === 'livraison' ? t('livre') : t('releve')} {joursDepuis(c.dateReleve)}
                 </p>
                 {c.telephone && <p className="text-xs text-petrol-600 mt-1">📞 {c.telephone}</p>}
               </div>
               {c.latitude != null && (
                 <button onClick={() => ouvrirItineraire(c)} className="text-blue-600 text-xs underline shrink-0">
-                  📍 Itinéraire
+                  {t('itineraire')}
                 </button>
               )}
             </div>
           ))}
           {resultats.length === 0 && (
             <p className="text-petrol-400 text-center py-8 text-sm">
-              Aucun relevé récent de ce produit en stock chez un client.
+              {t('aucunReleve')}
             </p>
           )}
         </div>

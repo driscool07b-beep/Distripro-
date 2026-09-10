@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF } from '../lib/export'
 
 export default function Groupes() {
+  const { t } = useTranslation('groupes')
   const { entreprise, profil } = useAuth()
   const [groupes, setGroupes] = useState([])
   const [chargement, setChargement] = useState(true)
@@ -62,8 +64,8 @@ export default function Groupes() {
 
     const groupesMagasinProduit = {}
     ;(data || []).forEach((l) => {
-      const magasin = l.ventes?.clients?.nom || 'Inconnu'
-      const produit = l.produits?.nom || 'Inconnu'
+      const magasin = l.ventes?.clients?.nom || t('inconnu')
+      const produit = l.produits?.nom || t('inconnu')
       const cle = `${magasin}__${produit}`
       if (!groupesMagasinProduit[cle]) {
         groupesMagasinProduit[cle] = { magasin, produit, quantite: 0, valeur: 0 }
@@ -90,31 +92,31 @@ export default function Groupes() {
   if (!accesAutorise('groupes', profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
 
-  if (chargement) return <div className="p-4 text-center text-petrol-500">Chargement…</div>
+  if (chargement) return <div className="p-4 text-center text-petrol-500">{t('chargement')}</div>
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <h1 className="text-xl font-bold mb-1">Groupes de clients</h1>
+      <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-4">
-        Chaînes de magasins livrées individuellement, facturées globalement après récap.
+        {t('sousTitre')}
       </p>
 
       <div className="card p-4 mb-4">
-        <label className="label">Groupe</label>
+        <label className="label">{t('groupe')}</label>
         <select className="input-field" value={groupeSelectionne} onChange={(e) => selectionnerGroupe(e.target.value)}>
-          <option value="">— Sélectionner un groupe —</option>
+          <option value="">{t('selectionnerGroupe')}</option>
           {groupes.map((g) => (
-            <option key={g.id} value={g.id}>{g.nom} ({g.clients?.length || 0} magasin(s))</option>
+            <option key={g.id} value={g.id}>{g.nom} ({t('magasins', { n: g.clients?.length || 0 })})</option>
           ))}
         </select>
         {groupes.length === 0 && (
           <p className="text-xs text-petrol-400 mt-2">
-            Aucun groupe créé. Vous pouvez en créer un depuis la fiche d'un client (section "Groupe").
+            {t('aucunGroupe')}
           </p>
         )}
       </div>
@@ -122,30 +124,30 @@ export default function Groupes() {
       {groupeSelectionne && (
         <>
           <div className="card p-4 mb-4">
-            <p className="text-sm font-medium mb-2">Magasins du groupe</p>
+            <p className="text-sm font-medium mb-2">{t('magasinsDuGroupe')}</p>
             <div className="flex flex-wrap gap-2">
               {membres.map((m) => (
                 <span key={m.id} className="text-xs bg-canvas border border-line rounded-full px-2 py-1">
                   {m.nom}{m.ville ? ` — ${m.ville}` : ''}
                 </span>
               ))}
-              {membres.length === 0 && <p className="text-xs text-petrol-400">Aucun magasin rattaché à ce groupe.</p>}
+              {membres.length === 0 && <p className="text-xs text-petrol-400">{t('aucunMagasinRattache')}</p>}
             </div>
           </div>
 
           <div className="card p-4 mb-4">
-            <p className="text-sm font-medium mb-2">Récap des livraisons</p>
+            <p className="text-sm font-medium mb-2">{t('recapLivraisons')}</p>
             <div className="flex gap-2 items-end mb-3">
               <div className="flex-1">
-                <label className="label">Du</label>
+                <label className="label">{t('du')}</label>
                 <input type="date" className="input-field" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
               </div>
               <div className="flex-1">
-                <label className="label">Au</label>
+                <label className="label">{t('au')}</label>
                 <input type="date" className="input-field" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
               </div>
               <button onClick={genererRapport} disabled={chargementRapport} className="btn-primary">
-                {chargementRapport ? '…' : 'Générer'}
+                {chargementRapport ? '…' : t('generer')}
               </button>
             </div>
 
@@ -153,24 +155,24 @@ export default function Groupes() {
               <>
                 <div className="flex gap-2 mb-3">
                   <button className="btn-secondary text-xs" disabled={rapport.length === 0} onClick={() => exporterExcel(`groupe-${groupeNom}-${dateDebut}-${dateFin}`, COLONNES, rapport)}>
-                    📊 Excel
+                    📊 {t('excel')}
                   </button>
                   <button
                     className="btn-secondary text-xs"
                     disabled={rapport.length === 0}
-                    onClick={() => exporterPDF(`groupe-${groupeNom}-${dateDebut}-${dateFin}`, `Récap livraisons — ${groupeNom}`, `${dateDebut} au ${dateFin}`, COLONNES, rapport, 'Total', formatXOF(totalValeur), entreprise)}
+                    onClick={() => exporterPDF(`groupe-${groupeNom}-${dateDebut}-${dateFin}`, t('recapLivraisonsTitre', { groupe: groupeNom }), t('periode', { debut: dateDebut, fin: dateFin }), COLONNES, rapport, t('total'), formatXOF(totalValeur), entreprise)}
                   >
-                    📄 PDF
+                    📄 {t('pdf')}
                   </button>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
-                        <th className="px-3 py-2">Magasin</th>
-                        <th className="px-3 py-2">Produit</th>
-                        <th className="px-3 py-2 text-right">Quantité</th>
-                        <th className="px-3 py-2 text-right">Valeur</th>
+                        <th className="px-3 py-2">{t('magasin')}</th>
+                        <th className="px-3 py-2">{t('produit')}</th>
+                        <th className="px-3 py-2 text-right">{t('quantite')}</th>
+                        <th className="px-3 py-2 text-right">{t('valeur')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -183,13 +185,13 @@ export default function Groupes() {
                         </tr>
                       ))}
                       {rapport.length === 0 && (
-                        <tr><td colSpan={4} className="px-3 py-6 text-center text-petrol-400">Aucune livraison sur cette période.</td></tr>
+                        <tr><td colSpan={4} className="px-3 py-6 text-center text-petrol-400">{t('aucuneLivraison')}</td></tr>
                       )}
                     </tbody>
                     {rapport.length > 0 && (
                       <tfoot>
                         <tr className="bg-canvas font-semibold">
-                          <td className="px-3 py-2" colSpan={3}>Total</td>
+                          <td className="px-3 py-2" colSpan={3}>{t('total')}</td>
                           <td className="px-3 py-2 text-right font-mono">{formatXOF(totalValeur)}</td>
                         </tr>
                       </tfoot>

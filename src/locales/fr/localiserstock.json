@@ -1,0 +1,23 @@
+{
+  "titre": "Localiser un produit",
+  "sousTitre": "Combine les relevés de visite terrain et les livraisons récentes — utile quand un client appelle pour savoir où en trouver.",
+  "produitRecherche": "Produit recherché",
+  "selectionner": "— Sélectionner —",
+  "positionCapturee": "📍 Position capturée — résultats triés par proximité.",
+  "positionIndisponible": "⚠️ Position indisponible — résultats triés par date.",
+  "captureEnCours": "Capture en cours…",
+  "utiliserPosition": "📍 Utiliser ma position actuelle",
+  "recherche": "Recherche…",
+  "rechercher": "Rechercher",
+  "compteurResultats": "{{n}} client(s) où ce produit a été relevé en stock — donnée basée sur les visites terrain, pas un inventaire en temps réel.",
+  "localisationNonPrecisee": "Localisation non précisée",
+  "livree": "livrée(s)",
+  "vueEnRayon": "vue(s) en rayon",
+  "livre": "livré",
+  "releve": "relevé",
+  "itineraire": "📍 Itinéraire",
+  "aucunReleve": "Aucun relevé récent de ce produit en stock chez un client.",
+  "aujourdhui": "aujourd'hui",
+  "hier": "hier",
+  "ilYaJours": "il y a {{n}} jours"
+}
