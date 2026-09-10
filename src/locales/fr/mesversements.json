@@ -1,0 +1,18 @@
+{
+  "titre": "Mes versements",
+  "sousTitre": "Détail de ce que vous devez reverser aujourd'hui, et historique de vos dépôts.",
+  "chargement": "Chargement…",
+  "aujourdhui": "Aujourd'hui",
+  "ventesEspeces": "Ventes encaissées en espèces",
+  "recouvrements": "Recouvrements de créances encaissés",
+  "totalDu": "Total dû",
+  "dejaVerse": "Déjà versé aujourd'hui",
+  "resteAVerser": "Reste à verser",
+  "remettreSomme": "Remettez cette somme à votre comptable ou manager, qui enregistrera le dépôt de son côté.",
+  "historiqueTitre": "Historique de mes versements",
+  "date": "Date",
+  "caisse": "Caisse",
+  "recuPar": "Reçu par",
+  "montant": "Montant",
+  "aucunVersement": "Aucun versement enregistré."
+}

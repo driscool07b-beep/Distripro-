@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
 export default function MesVersements() {
+  const { t } = useTranslation('mesversements')
   const { profil } = useAuth()
   const [chargement, setChargement] = useState(true)
   const [detailJour, setDetailJour] = useState({ ventesCash: 0, recouvrements: 0, deposeAujourdhui: 0 })
@@ -59,61 +61,61 @@ export default function MesVersements() {
   return (
     <div className="p-4 sm:p-8 max-w-2xl">
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Mes versements</h1>
-        <p className="text-sm text-petrol-700 mt-1">Détail de ce que vous devez reverser aujourd'hui, et historique de vos dépôts.</p>
+        <h1 className="text-2xl font-semibold">{t('titre')}</h1>
+        <p className="text-sm text-petrol-700 mt-1">{t('sousTitre')}</p>
       </header>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <>
           <div className="card p-5 mb-6 space-y-2">
-            <h2 className="font-semibold mb-1 text-sm">Aujourd'hui</h2>
+            <h2 className="font-semibold mb-1 text-sm">{t('aujourdhui')}</h2>
             <div className="flex justify-between text-sm">
-              <span className="text-petrol-600">Ventes encaissées en espèces</span>
+              <span className="text-petrol-600">{t('ventesEspeces')}</span>
               <span className="font-mono">{formatXOF(detailJour.ventesCash)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-petrol-600">Recouvrements de créances encaissés</span>
+              <span className="text-petrol-600">{t('recouvrements')}</span>
               <span className="font-mono">{formatXOF(detailJour.recouvrements)}</span>
             </div>
             <div className="flex justify-between text-sm border-t border-line pt-2">
-              <span className="text-petrol-600">Total dû</span>
+              <span className="text-petrol-600">{t('totalDu')}</span>
               <span className="font-mono font-medium">{formatXOF(totalDuAujourdhui)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-petrol-600">Déjà versé aujourd'hui</span>
+              <span className="text-petrol-600">{t('dejaVerse')}</span>
               <span className="font-mono text-green-700">{formatXOF(detailJour.deposeAujourdhui)}</span>
             </div>
             <div className="flex justify-between text-base border-t border-line pt-2">
-              <span className="font-medium">Reste à verser</span>
+              <span className="font-medium">{t('resteAVerser')}</span>
               <span className={`font-mono font-semibold ${resteAVerser > 0 ? 'text-amber-600' : 'text-green-700'}`}>
                 {formatXOF(resteAVerser)}
               </span>
             </div>
             {resteAVerser > 0 && (
               <p className="text-xs text-petrol-500 pt-1">
-                Remettez cette somme à votre comptable ou manager, qui enregistrera le dépôt de son côté.
+                {t('remettreSomme')}
               </p>
             )}
           </div>
 
           <div className="card overflow-x-auto">
             <div className="px-4 py-3 border-b border-line">
-              <h2 className="font-semibold text-sm">Historique de mes versements</h2>
+              <h2 className="font-semibold text-sm">{t('historiqueTitre')}</h2>
             </div>
             <table className="w-full text-sm min-w-[480px]">
               <thead>
                 <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
-                  <th className="px-4 py-2 font-medium">Date</th>
-                  <th className="px-4 py-2 font-medium">Caisse</th>
-                  <th className="px-4 py-2 font-medium">Reçu par</th>
-                  <th className="px-4 py-2 font-medium text-right">Montant</th>
+                  <th className="px-4 py-2 font-medium">{t('date')}</th>
+                  <th className="px-4 py-2 font-medium">{t('caisse')}</th>
+                  <th className="px-4 py-2 font-medium">{t('recuPar')}</th>
+                  <th className="px-4 py-2 font-medium text-right">{t('montant')}</th>
                 </tr>
               </thead>
               <tbody>
                 {historique.length === 0 ? (
-                  <tr><td colSpan={4} className="px-4 py-6 text-center text-petrol-500">Aucun versement enregistré.</td></tr>
+                  <tr><td colSpan={4} className="px-4 py-6 text-center text-petrol-500">{t('aucunVersement')}</td></tr>
                 ) : (
                   historique.map((v) => (
                     <tr key={v.id} className="border-b border-line last:border-0">

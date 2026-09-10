@@ -108,5 +108,9 @@
     "creerMonEntreprise": "Create my company",
     "inviteRejoindreEquipe": "Invited to join an existing team?",
     "cliquezIci": "Click here"
+  },
+  "notFound": {
+    "pageInexistante": "This page doesn't exist.",
+    "retourTableauDeBord": "Back to dashboard"
   }
 }

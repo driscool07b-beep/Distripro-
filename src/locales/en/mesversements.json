@@ -1,0 +1,18 @@
+{
+  "titre": "My Deposits",
+  "sousTitre": "Breakdown of what you need to deposit today, and your deposit history.",
+  "chargement": "Loading…",
+  "aujourdhui": "Today",
+  "ventesEspeces": "Cash sales collected",
+  "recouvrements": "Receivable collections",
+  "totalDu": "Total due",
+  "dejaVerse": "Already deposited today",
+  "resteAVerser": "Left to deposit",
+  "remettreSomme": "Hand this amount to your accountant or manager, who will record the deposit on their end.",
+  "historiqueTitre": "My deposit history",
+  "date": "Date",
+  "caisse": "Cash register",
+  "recuPar": "Received by",
+  "montant": "Amount",
+  "aucunVersement": "No deposit recorded."
+}

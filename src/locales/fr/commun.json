@@ -108,5 +108,9 @@
     "creerMonEntreprise": "Créer mon entreprise",
     "inviteRejoindreEquipe": "Invité(e) à rejoindre une équipe existante ?",
     "cliquezIci": "Cliquez ici"
+  },
+  "notFound": {
+    "pageInexistante": "Cette page n'existe pas.",
+    "retourTableauDeBord": "Retour au tableau de bord"
   }
 }

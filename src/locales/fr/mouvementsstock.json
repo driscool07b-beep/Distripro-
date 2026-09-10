@@ -1,0 +1,17 @@
+{
+  "accesRefuse": "Cette page est réservée à la gestion de stock (admin, manager, gestionnaire de stock).",
+  "titre": "Journal des mouvements de stock",
+  "sousTitre": "200 derniers mouvements magasin (hors stock des commerciaux).",
+  "tousLesDepots": "Tous les dépôts",
+  "entreesEtSorties": "Entrées et sorties",
+  "entreesSeulement": "Entrées seulement",
+  "sortiesSeulement": "Sorties seulement",
+  "chargement": "Chargement…",
+  "entree": "Entrée",
+  "sortie": "Sortie",
+  "voirJustificatif": "📎 Voir le justificatif",
+  "envoi": "Envoi…",
+  "joindre": "Joindre",
+  "joindreJustificatif": "+ Joindre un justificatif",
+  "aucunMouvement": "Aucun mouvement."
+}

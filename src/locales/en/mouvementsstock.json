@@ -1,0 +1,17 @@
+{
+  "accesRefuse": "This page is reserved for stock management (admin, manager, stock manager).",
+  "titre": "Stock movement log",
+  "sousTitre": "Last 200 warehouse movements (excluding sales reps' stock).",
+  "tousLesDepots": "All warehouses",
+  "entreesEtSorties": "In and out",
+  "entreesSeulement": "In only",
+  "sortiesSeulement": "Out only",
+  "chargement": "Loading…",
+  "entree": "In",
+  "sortie": "Out",
+  "voirJustificatif": "📎 View supporting document",
+  "envoi": "Sending…",
+  "joindre": "Attach",
+  "joindreJustificatif": "+ Attach a supporting document",
+  "aucunMouvement": "No movements."
+}

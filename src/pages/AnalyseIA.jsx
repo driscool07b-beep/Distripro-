@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
 export default function AnalyseIA() {
+  const { t } = useTranslation('analyseia')
   const { profil, entreprise } = useAuth()
   const [historique, setHistorique] = useState([])
   const [chargementHistorique, setChargementHistorique] = useState(true)
@@ -37,7 +39,7 @@ export default function AnalyseIA() {
     const { data, error } = await supabase.functions.invoke('analyse-ia')
     setGeneration(false)
     if (error || data?.erreur) {
-      setErreur(data?.erreur || traduireErreur(error?.message) || 'Erreur lors de la génération.')
+      setErreur(data?.erreur || traduireErreur(error?.message) || t('erreurGeneration'))
       return
     }
     await chargerHistorique()
@@ -47,7 +49,7 @@ export default function AnalyseIA() {
     return (
       <div className="p-4 max-w-2xl mx-auto">
         <p className="text-petrol-500">
-          Cette page est réservée aux responsables commerciaux et à la direction.
+          {t('accesRefuse')}
         </p>
       </div>
     )
@@ -56,9 +58,9 @@ export default function AnalyseIA() {
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <h1 className="text-xl font-bold">Analyse stratégique (IA)</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         <button onClick={genererAnalyse} disabled={generation} className="btn-primary text-sm">
-          {generation ? 'Génération en cours…' : '✨ Générer une nouvelle analyse'}
+          {generation ? t('generationEnCours') : t('genererNouvelleAnalyse')}
         </button>
       </div>
       <p className="text-sm text-petrol-500 mb-4">{entreprise?.nom}</p>
@@ -68,7 +70,7 @@ export default function AnalyseIA() {
           {erreur}
           {erreur.includes('ANTHROPIC_API_KEY') && (
             <p className="mt-1 text-xs">
-              La fonction serveur n'a pas encore été configurée avec une clé API. Voir les instructions de déploiement.
+              {t('cleApiManquante')}
             </p>
           )}
         </div>
@@ -76,9 +78,9 @@ export default function AnalyseIA() {
 
       <div className="grid md:grid-cols-[200px_1fr] gap-4">
         <div>
-          <p className="text-xs font-medium text-petrol-600 mb-2">Historique</p>
+          <p className="text-xs font-medium text-petrol-600 mb-2">{t('historique')}</p>
           {chargementHistorique ? (
-            <p className="text-xs text-petrol-400">Chargement…</p>
+            <p className="text-xs text-petrol-400">{t('chargement')}</p>
           ) : (
             <div className="space-y-1">
               {historique.map((a) => (
@@ -94,7 +96,7 @@ export default function AnalyseIA() {
                   <span className="opacity-70">{a.profils?.nom || '—'}</span>
                 </button>
               ))}
-              {historique.length === 0 && <p className="text-xs text-petrol-400">Aucune analyse générée.</p>}
+              {historique.length === 0 && <p className="text-xs text-petrol-400">{t('aucuneAnalyse')}</p>}
             </div>
           )}
         </div>
@@ -103,14 +105,14 @@ export default function AnalyseIA() {
           {analyseAffichee ? (
             <>
               <p className="text-xs text-petrol-500 mb-3">
-                Générée le {new Date(analyseAffichee.created_at).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}
-                {analyseAffichee.profils?.nom ? ` par ${analyseAffichee.profils.nom}` : ''}
+                {t('genereeLe', { date: new Date(analyseAffichee.created_at).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) })}
+                {analyseAffichee.profils?.nom ? ` ${t('par', { nom: analyseAffichee.profils.nom })}` : ''}
               </p>
               <div className="text-sm whitespace-pre-wrap leading-relaxed">{analyseAffichee.contenu}</div>
             </>
           ) : (
             <p className="text-sm text-petrol-400 text-center py-12">
-              Aucune analyse pour le moment. Cliquez sur "Générer une nouvelle analyse" pour commencer.
+              {t('aucuneAnalysePourLeMoment')}
             </p>
           )}
         </div>

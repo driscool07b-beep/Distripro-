@@ -1,0 +1,14 @@
+{
+  "accesRefuse": "This page is reserved for sales managers and leadership.",
+  "titre": "Strategic Analysis (AI)",
+  "generationEnCours": "Generating…",
+  "genererNouvelleAnalyse": "✨ Generate new analysis",
+  "erreurGeneration": "Error while generating.",
+  "cleApiManquante": "The server function hasn't been configured with an API key yet. See the deployment instructions.",
+  "historique": "History",
+  "chargement": "Loading…",
+  "aucuneAnalyse": "No analysis generated.",
+  "genereeLe": "Generated on {{date}}",
+  "par": "by {{nom}}",
+  "aucuneAnalysePourLeMoment": "No analysis yet. Click \"Generate new analysis\" to get started."
+}

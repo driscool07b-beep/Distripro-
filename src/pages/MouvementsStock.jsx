@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
-const LIBELLES_TYPE = { entree: 'Entrée', sortie: 'Sortie' }
+function libellesType(t) {
+  return { entree: t('entree'), sortie: t('sortie') }
+}
 
 export default function MouvementsStock() {
+  const { t } = useTranslation('mouvementsstock')
   const { profil, entreprise } = useAuth()
+  const LIBELLES_TYPE = libellesType(t)
   const [mouvements, setMouvements] = useState([])
   const [chargement, setChargement] = useState(true)
   const [depots, setDepots] = useState([])
@@ -64,30 +69,30 @@ export default function MouvementsStock() {
   if (!autorise) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page est réservée à la gestion de stock (admin, manager, gestionnaire de stock).</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-xl font-bold mb-1">Journal des mouvements de stock</h1>
-      <p className="text-sm text-petrol-500 mb-4">200 derniers mouvements magasin (hors stock des commerciaux).</p>
+      <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
+      <p className="text-sm text-petrol-500 mb-4">{t('sousTitre')}</p>
 
       <div className="flex flex-wrap gap-2 mb-4">
         <select className="input-field w-auto" value={filtreDepot} onChange={(e) => setFiltreDepot(e.target.value)}>
-          <option value="">Tous les dépôts</option>
+          <option value="">{t('tousLesDepots')}</option>
           {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
         </select>
         <select className="input-field w-auto" value={filtreType} onChange={(e) => setFiltreType(e.target.value)}>
-          <option value="">Entrées et sorties</option>
-          <option value="entree">Entrées seulement</option>
-          <option value="sortie">Sorties seulement</option>
+          <option value="">{t('entreesEtSorties')}</option>
+          <option value="entree">{t('entreesSeulement')}</option>
+          <option value="sortie">{t('sortiesSeulement')}</option>
         </select>
       </div>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <div className="space-y-2">
           {mouvements.map((m) => (
@@ -111,7 +116,7 @@ export default function MouvementsStock() {
               <div className="mt-2 flex items-center gap-3">
                 {m.reference_doc ? (
                   <button onClick={() => voirJustificatif(m.reference_doc)} className="text-xs text-blue-600 underline">
-                    📎 Voir le justificatif
+                    {t('voirJustificatif')}
                   </button>
                 ) : mouvementCiblé === m.id ? (
                   <div className="flex items-center gap-2">
@@ -126,18 +131,18 @@ export default function MouvementsStock() {
                       onClick={() => joindreApresCoup(m.id, fichierEnCours)}
                       className="text-xs text-petrol-700 underline"
                     >
-                      {envoi ? 'Envoi…' : 'Joindre'}
+                      {envoi ? t('envoi') : t('joindre')}
                     </button>
                   </div>
                 ) : (
                   <button onClick={() => setMouvementCiblé(m.id)} className="text-xs text-petrol-500 underline">
-                    + Joindre un justificatif
+                    {t('joindreJustificatif')}
                   </button>
                 )}
               </div>
             </div>
           ))}
-          {mouvements.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">Aucun mouvement.</p>}
+          {mouvements.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">{t('aucunMouvement')}</p>}
         </div>
       )}
     </div>

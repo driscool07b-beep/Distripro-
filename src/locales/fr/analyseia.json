@@ -1,0 +1,14 @@
+{
+  "accesRefuse": "Cette page est réservée aux responsables commerciaux et à la direction.",
+  "titre": "Analyse stratégique (IA)",
+  "generationEnCours": "Génération en cours…",
+  "genererNouvelleAnalyse": "✨ Générer une nouvelle analyse",
+  "erreurGeneration": "Erreur lors de la génération.",
+  "cleApiManquante": "La fonction serveur n'a pas encore été configurée avec une clé API. Voir les instructions de déploiement.",
+  "historique": "Historique",
+  "chargement": "Chargement…",
+  "aucuneAnalyse": "Aucune analyse générée.",
+  "genereeLe": "Générée le {{date}}",
+  "par": "par {{nom}}",
+  "aucuneAnalysePourLeMoment": "Aucune analyse pour le moment. Cliquez sur \"Générer une nouvelle analyse\" pour commencer."
+}
