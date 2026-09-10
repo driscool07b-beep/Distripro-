@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
 export default function Objectifs() {
+  const { t } = useTranslation('objectifs')
   const { profil } = useAuth()
   const [objectifs, setObjectifs] = useState([])
   const [chargement, setChargement] = useState(true)
@@ -110,19 +112,19 @@ export default function Objectifs() {
     setErreur('')
 
     if (typeCible === 'commercial' && !commercialId) {
-      setErreur('Sélectionnez un commercial.')
+      setErreur(t('erreurSelectionnerCommercial'))
       return
     }
     if (typeCible === 'zone' && !zone.trim()) {
-      setErreur('Indiquez une zone.')
+      setErreur(t('erreurIndiquerZone'))
       return
     }
     if (!montantCible && !quantiteCible) {
-      setErreur('Indiquez un montant cible et/ou une quantité cible.')
+      setErreur(t('erreurMontantOuQuantite'))
       return
     }
     if (quantiteCible && !produitId) {
-      setErreur('Une quantité cible doit être associée à un produit précis.')
+      setErreur(t('erreurQuantiteSansProduit'))
       return
     }
 
@@ -141,7 +143,7 @@ export default function Objectifs() {
     })
     setEnvoi(false)
     if (error) {
-      setErreur(`Erreur : ${traduireErreur(error.message)}`)
+      setErreur(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setModalOuvert(false)
@@ -156,7 +158,7 @@ export default function Objectifs() {
   if (!autorise) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page est réservée aux responsables commerciaux et à la direction.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
@@ -164,49 +166,49 @@ export default function Objectifs() {
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h1 className="text-xl font-bold">Objectifs commerciaux</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         <button onClick={ouvrirModal} className="btn-primary text-sm">
-          + Nouvel objectif
+          {t('nouvelObjectif')}
         </button>
       </div>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <div className="space-y-3">
           {objectifs.map((o) => (
             <CarteObjectif key={o.id} objectif={o} onSupprimer={() => supprimerObjectif(o.id)} />
           ))}
-          {objectifs.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">Aucun objectif défini.</p>}
+          {objectifs.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">{t('aucunObjectif')}</p>}
         </div>
       )}
 
       {modalOuvert && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-4">Nouvel objectif</h2>
+            <h2 className="font-semibold text-lg mb-4">{t('modalTitre')}</h2>
             <form onSubmit={enregistrerObjectif} className="space-y-3">
               <div>
-                <label className="label">Cible</label>
+                <label className="label">{t('cible')}</label>
                 <div className="flex gap-2 mb-2">
                   <button
                     type="button"
                     onClick={() => setTypeCible('commercial')}
                     className={`flex-1 text-sm px-3 py-2 rounded-lg border ${typeCible === 'commercial' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
                   >
-                    Un commercial
+                    {t('unCommercial')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setTypeCible('zone')}
                     className={`flex-1 text-sm px-3 py-2 rounded-lg border ${typeCible === 'zone' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
                   >
-                    Une zone
+                    {t('uneZone')}
                   </button>
                 </div>
                 {typeCible === 'commercial' ? (
                   <select className="input-field" value={commercialId} onChange={(e) => setCommercialId(e.target.value)}>
-                    <option value="">— Sélectionner —</option>
+                    <option value="">{t('selectionner')}</option>
                     {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
                   </select>
                 ) : (
@@ -214,66 +216,66 @@ export default function Objectifs() {
                     className="input-field"
                     value={zone}
                     onChange={(e) => setZone(e.target.value)}
-                    placeholder="Ex. Abidjan Nord (doit correspondre à la ville des clients)"
+                    placeholder={t('zonePlaceholder')}
                   />
                 )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Début de période</label>
+                  <label className="label">{t('debutPeriode')}</label>
                   <input type="date" className="input-field" value={periodeDebut} onChange={(e) => setPeriodeDebut(e.target.value)} />
                 </div>
                 <div>
-                  <label className="label">Fin de période</label>
+                  <label className="label">{t('finPeriode')}</label>
                   <input type="date" className="input-field" value={periodeFin} onChange={(e) => setPeriodeFin(e.target.value)} />
                 </div>
               </div>
 
               <div>
-                <label className="label">Montant cible (F CFA, optionnel)</label>
+                <label className="label">{t('montantCible')}</label>
                 <input
                   type="number"
                   min="0"
                   className="input-field"
                   value={montantCible}
                   onChange={(e) => setMontantCible(e.target.value)}
-                  placeholder="Ex. 500000"
+                  placeholder={t('montantPlaceholder')}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Produit (pour une quantité cible)</label>
+                  <label className="label">{t('produitPourQuantite')}</label>
                   <select className="input-field" value={produitId} onChange={(e) => setProduitId(e.target.value)}>
-                    <option value="">— Aucun —</option>
+                    <option value="">{t('aucun')}</option>
                     {produits.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="label">Quantité cible</label>
+                  <label className="label">{t('quantiteCible')}</label>
                   <input
                     type="number"
                     min="0"
                     className="input-field"
                     value={quantiteCible}
                     onChange={(e) => setQuantiteCible(e.target.value)}
-                    placeholder="Ex. 200"
+                    placeholder={t('quantitePlaceholder')}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="label">Notes</label>
+                <label className="label">{t('notes')}</label>
                 <textarea className="input-field" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
               </div>
 
               {erreur && <p className="text-sm text-red-600">{erreur}</p>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>Annuler</button>
+                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('annuler')}</button>
                 <button type="submit" disabled={envoi} className="btn-primary flex-1">
-                  {envoi ? 'Enregistrement…' : "Créer l'objectif"}
+                  {envoi ? t('enregistrement') : t('creerObjectif')}
                 </button>
               </div>
             </form>
@@ -285,6 +287,7 @@ export default function Objectifs() {
 }
 
 function CarteObjectif({ objectif: o, onSupprimer }) {
+  const { t } = useTranslation('objectifs')
   const cible = o.profils?.nom || o.zone
   const pctMontant = o.montant_cible ? Math.min(100, Math.round((o.montantRealise / o.montant_cible) * 100)) : null
   const pctQuantite = o.quantite_cible ? Math.min(100, Math.round((o.quantiteRealisee / o.quantite_cible) * 100)) : null
@@ -299,13 +302,13 @@ function CarteObjectif({ objectif: o, onSupprimer }) {
             {o.produits?.nom ? ` — ${o.produits.nom}` : ''}
           </p>
         </div>
-        <button onClick={onSupprimer} className="text-xs text-red-600 underline">Supprimer</button>
+        <button onClick={onSupprimer} className="text-xs text-red-600 underline">{t('supprimer')}</button>
       </div>
 
       {o.montant_cible != null && (
         <div className="mb-2">
           <div className="flex justify-between text-xs text-petrol-600 mb-1">
-            <span>Montant : {formatXOF(o.montantRealise)} / {formatXOF(o.montant_cible)}</span>
+            <span>{t('montantLabel', { realise: formatXOF(o.montantRealise), cible: formatXOF(o.montant_cible) })}</span>
             <span className="font-medium">{pctMontant}%</span>
           </div>
           <BarreProgression pct={pctMontant} />
@@ -315,7 +318,7 @@ function CarteObjectif({ objectif: o, onSupprimer }) {
       {o.quantite_cible != null && (
         <div>
           <div className="flex justify-between text-xs text-petrol-600 mb-1">
-            <span>Quantité : {o.quantiteRealisee} / {o.quantite_cible}</span>
+            <span>{t('quantiteLabel', { realise: o.quantiteRealisee, cible: o.quantite_cible })}</span>
             <span className="font-medium">{pctQuantite}%</span>
           </div>
           <BarreProgression pct={pctQuantite} />
