@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
 export default function StockCommercial() {
+  const { t } = useTranslation('stockcommercial')
   const { profil } = useAuth()
   const [onglet, setOnglet] = useState('enmain')
 
@@ -14,7 +16,7 @@ export default function StockCommercial() {
     return (
       <div className="p-4 max-w-2xl mx-auto">
         <p className="text-petrol-500">
-          Cette page est réservée à la gestion de stock (admin, manager, gestionnaire de stock).
+          {t('accesRefuse')}
         </p>
       </div>
     )
@@ -23,7 +25,7 @@ export default function StockCommercial() {
   if (lectureSeuleCommercial) {
     return (
       <div className="p-4 max-w-3xl mx-auto">
-        <h1 className="text-xl font-bold mb-4">Mon stock en main</h1>
+        <h1 className="text-xl font-bold mb-4">{t('monStockEnMain')}</h1>
         <StockEnMain />
       </div>
     )
@@ -31,11 +33,11 @@ export default function StockCommercial() {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-xl font-bold mb-4">Stock des commerciaux</h1>
+      <h1 className="text-xl font-bold mb-4">{t('stockDesCommerciaux')}</h1>
       <div className="flex gap-2 mb-4 flex-wrap">
         {[
-          { id: 'enmain', label: 'Stock en main' },
-          { id: 'sorties', label: 'Sorties / Retours' },
+          { id: 'enmain', label: t('ongletStockEnMain') },
+          { id: 'sorties', label: t('ongletSortiesRetours') },
         ].map((o) => (
           <button
             key={o.id}
@@ -56,6 +58,7 @@ export default function StockCommercial() {
 }
 
 function StockEnMain() {
+  const { t } = useTranslation('stockcommercial')
   const [chargement, setChargement] = useState(true)
   const [lignes, setLignes] = useState([])
 
@@ -75,14 +78,14 @@ function StockEnMain() {
 
   const groupes = {}
   lignes.forEach((l) => {
-    const nom = l.profils?.nom || 'Inconnu'
+    const nom = l.profils?.nom || t('inconnu')
     if (!groupes[nom]) groupes[nom] = { lignes: [], valeur: 0 }
     const valeur = l.quantite * (l.produits?.prix_vente || 0)
     groupes[nom].lignes.push({ produit: l.produits?.nom, quantite: l.quantite, valeur })
     groupes[nom].valeur += valeur
   })
 
-  if (chargement) return <p className="text-sm text-petrol-500">Chargement…</p>
+  if (chargement) return <p className="text-sm text-petrol-500">{t('chargement')}</p>
 
   return (
     <div className="space-y-4">
@@ -106,13 +109,14 @@ function StockEnMain() {
         </div>
       ))}
       {Object.keys(groupes).length === 0 && (
-        <p className="text-petrol-400 text-center py-8 text-sm">Aucun commercial n'a de stock en main actuellement.</p>
+        <p className="text-petrol-400 text-center py-8 text-sm">{t('aucunStockEnMain')}</p>
       )}
     </div>
   )
 }
 
 function SortiesRetours() {
+  const { t } = useTranslation('stockcommercial')
   const [sorties, setSorties] = useState([])
   const [chargement, setChargement] = useState(true)
   const [modalOuvert, setModalOuvert] = useState(false)
@@ -178,12 +182,12 @@ function SortiesRetours() {
     e.preventDefault()
     setErreur('')
     if (!commercialId || !depotId) {
-      setErreur('Sélectionnez un commercial et un dépôt.')
+      setErreur(t('erreurCommercialDepot'))
       return
     }
     const valides = lignesSortie.filter((l) => l.produit_id && Number(l.quantite) > 0)
     if (valides.length === 0) {
-      setErreur('Ajoutez au moins un article.')
+      setErreur(t('erreurAuMoinsUnArticle'))
       return
     }
     setEnregistrement(true)
@@ -194,7 +198,7 @@ function SortiesRetours() {
     })
     setEnregistrement(false)
     if (error) {
-      setErreur(`Erreur : ${traduireErreur(error.message)}`)
+      setErreur(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setModalOuvert(false)
@@ -266,7 +270,7 @@ function SortiesRetours() {
     })
     setActionEnvoi(false)
     if (error) {
-      setErreurAction(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurAction(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     await ouvrirDetailSortie(sortieOuverte)
@@ -276,11 +280,11 @@ function SortiesRetours() {
   return (
     <div>
       <button onClick={ouvrirModalSortie} className="btn-primary text-sm mb-4">
-        + Nouvelle sortie de stock
+        {t('nouvelleSortie')}
       </button>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <div className="space-y-2">
           {sorties.map((s) => (
@@ -290,44 +294,44 @@ function SortiesRetours() {
               className="w-full text-left border border-line rounded-lg p-3 flex justify-between items-center hover:bg-canvas/60"
             >
               <div>
-                <p className="font-medium text-sm">{s.profils?.nom || 'Commercial'}</p>
+                <p className="font-medium text-sm">{s.profils?.nom || t('commercial')}</p>
                 <p className="text-xs text-petrol-500">
-                  {new Date(s.date_sortie).toLocaleDateString('fr-FR')} — {s.sortie_stock_lignes?.length || 0} article(s)
+                  {new Date(s.date_sortie).toLocaleDateString('fr-FR')} — {t('articles', { n: s.sortie_stock_lignes?.length || 0 })}
                 </p>
               </div>
               <span className={`text-xs px-2 py-1 rounded-full border ${s.statut === 'ouverte' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
-                {s.statut === 'ouverte' ? 'En tournée' : 'Clôturée'}
+                {s.statut === 'ouverte' ? t('enTournee') : t('cloturee')}
               </span>
             </button>
           ))}
-          {sorties.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">Aucune sortie enregistrée.</p>}
+          {sorties.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">{t('aucuneSortie')}</p>}
         </div>
       )}
 
       {modalOuvert && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h2 className="font-semibold text-lg mb-4">Nouvelle sortie de stock</h2>
+            <h2 className="font-semibold text-lg mb-4">{t('modalTitre')}</h2>
             <form onSubmit={validerSortie} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Commercial</label>
+                  <label className="label">{t('commercial')}</label>
                   <select className="input-field" value={commercialId} onChange={(e) => setCommercialId(e.target.value)}>
-                    <option value="">— Sélectionner —</option>
+                    <option value="">{t('selectionner')}</option>
                     {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="label">Dépôt source</label>
+                  <label className="label">{t('depotSource')}</label>
                   <select className="input-field" value={depotId} onChange={(e) => setDepotId(e.target.value)}>
-                    <option value="">— Sélectionner —</option>
+                    <option value="">{t('selectionner')}</option>
                     {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="label">Articles à sortir</label>
+                <label className="label">{t('articlesASortir')}</label>
                 <div className="space-y-2">
                   {lignesSortie.map((l, i) => (
                     <div key={i} className="flex gap-2 items-start">
@@ -336,7 +340,7 @@ function SortiesRetours() {
                         value={l.produit_id}
                         onChange={(e) => majLigneSortie(i, 'produit_id', e.target.value)}
                       >
-                        <option value="">— Produit —</option>
+                        <option value="">{t('produitPlaceholder')}</option>
                         {produits.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
                       </select>
                       <input
@@ -353,16 +357,16 @@ function SortiesRetours() {
                   ))}
                 </div>
                 <button type="button" onClick={ajouterLigneSortie} className="text-xs text-petrol-600 underline mt-2">
-                  + Ajouter un article
+                  {t('ajouterArticle')}
                 </button>
               </div>
 
               {erreur && <p className="text-sm text-red-600">{erreur}</p>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>Annuler</button>
+                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('annuler')}</button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? 'Enregistrement…' : 'Émettre la sortie'}
+                  {enregistrement ? t('enregistrement') : t('emettreSortie')}
                 </button>
               </div>
             </form>
@@ -374,7 +378,7 @@ function SortiesRetours() {
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-5 w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-3">
             {!detail ? (
-              <p className="text-sm text-petrol-500 text-center py-8">Chargement…</p>
+              <p className="text-sm text-petrol-500 text-center py-8">{t('chargement')}</p>
             ) : (
               <>
                 <div className="flex justify-between items-start">
@@ -387,11 +391,11 @@ function SortiesRetours() {
 
                 {detail.statut === 'ouverte' ? (
                   <div>
-                    <p className="text-sm font-medium mb-2">Quantités retournées (comptage physique)</p>
+                    <p className="text-sm font-medium mb-2">{t('quantitesRetournees')}</p>
                     <div className="space-y-2">
                       {(detail.sortie_stock_lignes || []).map((l) => (
                         <div key={l.id} className="flex items-center justify-between gap-3">
-                          <span className="text-sm">{l.produits?.nom} <span className="text-petrol-400">(sorti : {l.quantite_sortie})</span></span>
+                          <span className="text-sm">{l.produits?.nom} <span className="text-petrol-400">({t('sorti', { n: l.quantite_sortie })})</span></span>
                           <input
                             type="number"
                             min="0"
@@ -409,19 +413,19 @@ function SortiesRetours() {
                       disabled={actionEnvoi}
                       className="bg-green-600 text-white px-4 py-2 rounded text-sm mt-3 w-full"
                     >
-                      {actionEnvoi ? 'Envoi…' : 'Valider le retour et clôturer'}
+                      {actionEnvoi ? t('envoi') : t('validerRetourCloturer')}
                     </button>
                   </div>
                 ) : (
                   <div>
-                    <p className="text-sm font-medium mb-2">Réconciliation sortie / retour / ventes réelles</p>
+                    <p className="text-sm font-medium mb-2">{t('reconciliationTitre')}</p>
                     <table className="w-full text-xs">
                       <thead>
                         <tr className="text-left text-petrol-500 border-b border-line">
-                          <th className="pb-1">Produit</th>
-                          <th className="pb-1 text-right">Vendu (implicite)</th>
-                          <th className="pb-1 text-right">Vendu (réel)</th>
-                          <th className="pb-1 text-right">Écart</th>
+                          <th className="pb-1">{t('produit')}</th>
+                          <th className="pb-1 text-right">{t('venduImplicite')}</th>
+                          <th className="pb-1 text-right">{t('venduReel')}</th>
+                          <th className="pb-1 text-right">{t('ecart')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -439,8 +443,7 @@ function SortiesRetours() {
                     </table>
                     {(reconciliation || []).some((r) => r.ecart !== 0) && (
                       <p className="text-xs text-red-600 mt-2">
-                        ⚠️ Écart détecté : le nombre d'unités manquantes (sorti − retourné) ne correspond pas
-                        aux ventes enregistrées ce jour pour ce commercial. À vérifier.
+                        {t('ecartDetecte')}
                       </p>
                     )}
                   </div>
