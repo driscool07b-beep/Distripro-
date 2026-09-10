@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF } from '../lib/export'
 
 export default function Rapports() {
+  const { t } = useTranslation('rapports')
   const { profil, entreprise } = useAuth()
   const [rapports, setRapports] = useState([])
   const [chargement, setChargement] = useState(true)
@@ -104,30 +106,30 @@ export default function Rapports() {
   if (!accesAutorise('rapports', profil?.role)) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page n'est pas accessible pour votre rôle.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
 
   if (chargement) {
-    return <div className="p-4 text-center text-petrol-500">Chargement des rapports…</div>
+    return <div className="p-4 text-center text-petrol-500">{t('chargementRapports')}</div>
   }
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <h1 className="text-xl font-bold">Rapports de visite</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex flex-wrap gap-2">
           <button className="btn-secondary text-xs" onClick={exportExcel} disabled={rapports.length === 0}>
-            📊 Excel
+            📊 {t('excel')}
           </button>
           <button className="btn-secondary text-xs" onClick={exportPDF} disabled={rapports.length === 0}>
-            📄 PDF
+            📄 {t('pdf')}
           </button>
         </div>
       </div>
       <p className="text-sm text-petrol-500 mb-4">
-        {voitTout ? 'Tous les commerciaux' : 'Vos visites'} — {rapports.length} rapport(s)
+        {voitTout ? t('tousLesCommerciaux') : t('vosVisites')} — {t('compteurRapports', { n: rapports.length })}
       </p>
 
       <div className="space-y-2">
@@ -154,31 +156,31 @@ export default function Rapports() {
             {rapportOuvert === r.id && (
               <div className="border-t border-line p-3 space-y-3 bg-canvas/40">
                 {chargementDetail ? (
-                  <p className="text-sm text-petrol-500">Chargement du détail…</p>
+                  <p className="text-sm text-petrol-500">{t('chargementDetail')}</p>
                 ) : (
                   <>
                     {r.notes_rayon && (
                       <div>
-                        <p className="text-xs font-medium text-petrol-600">Stock rayon (notes)</p>
+                        <p className="text-xs font-medium text-petrol-600">{t('stockRayonNotes')}</p>
                         <p className="text-sm">{r.notes_rayon}</p>
                       </div>
                     )}
                     {r.notes_reserve && (
                       <div>
-                        <p className="text-xs font-medium text-petrol-600">Stock réserve (notes)</p>
+                        <p className="text-xs font-medium text-petrol-600">{t('stockReserveNotes')}</p>
                         <p className="text-sm">{r.notes_reserve}</p>
                       </div>
                     )}
 
                     {detail?.lignesProduits.length > 0 && (
                       <div>
-                        <p className="text-xs font-medium text-petrol-600 mb-1">Stock par produit</p>
+                        <p className="text-xs font-medium text-petrol-600 mb-1">{t('stockParProduit')}</p>
                         <table className="w-full text-xs">
                           <thead>
                             <tr className="text-left text-petrol-500">
-                              <th className="font-medium pb-1">Produit</th>
-                              <th className="font-medium pb-1">Rayon</th>
-                              <th className="font-medium pb-1">Réserve</th>
+                              <th className="font-medium pb-1">{t('produit')}</th>
+                              <th className="font-medium pb-1">{t('rayon')}</th>
+                              <th className="font-medium pb-1">{t('reserve')}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -196,7 +198,7 @@ export default function Rapports() {
 
                     {detail?.valeursChamps.length > 0 && (
                       <div>
-                        <p className="text-xs font-medium text-petrol-600 mb-1">Autres informations</p>
+                        <p className="text-xs font-medium text-petrol-600 mb-1">{t('autresInformations')}</p>
                         {detail.valeursChamps.map((v, i) => (
                           <p key={i} className="text-sm">
                             <span className="text-petrol-500">
@@ -210,7 +212,7 @@ export default function Rapports() {
 
                     {detail?.presencesConcurrents.length > 0 && (
                       <div>
-                        <p className="text-xs font-medium text-petrol-600 mb-1">Produits concurrents en rayon</p>
+                        <p className="text-xs font-medium text-petrol-600 mb-1">{t('produitsConcurrentsRayon')}</p>
                         {detail.presencesConcurrents.map((p, i) => (
                           <p key={i} className="text-sm flex justify-between">
                             <span>
@@ -218,7 +220,7 @@ export default function Rapports() {
                               {p.produits_concurrents?.marque ? ` (${p.produits_concurrents.marque})` : ''}
                             </span>
                             <span className={p.present ? 'text-red-600' : 'text-green-600'}>
-                              {p.present ? 'Présent' : 'Absent'}
+                              {p.present ? t('present') : t('absent')}
                             </span>
                           </p>
                         ))}
@@ -227,7 +229,7 @@ export default function Rapports() {
 
                     {photosUrls.length > 0 && (
                       <div>
-                        <p className="text-xs font-medium text-petrol-600 mb-1">Photos</p>
+                        <p className="text-xs font-medium text-petrol-600 mb-1">{t('photos')}</p>
                         <div className="flex gap-2 flex-wrap">
                           {photosUrls.map((url, i) => (
                             <a key={i} href={url} target="_blank" rel="noreferrer">
@@ -244,7 +246,7 @@ export default function Rapports() {
                       detail?.valeursChamps.length === 0 &&
                       detail?.presencesConcurrents.length === 0 &&
                       photosUrls.length === 0 && (
-                        <p className="text-sm text-petrol-400">Rapport vide (visite validée sans détail).</p>
+                        <p className="text-sm text-petrol-400">{t('rapportVide')}</p>
                       )}
                   </>
                 )}
@@ -253,7 +255,7 @@ export default function Rapports() {
           </div>
         ))}
         {rapports.length === 0 && (
-          <p className="text-petrol-400 text-center py-8">Aucun rapport pour le moment.</p>
+          <p className="text-petrol-400 text-center py-8">{t('aucunRapport')}</p>
         )}
       </div>
     </div>
