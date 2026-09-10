@@ -1,19 +1,24 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
-const LIBELLES_ROLE = {
-  admin: 'Administrateur',
-  manager: 'Manager',
-  commercial: 'Commercial',
-  comptable: 'Comptable',
-  gestionnaire_stock: 'Gestionnaire de stock',
-  agent_recouvrement: 'Agent de recouvrement',
+function libellesRole(t) {
+  return {
+    admin: t('roles.admin'),
+    manager: t('roles.manager'),
+    commercial: t('roles.commercial'),
+    comptable: t('roles.comptable'),
+    gestionnaire_stock: t('roles.gestionnaire_stock'),
+    agent_recouvrement: t('roles.agent_recouvrement'),
+  }
 }
 
 export default function Utilisateurs() {
+  const { t } = useTranslation('utilisateurs')
   const { profil, entreprise } = useAuth()
+  const LIBELLES_ROLE = libellesRole(t)
   const [membres, setMembres] = useState([])
   const [invitationsEnAttente, setInvitationsEnAttente] = useState([])
   const [journal, setJournal] = useState([])
@@ -98,7 +103,7 @@ export default function Utilisateurs() {
     e.preventDefault()
     setErreur('')
     if (!email.trim() || !nomComplet.trim()) {
-      setErreur('Email et nom complet sont requis.')
+      setErreur(t('erreurEmailNomRequis'))
       return
     }
     setEnvoi(true)
@@ -124,7 +129,7 @@ export default function Utilisateurs() {
 
     if (error) {
       setEnvoi(false)
-      setErreur(`Erreur : ${traduireErreur(error.message)}`)
+      setErreur(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
 
@@ -135,9 +140,7 @@ export default function Utilisateurs() {
       if (erreurEmail) {
         console.error('Erreur envoi email invitation:', erreurEmail)
         setEnvoi(false)
-        setErreur(
-          "L'invitation a bien été créée, mais l'email n'a pas pu être envoyé automatiquement. Fermez cette fenêtre puis utilisez \u00ab Renvoyer l'email \u00bb depuis la liste des invitations en attente."
-        )
+        setErreur(t('invitationCreeeMaisEmailEchec'))
         charger()
         return
       }
@@ -154,7 +157,7 @@ export default function Utilisateurs() {
     const { error } = await supabase.functions.invoke('envoyer-invitation', { body: { invitation_id: id } })
     setRenvoiEnCours(null)
     if (error) {
-      setErreurRenvoi("Impossible d'envoyer l'email pour le moment. Réessayez plus tard.")
+      setErreurRenvoi(t('impossibleEnvoyerEmail'))
     }
   }
 
@@ -181,7 +184,7 @@ export default function Utilisateurs() {
     e.preventDefault()
     setErreurMembre('')
     if (!nomCompletMembre.trim()) {
-      setErreurMembre('Le nom complet est requis.')
+      setErreurMembre(t('erreurNomCompletRequis'))
       return
     }
     setEnvoiMembre(true)
@@ -198,7 +201,7 @@ export default function Utilisateurs() {
     })
     if (error) {
       setEnvoiMembre(false)
-      setErreurMembre(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurMembre(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
 
@@ -240,7 +243,7 @@ export default function Utilisateurs() {
   if (profil?.role !== 'admin') {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <p className="text-petrol-500">Cette page est réservée à l'administrateur.</p>
+        <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
   }
@@ -248,20 +251,20 @@ export default function Utilisateurs() {
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <h1 className="text-xl font-bold">Équipe</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         <button onClick={() => ouvrirModal(null)} className="btn-primary text-sm">
-          + Inviter un collaborateur
+          {t('inviterCollaborateur')}
         </button>
       </div>
       <p className="text-sm text-petrol-500 mb-4">{entreprise?.nom}</p>
 
       {chargement ? (
-        <p className="text-sm text-petrol-500">Chargement…</p>
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <>
           {invitationsEnAttente.length > 0 && (
             <div className="mb-6">
-              <p className="text-sm font-medium mb-2">Invitations en attente</p>
+              <p className="text-sm font-medium mb-2">{t('invitationsEnAttente')}</p>
               {erreurRenvoi && <p className="text-xs text-red-600 mb-2">{erreurRenvoi}</p>}
               <div className="space-y-2">
                 {invitationsEnAttente.map((inv) => (
@@ -279,13 +282,13 @@ export default function Utilisateurs() {
                         disabled={renvoiEnCours === inv.id}
                         className="text-xs text-petrol-600 underline disabled:opacity-50"
                       >
-                        {renvoiEnCours === inv.id ? 'Envoi…' : "Renvoyer l'email"}
+                        {renvoiEnCours === inv.id ? t('envoi') : t('renvoyerEmail')}
                       </button>
                       <button onClick={() => ouvrirModal(inv)} className="text-xs text-petrol-600 underline">
-                        Modifier
+                        {t('modifier')}
                       </button>
                       <button onClick={() => annulerInvitation(inv.id)} className="text-xs text-red-600 underline">
-                        Annuler
+                        {t('annulerInvitation')}
                       </button>
                     </div>
                   </div>
@@ -294,27 +297,27 @@ export default function Utilisateurs() {
             </div>
           )}
 
-          <p className="text-sm font-medium mb-2">Membres de l'équipe</p>
+          <p className="text-sm font-medium mb-2">{t('membresEquipe')}</p>
           <div className="space-y-2">
             {membres.map((m) => (
               <div key={m.id} className={`border rounded-lg p-3 flex justify-between items-center ${m.actif ? 'border-line' : 'border-red-200 bg-red-50/40'}`}>
                 <div>
                   <p className="text-sm font-medium">
                     {m.nom_complet || m.nom}
-                    {!m.actif && <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">Désactivé</span>}
+                    {!m.actif && <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">{t('desactive')}</span>}
                     {m.role === 'commercial' && m.acces_etendu && (
-                      <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Accès élargi</span>
+                      <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">{t('accesElargi')}</span>
                     )}
                     {m.lecture_seule && (
-                      <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Lecture seule</span>
+                      <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">{t('lectureSeule')}</span>
                     )}
                     {m.responsable_tournees && (
-                      <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">Responsable tournées</span>
+                      <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">{t('responsableTournees')}</span>
                     )}
                     {m.role === 'gestionnaire_stock' && depots.length > 1 && (
                       <span className="ml-2 text-xs bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded">
                         {(depotsParMembre[m.id] || []).length === 0
-                          ? 'Aucun dépôt attribué'
+                          ? t('aucunDepotAttribue')
                           : (depotsParMembre[m.id] || []).map((d) => d.nom).join(', ')}
                       </span>
                     )}
@@ -327,22 +330,22 @@ export default function Utilisateurs() {
                 </div>
                 <div className="flex gap-3 shrink-0">
                   <button onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
-                    Modifier
+                    {t('modifier')}
                   </button>
                   {m.id !== profil.id && (
                     <button onClick={() => basculerActif(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
-                      {m.actif ? 'Désactiver' : 'Réactiver'}
+                      {m.actif ? t('desactiver') : t('reactiver')}
                     </button>
                   )}
                 </div>
               </div>
             ))}
-            {membres.length === 0 && <p className="text-xs text-petrol-400">Aucun membre.</p>}
+            {membres.length === 0 && <p className="text-xs text-petrol-400">{t('aucunMembre')}</p>}
           </div>
 
           {journal.length > 0 && (
             <div className="mt-8">
-              <p className="text-sm font-medium mb-2">Journal d'administration</p>
+              <p className="text-sm font-medium mb-2">{t('journalAdministration')}</p>
               <div className="space-y-1.5">
                 {journal.map((j) => (
                   <div key={j.id} className="text-xs text-petrol-600 border-b border-line pb-1.5">
@@ -350,7 +353,7 @@ export default function Utilisateurs() {
                       {new Date(j.created_at).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </span>
                     {' — '}
-                    <strong>{j.effectue_par?.nom || '—'}</strong> a modifié <strong>{j.cible?.nom || '—'}</strong>
+                    <strong>{j.effectue_par?.nom || '—'}</strong> {t('aModifie')} <strong>{j.cible?.nom || '—'}</strong>
                     {j.details ? ` : ${j.details}` : ''}
                   </div>
                 ))}
@@ -363,10 +366,10 @@ export default function Utilisateurs() {
       {modalOuvert && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md">
-            <h2 className="font-semibold text-lg mb-4">{invitationEnEdition ? 'Modifier l\u2019invitation' : 'Inviter un collaborateur'}</h2>
+            <h2 className="font-semibold text-lg mb-4">{invitationEnEdition ? t('modalInvitationModifier') : t('modalInvitationInviter')}</h2>
             <form onSubmit={envoyerInvitation} className="space-y-3">
               <div>
-                <label className="label">Email</label>
+                <label className="label">{t('email')}</label>
                 <input
                   type="email"
                   required
@@ -377,7 +380,7 @@ export default function Utilisateurs() {
                 />
               </div>
               <div>
-                <label className="label">Nom complet</label>
+                <label className="label">{t('nomComplet')}</label>
                 <input
                   className="input-field"
                   value={nomComplet}
@@ -385,35 +388,35 @@ export default function Utilisateurs() {
                 />
               </div>
               <div>
-                <label className="label">Rôle</label>
+                <label className="label">{t('role')}</label>
                 <select className="input-field" value={role} onChange={(e) => setRole(e.target.value)}>
-                  <option value="commercial">Commercial</option>
-                  <option value="manager">Manager</option>
-                  <option value="comptable">Comptable</option>
-                  <option value="gestionnaire_stock">Gestionnaire de stock</option>
-                  <option value="agent_recouvrement">Agent de recouvrement</option>
-                  <option value="admin">Administrateur</option>
+                  <option value="commercial">{t('roles.commercial')}</option>
+                  <option value="manager">{t('roles.manager')}</option>
+                  <option value="comptable">{t('roles.comptable')}</option>
+                  <option value="gestionnaire_stock">{t('roles.gestionnaire_stock')}</option>
+                  <option value="agent_recouvrement">{t('roles.agent_recouvrement')}</option>
+                  <option value="admin">{t('roles.admin')}</option>
                 </select>
               </div>
               <div>
-                <label className="label">Zone (optionnel, pour un commercial)</label>
+                <label className="label">{t('zoneOptionnelle')}</label>
                 <input
                   className="input-field"
                   value={zone}
                   onChange={(e) => setZone(e.target.value)}
-                  placeholder="Ex. Abidjan Nord"
+                  placeholder={t('zonePlaceholder')}
                 />
               </div>
               <p className="text-xs text-petrol-500">
-                La personne devra s'inscrire elle-même sur la page d'inscription avec cet email exact.
+                {t('noteInscription')}
               </p>
               {erreur && <p className="text-sm text-red-600">{erreur}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>
-                  Annuler
+                  {t('annuler')}
                 </button>
                 <button type="submit" disabled={envoi} className="btn-primary flex-1">
-                  {envoi ? 'Envoi…' : invitationEnEdition ? 'Enregistrer' : 'Inviter'}
+                  {envoi ? t('envoi') : invitationEnEdition ? t('enregistrer') : t('inviter')}
                 </button>
               </div>
             </form>
@@ -424,10 +427,10 @@ export default function Utilisateurs() {
       {modalMembreOuvert && membreEnEdition && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
           <div className="card bg-white p-6 w-full max-w-md">
-            <h2 className="font-semibold text-lg mb-4">Modifier le membre</h2>
+            <h2 className="font-semibold text-lg mb-4">{t('modalMembreTitre')}</h2>
             <form onSubmit={enregistrerMembre} className="space-y-3">
               <div>
-                <label className="label">Nom complet</label>
+                <label className="label">{t('nomComplet')}</label>
                 <input
                   className="input-field"
                   value={nomCompletMembre}
@@ -435,7 +438,7 @@ export default function Utilisateurs() {
                 />
               </div>
               <div>
-                <label className="label">Téléphone</label>
+                <label className="label">{t('telephone')}</label>
                 <input
                   className="input-field"
                   value={telephoneMembre}
@@ -443,18 +446,18 @@ export default function Utilisateurs() {
                 />
               </div>
               <div>
-                <label className="label">Rôle</label>
+                <label className="label">{t('role')}</label>
                 <select className="input-field" value={roleMembre} onChange={(e) => setRoleMembre(e.target.value)}>
-                  <option value="commercial">Commercial</option>
-                  <option value="manager">Manager</option>
-                  <option value="comptable">Comptable</option>
-                  <option value="gestionnaire_stock">Gestionnaire de stock</option>
-                  <option value="agent_recouvrement">Agent de recouvrement</option>
-                  <option value="admin">Administrateur</option>
+                  <option value="commercial">{t('roles.commercial')}</option>
+                  <option value="manager">{t('roles.manager')}</option>
+                  <option value="comptable">{t('roles.comptable')}</option>
+                  <option value="gestionnaire_stock">{t('roles.gestionnaire_stock')}</option>
+                  <option value="agent_recouvrement">{t('roles.agent_recouvrement')}</option>
+                  <option value="admin">{t('roles.admin')}</option>
                 </select>
               </div>
               <div>
-                <label className="label">Zone</label>
+                <label className="label">{t('zone')}</label>
                 <input
                   className="input-field"
                   value={zoneMembre}
@@ -468,7 +471,7 @@ export default function Utilisateurs() {
                     checked={accesEtenduMembre}
                     onChange={(e) => setAccesEtenduMembre(e.target.checked)}
                   />
-                  Accès élargi (voit l'activité de toute l'entreprise, pas seulement la sienne)
+                  {t('accesElargiLabel')}
                 </label>
               )}
               {membreEnEdition?.id !== profil.id && (
@@ -478,7 +481,7 @@ export default function Utilisateurs() {
                     checked={lectureSeuleMembre}
                     onChange={(e) => setLectureSeuleMembre(e.target.checked)}
                   />
-                  Lecture seule (peut tout consulter, ne peut plus rien enregistrer ni modifier)
+                  {t('lectureSeuleLabel')}
                 </label>
               )}
               <label className="flex items-center gap-2 text-sm">
@@ -487,13 +490,13 @@ export default function Utilisateurs() {
                   checked={responsableTourneesMembre}
                   onChange={(e) => setResponsableTourneesMembre(e.target.checked)}
                 />
-                Responsable des tournées (peut programmer et modifier les tournées des commerciaux)
+                {t('responsableTourneesLabel')}
               </label>
               {roleMembre === 'gestionnaire_stock' && depots.length > 1 && (
                 <div className="border border-line rounded-lg p-3">
-                  <p className="label mb-2">Dépôts attribués</p>
+                  <p className="label mb-2">{t('depotsAttribues')}</p>
                   <p className="text-xs text-petrol-500 mb-2">
-                    Ce membre ne pourra enregistrer de mouvements que sur les dépôts cochés ci-dessous. Aucune case cochée = aucun accès.
+                    {t('depotsAttribuesAide')}
                   </p>
                   <div className="space-y-1.5">
                     {depots.map((d) => (
@@ -516,10 +519,10 @@ export default function Utilisateurs() {
               {erreurMembre && <p className="text-sm text-red-600">{erreurMembre}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="button" className="btn-secondary flex-1" onClick={() => setModalMembreOuvert(false)}>
-                  Annuler
+                  {t('annuler')}
                 </button>
                 <button type="submit" disabled={envoiMembre} className="btn-primary flex-1">
-                  {envoiMembre ? 'Enregistrement…' : 'Enregistrer'}
+                  {envoiMembre ? t('enregistrement') : t('enregistrer')}
                 </button>
               </div>
             </form>

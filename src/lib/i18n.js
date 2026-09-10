@@ -78,6 +78,10 @@ import stockcommercialFr from '../locales/fr/stockcommercial.json'
 import stockcommercialEn from '../locales/en/stockcommercial.json'
 import stockcommercialAr from '../locales/ar/stockcommercial.json'
 import stockcommercialZh from '../locales/zh/stockcommercial.json'
+import utilisateursFr from '../locales/fr/utilisateurs.json'
+import utilisateursEn from '../locales/en/utilisateurs.json'
+import utilisateursAr from '../locales/ar/utilisateurs.json'
+import utilisateursZh from '../locales/zh/utilisateurs.json'
 
 // Langues dont le contenu est réellement traduit. L'arabe et le chinois
 // sont préparés dans la structure (RTL, sélecteur) mais leur contenu
@@ -100,14 +104,14 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr, clients: clientsFr, commandes: commandesFr, tournees: tourneesFr, analyseia: analyseiaFr, mesversements: mesversementsFr, mouvementsstock: mouvementsstockFr, carteclients: carteclientsFr, grandlivre: grandlivreFr, depots: depotsFr, localiserstock: localiserstockFr, groupes: groupesFr, rapports: rapportsFr, versements: versementsFr, objectifs: objectifsFr, stockcommercial: stockcommercialFr },
-      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn, clients: clientsEn, commandes: commandesEn, tournees: tourneesEn, analyseia: analyseiaEn, mesversements: mesversementsEn, mouvementsstock: mouvementsstockEn, carteclients: carteclientsEn, grandlivre: grandlivreEn, depots: depotsEn, localiserstock: localiserstockEn, groupes: groupesEn, rapports: rapportsEn, versements: versementsEn, objectifs: objectifsEn, stockcommercial: stockcommercialEn },
-      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr, clients: clientsAr, commandes: commandesAr, tournees: tourneesAr, analyseia: analyseiaAr, mesversements: mesversementsAr, mouvementsstock: mouvementsstockAr, carteclients: carteclientsAr, grandlivre: grandlivreAr, depots: depotsAr, localiserstock: localiserstockAr, groupes: groupesAr, rapports: rapportsAr, versements: versementsAr, objectifs: objectifsAr, stockcommercial: stockcommercialAr },
-      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh, clients: clientsZh, commandes: commandesZh, tournees: tourneesZh, analyseia: analyseiaZh, mesversements: mesversementsZh, mouvementsstock: mouvementsstockZh, carteclients: carteclientsZh, grandlivre: grandlivreZh, depots: depotsZh, localiserstock: localiserstockZh, groupes: groupesZh, rapports: rapportsZh, versements: versementsZh, objectifs: objectifsZh, stockcommercial: stockcommercialZh },
+      fr: { commun: communFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr, clients: clientsFr, commandes: commandesFr, tournees: tourneesFr, analyseia: analyseiaFr, mesversements: mesversementsFr, mouvementsstock: mouvementsstockFr, carteclients: carteclientsFr, grandlivre: grandlivreFr, depots: depotsFr, localiserstock: localiserstockFr, groupes: groupesFr, rapports: rapportsFr, versements: versementsFr, objectifs: objectifsFr, stockcommercial: stockcommercialFr, utilisateurs: utilisateursFr },
+      en: { commun: communEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn, clients: clientsEn, commandes: commandesEn, tournees: tourneesEn, analyseia: analyseiaEn, mesversements: mesversementsEn, mouvementsstock: mouvementsstockEn, carteclients: carteclientsEn, grandlivre: grandlivreEn, depots: depotsEn, localiserstock: localiserstockEn, groupes: groupesEn, rapports: rapportsEn, versements: versementsEn, objectifs: objectifsEn, stockcommercial: stockcommercialEn, utilisateurs: utilisateursEn },
+      ar: { commun: communAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr, clients: clientsAr, commandes: commandesAr, tournees: tourneesAr, analyseia: analyseiaAr, mesversements: mesversementsAr, mouvementsstock: mouvementsstockAr, carteclients: carteclientsAr, grandlivre: grandlivreAr, depots: depotsAr, localiserstock: localiserstockAr, groupes: groupesAr, rapports: rapportsAr, versements: versementsAr, objectifs: objectifsAr, stockcommercial: stockcommercialAr, utilisateurs: utilisateursAr },
+      zh: { commun: communZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh, clients: clientsZh, commandes: commandesZh, tournees: tourneesZh, analyseia: analyseiaZh, mesversements: mesversementsZh, mouvementsstock: mouvementsstockZh, carteclients: carteclientsZh, grandlivre: grandlivreZh, depots: depotsZh, localiserstock: localiserstockZh, groupes: groupesZh, rapports: rapportsZh, versements: versementsZh, objectifs: objectifsZh, stockcommercial: stockcommercialZh, utilisateurs: utilisateursZh },
     },
     fallbackLng: 'fr',
     supportedLngs: LANGUES.map((l) => l.code),
-    ns: ['commun', 'dashboard', 'ventes', 'stock', 'clients', 'commandes', 'tournees', 'analyseia', 'mesversements', 'mouvementsstock', 'carteclients', 'grandlivre', 'depots', 'localiserstock', 'groupes', 'rapports', 'versements', 'objectifs', 'stockcommercial'],
+    ns: ['commun', 'dashboard', 'ventes', 'stock', 'clients', 'commandes', 'tournees', 'analyseia', 'mesversements', 'mouvementsstock', 'carteclients', 'grandlivre', 'depots', 'localiserstock', 'groupes', 'rapports', 'versements', 'objectifs', 'stockcommercial', 'utilisateurs'],
     defaultNS: 'commun',
     interpolation: { escapeValue: false }, // React échappe déjà par défaut
     detection: {
