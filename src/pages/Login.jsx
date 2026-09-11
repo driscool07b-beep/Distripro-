@@ -3,6 +3,7 @@ import { Navigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import SelecteurLangue from '../components/SelecteurLangue'
+import ChampMotDePasse from '../components/ChampMotDePasse'
 
 export default function Login() {
   const { t } = useTranslation()
@@ -51,12 +52,9 @@ export default function Login() {
           </div>
           <div>
             <label className="label">{t('connexion.motDePasse')}</label>
-            <input
-              type="password"
-              required
+            <ChampMotDePasse
               value={motDePasse}
               onChange={(e) => setMotDePasse(e.target.value)}
-              className="input-field"
               placeholder="••••••••"
               autoComplete="current-password"
             />

@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { traduireErreur } from '../lib/erreurs'
 import SelecteurLangue from '../components/SelecteurLangue'
+import ChampMotDePasse from '../components/ChampMotDePasse'
 
 export default function CreerEntreprise() {
   const { t } = useTranslation()
@@ -122,23 +123,17 @@ export default function CreerEntreprise() {
           </div>
           <div>
             <label className="label">{t('connexion.motDePasse')}</label>
-            <input
-              type="password"
-              required
+            <ChampMotDePasse
               value={motDePasse}
               onChange={(e) => setMotDePasse(e.target.value)}
-              className="input-field"
               autoComplete="new-password"
             />
           </div>
           <div>
             <label className="label">{t('inscription.confirmerMotDePasse')}</label>
-            <input
-              type="password"
-              required
+            <ChampMotDePasse
               value={confirmation}
               onChange={(e) => setConfirmation(e.target.value)}
-              className="input-field"
               autoComplete="new-password"
             />
           </div>
