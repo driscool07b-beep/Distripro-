@@ -7,6 +7,7 @@ import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, genererFactureAvoir, formatMontantPDF } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
 import { traduireErreur } from '../lib/erreurs'
+import { ajouterActionEnAttente } from '../lib/offline'
 
 export default function Ventes() {
   const { t } = useTranslation('ventes')
@@ -426,8 +427,7 @@ export default function Ventes() {
     const montantPayeEffectif = montantPaye === '' ? restantApresCredit : Math.min(Number(montantPaye), restantApresCredit)
     const resteAPayer = restantApresCredit - montantPayeEffectif
 
-    setEnregistrement(true)
-    const { data: nouvelleVenteId, error } = await supabase.rpc('creer_vente', {
+    const parametresVente = {
       p_client_id: clientId,
       p_lignes: lignesValides.map((l) => ({
         produit_id: l.produit_id,
@@ -443,10 +443,42 @@ export default function Ventes() {
       p_motif_remise: remiseEffective > 0 ? motifRemise.trim() : null,
       p_depot_id: depotId || null,
       p_credit_utilise: creditEffectif,
-    })
+    }
+
+    // Hors-ligne : uniquement possible pour un commercial vendant depuis
+    // son propre stock porté (stock_commercial, vérifié côté serveur en
+    // priorité par creer_vente avant le dépôt) — pas de vérification de
+    // stock en temps réel possible sans réseau, donc pas éligible pour
+    // une vente de bureau ou depuis un dépôt.
+    const eligibleHorsLigne = profil?.role === 'commercial' && commercialVendeurId === profil?.id
+
+    if (eligibleHorsLigne && !navigator.onLine) {
+      await ajouterActionEnAttente(
+        'creer_vente',
+        parametresVente,
+        `${t('titre')} — ${clients.find((c) => c.id === clientId)?.nom || ''} — ${formatXOF(total)}`
+      )
+      setModalOuvert(false)
+      chargerVentes()
+      return
+    }
+
+    setEnregistrement(true)
+    const { data: nouvelleVenteId, error } = await supabase.rpc('creer_vente', parametresVente)
     setEnregistrement(false)
 
     if (error) {
+      const erreurReseau = /failed to fetch|network|timeout|load failed/i.test(error.message || '')
+      if (eligibleHorsLigne && erreurReseau) {
+        await ajouterActionEnAttente(
+          'creer_vente',
+          parametresVente,
+          `${t('titre')} — ${clients.find((c) => c.id === clientId)?.nom || ''} — ${formatXOF(total)}`
+        )
+        setModalOuvert(false)
+        chargerVentes()
+        return
+      }
       console.error('Erreur creer_vente:', error)
       setErreur(`${t('form.erreurCreationVente')} : ${traduireErreur(error.message)}`)
       return

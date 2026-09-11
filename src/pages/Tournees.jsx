@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { accesAutorise } from '../lib/accesRole';
 import { traduireErreur } from '../lib/erreurs'
+import { ajouterActionEnAttente } from '../lib/offline'
 
 export default function Tournees() {
   const { t } = useTranslation('tournees');
@@ -177,6 +178,28 @@ export default function Tournees() {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        if (!navigator.onLine) {
+          // Hors-ligne : pas moyen de vérifier côté serveur la distance
+          // au client (valider_visite tourne sur la base) — on fait
+          // confiance à la position captée localement, mise à jour à
+          // la synchronisation.
+          await ajouterActionEnAttente(
+            'valider_visite',
+            { p_tournee_ligne_id: ligne.id, p_latitude: position.coords.latitude, p_longitude: position.coords.longitude },
+            `${t('detail.marquerVisitee')} — ${ligne.clients?.nom || ''}`
+          );
+          setRapportLigne(ligne);
+          setRapportNotesRayon('');
+          setRapportNotesReserve('');
+          setRapportPhotos([]);
+          setRapportErreur('');
+          setRapportLignesProduits([]);
+          setProduitAjoutSelection('');
+          setRapportValeursChamps({});
+          setRapportPresenceConcurrents({});
+          return;
+        }
+
         const { data, error } = await supabase.rpc('valider_visite', {
           p_tournee_ligne_id: ligne.id,
           p_latitude: position.coords.latitude,
@@ -262,6 +285,28 @@ export default function Tournees() {
       setRapportErreur(t('erreurs.photoRequise'));
       return;
     }
+
+    if (!navigator.onLine) {
+      await ajouterActionEnAttente(
+        'rapport_visite',
+        {
+          entrepriseId,
+          tourneeLigneId: rapportLigne.id,
+          clientId: rapportLigne.client_id,
+          commercialId: profil?.id,
+          notesRayon: rapportNotesRayon.trim(),
+          notesReserve: rapportNotesReserve.trim(),
+          lignesProduits: rapportLignesProduits,
+          valeursChamps: rapportValeursChamps,
+          presenceConcurrents: rapportPresenceConcurrents,
+          photos: rapportPhotos.map((p) => p.file),
+        },
+        `${t('rapport.titre')} — ${rapportLigne.clients?.nom || ''}`
+      );
+      fermerRapport();
+      return;
+    }
+
     setRapportEnvoi(true);
     setRapportErreur('');
 

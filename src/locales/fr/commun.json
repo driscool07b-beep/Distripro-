@@ -112,5 +112,13 @@
   "notFound": {
     "pageInexistante": "Cette page n'existe pas.",
     "retourTableauDeBord": "Retour au tableau de bord"
+  },
+  "horsLigne": {
+    "horsLigne": "📡 Hors ligne",
+    "enAttente": "{{n}} action(s) en attente",
+    "synchronisation": "🔄 Synchronisation… ({{n}} restante(s))",
+    "attenteSynchro": "En attente de connexion",
+    "echec": "Échec : {{message}}",
+    "supprimer": "Supprimer"
   }
 }

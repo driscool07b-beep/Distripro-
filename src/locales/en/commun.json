@@ -112,5 +112,13 @@
   "notFound": {
     "pageInexistante": "This page doesn't exist.",
     "retourTableauDeBord": "Back to dashboard"
+  },
+  "horsLigne": {
+    "horsLigne": "📡 Offline",
+    "enAttente": "{{n}} action(s) pending",
+    "synchronisation": "🔄 Syncing… ({{n}} remaining)",
+    "attenteSynchro": "Waiting for connection",
+    "echec": "Failed: {{message}}",
+    "supprimer": "Remove"
   }
 }

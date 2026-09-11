@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
+import BandeauHorsLigne from './BandeauHorsLigne'
 
 const TOUS_ROLES = ['admin', 'manager', 'commercial', 'comptable', 'gestionnaire_stock', 'agent_recouvrement']
 
@@ -240,6 +241,7 @@ export default function Layout() {
           <span className="font-display font-semibold">DistribPro</span>
         </div>
         <main className="flex-1 min-w-0 overflow-x-hidden">
+          <BandeauHorsLigne />
           <Outlet />
         </main>
       </div>
