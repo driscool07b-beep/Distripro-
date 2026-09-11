@@ -14,6 +14,11 @@
     "creancesEchues": "Créances échues",
     "commandesEnAttente": "Commandes en attente",
     "ventes7jTitre": "Ventes des 7 derniers jours",
+    "ventesPeriodeTitre": "Ventes",
+    "periode_7j": "7 jours",
+    "periode_30j": "30 jours",
+    "periode_12m": "12 mois",
+    "comparaisonAnnuelleTitre": "Comparaison sur 3 ans (par mois)",
     "aucuneVentePeriode": "Aucune vente enregistrée sur cette période.",
     "produitsEnAlerte": "Produits en alerte",
     "aucunProduitSeuil": "Aucun produit sous le seuil d'alerte."

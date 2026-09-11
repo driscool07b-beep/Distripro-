@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -28,13 +28,85 @@ function DashboardEntreprise() {
     creancesEchues: 0,
     commandesEnAttente: 0,
   })
-  const [ventes7j, setVentes7j] = useState([])
   const [alertes, setAlertes] = useState([])
   const [chargement, setChargement] = useState(true)
+  const [periodeGraphe, setPeriodeGraphe] = useState('7j')
+  const [ventesGraphe, setVentesGraphe] = useState([])
+  const [chargementGraphe, setChargementGraphe] = useState(true)
+  const [comparaisonAnnuelle, setComparaisonAnnuelle] = useState([])
+  const [chargementComparaison, setChargementComparaison] = useState(true)
 
   useEffect(() => {
     chargerDonnees()
   }, [])
+
+  useEffect(() => {
+    chargerGraphe(periodeGraphe)
+  }, [periodeGraphe])
+
+  useEffect(() => {
+    chargerComparaisonAnnuelle()
+  }, [])
+
+  async function chargerGraphe(periode) {
+    setChargementGraphe(true)
+    const maintenant = new Date()
+    let debut
+    if (periode === '7j') debut = new Date(Date.now() - 7 * 86400000)
+    else if (periode === '30j') debut = new Date(Date.now() - 30 * 86400000)
+    else debut = new Date(maintenant.getFullYear(), maintenant.getMonth() - 11, 1)
+
+    const { data } = await supabase
+      .from('ventes')
+      .select('total, created_at')
+      .neq('statut', 'annulee')
+      .gte('created_at', debut.toISOString())
+      .order('created_at')
+
+    const parCle = {}
+    ;(data || []).forEach((v) => {
+      const d = new Date(v.created_at)
+      const cle =
+        periode === '12m'
+          ? d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' })
+          : d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
+      parCle[cle] = (parCle[cle] || 0) + Number(v.total || 0)
+    })
+    setVentesGraphe(Object.entries(parCle).map(([jour, total]) => ({ jour, total })))
+    setChargementGraphe(false)
+  }
+
+  async function chargerComparaisonAnnuelle() {
+    setChargementComparaison(true)
+    const anneeActuelle = new Date().getFullYear()
+    const debut = new Date(anneeActuelle - 2, 0, 1)
+
+    const { data } = await supabase
+      .from('ventes')
+      .select('total, created_at')
+      .neq('statut', 'annulee')
+      .gte('created_at', debut.toISOString())
+      .order('created_at')
+
+    const parMoisAnnee = {}
+    ;(data || []).forEach((v) => {
+      const d = new Date(v.created_at)
+      const mois = d.getMonth()
+      const annee = d.getFullYear()
+      if (!parMoisAnnee[mois]) parMoisAnnee[mois] = {}
+      parMoisAnnee[mois][annee] = (parMoisAnnee[mois][annee] || 0) + Number(v.total || 0)
+    })
+
+    const labelsMois = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc']
+    const annees = [anneeActuelle - 2, anneeActuelle - 1, anneeActuelle]
+    const lignes = labelsMois.map((label, i) => {
+      const ligne = { mois: label }
+      annees.forEach((a) => { ligne[a] = parMoisAnnee[i]?.[a] || 0 })
+      return ligne
+    })
+    setComparaisonAnnuelle(lignes)
+    setChargementComparaison(false)
+  }
 
   async function chargerDonnees() {
     setChargement(true)
@@ -45,18 +117,13 @@ function DashboardEntreprise() {
     debutMois.setDate(1)
     debutMois.setHours(0, 0, 0, 0)
 
-    const [{ data: ventesJour }, { data: ventesMois }, { count: nbClientsActifs }, { count: nbClientsTotal }, { data: stockBas }, { data: histo }, { data: creancesData }, { count: commandesCount }] =
+    const [{ data: ventesJour }, { data: ventesMois }, { count: nbClientsActifs }, { count: nbClientsTotal }, { data: stockBas }, { data: creancesData }, { count: commandesCount }] =
       await Promise.all([
         supabase.from('ventes').select('total').neq('statut', 'annulee').gte('created_at', debutJour.toISOString()),
         supabase.from('ventes').select('total, created_at').neq('statut', 'annulee').gte('created_at', debutMois.toISOString()),
         supabase.from('clients').select('id', { count: 'exact', head: true }).eq('segment', 'actif'),
         supabase.from('clients').select('id', { count: 'exact', head: true }),
         supabase.from('stocks').select('quantite, produits(nom, seuil_alerte, prix_vente)'),
-        supabase
-          .from('ventes')
-          .select('total, created_at')
-          .neq('statut', 'annulee')
-          .gte('created_at', new Date(Date.now() - 7 * 86400000).toISOString()),
         supabase
           .from('ventes')
           .select('total, montant_regle, date_echeance')
@@ -78,12 +145,6 @@ function DashboardEntreprise() {
       0
     )
 
-    const parJour = {}
-    ;(histo || []).forEach((v) => {
-      const jour = new Date(v.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
-      parJour[jour] = (parJour[jour] || 0) + Number(v.total || 0)
-    })
-
     const aujourdhui = new Date().toISOString().split('T')[0]
     const creancesOuvertes = (creancesData || []).filter((v) => Number(v.montant_regle) < Number(v.total))
     const totalCreances = creancesOuvertes.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
@@ -102,7 +163,6 @@ function DashboardEntreprise() {
       commandesEnAttente: commandesCount || 0,
     })
     setAlertes(enAlerte.slice(0, 5))
-    setVentes7j(Object.entries(parJour).map(([jour, total]) => ({ jour, total })))
     setChargement(false)
   }
 
@@ -141,18 +201,33 @@ function DashboardEntreprise() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="card p-6 lg:col-span-2">
-          <h2 className="font-semibold mb-4">{t('entreprise.ventes7jTitre')}</h2>
-          {chargement ? (
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <h2 className="font-semibold">{t('entreprise.ventesPeriodeTitre')}</h2>
+            <div className="flex gap-1">
+              {['7j', '30j', '12m'].map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPeriodeGraphe(p)}
+                  className={`text-xs px-2.5 py-1 rounded-full border ${
+                    periodeGraphe === p ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line text-petrol-600'
+                  }`}
+                >
+                  {t(`entreprise.periode_${p}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+          {chargementGraphe ? (
             <div className="h-64 flex items-center justify-center text-sm text-petrol-500">{t('chargement')}</div>
-          ) : ventes7j.length === 0 ? (
+          ) : ventesGraphe.length === 0 ? (
             <div className="h-64 flex items-center justify-center text-sm text-petrol-500">
               {t('entreprise.aucuneVentePeriode')}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={ventes7j}>
+              <LineChart data={ventesGraphe}>
                 <CartesianGrid stroke="#e2e4df" vertical={false} />
                 <XAxis dataKey="jour" tick={{ fontSize: 12, fill: '#255a67' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 12, fill: '#255a67' }} axisLine={false} tickLine={false} />
@@ -182,6 +257,30 @@ function DashboardEntreprise() {
             </ul>
           )}
         </div>
+      </div>
+
+      <div className="card p-6">
+        <h2 className="font-semibold mb-4">{t('entreprise.comparaisonAnnuelleTitre')}</h2>
+        {chargementComparaison ? (
+          <div className="h-64 flex items-center justify-center text-sm text-petrol-500">{t('chargement')}</div>
+        ) : (
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={comparaisonAnnuelle}>
+              <CartesianGrid stroke="#e2e4df" vertical={false} />
+              <XAxis dataKey="mois" tick={{ fontSize: 12, fill: '#255a67' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: '#255a67' }} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v) => formatXOF(v)} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              {[0, 1, 2].map((i) => {
+                const annee = new Date().getFullYear() - 2 + i
+                const couleurs = ['#94a3b8', '#255a67', '#d69428']
+                return (
+                  <Line key={annee} type="monotone" dataKey={annee} name={String(annee)} stroke={couleurs[i]} strokeWidth={2} dot={{ r: 2 }} />
+                )
+              })}
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   )

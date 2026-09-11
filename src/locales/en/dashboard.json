@@ -14,6 +14,11 @@
     "creancesEchues": "Overdue receivables",
     "commandesEnAttente": "Pending orders",
     "ventes7jTitre": "Sales over the last 7 days",
+    "ventesPeriodeTitre": "Sales",
+    "periode_7j": "7 days",
+    "periode_30j": "30 days",
+    "periode_12m": "12 months",
+    "comparaisonAnnuelleTitre": "3-year comparison (by month)",
     "aucuneVentePeriode": "No sales recorded for this period.",
     "produitsEnAlerte": "Products in alert",
     "aucunProduitSeuil": "No product below the alert threshold."
