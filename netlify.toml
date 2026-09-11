@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Indispensable pour une SPA (React Router) : sans ça, recharger une
+# page autre que l'accueil (ex. /ventes) renverrait une erreur 404,
+# puisque Netlify chercherait un vrai fichier /ventes qui n'existe pas.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
