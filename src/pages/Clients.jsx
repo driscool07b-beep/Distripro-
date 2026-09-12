@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
+import { formatXOF } from '../lib/format'
 
 const COULEURS_SEGMENT = {
   actif: 'bg-green-50 text-green-700 border-green-200',
@@ -955,6 +956,3 @@ export default function Clients() {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

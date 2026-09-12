@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, genererAccuseVersement, formatMontantPDF } from '../lib/export'
 import { traduireErreur } from '../lib/erreurs'
+import { formatXOF } from '../lib/format'
 
 export default function Versements() {
   const { t } = useTranslation('versements')
@@ -299,6 +300,3 @@ export default function Versements() {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

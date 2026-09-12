@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { formatXOF } from '../lib/format'
 
 export default function Dashboard() {
   const { profil } = useAuth()
@@ -721,6 +722,3 @@ function CarteKpi({ label, valeur, accent, alerte, to }) {
   return to ? <Link to={to}>{contenu}</Link> : contenu
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

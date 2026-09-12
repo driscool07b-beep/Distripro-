@@ -30,6 +30,8 @@ export default function Parametres() {
   const [confirmationInfos, setConfirmationInfos] = useState(false)
   const [assujettiTva, setAssujettiTva] = useState(false)
   const [enregistrementTva, setEnregistrementTva] = useState(false)
+  const [devise, setDevise] = useState('XOF')
+  const [enregistrementDevise, setEnregistrementDevise] = useState(false)
   const [taxes, setTaxes] = useState([])
   const [nouvelleTaxe, setNouvelleTaxe] = useState({ nom: '', taux: '', base_calcul: 'ttc' })
   const [erreurTaxe, setErreurTaxe] = useState('')
@@ -47,6 +49,7 @@ export default function Parametres() {
       setSeuilRemise(String(entreprise.seuil_remise_pourcentage ?? 15))
       setJustificatifObligatoire(entreprise.justificatif_stock_obligatoire ?? true)
       setAssujettiTva(entreprise.assujetti_tva ?? false)
+      setDevise(entreprise.devise ?? 'XOF')
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -87,6 +90,16 @@ export default function Parametres() {
     setEnregistrementTva(false)
     if (!error) {
       setAssujettiTva(valeur)
+      rechargerProfil?.()
+    }
+  }
+
+  async function changerDevise(code) {
+    setEnregistrementDevise(true)
+    const { error } = await supabase.rpc('modifier_devise_entreprise', { p_devise: code })
+    setEnregistrementDevise(false)
+    if (!error) {
+      setDevise(code)
       rechargerProfil?.()
     }
   }
@@ -464,6 +477,28 @@ export default function Parametres() {
             Exiger un justificatif (photo/PDF) pour tout ajustement manuel de stock
           </label>
           {confirmationJustificatif && <p className="text-xs text-green-600 mt-2">Enregistré.</p>}
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">Devise</h2>
+          <p className="text-xs text-petrol-500 mb-3">
+            S'applique à tous les montants affichés dans l'app (ventes, stock, créances, reçus…).
+          </p>
+          <select
+            className="input-field"
+            value={devise}
+            disabled={enregistrementDevise}
+            onChange={(e) => changerDevise(e.target.value)}
+          >
+            <option value="XOF">Franc CFA (UEMOA) — F CFA</option>
+            <option value="EUR">Euro — €</option>
+            <option value="USD">Dollar américain — $</option>
+            <option value="GBP">Livre sterling — £</option>
+            <option value="GHS">Cedi ghanéen — GH₵</option>
+            <option value="NGN">Naira nigérian — ₦</option>
+          </select>
         </div>
       )}
 

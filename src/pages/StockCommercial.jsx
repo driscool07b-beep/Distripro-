@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
+import { formatXOF } from '../lib/format'
 
 export default function StockCommercial() {
   const { t } = useTranslation('stockcommercial')
@@ -457,6 +458,3 @@ function SortiesRetours() {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

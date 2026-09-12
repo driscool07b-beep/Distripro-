@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF } from '../lib/export'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
+import { formatXOF } from '../lib/format'
 
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '' }
 
@@ -1125,6 +1126,3 @@ export default function Stock() {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

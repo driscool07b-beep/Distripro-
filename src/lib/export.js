@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { formatNombre, formatXOF as formatMontantDevise, formatDate, formatDateHeure, DEVISES, deviseCourante } from './format'
 
 const LIBELLES_MODE = {
   espece: 'Espèces',
@@ -10,15 +11,20 @@ const LIBELLES_MODE = {
 }
 
 /**
- * Formate un montant pour affichage dans un PDF. Intl.NumberFormat('fr-FR')
- * utilise une espace fine insécable (U+202F) comme séparateur de milliers,
- * que la police par défaut de jsPDF (Helvetica) ne sait pas afficher — elle
- * la rend visuellement comme un "/". On la remplace par une espace normale.
+ * Formate un montant pour affichage dans un PDF. Intl.NumberFormat utilise
+ * une espace fine insécable (U+202F) comme séparateur de milliers, que la
+ * police par défaut de jsPDF (Helvetica) ne sait pas afficher — elle la
+ * rend visuellement comme un "/". formatNombre() la remplace déjà par une
+ * espace normale. Suit aussi la devise configurée par l'entreprise (plus
+ * seulement F CFA) et la langue active (plus seulement fr-FR).
  */
 export function formatMontantPDF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 })
-    .format(n || 0)
-    .replace(/[\u202F\u00A0]/g, ' ')
+  return formatNombre(n)
+}
+
+/** Symbole de la devise active de l'entreprise (F CFA, €, $...). */
+export function symboleDevise() {
+  return DEVISES[deviseCourante()]?.symbole || 'F CFA'
 }
 
 /**
@@ -143,12 +149,12 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes }) {
   doc.text(`Client : ${vente.clients?.nom || '—'}`, 14, yInfo)
   if (vente.clients?.telephone) doc.text(`Téléphone : ${vente.clients.telephone}`, 14, yInfo + 6)
   if (vente.clients?.adresse) doc.text(`Adresse : ${vente.clients.adresse}`, 14, yInfo + 12)
-  doc.text(`Date : ${new Date(vente.created_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
+  doc.text(`Date : ${formatDateHeure(vente.created_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
   if (vente.profils?.nom) doc.text(`Commercial : ${vente.profils.nom}`, 120, yInfo + 6)
 
   autoTable(doc, {
     startY: yInfo + 20,
-    head: [['Produit', 'Qté', 'PU (F CFA)', 'Sous-total (F CFA)']],
+    head: [['Produit', 'Qté', `PU (${symboleDevise()})`, `Sous-total (${symboleDevise()})`]],
     body: lignes.map((l) => [
       l.produits?.nom || '',
       String(l.quantite),
@@ -161,7 +167,7 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes }) {
     margin: { left: 14, right: 14 },
   })
 
-  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
+  const formatMontant = (n) => formatMontantDevise(n)
   const corpsRecap = []
   const sousTotalBrut = lignes.reduce((s, l) => s + Number(l.sous_total || 0), 0)
   const aDesTaxes = Number(vente.montant_tva) > 0 || Number(vente.montant_autres_taxes) > 0
@@ -229,7 +235,7 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes }) {
 export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, montant, date, reference }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
-  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
+  const formatMontant = (n) => formatMontantDevise(n)
 
   doc.setFillColor(253, 232, 232)
   doc.setDrawColor(190, 50, 50)
@@ -243,7 +249,7 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
   const yInfo = y0 + 18
   doc.text(`Client : ${client?.nom || '—'}`, 14, yInfo)
   if (client?.telephone) doc.text(`Téléphone : ${client.telephone}`, 14, yInfo + 6)
-  doc.text(`Date : ${new Date(date).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
+  doc.text(`Date : ${formatDateHeure(date, { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
   if (vente?.numero_vente) doc.text(`Réf. vente annulée : ${vente.numero_vente}`, 120, yInfo + 6)
 
   let y = yInfo + 18
@@ -257,7 +263,7 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
   if (lignes && lignes.length > 0) {
     autoTable(doc, {
       startY: y,
-      head: [['Produit', 'Qté', 'PU (F CFA)', 'Sous-total (F CFA)']],
+      head: [['Produit', 'Qté', `PU (${symboleDevise()})`, `Sous-total (${symboleDevise()})`]],
       body: lignes.map((l) => [
         l.produits?.nom || '',
         String(l.quantite),
@@ -301,7 +307,7 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
 export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde, total, date, numero, venteNumero, receptionnePar }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
-  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
+  const formatMontant = (n) => formatMontantDevise(n)
 
   doc.setFillColor(230, 245, 236)
   doc.setDrawColor(45, 140, 90)
@@ -315,7 +321,7 @@ export function genererRecuPaiement({ entreprise, client, montant, nouveauSolde,
   const yInfo = y0 + 20
   doc.text(`Client : ${client?.nom || '—'}`, 14, yInfo)
   if (client?.telephone) doc.text(`Téléphone : ${client.telephone}`, 14, yInfo + 7)
-  doc.text(`Date : ${new Date(date).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 130, yInfo)
+  doc.text(`Date : ${formatDateHeure(date, { dateStyle: 'medium', timeStyle: 'short' })}`, 130, yInfo)
   if (venteNumero) doc.text(`Réf. vente : ${venteNumero}`, 130, yInfo + 7)
   if (receptionnePar) doc.text(`Reçu par : ${receptionnePar}`, 130, yInfo + 14)
 
@@ -369,7 +375,7 @@ export function genererBonLivraison({ entreprise, vente, lignes }) {
   doc.text(`Client : ${vente.clients?.nom || '—'}`, 14, yInfo)
   if (vente.clients?.telephone) doc.text(`Téléphone : ${vente.clients.telephone}`, 14, yInfo + 6)
   if (vente.clients?.adresse) doc.text(`Adresse de livraison : ${vente.clients.adresse}`, 14, yInfo + 12)
-  doc.text(`Date : ${new Date(vente.created_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
+  doc.text(`Date : ${formatDateHeure(vente.created_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
   if (vente.profils?.nom) doc.text(`Livré par : ${vente.profils.nom}`, 120, yInfo + 6)
   if (vente.numero_vente) doc.text(`Réf. vente : ${vente.numero_vente}`, 120, yInfo + 12)
 
@@ -417,14 +423,14 @@ export function genererFactureProforma({ entreprise, commande, lignes }) {
   const yInfo = yTitre + 8
   if (commande.clients?.adresse) doc.text(`Adresse : ${commande.clients.adresse}`, 14, yInfo)
   if (commande.clients?.telephone) doc.text(`Téléphone : ${commande.clients.telephone}`, 14, yInfo + 6)
-  doc.text(`Date : ${new Date(commande.created_at).toLocaleDateString('fr-FR')}`, 130, yInfo)
+  doc.text(`Date : ${formatDate(commande.created_at)}`, 130, yInfo)
   if (commande.date_livraison_souhaitee) {
-    doc.text(`Livraison souhaitée : ${new Date(commande.date_livraison_souhaitee).toLocaleDateString('fr-FR')}`, 130, yInfo + 6)
+    doc.text(`Livraison souhaitée : ${formatDate(commande.date_livraison_souhaitee)}`, 130, yInfo + 6)
   }
 
   autoTable(doc, {
     startY: yInfo + 16,
-    head: [['Produit', 'Qté', 'PU (F CFA)', 'Sous-total (F CFA)']],
+    head: [['Produit', 'Qté', `PU (${symboleDevise()})`, `Sous-total (${symboleDevise()})`]],
     body: lignes.map((l) => [
       l.produits?.nom || '',
       String(l.quantite),
@@ -439,7 +445,7 @@ export function genererFactureProforma({ entreprise, commande, lignes }) {
 
   const totalHT = lignes.reduce((s, l) => s + l.quantite * l.prix_unitaire, 0)
   const y = doc.lastAutoTable.finalY + 12
-  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
+  const formatMontant = (n) => formatMontantDevise(n)
 
   doc.setFontSize(10)
   doc.text(`Montant HT`, 130, y)
@@ -473,7 +479,7 @@ export function genererFactureProforma({ entreprise, commande, lignes }) {
 export function genererAccuseVersement({ entreprise, versement, commercial, caisse, recuPar }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
-  const formatMontant = (n) => formatMontantPDF(n) + ' F CFA'
+  const formatMontant = (n) => formatMontantDevise(n)
 
   doc.setFontSize(11)
   doc.setTextColor(60)
@@ -484,7 +490,7 @@ export function genererAccuseVersement({ entreprise, versement, commercial, cais
   const yInfo = y0 + 14
   doc.text(`Commercial : ${commercial?.nom || '—'}`, 14, yInfo)
   doc.text(`Caisse : ${caisse?.nom || '—'}`, 14, yInfo + 8)
-  doc.text(`Date : ${new Date(versement.date_versement).toLocaleDateString('fr-FR')}`, 14, yInfo + 16)
+  doc.text(`Date : ${formatDate(versement.date_versement)}`, 14, yInfo + 16)
   doc.text(`Reçu par : ${recuPar?.nom || '—'}`, 14, yInfo + 24)
 
   doc.setFontSize(16)

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { formatXOF } from '../lib/format'
 
 export default function MesVersements() {
   const { t } = useTranslation('mesversements')
@@ -137,6 +138,3 @@ export default function MesVersements() {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

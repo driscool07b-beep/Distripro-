@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF } from '../lib/export'
+import { formatXOF } from '../lib/format'
 
 export default function Analytique() {
   const { t } = useTranslation('analytique')
@@ -594,6 +595,3 @@ function ManqueAGagner({ entreprise }) {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

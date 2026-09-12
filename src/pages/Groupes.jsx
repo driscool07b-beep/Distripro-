@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF } from '../lib/export'
+import { formatXOF } from '../lib/format'
 
 export default function Groupes() {
   const { t } = useTranslation('groupes')
@@ -212,6 +213,3 @@ function premierJourDuMois() {
   return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0]
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0).replace(/[\u202F\u00A0]/g, ' ') + ' F CFA'
-}

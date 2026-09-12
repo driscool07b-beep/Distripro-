@@ -8,6 +8,7 @@ import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, gene
 import SelectRecherche from '../components/SelectRecherche'
 import { traduireErreur } from '../lib/erreurs'
 import { ajouterActionEnAttente } from '../lib/offline'
+import { formatXOF } from '../lib/format'
 
 export default function Ventes() {
   const { t } = useTranslation('ventes')
@@ -1066,6 +1067,3 @@ export default function Ventes() {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

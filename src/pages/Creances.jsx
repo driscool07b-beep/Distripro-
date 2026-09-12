@@ -7,6 +7,7 @@ import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF } from '../lib/export'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
+import { formatXOF } from '../lib/format'
 
 export default function Creances() {
   const { t } = useTranslation('creances')
@@ -646,6 +647,3 @@ export default function Creances() {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

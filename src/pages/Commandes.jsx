@@ -6,6 +6,7 @@ import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererFactureProforma } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
 import { traduireErreur } from '../lib/erreurs'
+import { formatXOF } from '../lib/format'
 
 function libellesStatut(t) {
   return {
@@ -770,6 +771,3 @@ export default function Commandes() {
   )
 }
 
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
-}

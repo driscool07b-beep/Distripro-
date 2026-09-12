@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import i18n from '../lib/i18n'
+import { definirDevise } from '../lib/format'
 
 const AuthContext = createContext(null)
 
@@ -83,7 +84,7 @@ export function AuthProvider({ children }) {
 
     const { data: entrepriseData, error: entrepriseError } = await supabase
       .from('entreprises')
-      .select('id, nom, plan, statut, photo_rapport_obligatoire, adresse, telephone, email, ncc, rccm, seuil_remise_pourcentage, justificatif_stock_obligatoire, assujetti_tva')
+      .select('id, nom, plan, statut, photo_rapport_obligatoire, adresse, telephone, email, ncc, rccm, seuil_remise_pourcentage, justificatif_stock_obligatoire, assujetti_tva, devise')
       .eq('id', profilData.entreprise_id)
       .single()
 
@@ -93,6 +94,7 @@ export function AuthProvider({ children }) {
       return
     }
     setEntreprise(entrepriseData)
+    definirDevise(entrepriseData.devise)
   }
 
   useEffect(() => {

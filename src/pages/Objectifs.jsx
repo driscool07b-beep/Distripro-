@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
+import { formatXOF } from '../lib/format'
 
 export default function Objectifs() {
   const { t } = useTranslation('objectifs')
@@ -346,7 +347,4 @@ function premierJourDuMois() {
 function dernierJourDuMois() {
   const d = new Date()
   return new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0]
-}
-function formatXOF(n) {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0) + ' F CFA'
 }
