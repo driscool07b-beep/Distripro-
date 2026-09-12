@@ -18,6 +18,8 @@
 
   "recap": {
     "titre": "📦 Pending orders summary — {{unites}} unit(s), {{valeur}}",
+    "titreVide": "📦 Pending orders summary",
+    "aucuneCommandeEnAttente": "No pending orders at the moment.",
     "produit": "Product",
     "quantite": "Quantity",
     "valeurEstimee": "Estimated value"

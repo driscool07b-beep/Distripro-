@@ -67,7 +67,7 @@ export default function Commandes() {
   const [envoiBonCommande, setEnvoiBonCommande] = useState(false)
   const [erreurBonCommande, setErreurBonCommande] = useState('')
   const [recap, setRecap] = useState(null)
-  const [recapOuvert, setRecapOuvert] = useState(false)
+  const [recapOuvert, setRecapOuvert] = useState(true)
 
   useEffect(() => {
     if (profil) chargerCommandes()
@@ -395,36 +395,42 @@ export default function Commandes() {
         </div>
       </div>
 
-      {recap && recap.lignes.length > 0 && (
+      {recap && (
         <div className="card p-4 mb-4">
           <button
             onClick={() => setRecapOuvert(!recapOuvert)}
             className="w-full flex items-center justify-between"
           >
             <span className="font-semibold text-sm">
-              {t('recap.titre', { unites: recap.lignes.reduce((s, l) => s + l.quantite, 0), valeur: formatXOF(recap.totalValeur) })}
+              {recap.lignes.length > 0
+                ? t('recap.titre', { unites: recap.lignes.reduce((s, l) => s + l.quantite, 0), valeur: formatXOF(recap.totalValeur) })
+                : t('recap.titreVide')}
             </span>
             <span className="text-petrol-400 text-xs">{recapOuvert ? '▲' : '▼'}</span>
           </button>
           {recapOuvert && (
-            <table className="w-full text-xs mt-3">
-              <thead>
-                <tr className="text-left text-petrol-500 border-b border-line">
-                  <th className="pb-1.5">{t('recap.produit')}</th>
-                  <th className="pb-1.5 text-right">{t('recap.quantite')}</th>
-                  <th className="pb-1.5 text-right">{t('recap.valeurEstimee')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recap.lignes.map((l, i) => (
-                  <tr key={i} className="border-b border-line last:border-0">
-                    <td className="py-1.5">{l.produit}</td>
-                    <td className="py-1.5 text-right font-mono">{l.quantite}</td>
-                    <td className="py-1.5 text-right font-mono">{formatXOF(l.valeur)}</td>
+            recap.lignes.length > 0 ? (
+              <table className="w-full text-xs mt-3">
+                <thead>
+                  <tr className="text-left text-petrol-500 border-b border-line">
+                    <th className="pb-1.5">{t('recap.produit')}</th>
+                    <th className="pb-1.5 text-right">{t('recap.quantite')}</th>
+                    <th className="pb-1.5 text-right">{t('recap.valeurEstimee')}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {recap.lignes.map((l, i) => (
+                    <tr key={i} className="border-b border-line last:border-0">
+                      <td className="py-1.5">{l.produit}</td>
+                      <td className="py-1.5 text-right font-mono">{l.quantite}</td>
+                      <td className="py-1.5 text-right font-mono">{formatXOF(l.valeur)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-xs text-petrol-400 mt-2">{t('recap.aucuneCommandeEnAttente')}</p>
+            )
           )}
         </div>
       )}

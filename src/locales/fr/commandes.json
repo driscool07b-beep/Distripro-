@@ -18,6 +18,8 @@
 
   "recap": {
     "titre": "📦 Récap commandes en cours — {{unites}} unité(s), {{valeur}}",
+    "titreVide": "📦 Récap commandes en cours",
+    "aucuneCommandeEnAttente": "Aucune commande en attente pour le moment.",
     "produit": "Produit",
     "quantite": "Quantité",
     "valeurEstimee": "Valeur estimée"
