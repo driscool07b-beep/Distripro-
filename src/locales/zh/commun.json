@@ -1,1 +1,124 @@
-{}
+{
+  "menu": {
+    "tableauDeBord": "仪表盘",
+    "clients": "客户",
+    "groupesClients": "客户分组",
+    "carteClients": "客户地图",
+    "produitsStock": "产品与库存",
+    "magasinsStockage": "存储仓库",
+    "journalStock": "库存日志",
+    "ventes": "销售",
+    "commandes": "订单",
+    "tournees": "巡回路线",
+    "rapportsVisite": "拜访报告",
+    "creances": "应收账款",
+    "localiserProduit": "定位产品",
+    "versements": "存款",
+    "mesVersements": "我的存款",
+    "equipe": "团队",
+    "parametres": "设置",
+    "deconnexion": "退出登录",
+    "analytique": "分析",
+    "objectifs": "目标",
+    "analyseIA": "AI 分析",
+    "monStockEnMain": "我持有的库存",
+    "stockCommerciaux": "销售代表库存",
+    "fermerMenu": "关闭菜单",
+    "ouvrirMenu": "打开菜单"
+  },
+  "actions": {
+    "annuler": "取消",
+    "valider": "确认",
+    "enregistrer": "保存",
+    "enregistrement": "保存中…",
+    "modifier": "编辑",
+    "supprimer": "删除",
+    "fermer": "关闭",
+    "retour": "返回",
+    "reessayer": "重试",
+    "rechercher": "搜索…",
+    "telecharger": "下载",
+    "imprimer": "打印",
+    "partager": "分享",
+    "ajouter": "添加",
+    "confirmer": "确认"
+  },
+  "commun": {
+    "chargement": "加载中…",
+    "chargementProfil": "正在加载个人资料…",
+    "aucunResultat": "没有结果。",
+    "erreur": "错误",
+    "erreurInconnue": "未知错误。",
+    "champObligatoire": "此字段为必填项。",
+    "total": "总计",
+    "date": "日期",
+    "statut": "状态",
+    "client": "客户",
+    "produit": "产品",
+    "quantite": "数量",
+    "montant": "金额",
+    "oui": "是",
+    "non": "否"
+  },
+  "langue": {
+    "selectionner": "语言",
+    "fr": "法语",
+    "en": "英语",
+    "ar": "阿拉伯语",
+    "zh": "中文"
+  },
+  "auth": {
+    "profilImpossible": "无法加载您的个人资料",
+    "compteSuspenduTitre": "账户已暂停",
+    "compteSuspenduTexte": "您公司的订阅当前已暂停。请联系 DistribPro 支持以解决您的账户问题。"
+  },
+  "connexion": {
+    "tagline": "商业管理与分销",
+    "email": "电子邮件地址",
+    "motDePasse": "密码",
+    "erreurIdentifiants": "电子邮件或密码不正确。",
+    "enCours": "登录中…",
+    "seConnecter": "登录",
+    "inviteRejoindre": "受邀加入团队？",
+    "creerCompte": "创建您的账户",
+    "nouvelleEntreprise": "新公司？",
+    "creerEspace": "创建您的 DistribPro 空间"
+  },
+  "inscription": {
+    "mdpMinLength": "密码必须至少包含6个字符。",
+    "mdpMismatch": "两次输入的密码不一致。",
+    "compteCree": "账户已创建",
+    "verifierEmail": "请查收电子邮件以确认您的账户，然后登录。",
+    "allerConnexion": "前往登录",
+    "creerVotreCompte": "创建您的账户",
+    "utiliserEmailInvitation": "请使用管理员邀请您时所用的电子邮件地址。",
+    "confirmerMotDePasse": "确认密码",
+    "enCours": "创建中…",
+    "creerMonCompte": "创建我的账户",
+    "dejaCompte": "已有账户？"
+  },
+  "creerEntreprise": {
+    "champsRequis": "公司名称和您的全名为必填项。",
+    "verifierEmail": "请查收电子邮件以确认您的账户，然后登录——您的公司将自动创建。",
+    "titre": "创建您的公司",
+    "nomEntreprise": "您的公司名称",
+    "placeholderEntreprise": "例如：Rama Cereal",
+    "votreNomComplet": "您的全名",
+    "enCours": "创建中…",
+    "creerMonEntreprise": "创建我的公司",
+    "inviteRejoindreEquipe": "受邀加入现有团队？",
+    "cliquezIci": "点击这里"
+  },
+  "notFound": {
+    "pageInexistante": "此页面不存在。",
+    "retourTableauDeBord": "返回仪表盘"
+  },
+  "horsLigne": {
+    "horsLigne": "📡 离线",
+    "enAttente": "{{n}} 个待处理操作",
+    "synchronisation": "🔄 同步中…（剩余 {{n}} 个）",
+    "attenteSynchro": "等待网络连接",
+    "echec": "失败：{{message}}",
+    "supprimer": "删除"
+  }
+}

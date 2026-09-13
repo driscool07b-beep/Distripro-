@@ -1,1 +1,124 @@
-{}
+{
+  "menu": {
+    "tableauDeBord": "لوحة التحكم",
+    "clients": "العملاء",
+    "groupesClients": "مجموعات العملاء",
+    "carteClients": "خريطة العملاء",
+    "produitsStock": "المنتجات والمخزون",
+    "magasinsStockage": "مستودعات التخزين",
+    "journalStock": "سجل المخزون",
+    "ventes": "المبيعات",
+    "commandes": "الطلبات",
+    "tournees": "الجولات",
+    "rapportsVisite": "تقارير الزيارة",
+    "creances": "الديون المستحقة",
+    "localiserProduit": "تحديد موقع منتج",
+    "versements": "الإيداعات",
+    "mesVersements": "إيداعاتي",
+    "equipe": "الفريق",
+    "parametres": "الإعدادات",
+    "deconnexion": "تسجيل الخروج",
+    "analytique": "التحليلات",
+    "objectifs": "الأهداف",
+    "analyseIA": "تحليل الذكاء الاصطناعي",
+    "monStockEnMain": "مخزوني الحالي",
+    "stockCommerciaux": "مخزون المندوبين",
+    "fermerMenu": "إغلاق القائمة",
+    "ouvrirMenu": "فتح القائمة"
+  },
+  "actions": {
+    "annuler": "إلغاء",
+    "valider": "تأكيد",
+    "enregistrer": "حفظ",
+    "enregistrement": "جارٍ الحفظ…",
+    "modifier": "تعديل",
+    "supprimer": "حذف",
+    "fermer": "إغلاق",
+    "retour": "رجوع",
+    "reessayer": "إعادة المحاولة",
+    "rechercher": "بحث…",
+    "telecharger": "تنزيل",
+    "imprimer": "طباعة",
+    "partager": "مشاركة",
+    "ajouter": "إضافة",
+    "confirmer": "تأكيد"
+  },
+  "commun": {
+    "chargement": "جارٍ التحميل…",
+    "chargementProfil": "جارٍ تحميل الملف الشخصي…",
+    "aucunResultat": "لا توجد نتائج.",
+    "erreur": "خطأ",
+    "erreurInconnue": "خطأ غير معروف.",
+    "champObligatoire": "هذا الحقل مطلوب.",
+    "total": "المجموع",
+    "date": "التاريخ",
+    "statut": "الحالة",
+    "client": "العميل",
+    "produit": "المنتج",
+    "quantite": "الكمية",
+    "montant": "المبلغ",
+    "oui": "نعم",
+    "non": "لا"
+  },
+  "langue": {
+    "selectionner": "اللغة",
+    "fr": "الفرنسية",
+    "en": "الإنجليزية",
+    "ar": "العربية",
+    "zh": "الصينية"
+  },
+  "auth": {
+    "profilImpossible": "تعذر تحميل ملفك الشخصي",
+    "compteSuspenduTitre": "الحساب موقوف",
+    "compteSuspenduTexte": "اشتراك شركتك موقوف حاليًا. يرجى التواصل مع دعم DistribPro لتسوية وضعك."
+  },
+  "connexion": {
+    "tagline": "إدارة تجارية وتوزيع",
+    "email": "البريد الإلكتروني",
+    "motDePasse": "كلمة المرور",
+    "erreurIdentifiants": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "enCours": "جارٍ تسجيل الدخول…",
+    "seConnecter": "تسجيل الدخول",
+    "inviteRejoindre": "تمت دعوتك للانضمام إلى فريق؟",
+    "creerCompte": "إنشاء حسابك",
+    "nouvelleEntreprise": "شركة جديدة؟",
+    "creerEspace": "إنشاء مساحة DistribPro الخاصة بك"
+  },
+  "inscription": {
+    "mdpMinLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",
+    "mdpMismatch": "كلمتا المرور غير متطابقتين.",
+    "compteCree": "تم إنشاء الحساب",
+    "verifierEmail": "تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل الدخول.",
+    "allerConnexion": "الذهاب إلى تسجيل الدخول",
+    "creerVotreCompte": "إنشاء حسابك",
+    "utiliserEmailInvitation": "استخدم عنوان البريد الإلكتروني الذي تمت دعوتك عليه من قبل مسؤولك.",
+    "confirmerMotDePasse": "تأكيد كلمة المرور",
+    "enCours": "جارٍ الإنشاء…",
+    "creerMonCompte": "إنشاء حسابي",
+    "dejaCompte": "لديك حساب بالفعل؟"
+  },
+  "creerEntreprise": {
+    "champsRequis": "اسم الشركة واسمك الكامل مطلوبان.",
+    "verifierEmail": "تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل الدخول — سيتم إنشاء شركتك تلقائيًا.",
+    "titre": "إنشاء شركتك",
+    "nomEntreprise": "اسم شركتك",
+    "placeholderEntreprise": "مثال: راما سيريال",
+    "votreNomComplet": "اسمك الكامل",
+    "enCours": "جارٍ الإنشاء…",
+    "creerMonEntreprise": "إنشاء شركتي",
+    "inviteRejoindreEquipe": "تمت دعوتك للانضمام إلى فريق موجود؟",
+    "cliquezIci": "انقر هنا"
+  },
+  "notFound": {
+    "pageInexistante": "هذه الصفحة غير موجودة.",
+    "retourTableauDeBord": "العودة إلى لوحة التحكم"
+  },
+  "horsLigne": {
+    "horsLigne": "📡 غير متصل",
+    "enAttente": "{{n}} إجراء(ات) في الانتظار",
+    "synchronisation": "🔄 جارٍ المزامنة… (متبقٍ {{n}})",
+    "attenteSynchro": "في انتظار الاتصال",
+    "echec": "فشل: {{message}}",
+    "supprimer": "حذف"
+  }
+}
