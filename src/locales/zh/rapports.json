@@ -1,1 +1,24 @@
-{}
+{
+  "accesRefuse": "此页面不适用于您的角色。",
+  "chargementRapports": "正在加载报告…",
+  "titre": "拜访报告",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "tousLesCommerciaux": "所有销售代表",
+  "vosVisites": "您的拜访",
+  "compteurRapports": "{{n}} 份报告",
+  "chargementDetail": "正在加载详情…",
+  "stockRayonNotes": "货架库存（备注）",
+  "stockReserveNotes": "库房库存（备注）",
+  "stockParProduit": "按产品库存",
+  "produit": "产品",
+  "rayon": "货架",
+  "reserve": "库房",
+  "autresInformations": "其他信息",
+  "produitsConcurrentsRayon": "货架上的竞品",
+  "present": "有",
+  "absent": "无",
+  "photos": "照片",
+  "rapportVide": "空报告（拜访已确认但无详情）。",
+  "aucunRapport": "目前没有报告。"
+}

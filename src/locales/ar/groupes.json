@@ -1,1 +1,27 @@
-{}
+{
+  "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
+  "chargement": "جارٍ التحميل…",
+  "titre": "مجموعات العملاء",
+  "sousTitre": "سلاسل متاجر يتم التسليم لها بشكل فردي، وتصدر لها فاتورة إجمالية بعد الملخص.",
+  "groupe": "المجموعة",
+  "selectionnerGroupe": "— اختر مجموعة —",
+  "magasins": "{{n}} متجر(متاجر)",
+  "aucunGroupe": "لم يتم إنشاء أي مجموعة. يمكنك إنشاء واحدة من ملف العميل (قسم \"المجموعة\").",
+  "magasinsDuGroupe": "متاجر المجموعة",
+  "aucunMagasinRattache": "لا يوجد متجر مرتبط بهذه المجموعة.",
+  "recapLivraisons": "ملخص التسليمات",
+  "du": "من",
+  "au": "إلى",
+  "generer": "إنشاء",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "recapLivraisonsTitre": "ملخص التسليمات — {{groupe}}",
+  "periode": "من {{debut}} إلى {{fin}}",
+  "magasin": "المتجر",
+  "produit": "المنتج",
+  "quantite": "الكمية",
+  "valeur": "القيمة",
+  "total": "المجموع",
+  "aucuneLivraison": "لا توجد تسليمات خلال هذه الفترة.",
+  "inconnu": "غير معروف"
+}

@@ -1,1 +1,27 @@
-{}
+{
+  "accesRefuse": "此页面不适用于您的角色。",
+  "chargement": "加载中…",
+  "titre": "客户分组",
+  "sousTitre": "分别配送的连锁门店，在汇总后统一开票。",
+  "groupe": "分组",
+  "selectionnerGroupe": "— 选择分组 —",
+  "magasins": "{{n}} 家门店",
+  "aucunGroupe": "尚未创建任何分组。您可以从客户资料页（“分组”部分）创建一个。",
+  "magasinsDuGroupe": "该分组的门店",
+  "aucunMagasinRattache": "没有门店关联到此分组。",
+  "recapLivraisons": "送货汇总",
+  "du": "从",
+  "au": "至",
+  "generer": "生成",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "recapLivraisonsTitre": "送货汇总 — {{groupe}}",
+  "periode": "{{debut}} 至 {{fin}}",
+  "magasin": "门店",
+  "produit": "产品",
+  "quantite": "数量",
+  "valeur": "价值",
+  "total": "总计",
+  "aucuneLivraison": "该时间段内没有送货记录。",
+  "inconnu": "未知"
+}

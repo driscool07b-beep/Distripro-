@@ -1,1 +1,23 @@
-{}
+{
+  "titre": "定位产品",
+  "sousTitre": "结合实地拜访记录和近期送货情况——当客户来电询问哪里能买到时很有用。",
+  "produitRecherche": "查询的产品",
+  "selectionner": "— 选择 —",
+  "positionCapturee": "📍 已获取位置 — 结果按距离排序。",
+  "positionIndisponible": "⚠️ 位置不可用 — 结果按日期排序。",
+  "captureEnCours": "正在获取位置…",
+  "utiliserPosition": "📍 使用我的当前位置",
+  "recherche": "搜索中…",
+  "rechercher": "搜索",
+  "compteurResultats": "{{n}} 位客户记录到该产品有库存 — 数据基于实地拜访，非实时库存。",
+  "localisationNonPrecisee": "位置未指定",
+  "livree": "已送达",
+  "vueEnRayon": "已在货架上看到",
+  "livre": "已送达",
+  "releve": "已记录",
+  "itineraire": "📍 路线",
+  "aucunReleve": "没有客户处近期记录到此产品库存。",
+  "aujourdhui": "今天",
+  "hier": "昨天",
+  "ilYaJours": "{{n}} 天前"
+}

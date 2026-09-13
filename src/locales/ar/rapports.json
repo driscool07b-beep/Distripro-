@@ -1,1 +1,24 @@
-{}
+{
+  "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
+  "chargementRapports": "جارٍ تحميل التقارير…",
+  "titre": "تقارير الزيارة",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "tousLesCommerciaux": "جميع المندوبين",
+  "vosVisites": "زياراتك",
+  "compteurRapports": "{{n}} تقرير(تقارير)",
+  "chargementDetail": "جارٍ تحميل التفاصيل…",
+  "stockRayonNotes": "مخزون الرف (ملاحظات)",
+  "stockReserveNotes": "مخزون المستودع (ملاحظات)",
+  "stockParProduit": "المخزون حسب المنتج",
+  "produit": "المنتج",
+  "rayon": "الرف",
+  "reserve": "المستودع",
+  "autresInformations": "معلومات أخرى",
+  "produitsConcurrentsRayon": "منتجات المنافسين على الرف",
+  "present": "موجود",
+  "absent": "غير موجود",
+  "photos": "الصور",
+  "rapportVide": "تقرير فارغ (تم تأكيد الزيارة دون تفاصيل).",
+  "aucunRapport": "لا يوجد تقرير حاليًا."
+}
