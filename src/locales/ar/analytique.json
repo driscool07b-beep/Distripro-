@@ -1,1 +1,62 @@
-{}
+{
+  "accesRefuse": "هذه الصفحة مخصصة لمسؤولي المبيعات والإدارة فقط.",
+  "titre": "لوحة التحليلات",
+  "onglets": {
+    "recap": "الملخص اليومي",
+    "rotation": "معدل الدوران",
+    "presence": "معدل التواجد",
+    "manque": "الفرص الضائعة"
+  },
+  "excel": "Excel",
+  "pdf": "PDF",
+  "chargement": "جارٍ التحميل…",
+
+  "recap": {
+    "commercial": "المندوب",
+    "visitesFaites": "الزيارات المنجزة",
+    "visitesPrevues": "الزيارات المخطط لها",
+    "distanceKm": "المسافة (كم)",
+    "rapports": "التقارير",
+    "aucunCommercial": "لا يوجد مندوب أو جولة في ذلك اليوم."
+  },
+
+  "rotation": {
+    "explication": "يُحتسب من رصدات المخزون المتتالية على الرف المسجلة في تقارير الزيارة، لدى نفس العميل. يتطلب رصدين على الأقل لنفس زوج المنتج/العميل.",
+    "produit": "المنتج",
+    "observations": "الملاحظات",
+    "rotationMoyenne": "متوسط الدوران (وحدة/يوم)",
+    "pasAssezDeDonnees": "لا توجد بيانات كافية بعد (مطلوب رصدان على الأقل لكل منتج/عميل)."
+  },
+
+  "presence": {
+    "explication": "يعتمد فقط على الزيارات التي تم فيها رصد المنتج صراحةً (على الرف أو في قائمة المنافسين) — المنتج الذي لم يُرصد أبدًا لا يدخل في الحساب.",
+    "nosProduits": "منتجاتنا",
+    "produitsConcurrents": "منتجات المنافسين",
+    "produit": "المنتج",
+    "taux": "المعدل",
+    "aucuneDonnee": "لا توجد بيانات."
+  },
+
+  "manque": {
+    "commandesAnnulees": "الطلبات الملغاة",
+    "valeurTotalePerdue": "إجمالي القيمة المفقودة",
+    "commande": "الطلب",
+    "client": "العميل",
+    "date": "التاريخ",
+    "montant": "المبلغ",
+    "aucuneCommandeAnnulee": "لا توجد طلبات ملغاة.",
+    "livraisonsPartielles": "التسليمات الجزئية (نقص المخزون)",
+    "manqueAGagnerTotal": "إجمالي الفرص الضائعة",
+    "produit": "المنتج",
+    "qteManquante": "الكمية الناقصة",
+    "valeur": "القيمة",
+    "aucuneRupture": "لم يتم اكتشاف أي نقص.",
+    "delaisLivraison": "مهل التسليم",
+    "retardMoyen": "متوسط التأخير",
+    "jours": "يوم(أيام)",
+    "commandesLivreesEnRetard": "{{enRetard}} طلب(طلبات) تم تسليمها متأخرة من أصل {{total}}",
+    "ecartVsSouhaite": "الفرق مقابل التاريخ المطلوب",
+    "aTemps": "في الموعد",
+    "pasAssezDeDonneesDelai": "لا توجد بيانات كافية (تاريخ التسليم المطلوب غير متوفر)."
+  }
+}

@@ -1,1 +1,62 @@
-{}
+{
+  "accesRefuse": "此页面仅限销售负责人和管理层使用。",
+  "titre": "分析面板",
+  "onglets": {
+    "recap": "每日汇总",
+    "rotation": "周转率",
+    "presence": "铺货率",
+    "manque": "损失收入"
+  },
+  "excel": "Excel",
+  "pdf": "PDF",
+  "chargement": "加载中…",
+
+  "recap": {
+    "commercial": "销售代表",
+    "visitesFaites": "已完成拜访",
+    "visitesPrevues": "计划拜访",
+    "distanceKm": "距离（公里）",
+    "rapports": "报告",
+    "aucunCommercial": "当天没有销售代表或路线。"
+  },
+
+  "rotation": {
+    "explication": "根据同一客户处连续记录的货架库存数据计算得出。每个产品/客户组合至少需要2次记录。",
+    "produit": "产品",
+    "observations": "观察次数",
+    "rotationMoyenne": "平均周转率（件/天）",
+    "pasAssezDeDonnees": "数据尚不足（每个产品/客户至少需要2次记录）。"
+  },
+
+  "presence": {
+    "explication": "仅基于明确记录了该产品的拜访（货架或竞品清单）——从未被记录的产品不计入统计。",
+    "nosProduits": "我方产品",
+    "produitsConcurrents": "竞品",
+    "produit": "产品",
+    "taux": "比率",
+    "aucuneDonnee": "没有数据。"
+  },
+
+  "manque": {
+    "commandesAnnulees": "已取消订单",
+    "valeurTotalePerdue": "损失总价值",
+    "commande": "订单",
+    "client": "客户",
+    "date": "日期",
+    "montant": "金额",
+    "aucuneCommandeAnnulee": "没有已取消的订单。",
+    "livraisonsPartielles": "部分交付（缺货）",
+    "manqueAGagnerTotal": "损失收入总额",
+    "produit": "产品",
+    "qteManquante": "缺失数量",
+    "valeur": "价值",
+    "aucuneRupture": "未检测到缺货。",
+    "delaisLivraison": "交付时效",
+    "retardMoyen": "平均延迟",
+    "jours": "天",
+    "commandesLivreesEnRetard": "{{total}} 个订单中有 {{enRetard}} 个延迟交付",
+    "ecartVsSouhaite": "与要求日期的差异",
+    "aTemps": "准时",
+    "pasAssezDeDonneesDelai": "数据不足（缺少要求交付日期）。"
+  }
+}
