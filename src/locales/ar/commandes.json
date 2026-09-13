@@ -1,1 +1,91 @@
-{}
+{
+  "erreur": "خطأ",
+  "titre": "الطلبات",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "nouvelleCommande": "+ طلب جديد",
+  "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
+  "chargementCommandes": "جارٍ تحميل الطلبات…",
+
+  "statuts": {
+    "brouillon": "مسودة",
+    "confirmee": "مؤكدة",
+    "en_preparation": "قيد التجهيز",
+    "livree": "تم التسليم",
+    "annulee": "ملغاة",
+    "toutes": "الكل"
+  },
+
+  "recap": {
+    "titre": "📦 ملخص الطلبات الجارية — {{unites}} وحدة(وحدات)، {{valeur}}",
+    "titreVide": "📦 ملخص الطلبات الجارية",
+    "aucuneCommandeEnAttente": "لا توجد طلبات معلقة حاليًا.",
+    "produit": "المنتج",
+    "quantite": "الكمية",
+    "valeurEstimee": "القيمة المقدرة"
+  },
+
+  "liste": {
+    "articles": "{{n}} صنف(أصناف)",
+    "aucuneCommande": "لا توجد طلبات.",
+    "aucuneCommandeStatut": "لا توجد طلبات بحالة \"{{statut}}\"."
+  },
+
+  "form": {
+    "titre": "طلب جديد",
+    "client": "العميل",
+    "rechercherClient": "بحث عن عميل…",
+    "commercial": "المندوب (اختياري)",
+    "aucun": "— لا أحد —",
+    "depotLivraison": "مستودع التسليم",
+    "articles": "الأصناف",
+    "produitPlaceholder": "— المنتج —",
+    "ajouterArticle": "+ إضافة صنف",
+    "modePaiement": "طريقة الدفع",
+    "cash": "نقدًا",
+    "credit": "آجل",
+    "acompteVerse": "الدفعة المقدمة (اختياري)",
+    "dateLivraison": "تاريخ التسليم المطلوب",
+    "notes": "ملاحظات",
+    "positionCapturee": "📍 تم تحديد موقع إصدار الطلب.",
+    "positionIndisponible": "⚠️ الموقع غير متاح.",
+    "capture": "جارٍ التحديد…",
+    "recapturerPosition": "إعادة تحديد موقعي",
+    "total": "المجموع",
+    "annuler": "إلغاء",
+    "enregistrement": "جارٍ الحفظ…",
+    "creerCommande": "إنشاء الطلب",
+    "erreurSelectionnerClient": "اختر عميلًا.",
+    "erreurArticleValide": "أضف صنفًا صحيحًا واحدًا على الأقل."
+  },
+
+  "detail": {
+    "chargement": "جارٍ التحميل…",
+    "commercial": "المندوب",
+    "livraisonSouhaitee": "التسليم المطلوب: {{date}}",
+    "bonCommandeClient": "أمر شراء العميل (مستند داعم)",
+    "referencePlaceholder": "رقم أمر الشراء (مثال: BC-4521)",
+    "voirDocument": "📎 عرض المستند المرفق",
+    "aucunDocument": "لا يوجد مستند مرفق حاليًا.",
+    "erreurEnvoi": "خطأ في الإرسال",
+    "erreurEnregistrement": "خطأ في الحفظ",
+    "envoiEnCours": "جارٍ الإرسال…",
+    "produit": "المنتج",
+    "commande": "المطلوب",
+    "livre": "المسلَّم",
+    "quantitesLivrees": "الكميات المسلَّمة (يمكن وجود نقص)",
+    "cmdAbrege": "طلب",
+    "montantSupplementaire": "المبلغ الإضافي المحصّل",
+    "modeDePaiement": "طريقة الدفع",
+    "facturePropforma": "📄 فاتورة أولية",
+    "confirmer": "تأكيد",
+    "demarrerPreparation": "بدء التجهيز",
+    "enregistrerLivraison": "تسجيل التسليم",
+    "envoi": "جارٍ الإرسال…",
+    "validerLivraison": "تأكيد التسليم",
+    "annulerCommande": "إلغاء الطلب",
+    "historique": "السجل",
+    "par": "بواسطة",
+    "impossibleChargerDetail": "تعذر تحميل التفاصيل."
+  }
+}

@@ -1,1 +1,91 @@
-{}
+{
+  "erreur": "错误",
+  "titre": "订单",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "nouvelleCommande": "+ 新建订单",
+  "accesRefuse": "此页面不适用于您的角色。",
+  "chargementCommandes": "正在加载订单…",
+
+  "statuts": {
+    "brouillon": "草稿",
+    "confirmee": "已确认",
+    "en_preparation": "备货中",
+    "livree": "已送达",
+    "annulee": "已取消",
+    "toutes": "全部"
+  },
+
+  "recap": {
+    "titre": "📦 进行中订单汇总 — {{unites}} 件，{{valeur}}",
+    "titreVide": "📦 进行中订单汇总",
+    "aucuneCommandeEnAttente": "目前没有待处理订单。",
+    "produit": "产品",
+    "quantite": "数量",
+    "valeurEstimee": "预估价值"
+  },
+
+  "liste": {
+    "articles": "{{n}} 项",
+    "aucuneCommande": "没有订单。",
+    "aucuneCommandeStatut": "没有状态为“{{statut}}”的订单。"
+  },
+
+  "form": {
+    "titre": "新建订单",
+    "client": "客户",
+    "rechercherClient": "搜索客户…",
+    "commercial": "销售代表（可选）",
+    "aucun": "— 无 —",
+    "depotLivraison": "配送仓库",
+    "articles": "商品",
+    "produitPlaceholder": "— 产品 —",
+    "ajouterArticle": "+ 添加商品",
+    "modePaiement": "付款方式",
+    "cash": "现金",
+    "credit": "赊账",
+    "acompteVerse": "已付定金（可选）",
+    "dateLivraison": "期望送货日期",
+    "notes": "备注",
+    "positionCapturee": "📍 已记录下单位置。",
+    "positionIndisponible": "⚠️ 位置不可用。",
+    "capture": "定位中…",
+    "recapturerPosition": "重新获取我的位置",
+    "total": "总计",
+    "annuler": "取消",
+    "enregistrement": "保存中…",
+    "creerCommande": "创建订单",
+    "erreurSelectionnerClient": "请选择客户。",
+    "erreurArticleValide": "请至少添加一项有效商品。"
+  },
+
+  "detail": {
+    "chargement": "加载中…",
+    "commercial": "销售代表",
+    "livraisonSouhaitee": "期望送货：{{date}}",
+    "bonCommandeClient": "客户采购单（凭证）",
+    "referencePlaceholder": "采购单编号（例如：BC-4521）",
+    "voirDocument": "📎 查看附件",
+    "aucunDocument": "目前没有附件。",
+    "erreurEnvoi": "上传错误",
+    "erreurEnregistrement": "保存错误",
+    "envoiEnCours": "上传中…",
+    "produit": "产品",
+    "commande": "已订",
+    "livre": "已送达",
+    "quantitesLivrees": "已送达数量（可能缺货）",
+    "cmdAbrege": "订购",
+    "montantSupplementaire": "额外收取金额",
+    "modeDePaiement": "付款方式",
+    "facturePropforma": "📄 形式发票",
+    "confirmer": "确认",
+    "demarrerPreparation": "开始备货",
+    "enregistrerLivraison": "记录送货",
+    "envoi": "发送中…",
+    "validerLivraison": "确认送货",
+    "annulerCommande": "取消订单",
+    "historique": "历史记录",
+    "par": "由",
+    "impossibleChargerDetail": "无法加载详情。"
+  }
+}
