@@ -1,1 +1,18 @@
-{}
+{
+  "titre": "我的存款",
+  "sousTitre": "今日应存金额明细，以及您的存款历史。",
+  "chargement": "加载中…",
+  "aujourdhui": "今天",
+  "ventesEspeces": "已收现金销售额",
+  "recouvrements": "已收账款回收",
+  "totalDu": "应存总额",
+  "dejaVerse": "今日已存",
+  "resteAVerser": "待存余额",
+  "remettreSomme": "请将此款项交给您的会计或经理，由其记录存款。",
+  "historiqueTitre": "我的存款历史",
+  "date": "日期",
+  "caisse": "收银台",
+  "recuPar": "收款人",
+  "montant": "金额",
+  "aucunVersement": "没有记录的存款。"
+}

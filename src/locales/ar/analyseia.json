@@ -1,1 +1,14 @@
-{}
+{
+  "accesRefuse": "هذه الصفحة مخصصة لمسؤولي المبيعات والإدارة فقط.",
+  "titre": "التحليل الاستراتيجي (الذكاء الاصطناعي)",
+  "generationEnCours": "جارٍ الإنشاء…",
+  "genererNouvelleAnalyse": "✨ إنشاء تحليل جديد",
+  "erreurGeneration": "حدث خطأ أثناء الإنشاء.",
+  "cleApiManquante": "لم يتم تكوين وظيفة الخادم بمفتاح API بعد. راجع تعليمات النشر.",
+  "historique": "السجل",
+  "chargement": "جارٍ التحميل…",
+  "aucuneAnalyse": "لم يتم إنشاء أي تحليل.",
+  "genereeLe": "تم الإنشاء في {{date}}",
+  "par": "بواسطة {{nom}}",
+  "aucuneAnalysePourLeMoment": "لا يوجد تحليل حاليًا. انقر على \"إنشاء تحليل جديد\" للبدء."
+}

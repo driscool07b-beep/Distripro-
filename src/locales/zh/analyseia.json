@@ -1,1 +1,14 @@
-{}
+{
+  "accesRefuse": "此页面仅限销售负责人和管理层访问。",
+  "titre": "战略分析（AI）",
+  "generationEnCours": "正在生成…",
+  "genererNouvelleAnalyse": "✨ 生成新分析",
+  "erreurGeneration": "生成时出错。",
+  "cleApiManquante": "服务器功能尚未配置 API 密钥。请参阅部署说明。",
+  "historique": "历史记录",
+  "chargement": "加载中…",
+  "aucuneAnalyse": "尚未生成任何分析。",
+  "genereeLe": "生成于 {{date}}",
+  "par": "由 {{nom}}",
+  "aucuneAnalysePourLeMoment": "目前没有分析。点击“生成新分析”开始。"
+}

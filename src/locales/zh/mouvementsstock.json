@@ -1,1 +1,17 @@
-{}
+{
+  "accesRefuse": "此页面仅限库存管理人员使用（管理员、经理、库存管理员）。",
+  "titre": "库存变动日志",
+  "sousTitre": "最近200条仓库库存变动记录（不含销售代表库存）。",
+  "tousLesDepots": "所有仓库",
+  "entreesEtSorties": "入库与出库",
+  "entreesSeulement": "仅入库",
+  "sortiesSeulement": "仅出库",
+  "chargement": "加载中…",
+  "entree": "入库",
+  "sortie": "出库",
+  "voirJustificatif": "📎 查看凭证",
+  "envoi": "发送中…",
+  "joindre": "附加",
+  "joindreJustificatif": "+ 附加凭证",
+  "aucunMouvement": "没有变动记录。"
+}

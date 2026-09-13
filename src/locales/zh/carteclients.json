@@ -1,1 +1,14 @@
-{}
+{
+  "accesRefuse": "此页面不适用于您的角色。",
+  "chargementCarte": "正在加载地图…",
+  "titre": "客户地图",
+  "compteur": "{{n}} 个客户已定位 — 放大可从科特迪瓦全景切换到阿比让视图。",
+  "aucunePosition": "目前没有客户保存了 GPS 位置。",
+  "segments": {
+    "actif": "活跃",
+    "vip": "VIP",
+    "nouveau": "新客户",
+    "a_relancer": "待跟进",
+    "inactif": "不活跃"
+  }
+}

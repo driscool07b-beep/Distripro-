@@ -1,1 +1,17 @@
-{}
+{
+  "accesRefuse": "هذه الصفحة مخصصة لإدارة المخزون (المسؤول، المدير، مسؤول المخزون).",
+  "titre": "سجل حركات المخزون",
+  "sousTitre": "آخر 200 حركة في المستودع (باستثناء مخزون المندوبين).",
+  "tousLesDepots": "جميع المستودعات",
+  "entreesEtSorties": "الوارد والصادر",
+  "entreesSeulement": "الوارد فقط",
+  "sortiesSeulement": "الصادر فقط",
+  "chargement": "جارٍ التحميل…",
+  "entree": "وارد",
+  "sortie": "صادر",
+  "voirJustificatif": "📎 عرض المستند الداعم",
+  "envoi": "جارٍ الإرسال…",
+  "joindre": "إرفاق",
+  "joindreJustificatif": "+ إرفاق مستند داعم",
+  "aucunMouvement": "لا توجد حركات."
+}

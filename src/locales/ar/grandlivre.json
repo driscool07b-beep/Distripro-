@@ -1,1 +1,21 @@
-{}
+{
+  "titre": "دفتر أستاذ العميل",
+  "imprimer": "🖨️ طباعة",
+  "choisirClient": "اختر عميلًا",
+  "selectionner": "— اختر —",
+  "chargement": "جارٍ التحميل…",
+  "releveDeCompte": "كشف حساب",
+  "limiteCredit": "حد الائتمان: {{montant}}",
+  "date": "التاريخ",
+  "libelle": "البيان",
+  "debit": "مدين",
+  "credit": "دائن",
+  "solde": "الرصيد",
+  "aucunMouvement": "لا توجد حركات لهذا العميل.",
+  "soldeFinal": "الرصيد النهائي",
+  "selectionnezClient": "اختر عميلًا لعرض سجله.",
+  "venteCredit": "بيع (آجل)",
+  "venteComptant": "بيع (نقدي)",
+  "reglementComptant": "تسوية نقدية",
+  "paiementRecu": "دفعة مستلمة"
+}

@@ -1,1 +1,21 @@
-{}
+{
+  "titre": "客户总账",
+  "imprimer": "🖨️ 打印",
+  "choisirClient": "选择客户",
+  "selectionner": "— 选择 —",
+  "chargement": "加载中…",
+  "releveDeCompte": "对账单",
+  "limiteCredit": "信用额度：{{montant}}",
+  "date": "日期",
+  "libelle": "摘要",
+  "debit": "借方",
+  "credit": "贷方",
+  "solde": "余额",
+  "aucunMouvement": "该客户没有交易记录。",
+  "soldeFinal": "最终余额",
+  "selectionnezClient": "选择一个客户以查看其记录。",
+  "venteCredit": "销售（赊账）",
+  "venteComptant": "销售（现金）",
+  "reglementComptant": "现金结算",
+  "paiementRecu": "已收付款"
+}
