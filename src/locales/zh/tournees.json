@@ -1,1 +1,71 @@
-{}
+{
+  "accesRefuse": "此页面不适用于您的角色。",
+  "chargementTournees": "正在加载路线...",
+  "titre": "巡回路线",
+  "annuler": "取消",
+  "nouvelleTournee": "+ 新建路线",
+  "dateTournee": "路线日期",
+  "clientsAVisiter": "待拜访客户（已选 {{n}} 个）",
+  "aucunClientDisponible": "没有可用客户",
+  "creerTourneeOptimisee": "创建路线（优化路径）",
+  "statutPlanifiee": "已计划",
+  "aucuneTournee": "尚未创建任何路线",
+  "ajouter": "+ 添加",
+
+  "detail": {
+    "retour": "← 返回路线列表",
+    "titreTourneeDu": "{{date}} 的路线",
+    "compteurVisites": "{{n}} 个计划拜访",
+    "prochainArret": "下一站",
+    "meGuider": "📍 为我导航",
+    "statutLabel": "状态",
+    "visitee": "✅ 已拜访",
+    "aVisiter": "⏳ 待拜访",
+    "itineraire": "📍 路线",
+    "pasPositionGPS": "该客户没有保存的 GPS 位置",
+    "ouvrirItineraireGoogle": "在谷歌地图中打开路线",
+    "marquerVisitee": "标记为已拜访（GPS 验证）",
+    "retirer": "移除",
+    "aucuneVisite": "该路线没有拜访记录",
+    "ajouterClientTournee": "向此路线添加客户",
+    "selectionnerClient": "— 选择客户 —"
+  },
+
+  "rapport": {
+    "titre": "拜访报告",
+    "visiteValidee": "{{nom}} — 拜访已确认 ✅",
+    "etatStockRayon": "货架库存情况",
+    "placeholderRayon": "例如：Bacca mil 550g 缺货，其余充足",
+    "etatStockReserve": "库房库存情况",
+    "placeholderReserve": "例如：库房有20箱，可供2周使用",
+    "stockParProduit": "按产品库存",
+    "choisirProduit": "— 选择产品 —",
+    "produitDefaut": "产品",
+    "retirer": "移除",
+    "qteRayon": "货架数量",
+    "qteReserve": "库房数量",
+    "photos": "照片（{{n}}/3）",
+    "auMoinsUnePhoto": "— 至少需要1张",
+    "presenceConcurrents": "货架上的竞品情况",
+    "oui": "是",
+    "non": "否",
+    "passer": "跳过",
+    "envoi": "发送中…",
+    "enregistrerRapport": "保存报告"
+  },
+
+  "erreurs": {
+    "selectionnerClient": "请至少选择一位客户",
+    "creation": "创建时出错：{{message}}",
+    "geolocNonDisponible": "此设备/浏览器不支持地理定位。",
+    "validationVisite": "错误：{{message}}",
+    "tropEloigne": "您似乎离客户太远（{{distance}} 米），无法确认此次拜访。",
+    "impossibleObtenirPosition": "无法获取您的位置。请允许地理定位以确认拜访。",
+    "photoRequise": "此报告至少需要一张照片（公司设置要求）。",
+    "envoiPhoto": "上传照片 {{n}} 时出错：{{message}}",
+    "enregistrementRapport": "保存报告时出错：{{message}}",
+    "rapportErreurLignes": "报告已保存，但产品明细出错：{{message}}",
+    "rapportErreurChamps": "报告已保存，但自定义字段出错：{{message}}",
+    "rapportErreurConcurrents": "报告已保存，但竞品信息出错：{{message}}"
+  }
+}

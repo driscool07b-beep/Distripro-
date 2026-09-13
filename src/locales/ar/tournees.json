@@ -1,1 +1,71 @@
-{}
+{
+  "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
+  "chargementTournees": "جارٍ تحميل الجولات...",
+  "titre": "الجولات",
+  "annuler": "إلغاء",
+  "nouvelleTournee": "+ جولة جديدة",
+  "dateTournee": "تاريخ الجولة",
+  "clientsAVisiter": "العملاء المراد زيارتهم ({{n}} محدد)",
+  "aucunClientDisponible": "لا يوجد عميل متاح",
+  "creerTourneeOptimisee": "إنشاء الجولة (مسار مُحسَّن)",
+  "statutPlanifiee": "مخطط لها",
+  "aucuneTournee": "لم يتم إنشاء أي جولة حتى الآن",
+  "ajouter": "+ إضافة",
+
+  "detail": {
+    "retour": "← العودة إلى الجولات",
+    "titreTourneeDu": "جولة يوم {{date}}",
+    "compteurVisites": "{{n}} زيارة(زيارات) مخطط لها",
+    "prochainArret": "المحطة التالية",
+    "meGuider": "📍 إرشادي إلى هناك",
+    "statutLabel": "الحالة",
+    "visitee": "✅ تمت الزيارة",
+    "aVisiter": "⏳ بانتظار الزيارة",
+    "itineraire": "📍 الاتجاهات",
+    "pasPositionGPS": "لا يوجد موقع GPS مسجل لهذا العميل",
+    "ouvrirItineraireGoogle": "فتح الاتجاهات في خرائط جوجل",
+    "marquerVisitee": "تحديد كزيارة تمت (تحقق GPS)",
+    "retirer": "إزالة",
+    "aucuneVisite": "لا توجد زيارات لهذه الجولة",
+    "ajouterClientTournee": "إضافة عميل إلى هذه الجولة",
+    "selectionnerClient": "— اختر عميلًا —"
+  },
+
+  "rapport": {
+    "titre": "تقرير الزيارة",
+    "visiteValidee": "{{nom}} — تم تأكيد الزيارة ✅",
+    "etatStockRayon": "حالة المخزون على الرف",
+    "placeholderRayon": "مثال: نفاد في باكا ميل 550غ، وباقي الأصناف متوفرة",
+    "etatStockReserve": "حالة المخزون في المستودع",
+    "placeholderReserve": "مثال: 20 كرتونة في المستودع، مخزون يكفي لأسبوعين",
+    "stockParProduit": "المخزون حسب المنتج",
+    "choisirProduit": "— اختر منتجًا —",
+    "produitDefaut": "المنتج",
+    "retirer": "إزالة",
+    "qteRayon": "كمية الرف",
+    "qteReserve": "كمية المستودع",
+    "photos": "الصور ({{n}}/3)",
+    "auMoinsUnePhoto": "— مطلوبة صورة واحدة على الأقل",
+    "presenceConcurrents": "تواجد منتجات المنافسين على الرف",
+    "oui": "نعم",
+    "non": "لا",
+    "passer": "تخطي",
+    "envoi": "جارٍ الإرسال…",
+    "enregistrerRapport": "حفظ التقرير"
+  },
+
+  "erreurs": {
+    "selectionnerClient": "اختر عميلًا واحدًا على الأقل",
+    "creation": "خطأ أثناء الإنشاء: {{message}}",
+    "geolocNonDisponible": "تحديد الموقع الجغرافي غير متاح على هذا الجهاز/المتصفح.",
+    "validationVisite": "خطأ: {{message}}",
+    "tropEloigne": "يبدو أنك بعيد جدًا عن العميل ({{distance}} م) لتأكيد هذه الزيارة.",
+    "impossibleObtenirPosition": "تعذر الحصول على موقعك. يرجى السماح بتحديد الموقع الجغرافي لتأكيد الزيارة.",
+    "photoRequise": "صورة واحدة على الأقل مطلوبة لهذا التقرير (إعداد الشركة).",
+    "envoiPhoto": "خطأ في إرسال الصورة {{n}}: {{message}}",
+    "enregistrementRapport": "خطأ في حفظ التقرير: {{message}}",
+    "rapportErreurLignes": "تم حفظ التقرير، لكن حدث خطأ في بنود المنتجات: {{message}}",
+    "rapportErreurChamps": "تم حفظ التقرير، لكن حدث خطأ في الحقول المخصصة: {{message}}",
+    "rapportErreurConcurrents": "تم حفظ التقرير، لكن حدث خطأ في منتجات المنافسين: {{message}}"
+  }
+}
