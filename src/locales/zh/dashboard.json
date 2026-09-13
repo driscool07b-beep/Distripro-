@@ -1,1 +1,68 @@
-{}
+{
+  "bonjour": "你好，{{prenom}} 👋",
+  "restants": "剩余",
+  "chargement": "加载中…",
+
+  "entreprise": {
+    "sousTitre": "这是您公司今天的活动情况。",
+    "ventesJour": "今日销售额",
+    "ventesMois": "本月销售额",
+    "clientsActifs": "活跃客户",
+    "valeurStock": "库存价值",
+    "alertesStock": "库存警报",
+    "creancesEnCours": "未结应收账款",
+    "creancesEchues": "逾期应收账款",
+    "commandesEnAttente": "待处理订单",
+    "ventes7jTitre": "过去7天的销售额",
+    "ventesPeriodeTitre": "销售额",
+    "periode_7j": "7天",
+    "periode_30j": "30天",
+    "periode_12m": "12个月",
+    "comparaisonAnnuelleTitre": "三年对比（按月）",
+    "aucuneVentePeriode": "该时间段内没有记录的销售。",
+    "produitsEnAlerte": "警报产品",
+    "aucunProduitSeuil": "没有产品低于警报阈值。"
+  },
+
+  "commercial": {
+    "sousTitre": "这是您的个人活动情况。",
+    "mesVentesJour": "我今日的销售额",
+    "mesVentesMois": "我本月的销售额",
+    "monStockEnMain": "我持有的库存",
+    "mesCreancesEnCours": "我的未结应收账款",
+    "mesCommandesEnCours": "我的待处理订单",
+    "resteAVerserAujourdhui": "今日待存余额",
+    "monObjectifMois": "我本月的目标",
+    "mesVentes7j": "我过去7天的销售额"
+  },
+
+  "comptable": {
+    "sousTitre": "这是今日的财务状况。",
+    "totalAVerserAujourdhui": "今日应存总额",
+    "creancesEnCours": "未结应收账款",
+    "ventesCashJour": "今日现金销售",
+    "recouvrementJour": "今日收款",
+    "creancesEchues": "逾期应收账款"
+  },
+
+  "agentRecouvrement": {
+    "sousTitre": "这是客户应收账款的跟进情况。",
+    "creancesEnCours": "未结应收账款",
+    "creancesEchues": "逾期应收账款",
+    "encaisseAujourdhui": "今日已收款",
+    "encaisseMois": "本月已收款",
+    "creancesUrgentes": "最紧急的逾期账款",
+    "aucuneCreanceEchue": "没有逾期账款 — 做得好 👍",
+    "echeance": "到期",
+    "voirToutesEchues": "查看所有逾期账款 →"
+  },
+
+  "gestionnaireStock": {
+    "sousTitre": "这是库存状况。",
+    "valeurStockMagasin": "仓库库存价值",
+    "valeurEnMainCommerciaux": "销售代表持有的价值",
+    "alertesStock": "库存警报",
+    "produitsEnAlerte": "警报产品",
+    "aucunProduitSeuil": "没有产品低于警报阈值。"
+  }
+}

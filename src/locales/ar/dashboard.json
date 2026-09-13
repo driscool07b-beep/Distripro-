@@ -1,1 +1,68 @@
-{}
+{
+  "bonjour": "مرحبًا {{prenom}} 👋",
+  "restants": "متبقٍ",
+  "chargement": "جارٍ التحميل…",
+
+  "entreprise": {
+    "sousTitre": "إليك نشاط شركتك اليوم.",
+    "ventesJour": "مبيعات اليوم",
+    "ventesMois": "مبيعات الشهر",
+    "clientsActifs": "العملاء النشطون",
+    "valeurStock": "قيمة المخزون",
+    "alertesStock": "تنبيهات المخزون",
+    "creancesEnCours": "الديون الجارية",
+    "creancesEchues": "الديون المتأخرة",
+    "commandesEnAttente": "الطلبات المعلقة",
+    "ventes7jTitre": "مبيعات آخر 7 أيام",
+    "ventesPeriodeTitre": "المبيعات",
+    "periode_7j": "7 أيام",
+    "periode_30j": "30 يومًا",
+    "periode_12m": "12 شهرًا",
+    "comparaisonAnnuelleTitre": "مقارنة على 3 سنوات (حسب الشهر)",
+    "aucuneVentePeriode": "لم يتم تسجيل أي مبيعات خلال هذه الفترة.",
+    "produitsEnAlerte": "منتجات في حالة تنبيه",
+    "aucunProduitSeuil": "لا يوجد منتج دون حد التنبيه."
+  },
+
+  "commercial": {
+    "sousTitre": "إليك نشاطك الشخصي.",
+    "mesVentesJour": "مبيعاتي اليوم",
+    "mesVentesMois": "مبيعاتي هذا الشهر",
+    "monStockEnMain": "مخزوني الحالي",
+    "mesCreancesEnCours": "ديوني الجارية",
+    "mesCommandesEnCours": "طلباتي الجارية",
+    "resteAVerserAujourdhui": "المتبقي للإيداع اليوم",
+    "monObjectifMois": "هدفي لهذا الشهر",
+    "mesVentes7j": "مبيعاتي في آخر 7 أيام"
+  },
+
+  "comptable": {
+    "sousTitre": "إليك الوضع المالي لليوم.",
+    "totalAVerserAujourdhui": "الإجمالي الواجب إيداعه اليوم",
+    "creancesEnCours": "الديون الجارية",
+    "ventesCashJour": "المبيعات النقدية اليوم",
+    "recouvrementJour": "التحصيل اليوم",
+    "creancesEchues": "الديون المتأخرة"
+  },
+
+  "agentRecouvrement": {
+    "sousTitre": "إليك متابعة ديون العملاء.",
+    "creancesEnCours": "الديون الجارية",
+    "creancesEchues": "الديون المتأخرة",
+    "encaisseAujourdhui": "المحصّل اليوم",
+    "encaisseMois": "المحصّل هذا الشهر",
+    "creancesUrgentes": "الديون المتأخرة الأكثر إلحاحًا",
+    "aucuneCreanceEchue": "لا توجد ديون متأخرة — عمل ممتاز 👍",
+    "echeance": "الاستحقاق",
+    "voirToutesEchues": "عرض جميع الديون المتأخرة ←"
+  },
+
+  "gestionnaireStock": {
+    "sousTitre": "إليك وضع المخزون.",
+    "valeurStockMagasin": "قيمة مخزون المستودع",
+    "valeurEnMainCommerciaux": "القيمة لدى المندوبين",
+    "alertesStock": "تنبيهات المخزون",
+    "produitsEnAlerte": "منتجات في حالة تنبيه",
+    "aucunProduitSeuil": "لا يوجد منتج دون حد التنبيه."
+  }
+}
