@@ -41,7 +41,7 @@ export default function Layout() {
       )}
 
       <aside
-        className={`no-print fixed inset-y-0 left-0 z-50 w-64 shrink-0 bg-petrol-950 text-white flex flex-col transition-transform duration-200 md:static md:translate-x-0 ${
+        className={`no-print fixed inset-y-0 left-0 z-50 w-64 shrink-0 bg-petrol-950 text-white flex flex-col transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 ${
           menuOuvert ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
