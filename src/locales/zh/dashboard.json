@@ -23,7 +23,13 @@
     "aucunProduitSeuil": "没有产品低于警报阈值。",
     "commerciauxInactifsTitre": "{{n}} 名销售代表已超过24小时无活动",
     "jamaisConnecte": "从未登录",
-    "dernierAcces": "最后登录：{{date}}"
+    "dernierAcces": "最后登录：{{date}}",
+    "objectifsTitre": "目标 — 团队与管理层汇总",
+    "objectifsSousTitre": "分配给每位销售代表、团队负责人和管理层的目标总和。",
+    "aucunObjectifDefini": "本月或本年度尚未设定目标。",
+    "objectifMois": "本月",
+    "objectifAnnee": "本年度",
+    "nbObjectifs": "{{n}} 个目标"
   },
   "commercial": {
     "sousTitre": "这是您的个人活动情况。",

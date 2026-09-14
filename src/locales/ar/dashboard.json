@@ -23,7 +23,13 @@
     "aucunProduitSeuil": "لا يوجد منتج دون حد التنبيه.",
     "commerciauxInactifsTitre": "{{n}} مندوب(ين) بلا نشاط منذ 24 ساعة",
     "jamaisConnecte": "لم يسجل الدخول أبدًا",
-    "dernierAcces": "آخر دخول: {{date}}"
+    "dernierAcces": "آخر دخول: {{date}}",
+    "objectifsTitre": "الأهداف — مجموع الفرق والإدارة",
+    "objectifsSousTitre": "مجموع الأهداف المخصصة لكل مندوب مبيعات، ورئيس فريق، والإدارة.",
+    "aucunObjectifDefini": "لا يوجد هدف محدد للشهر أو السنة الحالية.",
+    "objectifMois": "هذا الشهر",
+    "objectifAnnee": "هذه السنة",
+    "nbObjectifs": "{{n}} هدف(أهداف)"
   },
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",

@@ -23,7 +23,13 @@
     "aucunProduitSeuil": "No product below the alert threshold.",
     "commerciauxInactifsTitre": "{{n}} sales rep(s) inactive for 24h+",
     "jamaisConnecte": "Never signed in",
-    "dernierAcces": "Last seen: {{date}}"
+    "dernierAcces": "Last seen: {{date}}",
+    "objectifsTitre": "Targets — sum across teams and leadership",
+    "objectifsSousTitre": "Combined targets assigned to each sales rep, team leader, and leadership.",
+    "aucunObjectifDefini": "No target defined for the current month or year.",
+    "objectifMois": "This month",
+    "objectifAnnee": "This year",
+    "nbObjectifs": "{{n}} target(s)"
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",

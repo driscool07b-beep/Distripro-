@@ -7,7 +7,7 @@
   "aucunObjectif": "Aucun objectif défini.",
   "modalTitre": "Nouvel objectif",
   "cible": "Cible",
-  "unCommercial": "Un commercial",
+  "unePersonne": "Une personne",
   "uneZone": "Une zone",
   "selectionner": "— Sélectionner —",
   "zonePlaceholder": "Ex. Abidjan Nord (doit correspondre à la ville des clients)",
@@ -29,5 +29,11 @@
   "erreurSelectionnerCommercial": "Sélectionnez un commercial.",
   "erreurIndiquerZone": "Indiquez une zone.",
   "erreurMontantOuQuantite": "Indiquez un montant cible et/ou une quantité cible.",
-  "erreurQuantiteSansProduit": "Une quantité cible doit être associée à un produit précis."
+  "erreurQuantiteSansProduit": "Une quantité cible doit être associée à un produit précis.",
+  "noteRealiseManagerAdmin": "Le montant réalisé reflétera les ventes personnelles de cette personne — souvent 0 pour un manager ou la direction, sauf s'ils enregistrent eux-mêmes des ventes.",
+  "roles": {
+    "commercial": "commercial",
+    "manager": "chef d'équipe",
+    "admin": "direction"
+  }
 }

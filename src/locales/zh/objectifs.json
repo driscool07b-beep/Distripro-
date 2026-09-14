@@ -7,7 +7,6 @@
   "aucunObjectif": "没有设定目标。",
   "modalTitre": "新建目标",
   "cible": "目标对象",
-  "unCommercial": "某销售代表",
   "uneZone": "某区域",
   "selectionner": "— 选择 —",
   "zonePlaceholder": "例如：北阿比让（必须与客户城市一致）",
@@ -29,5 +28,12 @@
   "erreurSelectionnerCommercial": "请选择一名销售代表。",
   "erreurIndiquerZone": "请输入区域。",
   "erreurMontantOuQuantite": "请输入目标金额和/或目标数量。",
-  "erreurQuantiteSansProduit": "目标数量必须关联到具体产品。"
+  "erreurQuantiteSansProduit": "目标数量必须关联到具体产品。",
+  "unePersonne": "某人",
+  "noteRealiseManagerAdmin": "已实现金额将反映此人的个人销售额——对于经理或管理层通常为0，除非他们亲自记录销售。",
+  "roles": {
+    "commercial": "销售代表",
+    "manager": "团队负责人",
+    "admin": "管理层"
+  }
 }

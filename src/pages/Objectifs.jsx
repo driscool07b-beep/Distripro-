@@ -36,7 +36,7 @@ export default function Objectifs() {
     setChargement(true)
     const { data } = await supabase
       .from('objectifs')
-      .select('id, commercial_id, zone, produit_id, periode_debut, periode_fin, montant_cible, quantite_cible, notes, profils!commercial_id(nom), produits(nom)')
+      .select('id, commercial_id, zone, produit_id, periode_debut, periode_fin, montant_cible, quantite_cible, notes, profils!commercial_id(nom, role), produits(nom)')
       .order('periode_debut', { ascending: false })
 
     const avecProgression = await Promise.all(
@@ -86,7 +86,7 @@ export default function Objectifs() {
 
   async function chargerListes() {
     const [{ data: com }, { data: prod }] = await Promise.all([
-      supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom'),
+      supabase.from('profils').select('id, nom, role').in('role', ['commercial', 'manager', 'admin']).order('nom'),
       supabase.from('produits').select('id, nom').eq('actif', true).order('nom'),
     ])
     setCommerciaux(com || [])
@@ -197,7 +197,7 @@ export default function Objectifs() {
                     onClick={() => setTypeCible('commercial')}
                     className={`flex-1 text-sm px-3 py-2 rounded-lg border ${typeCible === 'commercial' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
                   >
-                    {t('unCommercial')}
+                    {t('unePersonne')}
                   </button>
                   <button
                     type="button"
@@ -208,10 +208,17 @@ export default function Objectifs() {
                   </button>
                 </div>
                 {typeCible === 'commercial' ? (
-                  <select className="input-field" value={commercialId} onChange={(e) => setCommercialId(e.target.value)}>
-                    <option value="">{t('selectionner')}</option>
-                    {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
-                  </select>
+                  <>
+                    <select className="input-field" value={commercialId} onChange={(e) => setCommercialId(e.target.value)}>
+                      <option value="">{t('selectionner')}</option>
+                      {commerciaux.map((c) => (
+                        <option key={c.id} value={c.id}>{c.nom} — {t(`roles.${c.role}`)}</option>
+                      ))}
+                    </select>
+                    {commercialId && commerciaux.find((c) => c.id === commercialId)?.role !== 'commercial' && (
+                      <p className="text-xs text-petrol-500 mt-1">{t('noteRealiseManagerAdmin')}</p>
+                    )}
+                  </>
                 ) : (
                   <input
                     className="input-field"
@@ -290,6 +297,7 @@ export default function Objectifs() {
 function CarteObjectif({ objectif: o, onSupprimer }) {
   const { t } = useTranslation('objectifs')
   const cible = o.profils?.nom || o.zone
+  const roleCible = o.profils?.role && o.profils.role !== 'commercial' ? t(`roles.${o.profils.role}`) : null
   const pctMontant = o.montant_cible ? Math.min(100, Math.round((o.montantRealise / o.montant_cible) * 100)) : null
   const pctQuantite = o.quantite_cible ? Math.min(100, Math.round((o.quantiteRealisee / o.quantite_cible) * 100)) : null
 
@@ -297,7 +305,10 @@ function CarteObjectif({ objectif: o, onSupprimer }) {
     <div className="card p-4">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <p className="font-medium text-sm">{cible}</p>
+          <p className="font-medium text-sm">
+            {cible}
+            {roleCible && <span className="ml-1.5 text-xs bg-petrol-100 text-petrol-600 px-1.5 py-0.5 rounded">{roleCible}</span>}
+          </p>
           <p className="text-xs text-petrol-500">
             {new Date(o.periode_debut).toLocaleDateString('fr-FR')} — {new Date(o.periode_fin).toLocaleDateString('fr-FR')}
             {o.produits?.nom ? ` — ${o.produits.nom}` : ''}

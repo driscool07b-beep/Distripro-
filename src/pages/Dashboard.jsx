@@ -37,6 +37,8 @@ function DashboardEntreprise() {
   const [comparaisonAnnuelle, setComparaisonAnnuelle] = useState([])
   const [chargementComparaison, setChargementComparaison] = useState(true)
   const [commerciauxInactifs, setCommerciauxInactifs] = useState([])
+  const [objectifSynthese, setObjectifSynthese] = useState(null)
+  const [chargementObjectifs, setChargementObjectifs] = useState(true)
 
   useEffect(() => {
     chargerDonnees()
@@ -53,8 +55,71 @@ function DashboardEntreprise() {
   useEffect(() => {
     if (['admin', 'manager'].includes(profil?.role)) {
       supabase.rpc('commerciaux_inactifs').then(({ data }) => setCommerciauxInactifs(data || []))
+      chargerObjectifSynthese()
     }
   }, [profil?.role])
+
+  async function calculerRealiseObjectif(o) {
+    let ventes
+    if (o.commercial_id) {
+      const { data } = await supabase
+        .from('ventes')
+        .select('total')
+        .neq('statut', 'annulee')
+        .eq('commercial_id', o.commercial_id)
+        .gte('created_at', `${o.periode_debut}T00:00:00`)
+        .lt('created_at', `${o.periode_fin}T23:59:59.999`)
+      ventes = data
+    } else if (o.zone) {
+      const { data } = await supabase
+        .from('ventes')
+        .select('total, clients!inner(ville)')
+        .neq('statut', 'annulee')
+        .eq('clients.ville', o.zone)
+        .gte('created_at', `${o.periode_debut}T00:00:00`)
+        .lt('created_at', `${o.periode_fin}T23:59:59.999`)
+      ventes = data
+    }
+    return (ventes || []).reduce((s, v) => s + Number(v.total || 0), 0)
+  }
+
+  async function chargerObjectifSynthese() {
+    setChargementObjectifs(true)
+    const maintenant = new Date()
+    const debutMois = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1).toISOString().split('T')[0]
+    const finMois = new Date(maintenant.getFullYear(), maintenant.getMonth() + 1, 0).toISOString().split('T')[0]
+    const debutAnnee = `${maintenant.getFullYear()}-01-01`
+    const finAnnee = `${maintenant.getFullYear()}-12-31`
+
+    const { data } = await supabase
+      .from('objectifs')
+      .select('id, commercial_id, zone, periode_debut, periode_fin, montant_cible')
+      .not('montant_cible', 'is', null)
+      .lte('periode_debut', finAnnee)
+      .gte('periode_fin', debutAnnee)
+
+    const tous = data || []
+    const objectifsMois = tous.filter((o) => o.periode_debut <= finMois && o.periode_fin >= debutMois)
+
+    const [realiseMois, realiseAnnee] = await Promise.all([
+      Promise.all(objectifsMois.map(calculerRealiseObjectif)),
+      Promise.all(tous.map(calculerRealiseObjectif)),
+    ])
+
+    setObjectifSynthese({
+      mois: {
+        cible: objectifsMois.reduce((s, o) => s + Number(o.montant_cible || 0), 0),
+        realise: realiseMois.reduce((s, v) => s + v, 0),
+        nb: objectifsMois.length,
+      },
+      annee: {
+        cible: tous.reduce((s, o) => s + Number(o.montant_cible || 0), 0),
+        realise: realiseAnnee.reduce((s, v) => s + v, 0),
+        nb: tous.length,
+      },
+    })
+    setChargementObjectifs(false)
+  }
 
   async function chargerGraphe(periode) {
     setChargementGraphe(true)
@@ -287,6 +352,33 @@ function DashboardEntreprise() {
         </div>
       </div>
 
+      <div className="card p-6 mb-6">
+        <h2 className="font-semibold mb-1">{t('entreprise.objectifsTitre')}</h2>
+        <p className="text-xs text-petrol-500 mb-4">{t('entreprise.objectifsSousTitre')}</p>
+        {chargementObjectifs ? (
+          <p className="text-sm text-petrol-500">{t('chargement')}</p>
+        ) : !objectifSynthese || (objectifSynthese.mois.nb === 0 && objectifSynthese.annee.nb === 0) ? (
+          <p className="text-sm text-petrol-400">{t('entreprise.aucunObjectifDefini')}</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <BlocObjectif
+              titre={t('entreprise.objectifMois')}
+              cible={objectifSynthese.mois.cible}
+              realise={objectifSynthese.mois.realise}
+              nb={objectifSynthese.mois.nb}
+              t={t}
+            />
+            <BlocObjectif
+              titre={t('entreprise.objectifAnnee')}
+              cible={objectifSynthese.annee.cible}
+              realise={objectifSynthese.annee.realise}
+              nb={objectifSynthese.annee.nb}
+              t={t}
+            />
+          </div>
+        )}
+      </div>
+
       <div className="card p-6">
         <h2 className="font-semibold mb-4">{t('entreprise.comparaisonAnnuelleTitre')}</h2>
         {chargementComparaison ? (
@@ -309,6 +401,25 @@ function DashboardEntreprise() {
             </LineChart>
           </ResponsiveContainer>
         )}
+      </div>
+    </div>
+  )
+}
+
+function BlocObjectif({ titre, cible, realise, nb, t }) {
+  const pct = cible > 0 ? Math.min(100, Math.round((realise / cible) * 100)) : null
+  return (
+    <div>
+      <p className="text-xs font-medium text-petrol-600 mb-1">{titre} <span className="text-petrol-400">({t('entreprise.nbObjectifs', { n: nb })})</span></p>
+      <div className="flex justify-between text-sm mb-1">
+        <span className="font-mono">{formatXOF(realise)} / {formatXOF(cible)}</span>
+        {pct !== null && <span className="font-semibold">{pct}%</span>}
+      </div>
+      <div className="w-full bg-canvas rounded-full h-2 overflow-hidden">
+        <div
+          className={`h-full rounded-full ${pct >= 100 ? 'bg-green-600' : pct >= 60 ? 'bg-amber-500' : 'bg-red-500'}`}
+          style={{ width: `${pct || 0}%` }}
+        />
       </div>
     </div>
   )

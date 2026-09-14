@@ -7,7 +7,6 @@
   "aucunObjectif": "لم يتم تحديد أي هدف.",
   "modalTitre": "هدف جديد",
   "cible": "الهدف",
-  "unCommercial": "مندوب",
   "uneZone": "منطقة",
   "selectionner": "— اختر —",
   "zonePlaceholder": "مثال: أبيدجان الشمالية (يجب أن يطابق مدينة العملاء)",
@@ -29,5 +28,12 @@
   "erreurSelectionnerCommercial": "اختر مندوبًا.",
   "erreurIndiquerZone": "أدخل منطقة.",
   "erreurMontantOuQuantite": "أدخل مبلغًا مستهدفًا و/أو كمية مستهدفة.",
-  "erreurQuantiteSansProduit": "يجب ربط الكمية المستهدفة بمنتج محدد."
+  "erreurQuantiteSansProduit": "يجب ربط الكمية المستهدفة بمنتج محدد.",
+  "unePersonne": "شخص",
+  "noteRealiseManagerAdmin": "المبلغ المحقق سيعكس المبيعات الشخصية لهذا الشخص — غالبًا 0 للمدير أو الإدارة، ما لم يسجلوا مبيعات بأنفسهم.",
+  "roles": {
+    "commercial": "مندوب مبيعات",
+    "manager": "رئيس فريق",
+    "admin": "الإدارة"
+  }
 }

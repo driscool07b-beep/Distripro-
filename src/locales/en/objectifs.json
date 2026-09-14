@@ -7,7 +7,7 @@
   "aucunObjectif": "No target defined.",
   "modalTitre": "New target",
   "cible": "Target",
-  "unCommercial": "A sales rep",
+  "unePersonne": "A person",
   "uneZone": "A zone",
   "selectionner": "— Select —",
   "zonePlaceholder": "E.g. North Abidjan (must match clients' city)",
@@ -29,5 +29,11 @@
   "erreurSelectionnerCommercial": "Select a sales rep.",
   "erreurIndiquerZone": "Enter a zone.",
   "erreurMontantOuQuantite": "Enter a target amount and/or a target quantity.",
-  "erreurQuantiteSansProduit": "A target quantity must be linked to a specific product."
+  "erreurQuantiteSansProduit": "A target quantity must be linked to a specific product.",
+  "noteRealiseManagerAdmin": "The realized amount will reflect this person's own personal sales — often 0 for a manager or leadership, unless they record sales themselves.",
+  "roles": {
+    "commercial": "sales rep",
+    "manager": "team leader",
+    "admin": "leadership"
+  }
 }
