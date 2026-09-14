@@ -1,0 +1,130 @@
+{
+  "accesRefuse": "此页面仅限公司管理员使用。",
+  "titre": "设置",
+  "erreur": "错误",
+  "enregistrement": "保存中…",
+  "enregistrer": "保存",
+  "enregistre": "已保存。",
+  "ajout": "添加中…",
+
+  "infosLegales": {
+    "titre": "法律信息",
+    "sousTitre": "显示在生成的所有文件中（发票、收据、送货单、形式发票）。",
+    "adresse": "地址",
+    "telephone": "电话",
+    "email": "电子邮件",
+    "ncc": "纳税人账号（NCC）",
+    "rccm": "商业注册号（RCCM）"
+  },
+
+  "caisses": {
+    "titre": "收银台",
+    "sousTitre": "销售代表提交存款的地点（现金及其他已收付款方式）。",
+    "desactiver": "停用",
+    "reactiver": "重新启用",
+    "aucuneCaisse": "尚未创建收银台。",
+    "placeholder": "例如：收银台1",
+    "ajouter": "+ 添加"
+  },
+
+  "remises": {
+    "titre": "折扣政策",
+    "sousTitre": "超过此阈值后，销售代表将无法单独批准折扣——只有经理或管理员可以应用。",
+    "seuil": "阈值（%）",
+    "erreurSeuil": "阈值必须是0到100之间的百分比。"
+  },
+
+  "stock": {
+    "titre": "库存政策",
+    "exigerJustificatif": "任何手动库存调整都需要提供凭证（照片/PDF）"
+  },
+
+  "devise": {
+    "titre": "货币",
+    "sousTitre": "适用于应用中显示的所有金额（销售、库存、应收账款、收据等）。"
+  },
+
+  "organigramme": {
+    "titre": "销售组织架构",
+    "sousTitre": "将每位销售代表关联到由团队负责人（经理）管理的团队——为团队负责人设定的目标将按其团队所有销售代表的销售额总和计算。",
+    "chefEquipe": "团队负责人：{{nom}}",
+    "aucun": "— 无 —",
+    "supprimer": "删除",
+    "aucunCommercialAffilie": "没有关联的销售代表。",
+    "aucuneEquipe": "尚未创建团队。",
+    "affecterCommercial": "将销售代表分配到团队",
+    "aucuneEquipeOption": "— 无团队 —",
+    "nouvelleEquipe": "新建团队",
+    "nomPlaceholder": "团队名称（例如：北区团队）",
+    "chefEquipeOptionnel": "— 团队负责人（可选）—",
+    "creer": "+ 创建",
+    "erreurNomEquipe": "团队名称为必填项。"
+  },
+
+  "facturation": {
+    "titre": "开票与税务",
+    "sousTitre": "在依赖这些计算开具真实发票之前，请先与您的会计核实。",
+    "assujettiLabel": "我公司需缴纳增值税（一般或简易征收方式）",
+    "assujettiAide": "启用后，每个产品都需要单独配置（是否适用增值税，以及税率）——请在库存页面设置，税率通常因商品性质而异。",
+    "autresTaxes": "其他税种（如AIRSI）",
+    "aucuneTaxe": "未配置其他税种。",
+    "surMontantHt": "基于税前金额",
+    "surMontantTtc": "基于含税金额",
+    "desactiver": "停用",
+    "activer": "启用",
+    "nom": "名称",
+    "nomPlaceholder": "例如：AIRSI",
+    "taux": "税率（%）",
+    "calculeeSur": "计算基础",
+    "montantPlusTva": "金额 + 增值税",
+    "montantHt": "税前金额",
+    "ajouterTaxe": "+ 添加此税种",
+    "erreurNomTaux": "名称和税率为必填项。"
+  },
+
+  "rapportsVisite": {
+    "titre": "销售拜访报告",
+    "sousTitre": "销售代表在路线中确认拜访时，可以记录客户处的库存情况（货架和库房），并附上最多3张照片。",
+    "photoObligatoire": "提交报告需要照片",
+    "activeTexte": "已启用：必须至少添加一张照片。",
+    "desactiveTexte": "已停用：报告可以不带照片发送。"
+  },
+
+  "champsPersonnalises": {
+    "titre": "需收集的附加信息",
+    "sousTitre": "为您的市场调研添加自定义问题——这些问题会自动出现在销售代表的拜访报告表单中。",
+    "chargement": "加载中…",
+    "aucunChamp": "暂无自定义字段。",
+    "actif": "启用",
+    "desactive": "停用",
+    "libelle": "问题标签",
+    "libellePlaceholder": "例如：橱窗中是否有促销陈列？",
+    "typeReponse": "答案类型",
+    "options": "选项（用逗号分隔）",
+    "optionsPlaceholder": "好，一般，差",
+    "ajouterQuestion": "+ 添加此问题",
+    "erreurLibelle": "标签为必填项。",
+    "erreurOptions": "请至少输入一个选项，用逗号分隔。"
+  },
+
+  "typesChamp": {
+    "texte": "自由文本",
+    "nombre": "数字",
+    "oui_non": "是 / 否",
+    "choix_multiple": "从列表中选择"
+  },
+
+  "concurrents": {
+    "titre": "竞品",
+    "sousTitre": "记录需要监控的竞品——销售代表可以在每次拜访客户时勾选其在货架上的铺货情况，以计算您的铺货率。",
+    "chargement": "加载中…",
+    "aucunProduit": "暂无竞品。",
+    "actif": "启用",
+    "desactive": "停用",
+    "nomProduit": "产品名称",
+    "nomPlaceholder": "例如：XYZ谷物 400克",
+    "marque": "品牌（可选）",
+    "ajouterProduit": "+ 添加此竞品",
+    "erreurNom": "产品名称为必填项。"
+  }
+}

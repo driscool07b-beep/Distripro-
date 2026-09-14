@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
-const TYPES_CHAMP = [
-  { value: 'texte', label: 'Texte libre' },
-  { value: 'nombre', label: 'Nombre' },
-  { value: 'oui_non', label: 'Oui / Non' },
-  { value: 'choix_multiple', label: 'Choix parmi une liste' },
-]
-
 const CHAMP_VIDE = { libelle: '', type_champ: 'texte', options: '' }
 
 export default function Parametres() {
+  const { t } = useTranslation('parametres')
   const { profil, entreprise, rechargerProfil } = useAuth()
+  const TYPES_CHAMP = [
+    { value: 'texte', label: t('typesChamp.texte') },
+    { value: 'nombre', label: t('typesChamp.nombre') },
+    { value: 'oui_non', label: t('typesChamp.oui_non') },
+    { value: 'choix_multiple', label: t('typesChamp.choix_multiple') },
+  ]
   const [infosLegales, setInfosLegales] = useState({ adresse: '', telephone: '', email: '', ncc: '', rccm: '' })
   const [seuilRemise, setSeuilRemise] = useState('15')
   const [enregistrementSeuil, setEnregistrementSeuil] = useState(false)
@@ -97,7 +98,7 @@ export default function Parametres() {
   async function creerEquipe() {
     setErreurEquipe('')
     if (!nouvelleEquipeNom.trim()) {
-      setErreurEquipe('Le nom de l\'équipe est requis.')
+      setErreurEquipe(t('organigramme.erreurNomEquipe'))
       return
     }
     const { error } = await supabase.rpc('creer_equipe', {
@@ -105,7 +106,7 @@ export default function Parametres() {
       p_manager_id: nouvelleEquipeManager || null,
     })
     if (error) {
-      setErreurEquipe(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurEquipe(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setNouvelleEquipeNom('')
@@ -157,7 +158,7 @@ export default function Parametres() {
     e.preventDefault()
     setErreurTaxe('')
     if (!nouvelleTaxe.nom.trim() || !nouvelleTaxe.taux) {
-      setErreurTaxe('Le nom et le taux sont requis.')
+      setErreurTaxe(t('facturation.erreurNomTaux'))
       return
     }
     setAjoutTaxeEnvoi(true)
@@ -168,7 +169,7 @@ export default function Parametres() {
     })
     setAjoutTaxeEnvoi(false)
     if (error) {
-      setErreurTaxe(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurTaxe(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setNouvelleTaxe({ nom: '', taux: '', base_calcul: 'ttc' })
@@ -195,7 +196,7 @@ export default function Parametres() {
       .select('id, nom, actif')
       .single()
     if (error) {
-      setErreurCaisse(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurCaisse(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setCaisses((prev) => [...prev, data])
@@ -221,7 +222,7 @@ export default function Parametres() {
     e.preventDefault()
     setErreurConcurrent('')
     if (!nouveauConcurrent.nom.trim()) {
-      setErreurConcurrent('Le nom du produit est requis.')
+      setErreurConcurrent(t('concurrents.erreurNom'))
       return
     }
     setAjoutConcurrentEnvoi(true)
@@ -232,7 +233,7 @@ export default function Parametres() {
     })
     setAjoutConcurrentEnvoi(false)
     if (error) {
-      setErreurConcurrent(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurConcurrent(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setNouveauConcurrent({ nom: '', marque: '' })
@@ -262,7 +263,7 @@ export default function Parametres() {
     return (
       <div className="p-4 max-w-2xl mx-auto">
         <p className="text-petrol-500">
-          Cette page est réservée aux administrateurs de l'entreprise.
+          {t('accesRefuse')}
         </p>
       </div>
     )
@@ -278,7 +279,7 @@ export default function Parametres() {
       .eq('id', entreprise.id)
     setEnregistrement(false)
     if (error) {
-      setErreur(`Erreur : ${traduireErreur(error.message)}`)
+      setErreur(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     await rechargerProfil()
@@ -303,7 +304,7 @@ export default function Parametres() {
       .eq('id', entreprise.id)
     setEnregistrementInfos(false)
     if (error) {
-      setErreurInfos(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurInfos(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     await rechargerProfil()
@@ -317,14 +318,14 @@ export default function Parametres() {
     setConfirmationSeuil(false)
     const valeur = Number(seuilRemise)
     if (isNaN(valeur) || valeur < 0 || valeur > 100) {
-      setErreurSeuil('Le seuil doit être un pourcentage entre 0 et 100.')
+      setErreurSeuil(t('remises.erreurSeuil'))
       return
     }
     setEnregistrementSeuil(true)
     const { error } = await supabase.from('entreprises').update({ seuil_remise_pourcentage: valeur }).eq('id', entreprise.id)
     setEnregistrementSeuil(false)
     if (error) {
-      setErreurSeuil(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurSeuil(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     await rechargerProfil()
@@ -348,11 +349,11 @@ export default function Parametres() {
     e.preventDefault()
     setErreurChamp('')
     if (!nouveauChamp.libelle.trim()) {
-      setErreurChamp('Le libellé est requis.')
+      setErreurChamp(t('champsPersonnalises.erreurLibelle'))
       return
     }
     if (nouveauChamp.type_champ === 'choix_multiple' && !nouveauChamp.options.trim()) {
-      setErreurChamp('Indiquez au moins une option, séparée par des virgules.')
+      setErreurChamp(t('champsPersonnalises.erreurOptions'))
       return
     }
     setAjoutChampEnvoi(true)
@@ -368,7 +369,7 @@ export default function Parametres() {
     })
     setAjoutChampEnvoi(false)
     if (error) {
-      setErreurChamp(`Erreur : ${traduireErreur(error.message)}`)
+      setErreurChamp(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
     setNouveauChamp(CHAMP_VIDE)
@@ -386,18 +387,18 @@ export default function Parametres() {
   return (
     <div className="p-4 max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="text-xl font-bold">Paramètres</h1>
+        <h1 className="text-xl font-bold">{t('titre')}</h1>
         <p className="text-sm text-petrol-500">{entreprise?.nom}</p>
       </div>
 
       <div className="card p-4">
-        <h2 className="font-semibold mb-1">Informations légales</h2>
+        <h2 className="font-semibold mb-1">{t('infosLegales.titre')}</h2>
         <p className="text-sm text-petrol-600 mb-4">
-          Affichées sur tous les documents générés (factures, reçus, bons de livraison, proforma).
+          {t('infosLegales.sousTitre')}
         </p>
         <form onSubmit={enregistrerInfosLegales} className="space-y-3">
           <div>
-            <label className="label">Adresse</label>
+            <label className="label">{t('infosLegales.adresse')}</label>
             <input
               className="input-field"
               value={infosLegales.adresse}
@@ -406,7 +407,7 @@ export default function Parametres() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">Téléphone</label>
+              <label className="label">{t('infosLegales.telephone')}</label>
               <input
                 className="input-field"
                 value={infosLegales.telephone}
@@ -414,7 +415,7 @@ export default function Parametres() {
               />
             </div>
             <div>
-              <label className="label">Email</label>
+              <label className="label">{t('infosLegales.email')}</label>
               <input
                 type="email"
                 className="input-field"
@@ -425,7 +426,7 @@ export default function Parametres() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">NCC (numéro de compte contribuable)</label>
+              <label className="label">{t('infosLegales.ncc')}</label>
               <input
                 className="input-field"
                 value={infosLegales.ncc}
@@ -433,7 +434,7 @@ export default function Parametres() {
               />
             </div>
             <div>
-              <label className="label">RCCM (registre de commerce)</label>
+              <label className="label">{t('infosLegales.rccm')}</label>
               <input
                 className="input-field"
                 value={infosLegales.rccm}
@@ -442,38 +443,38 @@ export default function Parametres() {
             </div>
           </div>
           {erreurInfos && <p className="text-xs text-red-600">{erreurInfos}</p>}
-          {confirmationInfos && <p className="text-xs text-green-600">Enregistré.</p>}
+          {confirmationInfos && <p className="text-xs text-green-600">{t('enregistre')}</p>}
           <button type="submit" disabled={enregistrementInfos} className="btn-primary w-full">
-            {enregistrementInfos ? 'Enregistrement…' : 'Enregistrer'}
+            {enregistrementInfos ? t('enregistrement') : t('enregistrer')}
           </button>
         </form>
       </div>
 
       {['admin', 'manager'].includes(profil?.role) && (
         <div className="card p-4">
-          <h2 className="font-semibold mb-1">Caisses</h2>
+          <h2 className="font-semibold mb-1">{t('caisses.titre')}</h2>
           <p className="text-sm text-petrol-600 mb-3">
-            Où les commerciaux remettent leurs versements (espèces et autres modes de règlement encaissés).
+            {t('caisses.sousTitre')}
           </p>
           <div className="space-y-1 mb-3">
             {caisses.map((c) => (
               <div key={c.id} className="flex items-center justify-between text-sm border border-line rounded px-3 py-2">
                 <span className={c.actif ? '' : 'text-petrol-400 line-through'}>{c.nom}</span>
                 <button onClick={() => basculerCaisseActive(c)} className="text-xs text-petrol-600 underline">
-                  {c.actif ? 'Désactiver' : 'Réactiver'}
+                  {c.actif ? t('caisses.desactiver') : t('caisses.reactiver')}
                 </button>
               </div>
             ))}
-            {caisses.length === 0 && <p className="text-xs text-petrol-400">Aucune caisse créée.</p>}
+            {caisses.length === 0 && <p className="text-xs text-petrol-400">{t('caisses.aucuneCaisse')}</p>}
           </div>
           <div className="flex gap-2">
             <input
               className="input-field flex-1"
-              placeholder="Ex. Caisse 1"
+              placeholder={t('caisses.placeholder')}
               value={nouvelleCaisseNom}
               onChange={(e) => setNouvelleCaisseNom(e.target.value)}
             />
-            <button onClick={ajouterCaisse} className="btn-secondary text-sm px-3">+ Ajouter</button>
+            <button onClick={ajouterCaisse} className="btn-secondary text-sm px-3">{t('caisses.ajouter')}</button>
           </div>
           {erreurCaisse && <p className="text-xs text-red-600 mt-2">{erreurCaisse}</p>}
         </div>
@@ -481,14 +482,13 @@ export default function Parametres() {
 
       {['admin', 'manager'].includes(profil?.role) && (
         <div className="card p-4">
-          <h2 className="font-semibold mb-1">Politique de remises</h2>
+          <h2 className="font-semibold mb-1">{t('remises.titre')}</h2>
           <p className="text-sm text-petrol-600 mb-3">
-            Au-delà de ce seuil, un commercial ne peut plus valider seul la remise — seuls un manager
-            ou un administrateur peuvent l'appliquer.
+            {t('remises.sousTitre')}
           </p>
           <form onSubmit={enregistrerSeuilRemise} className="flex gap-2 items-end">
             <div className="flex-1">
-              <label className="label">Seuil (%)</label>
+              <label className="label">{t('remises.seuil')}</label>
               <input
                 type="number"
                 min="0"
@@ -500,17 +500,17 @@ export default function Parametres() {
               />
             </div>
             <button type="submit" disabled={enregistrementSeuil} className="btn-primary">
-              {enregistrementSeuil ? '…' : 'Enregistrer'}
+              {enregistrementSeuil ? '…' : t('enregistrer')}
             </button>
           </form>
           {erreurSeuil && <p className="text-xs text-red-600 mt-2">{erreurSeuil}</p>}
-          {confirmationSeuil && <p className="text-xs text-green-600 mt-2">Enregistré.</p>}
+          {confirmationSeuil && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 
       {['admin', 'manager'].includes(profil?.role) && (
         <div className="card p-4">
-          <h2 className="font-semibold mb-1">Politique de stock</h2>
+          <h2 className="font-semibold mb-1">{t('stock.titre')}</h2>
           <label className="flex items-center gap-2 text-sm mt-2">
             <input
               type="checkbox"
@@ -518,17 +518,17 @@ export default function Parametres() {
               disabled={enregistrementJustificatif}
               onChange={(e) => basculerJustificatifObligatoire(e.target.checked)}
             />
-            Exiger un justificatif (photo/PDF) pour tout ajustement manuel de stock
+            {t('stock.exigerJustificatif')}
           </label>
-          {confirmationJustificatif && <p className="text-xs text-green-600 mt-2">Enregistré.</p>}
+          {confirmationJustificatif && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 
       {profil?.role === 'admin' && (
         <div className="card p-4">
-          <h2 className="font-semibold mb-1">Devise</h2>
+          <h2 className="font-semibold mb-1">{t('devise.titre')}</h2>
           <p className="text-xs text-petrol-500 mb-3">
-            S'applique à tous les montants affichés dans l'app (ventes, stock, créances, reçus…).
+            {t('devise.sousTitre')}
           </p>
           <select
             className="input-field"
@@ -548,10 +548,9 @@ export default function Parametres() {
 
       {['admin', 'manager'].includes(profil?.role) && (
         <div className="card p-4">
-          <h2 className="font-semibold mb-1">Organigramme commercial</h2>
+          <h2 className="font-semibold mb-1">{t('organigramme.titre')}</h2>
           <p className="text-xs text-petrol-500 mb-3">
-            Affiliez chaque commercial à une équipe gérée par un chef d'équipe (manager) — l'objectif fixé
-            au chef d'équipe sera alors calculé comme la somme des ventes de tous les commerciaux de son équipe.
+            {t('organigramme.sousTitre')}
           </p>
 
           <div className="space-y-3 mb-4">
@@ -561,11 +560,11 @@ export default function Parametres() {
                   <div>
                     <p className="text-sm font-medium">{e.nom}</p>
                     <p className="text-xs text-petrol-500">
-                      Chef d'équipe : {e.profils?.nom || <span className="italic">— aucun —</span>}
+                      {t('organigramme.chefEquipe', { nom: e.profils?.nom || t('organigramme.aucun') })}
                     </p>
                   </div>
                   <button onClick={() => supprimerEquipe(e.id)} className="text-xs text-red-600 underline">
-                    Supprimer
+                    {t('organigramme.supprimer')}
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -576,16 +575,16 @@ export default function Parametres() {
                     </span>
                   ))}
                   {e.membres.filter((m) => m.role === 'commercial').length === 0 && (
-                    <span className="text-xs text-petrol-400">Aucun commercial affilié.</span>
+                    <span className="text-xs text-petrol-400">{t('organigramme.aucunCommercialAffilie')}</span>
                   )}
                 </div>
               </div>
             ))}
-            {equipes.length === 0 && <p className="text-xs text-petrol-400">Aucune équipe créée.</p>}
+            {equipes.length === 0 && <p className="text-xs text-petrol-400">{t('organigramme.aucuneEquipe')}</p>}
           </div>
 
           <div className="border-t border-line pt-3 mb-4">
-            <p className="text-xs font-medium text-petrol-600 mb-2">Affecter un commercial à une équipe</p>
+            <p className="text-xs font-medium text-petrol-600 mb-2">{t('organigramme.affecterCommercial')}</p>
             <div className="space-y-1.5">
               {commerciauxEtManagers.filter((m) => m.role === 'commercial').map((c) => (
                 <div key={c.id} className="flex items-center justify-between gap-2 text-sm">
@@ -595,7 +594,7 @@ export default function Parametres() {
                     value={c.equipe_id || ''}
                     onChange={(ev) => affilier(c.id, ev.target.value || null)}
                   >
-                    <option value="">— Aucune équipe —</option>
+                    <option value="">{t('organigramme.aucuneEquipeOption')}</option>
                     {equipes.map((e) => <option key={e.id} value={e.id}>{e.nom}</option>)}
                   </select>
                 </div>
@@ -604,11 +603,11 @@ export default function Parametres() {
           </div>
 
           <div className="border-t border-line pt-3">
-            <p className="text-xs font-medium text-petrol-600 mb-2">Nouvelle équipe</p>
+            <p className="text-xs font-medium text-petrol-600 mb-2">{t('organigramme.nouvelleEquipe')}</p>
             <div className="flex flex-col sm:flex-row gap-2">
               <input
                 className="input-field flex-1"
-                placeholder="Nom de l'équipe (ex. Équipe Nord)"
+                placeholder={t('organigramme.nomPlaceholder')}
                 value={nouvelleEquipeNom}
                 onChange={(e) => setNouvelleEquipeNom(e.target.value)}
               />
@@ -617,12 +616,12 @@ export default function Parametres() {
                 value={nouvelleEquipeManager}
                 onChange={(e) => setNouvelleEquipeManager(e.target.value)}
               >
-                <option value="">— Chef d'équipe (optionnel) —</option>
+                <option value="">{t('organigramme.chefEquipeOptionnel')}</option>
                 {commerciauxEtManagers.filter((m) => m.role === 'manager' || m.role === 'admin').map((m) => (
                   <option key={m.id} value={m.id}>{m.nom} — {m.role === 'manager' ? 'manager' : 'admin'}</option>
                 ))}
               </select>
-              <button onClick={creerEquipe} className="btn-primary shrink-0">+ Créer</button>
+              <button onClick={creerEquipe} className="btn-primary shrink-0">{t('organigramme.creer')}</button>
             </div>
             {erreurEquipe && <p className="text-xs text-red-600 mt-2">{erreurEquipe}</p>}
           </div>
@@ -631,9 +630,9 @@ export default function Parametres() {
 
       {profil?.role === 'admin' && (
         <div className="card p-4">
-          <h2 className="font-semibold mb-1">Facturation & taxes</h2>
+          <h2 className="font-semibold mb-1">{t('facturation.titre')}</h2>
           <p className="text-xs text-petrol-500 mb-3">
-            À vérifier avec ton comptable avant de t'appuyer sur ces calculs pour de vraies factures.
+            {t('facturation.sousTitre')}
           </p>
           <label className="flex items-center gap-2 text-sm">
             <input
@@ -642,30 +641,29 @@ export default function Parametres() {
               disabled={enregistrementTva}
               onChange={(e) => basculerAssujettiTva(e.target.checked)}
             />
-            Mon entreprise facture la TVA (régime réel normal ou simplifié)
+            {t('facturation.assujettiLabel')}
           </label>
           <p className="text-xs text-petrol-500 mt-1 mb-4">
-            Une fois activé, chaque produit doit être configuré individuellement (TVA applicable ou non, et à quel
-            taux) depuis la page Stock — le taux varie souvent selon la nature de la marchandise.
+            {t('facturation.assujettiAide')}
           </p>
 
           {assujettiTva && (
             <>
-              <h3 className="text-sm font-medium mb-2">Autres taxes (ex. AIRSI)</h3>
+              <h3 className="text-sm font-medium mb-2">{t('facturation.autresTaxes')}</h3>
               <div className="space-y-2 mb-3">
                 {taxes.length === 0 ? (
-                  <p className="text-xs text-petrol-500">Aucune autre taxe configurée.</p>
+                  <p className="text-xs text-petrol-500">{t('facturation.aucuneTaxe')}</p>
                 ) : (
-                  taxes.map((t) => (
-                    <div key={t.id} className="flex items-center justify-between border border-line rounded-lg px-3 py-2 text-sm">
+                  taxes.map((t2) => (
+                    <div key={t2.id} className="flex items-center justify-between border border-line rounded-lg px-3 py-2 text-sm">
                       <div>
-                        <span className={t.actif ? '' : 'text-petrol-400 line-through'}>{t.nom} — {t.taux}%</span>
+                        <span className={t2.actif ? '' : 'text-petrol-400 line-through'}>{t2.nom} — {t2.taux}%</span>
                         <span className="text-xs text-petrol-500 ml-2">
-                          (sur {t.base_calcul === 'ht' ? 'le montant HT' : 'le montant + TVA'})
+                          ({t2.base_calcul === 'ht' ? t('facturation.surMontantHt') : t('facturation.surMontantTtc')})
                         </span>
                       </div>
-                      <button type="button" onClick={() => basculerActifTaxe(t)} className="text-xs text-petrol-600 underline">
-                        {t.actif ? 'Désactiver' : 'Activer'}
+                      <button type="button" onClick={() => basculerActifTaxe(t2)} className="text-xs text-petrol-600 underline">
+                        {t2.actif ? t('facturation.desactiver') : t('facturation.activer')}
                       </button>
                     </div>
                   ))
@@ -673,16 +671,16 @@ export default function Parametres() {
               </div>
               <form onSubmit={ajouterTaxe} className="grid grid-cols-3 gap-2 items-end">
                 <div>
-                  <label className="label">Nom</label>
+                  <label className="label">{t('facturation.nom')}</label>
                   <input
                     className="input-field text-sm"
                     value={nouvelleTaxe.nom}
                     onChange={(e) => setNouvelleTaxe({ ...nouvelleTaxe, nom: e.target.value })}
-                    placeholder="Ex. AIRSI"
+                    placeholder={t('facturation.nomPlaceholder')}
                   />
                 </div>
                 <div>
-                  <label className="label">Taux (%)</label>
+                  <label className="label">{t('facturation.taux')}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -692,19 +690,19 @@ export default function Parametres() {
                   />
                 </div>
                 <div>
-                  <label className="label">Calculée sur</label>
+                  <label className="label">{t('facturation.calculeeSur')}</label>
                   <select
                     className="input-field text-sm"
                     value={nouvelleTaxe.base_calcul}
                     onChange={(e) => setNouvelleTaxe({ ...nouvelleTaxe, base_calcul: e.target.value })}
                   >
-                    <option value="ttc">Montant + TVA</option>
-                    <option value="ht">Montant HT</option>
+                    <option value="ttc">{t('facturation.montantPlusTva')}</option>
+                    <option value="ht">{t('facturation.montantHt')}</option>
                   </select>
                 </div>
                 <div className="col-span-3">
                   <button type="submit" disabled={ajoutTaxeEnvoi} className="btn-secondary text-sm">
-                    {ajoutTaxeEnvoi ? '…' : '+ Ajouter cette taxe'}
+                    {ajoutTaxeEnvoi ? '…' : t('facturation.ajouterTaxe')}
                   </button>
                 </div>
               </form>
@@ -715,19 +713,18 @@ export default function Parametres() {
       )}
 
       <div className="card p-4">
-        <h2 className="font-semibold mb-1">Rapports de visite commerciale</h2>
+        <h2 className="font-semibold mb-1">{t('rapportsVisite.titre')}</h2>
         <p className="text-sm text-petrol-600 mb-4">
-          Lorsqu'un commercial valide une visite pendant une tournée, il peut saisir l'état
-          du stock chez le client (rayon et réserve) avec jusqu'à 3 photos à l'appui.
+          {t('rapportsVisite.sousTitre')}
         </p>
 
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="font-medium text-sm">Photo obligatoire pour valider le rapport</p>
+            <p className="font-medium text-sm">{t('rapportsVisite.photoObligatoire')}</p>
             <p className="text-xs text-petrol-500">
               {entreprise?.photo_rapport_obligatoire
-                ? 'Activé : au moins une photo doit être ajoutée.'
-                : 'Désactivé : le rapport peut être envoyé sans photo.'}
+                ? t('rapportsVisite.activeTexte')
+                : t('rapportsVisite.desactiveTexte')}
             </p>
           </div>
           <button
@@ -746,23 +743,22 @@ export default function Parametres() {
           </button>
         </div>
 
-        {confirmation && <p className="text-xs text-green-600 mt-3">Réglage enregistré.</p>}
+        {confirmation && <p className="text-xs text-green-600 mt-3">{t('enregistre')}</p>}
         {erreur && <p className="text-xs text-red-600 mt-3">{erreur}</p>}
       </div>
 
       <div className="card p-4">
-        <h2 className="font-semibold mb-1">Informations supplémentaires à collecter</h2>
+        <h2 className="font-semibold mb-1">{t('champsPersonnalises.titre')}</h2>
         <p className="text-sm text-petrol-600 mb-4">
-          Ajoutez vos propres questions pour votre étude commerciale — elles apparaîtront
-          automatiquement dans le formulaire de rapport de visite des commerciaux.
+          {t('champsPersonnalises.sousTitre')}
         </p>
 
         {chargementChamps ? (
-          <p className="text-sm text-petrol-500">Chargement…</p>
+          <p className="text-sm text-petrol-500">{t('champsPersonnalises.chargement')}</p>
         ) : (
           <div className="space-y-2 mb-4">
             {champs.length === 0 && (
-              <p className="text-sm text-petrol-400">Aucun champ personnalisé pour le moment.</p>
+              <p className="text-sm text-petrol-400">{t('champsPersonnalises.aucunChamp')}</p>
             )}
             {champs.map((champ) => (
               <div
@@ -772,7 +768,7 @@ export default function Parametres() {
                 <div>
                   <p className="text-sm font-medium">{champ.libelle}</p>
                   <p className="text-xs text-petrol-500">
-                    {TYPES_CHAMP.find((t) => t.value === champ.type_champ)?.label}
+                    {TYPES_CHAMP.find((tc) => tc.value === champ.type_champ)?.label}
                     {champ.options?.length ? ` — ${champ.options.join(', ')}` : ''}
                   </p>
                 </div>
@@ -781,7 +777,7 @@ export default function Parametres() {
                   onClick={() => basculerActifChamp(champ)}
                   className={`text-xs underline shrink-0 ${champ.actif ? 'text-petrol-600' : 'text-petrol-400'}`}
                 >
-                  {champ.actif ? 'Actif' : 'Désactivé'}
+                  {champ.actif ? t('champsPersonnalises.actif') : t('champsPersonnalises.desactive')}
                 </button>
               </div>
             ))}
@@ -790,57 +786,56 @@ export default function Parametres() {
 
         <form onSubmit={ajouterChamp} className="border-t border-line pt-4 space-y-3">
           <div>
-            <label className="label">Libellé de la question</label>
+            <label className="label">{t('champsPersonnalises.libelle')}</label>
             <input
               className="input-field"
               value={nouveauChamp.libelle}
               onChange={(e) => setNouveauChamp({ ...nouveauChamp, libelle: e.target.value })}
-              placeholder="Ex : Présence de la PLV en vitrine ?"
+              placeholder={t('champsPersonnalises.libellePlaceholder')}
             />
           </div>
           <div>
-            <label className="label">Type de réponse</label>
+            <label className="label">{t('champsPersonnalises.typeReponse')}</label>
             <select
               className="input-field"
               value={nouveauChamp.type_champ}
               onChange={(e) => setNouveauChamp({ ...nouveauChamp, type_champ: e.target.value })}
             >
-              {TYPES_CHAMP.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+              {TYPES_CHAMP.map((tc) => (
+                <option key={tc.value} value={tc.value}>{tc.label}</option>
               ))}
             </select>
           </div>
           {nouveauChamp.type_champ === 'choix_multiple' && (
             <div>
-              <label className="label">Options (séparées par des virgules)</label>
+              <label className="label">{t('champsPersonnalises.options')}</label>
               <input
                 className="input-field"
                 value={nouveauChamp.options}
                 onChange={(e) => setNouveauChamp({ ...nouveauChamp, options: e.target.value })}
-                placeholder="Bonne, Moyenne, Mauvaise"
+                placeholder={t('champsPersonnalises.optionsPlaceholder')}
               />
             </div>
           )}
           {erreurChamp && <p className="text-xs text-red-600">{erreurChamp}</p>}
           <button type="submit" disabled={ajoutChampEnvoi} className="btn-primary w-full">
-            {ajoutChampEnvoi ? 'Ajout…' : '+ Ajouter cette question'}
+            {ajoutChampEnvoi ? t('ajout') : t('champsPersonnalises.ajouterQuestion')}
           </button>
         </form>
       </div>
 
       <div className="card p-4">
-        <h2 className="font-semibold mb-1">Produits concurrents</h2>
+        <h2 className="font-semibold mb-1">{t('concurrents.titre')}</h2>
         <p className="text-sm text-petrol-600 mb-4">
-          Enregistrez les produits concurrents à surveiller — les commerciaux pourront cocher
-          leur présence en rayon chez chaque client visité, pour calculer votre taux de présence.
+          {t('concurrents.sousTitre')}
         </p>
 
         {chargementConcurrents ? (
-          <p className="text-sm text-petrol-500">Chargement…</p>
+          <p className="text-sm text-petrol-500">{t('concurrents.chargement')}</p>
         ) : (
           <div className="space-y-2 mb-4">
             {concurrents.length === 0 && (
-              <p className="text-sm text-petrol-400">Aucun produit concurrent pour le moment.</p>
+              <p className="text-sm text-petrol-400">{t('concurrents.aucunProduit')}</p>
             )}
             {concurrents.map((c) => (
               <div
@@ -856,7 +851,7 @@ export default function Parametres() {
                   onClick={() => basculerActifConcurrent(c)}
                   className={`text-xs underline shrink-0 ${c.actif ? 'text-petrol-600' : 'text-petrol-400'}`}
                 >
-                  {c.actif ? 'Actif' : 'Désactivé'}
+                  {c.actif ? t('concurrents.actif') : t('concurrents.desactive')}
                 </button>
               </div>
             ))}
@@ -866,16 +861,16 @@ export default function Parametres() {
         <form onSubmit={ajouterConcurrent} className="border-t border-line pt-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">Nom du produit</label>
+              <label className="label">{t('concurrents.nomProduit')}</label>
               <input
                 className="input-field"
                 value={nouveauConcurrent.nom}
                 onChange={(e) => setNouveauConcurrent({ ...nouveauConcurrent, nom: e.target.value })}
-                placeholder="Ex : Céréale XYZ 400g"
+                placeholder={t('concurrents.nomPlaceholder')}
               />
             </div>
             <div>
-              <label className="label">Marque (optionnel)</label>
+              <label className="label">{t('concurrents.marque')}</label>
               <input
                 className="input-field"
                 value={nouveauConcurrent.marque}
@@ -885,7 +880,7 @@ export default function Parametres() {
           </div>
           {erreurConcurrent && <p className="text-xs text-red-600">{erreurConcurrent}</p>}
           <button type="submit" disabled={ajoutConcurrentEnvoi} className="btn-primary w-full">
-            {ajoutConcurrentEnvoi ? 'Ajout…' : '+ Ajouter ce produit concurrent'}
+            {ajoutConcurrentEnvoi ? t('ajout') : t('concurrents.ajouterProduit')}
           </button>
         </form>
       </div>
