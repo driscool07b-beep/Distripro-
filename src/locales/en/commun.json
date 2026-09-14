@@ -24,7 +24,8 @@
     "monStockEnMain": "My stock on hand",
     "stockCommerciaux": "Sales reps' stock",
     "fermerMenu": "Close menu",
-    "ouvrirMenu": "Open menu"
+    "ouvrirMenu": "Open menu",
+    "messagerie": "Messaging"
   },
   "actions": {
     "annuler": "Cancel",

@@ -24,7 +24,8 @@
     "monStockEnMain": "مخزوني الحالي",
     "stockCommerciaux": "مخزون المندوبين",
     "fermerMenu": "إغلاق القائمة",
-    "ouvrirMenu": "فتح القائمة"
+    "ouvrirMenu": "فتح القائمة",
+    "messagerie": "المراسلة"
   },
   "actions": {
     "annuler": "إلغاء",

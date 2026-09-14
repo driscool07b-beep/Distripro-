@@ -1,0 +1,22 @@
+{
+  "titre": "消息",
+  "nouvelleConversation": "+ 新建消息",
+  "nouveauCanal": "+ 新建频道",
+  "chargement": "加载中…",
+  "aucuneConversation": "暂无对话。快和同事开始聊天吧！",
+  "aucunMessage": "没有消息",
+  "piecesJointe": "附件",
+  "utilisateurSupprime": "已删除的用户",
+  "choisirCollegue": "选择同事",
+  "aucunCollegue": "团队中没有其他成员。",
+  "annuler": "取消",
+  "nomCanal": "频道名称",
+  "nomCanalPlaceholder": "例如：阿比让外勤团队",
+  "membres": "成员",
+  "creerLeCanal": "创建频道",
+  "erreurNomCanal": "频道名称为必填项。",
+  "conversation": "对话",
+  "debutConversation": "对话开始 — 打个招呼吧 👋",
+  "ecrireMessage": "输入消息…",
+  "envoyer": "发送"
+}

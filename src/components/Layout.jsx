@@ -11,6 +11,7 @@ const TOUS_ROLES = ['admin', 'manager', 'commercial', 'comptable', 'gestionnaire
 function navItems(t) {
   return [
     { to: '/', label: t('menu.tableauDeBord'), icon: DashIcon, end: true, roles: TOUS_ROLES },
+    { to: '/messagerie', label: t('menu.messagerie'), icon: MessagerieIcon, roles: TOUS_ROLES },
     { to: '/clients', label: t('menu.clients'), icon: ClientsIcon, roles: ROLES_PAGES.clients },
     { to: '/groupes', label: t('menu.groupesClients'), icon: GroupesIcon, roles: ROLES_PAGES.groupes },
     { to: '/carte-clients', label: t('menu.carteClients'), icon: CarteIcon, roles: ROLES_PAGES.carteClients },
@@ -262,6 +263,13 @@ function ClientsIcon(props) {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <circle cx="9" cy="8" r="3" /><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6" />
       <circle cx="17" cy="8" r="2.5" /><path d="M16 14.2c2.8.4 5 2.4 5 5.8" />
+    </svg>
+  )
+}
+function MessagerieIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
     </svg>
   )
 }

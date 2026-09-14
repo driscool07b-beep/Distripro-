@@ -1,0 +1,22 @@
+{
+  "titre": "Messagerie",
+  "nouvelleConversation": "+ Nouveau message",
+  "nouveauCanal": "+ Nouveau canal",
+  "chargement": "Chargement…",
+  "aucuneConversation": "Aucune conversation pour le moment. Démarrez-en une avec un collègue !",
+  "aucunMessage": "Aucun message",
+  "piecesJointe": "Pièce jointe",
+  "utilisateurSupprime": "Utilisateur supprimé",
+  "choisirCollegue": "Choisir un collègue",
+  "aucunCollegue": "Aucun autre membre dans l'équipe.",
+  "annuler": "Annuler",
+  "nomCanal": "Nom du canal",
+  "nomCanalPlaceholder": "Ex. Équipe terrain Abidjan",
+  "membres": "Membres",
+  "creerLeCanal": "Créer le canal",
+  "erreurNomCanal": "Le nom du canal est requis.",
+  "conversation": "Conversation",
+  "debutConversation": "Début de la conversation — dites bonjour 👋",
+  "ecrireMessage": "Écrire un message…",
+  "envoyer": "Envoyer"
+}

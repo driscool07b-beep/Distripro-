@@ -1,0 +1,22 @@
+{
+  "titre": "Messaging",
+  "nouvelleConversation": "+ New message",
+  "nouveauCanal": "+ New channel",
+  "chargement": "Loading…",
+  "aucuneConversation": "No conversations yet. Start one with a colleague!",
+  "aucunMessage": "No messages",
+  "piecesJointe": "Attachment",
+  "utilisateurSupprime": "Deleted user",
+  "choisirCollegue": "Choose a colleague",
+  "aucunCollegue": "No other team members.",
+  "annuler": "Cancel",
+  "nomCanal": "Channel name",
+  "nomCanalPlaceholder": "E.g. Abidjan field team",
+  "membres": "Members",
+  "creerLeCanal": "Create channel",
+  "erreurNomCanal": "The channel name is required.",
+  "conversation": "Conversation",
+  "debutConversation": "Start of the conversation — say hi 👋",
+  "ecrireMessage": "Write a message…",
+  "envoyer": "Send"
+}

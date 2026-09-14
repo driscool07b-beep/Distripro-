@@ -1,0 +1,22 @@
+{
+  "titre": "المراسلة",
+  "nouvelleConversation": "+ رسالة جديدة",
+  "nouveauCanal": "+ قناة جديدة",
+  "chargement": "جارٍ التحميل…",
+  "aucuneConversation": "لا توجد محادثات حتى الآن. ابدأ واحدة مع زميل!",
+  "aucunMessage": "لا توجد رسائل",
+  "piecesJointe": "مرفق",
+  "utilisateurSupprime": "مستخدم محذوف",
+  "choisirCollegue": "اختر زميلًا",
+  "aucunCollegue": "لا يوجد أعضاء آخرون في الفريق.",
+  "annuler": "إلغاء",
+  "nomCanal": "اسم القناة",
+  "nomCanalPlaceholder": "مثال: فريق أبيدجان الميداني",
+  "membres": "الأعضاء",
+  "creerLeCanal": "إنشاء القناة",
+  "erreurNomCanal": "اسم القناة مطلوب.",
+  "conversation": "محادثة",
+  "debutConversation": "بداية المحادثة — قل مرحبًا 👋",
+  "ecrireMessage": "اكتب رسالة…",
+  "envoyer": "إرسال"
+}
