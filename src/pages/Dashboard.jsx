@@ -175,7 +175,7 @@ function DashboardEntreprise() {
   }
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="p-8 max-w-[1600px] mx-auto">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
         <p className="text-sm text-petrol-700 mt-1">{t('entreprise.sousTitre')}</p>
