@@ -61,7 +61,32 @@ function DashboardEntreprise() {
 
   async function calculerRealiseObjectif(o) {
     let ventes
-    if (o.commercial_id) {
+    if (o.commercial_id && o.role_cible === 'manager') {
+      const { data: equipesGerees } = await supabase.from('equipes').select('id').eq('manager_id', o.commercial_id)
+      const idsEquipes = (equipesGerees || []).map((e) => e.id)
+      const { data: membres } = idsEquipes.length
+        ? await supabase.from('profils').select('id').in('equipe_id', idsEquipes)
+        : { data: [] }
+      const idsCommerciaux = (membres || []).map((m) => m.id)
+      const { data } = idsCommerciaux.length
+        ? await supabase
+            .from('ventes')
+            .select('total')
+            .neq('statut', 'annulee')
+            .in('commercial_id', idsCommerciaux)
+            .gte('created_at', `${o.periode_debut}T00:00:00`)
+            .lt('created_at', `${o.periode_fin}T23:59:59.999`)
+        : { data: [] }
+      ventes = data
+    } else if (o.commercial_id && o.role_cible === 'admin') {
+      const { data } = await supabase
+        .from('ventes')
+        .select('total')
+        .neq('statut', 'annulee')
+        .gte('created_at', `${o.periode_debut}T00:00:00`)
+        .lt('created_at', `${o.periode_fin}T23:59:59.999`)
+      ventes = data
+    } else if (o.commercial_id) {
       const { data } = await supabase
         .from('ventes')
         .select('total')
@@ -93,12 +118,12 @@ function DashboardEntreprise() {
 
     const { data } = await supabase
       .from('objectifs')
-      .select('id, commercial_id, zone, periode_debut, periode_fin, montant_cible')
+      .select('id, commercial_id, zone, periode_debut, periode_fin, montant_cible, profils!commercial_id(role)')
       .not('montant_cible', 'is', null)
       .lte('periode_debut', finAnnee)
       .gte('periode_fin', debutAnnee)
 
-    const tous = data || []
+    const tous = (data || []).map((o) => ({ ...o, role_cible: o.profils?.role }))
     const objectifsMois = tous.filter((o) => o.periode_debut <= finMois && o.periode_fin >= debutMois)
 
     const [realiseMois, realiseAnnee] = await Promise.all([

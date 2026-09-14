@@ -32,6 +32,11 @@ export default function Parametres() {
   const [enregistrementTva, setEnregistrementTva] = useState(false)
   const [devise, setDevise] = useState('XOF')
   const [enregistrementDevise, setEnregistrementDevise] = useState(false)
+  const [equipes, setEquipes] = useState([])
+  const [commerciauxEtManagers, setCommerciauxEtManagers] = useState([])
+  const [nouvelleEquipeNom, setNouvelleEquipeNom] = useState('')
+  const [nouvelleEquipeManager, setNouvelleEquipeManager] = useState('')
+  const [erreurEquipe, setErreurEquipe] = useState('')
   const [taxes, setTaxes] = useState([])
   const [nouvelleTaxe, setNouvelleTaxe] = useState({ nom: '', taux: '', base_calcul: 'ttc' })
   const [erreurTaxe, setErreurTaxe] = useState('')
@@ -76,8 +81,47 @@ export default function Parametres() {
     }
     if (['admin', 'manager'].includes(profil?.role)) {
       chargerCaisses()
+      chargerEquipes()
     }
   }, [profil])
+
+  async function chargerEquipes() {
+    const [{ data: eq }, { data: membres }] = await Promise.all([
+      supabase.from('equipes').select('id, nom, manager_id, profils!manager_id(nom)').order('nom'),
+      supabase.from('profils').select('id, nom, role, equipe_id').in('role', ['commercial', 'manager', 'admin']).order('nom'),
+    ])
+    setEquipes((eq || []).map((e) => ({ ...e, membres: (membres || []).filter((m) => m.equipe_id === e.id) })))
+    setCommerciauxEtManagers(membres || [])
+  }
+
+  async function creerEquipe() {
+    setErreurEquipe('')
+    if (!nouvelleEquipeNom.trim()) {
+      setErreurEquipe('Le nom de l\'équipe est requis.')
+      return
+    }
+    const { error } = await supabase.rpc('creer_equipe', {
+      p_nom: nouvelleEquipeNom.trim(),
+      p_manager_id: nouvelleEquipeManager || null,
+    })
+    if (error) {
+      setErreurEquipe(`Erreur : ${traduireErreur(error.message)}`)
+      return
+    }
+    setNouvelleEquipeNom('')
+    setNouvelleEquipeManager('')
+    chargerEquipes()
+  }
+
+  async function supprimerEquipe(id) {
+    await supabase.rpc('supprimer_equipe', { p_equipe_id: id })
+    chargerEquipes()
+  }
+
+  async function affilier(profilId, equipeId) {
+    await supabase.rpc('affilier_commercial_equipe', { p_profil_id: profilId, p_equipe_id: equipeId || null })
+    chargerEquipes()
+  }
 
   async function chargerCaisses() {
     const { data } = await supabase.from('caisses').select('id, nom, actif').order('created_at')
@@ -499,6 +543,89 @@ export default function Parametres() {
             <option value="GHS">Cedi ghanéen — GH₵</option>
             <option value="NGN">Naira nigérian — ₦</option>
           </select>
+        </div>
+      )}
+
+      {['admin', 'manager'].includes(profil?.role) && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">Organigramme commercial</h2>
+          <p className="text-xs text-petrol-500 mb-3">
+            Affiliez chaque commercial à une équipe gérée par un chef d'équipe (manager) — l'objectif fixé
+            au chef d'équipe sera alors calculé comme la somme des ventes de tous les commerciaux de son équipe.
+          </p>
+
+          <div className="space-y-3 mb-4">
+            {equipes.map((e) => (
+              <div key={e.id} className="border border-line rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <p className="text-sm font-medium">{e.nom}</p>
+                    <p className="text-xs text-petrol-500">
+                      Chef d'équipe : {e.profils?.nom || <span className="italic">— aucun —</span>}
+                    </p>
+                  </div>
+                  <button onClick={() => supprimerEquipe(e.id)} className="text-xs text-red-600 underline">
+                    Supprimer
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {e.membres.filter((m) => m.role === 'commercial').map((m) => (
+                    <span key={m.id} className="text-xs bg-canvas border border-line rounded-full px-2 py-1 flex items-center gap-1.5">
+                      {m.nom}
+                      <button onClick={() => affilier(m.id, null)} className="text-petrol-400 hover:text-red-600">✕</button>
+                    </span>
+                  ))}
+                  {e.membres.filter((m) => m.role === 'commercial').length === 0 && (
+                    <span className="text-xs text-petrol-400">Aucun commercial affilié.</span>
+                  )}
+                </div>
+              </div>
+            ))}
+            {equipes.length === 0 && <p className="text-xs text-petrol-400">Aucune équipe créée.</p>}
+          </div>
+
+          <div className="border-t border-line pt-3 mb-4">
+            <p className="text-xs font-medium text-petrol-600 mb-2">Affecter un commercial à une équipe</p>
+            <div className="space-y-1.5">
+              {commerciauxEtManagers.filter((m) => m.role === 'commercial').map((c) => (
+                <div key={c.id} className="flex items-center justify-between gap-2 text-sm">
+                  <span>{c.nom}</span>
+                  <select
+                    className="input-field w-auto text-xs py-1"
+                    value={c.equipe_id || ''}
+                    onChange={(ev) => affilier(c.id, ev.target.value || null)}
+                  >
+                    <option value="">— Aucune équipe —</option>
+                    {equipes.map((e) => <option key={e.id} value={e.id}>{e.nom}</option>)}
+                  </select>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-line pt-3">
+            <p className="text-xs font-medium text-petrol-600 mb-2">Nouvelle équipe</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                className="input-field flex-1"
+                placeholder="Nom de l'équipe (ex. Équipe Nord)"
+                value={nouvelleEquipeNom}
+                onChange={(e) => setNouvelleEquipeNom(e.target.value)}
+              />
+              <select
+                className="input-field sm:w-48"
+                value={nouvelleEquipeManager}
+                onChange={(e) => setNouvelleEquipeManager(e.target.value)}
+              >
+                <option value="">— Chef d'équipe (optionnel) —</option>
+                {commerciauxEtManagers.filter((m) => m.role === 'manager' || m.role === 'admin').map((m) => (
+                  <option key={m.id} value={m.id}>{m.nom} — {m.role === 'manager' ? 'manager' : 'admin'}</option>
+                ))}
+              </select>
+              <button onClick={creerEquipe} className="btn-primary shrink-0">+ Créer</button>
+            </div>
+            {erreurEquipe && <p className="text-xs text-red-600 mt-2">{erreurEquipe}</p>}
+          </div>
         </div>
       )}
 

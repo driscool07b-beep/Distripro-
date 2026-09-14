@@ -51,7 +51,32 @@ export default function Objectifs() {
 
   async function calculerProgression(o) {
     let ventes
-    if (o.commercial_id) {
+    if (o.commercial_id && o.profils?.role === 'manager') {
+      const { data: equipesGerees } = await supabase.from('equipes').select('id').eq('manager_id', o.commercial_id)
+      const idsEquipes = (equipesGerees || []).map((e) => e.id)
+      const { data: membres } = idsEquipes.length
+        ? await supabase.from('profils').select('id').in('equipe_id', idsEquipes)
+        : { data: [] }
+      const idsCommerciaux = (membres || []).map((m) => m.id)
+      const { data } = idsCommerciaux.length
+        ? await supabase
+            .from('ventes')
+            .select('id, total, ventes_lignes(produit_id, quantite)')
+            .neq('statut', 'annulee')
+            .in('commercial_id', idsCommerciaux)
+            .gte('created_at', `${o.periode_debut}T00:00:00`)
+            .lt('created_at', `${o.periode_fin}T23:59:59.999`)
+        : { data: [] }
+      ventes = data
+    } else if (o.commercial_id && o.profils?.role === 'admin') {
+      const { data } = await supabase
+        .from('ventes')
+        .select('id, total, ventes_lignes(produit_id, quantite)')
+        .neq('statut', 'annulee')
+        .gte('created_at', `${o.periode_debut}T00:00:00`)
+        .lt('created_at', `${o.periode_fin}T23:59:59.999`)
+      ventes = data
+    } else if (o.commercial_id) {
       const { data } = await supabase
         .from('ventes')
         .select('id, total, ventes_lignes(produit_id, quantite)')
@@ -215,8 +240,11 @@ export default function Objectifs() {
                         <option key={c.id} value={c.id}>{c.nom} — {t(`roles.${c.role}`)}</option>
                       ))}
                     </select>
-                    {commercialId && commerciaux.find((c) => c.id === commercialId)?.role !== 'commercial' && (
-                      <p className="text-xs text-petrol-500 mt-1">{t('noteRealiseManagerAdmin')}</p>
+                    {commercialId && commerciaux.find((c) => c.id === commercialId)?.role === 'manager' && (
+                      <p className="text-xs text-petrol-500 mt-1">{t('noteRealiseManager')}</p>
+                    )}
+                    {commercialId && commerciaux.find((c) => c.id === commercialId)?.role === 'admin' && (
+                      <p className="text-xs text-petrol-500 mt-1">{t('noteRealiseAdmin')}</p>
                     )}
                   </>
                 ) : (

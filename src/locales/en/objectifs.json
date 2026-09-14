@@ -30,10 +30,11 @@
   "erreurIndiquerZone": "Enter a zone.",
   "erreurMontantOuQuantite": "Enter a target amount and/or a target quantity.",
   "erreurQuantiteSansProduit": "A target quantity must be linked to a specific product.",
-  "noteRealiseManagerAdmin": "The realized amount will reflect this person's own personal sales — often 0 for a manager or leadership, unless they record sales themselves.",
   "roles": {
     "commercial": "sales rep",
     "manager": "team leader",
     "admin": "leadership"
-  }
+  },
+  "noteRealiseManager": "The realized amount will be the sum of sales from every sales rep affiliated with their team (configurable in Settings → Sales org chart).",
+  "noteRealiseAdmin": "The realized amount will be the sum of all company sales for the period (company-wide target)."
 }
