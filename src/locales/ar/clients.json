@@ -5,7 +5,6 @@
   "nouveauClient": "+ عميل جديد",
   "rechercherClient": "بحث عن عميل…",
   "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
-
   "table": {
     "nom": "الاسم",
     "telephone": "الهاتف",
@@ -23,7 +22,6 @@
     "creditTitle": "رصيد متاح لهذا العميل — انقر للاسترداد",
     "credit": "رصيد {{montant}}"
   },
-
   "form": {
     "titreModifier": "تعديل العميل",
     "titreNouveau": "عميل جديد",
@@ -69,9 +67,10 @@
     "erreurNomRequis": "اسم العميل مطلوب.",
     "erreurProfilNonCharge": "لم يتم تحميل الملف الشخصي. حاول مرة أخرى بعد لحظات.",
     "erreurCreationGroupe": "خطأ في إنشاء المجموعة",
-    "erreurTarifChoix": "اختر منتجًا وسعرًا."
+    "erreurTarifChoix": "اختر منتجًا وسعرًا.",
+    "pays": "الدولة (اختياري)",
+    "paysPlaceholder": "مثال: كوت ديفوار"
   },
-
   "import": {
     "titre": "استيراد العملاء (Excel)",
     "consigne": "قم بتنزيل النموذج، واملأه مع الحفاظ على ترتيب الأعمدة، ثم استورده.",
@@ -88,7 +87,6 @@
     "erreurAucuneLigne": "لم يتم العثور على سطر صالح (الاسم إلزامي).",
     "erreurFichierIllisible": "ملف غير قابل للقراءة: {{message}}"
   },
-
   "remboursement": {
     "titre": "استرداد رصيد العميل",
     "creditDisponible": "الرصيد المتاح",

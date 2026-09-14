@@ -5,7 +5,6 @@
   "nouveauClient": "+ Nouveau client",
   "rechercherClient": "Rechercher un client…",
   "accesRefuse": "Cette page n'est pas accessible pour votre rôle.",
-
   "table": {
     "nom": "Nom",
     "telephone": "Téléphone",
@@ -23,7 +22,6 @@
     "creditTitle": "Crédit disponible pour ce client — cliquer pour rembourser",
     "credit": "crédit {{montant}}"
   },
-
   "form": {
     "titreModifier": "Modifier le client",
     "titreNouveau": "Nouveau client",
@@ -69,9 +67,10 @@
     "erreurNomRequis": "Le nom du client est requis.",
     "erreurProfilNonCharge": "Profil non chargé. Réessayez dans un instant.",
     "erreurCreationGroupe": "Erreur création du groupe",
-    "erreurTarifChoix": "Choisissez un produit et un prix."
+    "erreurTarifChoix": "Choisissez un produit et un prix.",
+    "pays": "Pays (optionnel)",
+    "paysPlaceholder": "Ex. Côte d'Ivoire"
   },
-
   "import": {
     "titre": "Importer des clients (Excel)",
     "consigne": "Téléchargez le modèle, remplissez-le en gardant l'ordre des colonnes, puis importez-le.",
@@ -88,7 +87,6 @@
     "erreurAucuneLigne": "Aucune ligne valide trouvée (le nom est obligatoire).",
     "erreurFichierIllisible": "Fichier illisible : {{message}}"
   },
-
   "remboursement": {
     "titre": "Rembourser le crédit client",
     "creditDisponible": "crédit disponible",

@@ -22,6 +22,7 @@ const CLIENT_VIDE = {
   email: '',
   adresse: '',
   ville: '',
+  pays: '',
   type_client: '',
   segment: 'nouveau',
   limite_credit: '',
@@ -112,6 +113,7 @@ export default function Clients() {
       email: client.email || '',
       adresse: client.adresse || '',
       ville: client.ville || '',
+      pays: client.pays || '',
       type_client: client.type_client || '',
       segment: client.segment || 'nouveau',
       limite_credit: client.limite_credit != null ? String(client.limite_credit) : '',
@@ -337,7 +339,7 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, email, adresse, ville, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, groupes_clients(nom)')
+      .select('id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, groupes_clients(nom)')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
@@ -412,6 +414,7 @@ export default function Clients() {
       email: formulaire.email.trim() || null,
       adresse: formulaire.adresse.trim() || null,
       ville: formulaire.ville.trim() || null,
+      pays: formulaire.pays.trim() || null,
       type_client: formulaire.type_client || null,
       segment: formulaire.segment || null,
       limite_credit: formulaire.limite_credit ? Number(formulaire.limite_credit) : 0,
@@ -606,6 +609,15 @@ export default function Clients() {
                     className="input-field"
                     value={formulaire.ville}
                     onChange={(e) => setFormulaire({ ...formulaire, ville: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="label">{t('form.pays')}</label>
+                  <input
+                    className="input-field"
+                    value={formulaire.pays}
+                    onChange={(e) => setFormulaire({ ...formulaire, pays: e.target.value })}
+                    placeholder={t('form.paysPlaceholder')}
                   />
                 </div>
               </div>

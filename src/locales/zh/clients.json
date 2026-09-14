@@ -5,7 +5,6 @@
   "nouveauClient": "+ 新建客户",
   "rechercherClient": "搜索客户…",
   "accesRefuse": "此页面不适用于您的角色。",
-
   "table": {
     "nom": "姓名",
     "telephone": "电话",
@@ -23,7 +22,6 @@
     "creditTitle": "该客户有可用余额 — 点击以退款",
     "credit": "余额 {{montant}}"
   },
-
   "form": {
     "titreModifier": "编辑客户",
     "titreNouveau": "新建客户",
@@ -69,9 +67,10 @@
     "erreurNomRequis": "客户姓名为必填项。",
     "erreurProfilNonCharge": "个人资料尚未加载，请稍后重试。",
     "erreurCreationGroupe": "创建分组时出错",
-    "erreurTarifChoix": "请选择产品和价格。"
+    "erreurTarifChoix": "请选择产品和价格。",
+    "pays": "国家（可选）",
+    "paysPlaceholder": "例如：科特迪瓦"
   },
-
   "import": {
     "titre": "导入客户（Excel）",
     "consigne": "下载模板，按列顺序填写，然后导入。",
@@ -88,7 +87,6 @@
     "erreurAucuneLigne": "未找到有效行（姓名为必填项）。",
     "erreurFichierIllisible": "文件无法读取：{{message}}"
   },
-
   "remboursement": {
     "titre": "客户余额退款",
     "creditDisponible": "可用余额",

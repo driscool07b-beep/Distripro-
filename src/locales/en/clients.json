@@ -5,7 +5,6 @@
   "nouveauClient": "+ New client",
   "rechercherClient": "Search a client…",
   "accesRefuse": "This page isn't accessible for your role.",
-
   "table": {
     "nom": "Name",
     "telephone": "Phone",
@@ -23,7 +22,6 @@
     "creditTitle": "Available credit for this client — click to refund",
     "credit": "credit {{montant}}"
   },
-
   "form": {
     "titreModifier": "Edit client",
     "titreNouveau": "New client",
@@ -69,9 +67,10 @@
     "erreurNomRequis": "The client's name is required.",
     "erreurProfilNonCharge": "Profile not loaded yet. Try again in a moment.",
     "erreurCreationGroupe": "Error creating the group",
-    "erreurTarifChoix": "Choose a product and a price."
+    "erreurTarifChoix": "Choose a product and a price.",
+    "pays": "Country (optional)",
+    "paysPlaceholder": "E.g. Côte d'Ivoire"
   },
-
   "import": {
     "titre": "Import clients (Excel)",
     "consigne": "Download the template, fill it in keeping the column order, then import it.",
@@ -88,7 +87,6 @@
     "erreurAucuneLigne": "No valid rows found (name is required).",
     "erreurFichierIllisible": "Unreadable file: {{message}}"
   },
-
   "remboursement": {
     "titre": "Refund client credit",
     "creditDisponible": "available credit",
