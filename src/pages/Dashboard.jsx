@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { formatXOF } from '../lib/format'
+import { formatXOF, formatDateHeure } from '../lib/format'
 
 export default function Dashboard() {
   const { profil } = useAuth()
@@ -36,6 +36,7 @@ function DashboardEntreprise() {
   const [chargementGraphe, setChargementGraphe] = useState(true)
   const [comparaisonAnnuelle, setComparaisonAnnuelle] = useState([])
   const [chargementComparaison, setChargementComparaison] = useState(true)
+  const [commerciauxInactifs, setCommerciauxInactifs] = useState([])
 
   useEffect(() => {
     chargerDonnees()
@@ -48,6 +49,12 @@ function DashboardEntreprise() {
   useEffect(() => {
     chargerComparaisonAnnuelle()
   }, [])
+
+  useEffect(() => {
+    if (['admin', 'manager'].includes(profil?.role)) {
+      supabase.rpc('commerciaux_inactifs').then(({ data }) => setCommerciauxInactifs(data || []))
+    }
+  }, [profil?.role])
 
   async function chargerGraphe(periode) {
     setChargementGraphe(true)
@@ -201,6 +208,26 @@ function DashboardEntreprise() {
           to="/commandes"
         />
       </div>
+
+      {commerciauxInactifs.length > 0 && (
+        <div className="card p-4 mb-6 border-amber-300 bg-amber-50">
+          <p className="text-sm font-semibold text-amber-800 mb-2">
+            ⚠️ {t('entreprise.commerciauxInactifsTitre', { n: commerciauxInactifs.length })}
+          </p>
+          <div className="space-y-1">
+            {commerciauxInactifs.map((c) => (
+              <div key={c.profil_id} className="flex items-center justify-between text-sm">
+                <span>{c.nom}{c.zone ? ` — ${c.zone}` : ''}</span>
+                <span className="text-amber-700 text-xs">
+                  {c.jamais_connecte
+                    ? t('entreprise.jamaisConnecte')
+                    : t('entreprise.dernierAcces', { date: formatDateHeure(c.derniere_connexion) })}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="card p-6 lg:col-span-2">

@@ -2,7 +2,6 @@
   "bonjour": "Bonjour {{prenom}} 👋",
   "restants": "restants",
   "chargement": "Chargement…",
-
   "entreprise": {
     "sousTitre": "Voici l'activité de votre entreprise aujourd'hui.",
     "ventesJour": "Ventes du jour",
@@ -21,9 +20,11 @@
     "comparaisonAnnuelleTitre": "Comparaison sur 3 ans (par mois)",
     "aucuneVentePeriode": "Aucune vente enregistrée sur cette période.",
     "produitsEnAlerte": "Produits en alerte",
-    "aucunProduitSeuil": "Aucun produit sous le seuil d'alerte."
+    "aucunProduitSeuil": "Aucun produit sous le seuil d'alerte.",
+    "commerciauxInactifsTitre": "{{n}} commercial(aux) sans activité depuis 24h",
+    "jamaisConnecte": "Jamais connecté",
+    "dernierAcces": "Dernier accès : {{date}}"
   },
-
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",
     "mesVentesJour": "Mes ventes du jour",
@@ -35,7 +36,6 @@
     "monObjectifMois": "Mon objectif du mois",
     "mesVentes7j": "Mes ventes des 7 derniers jours"
   },
-
   "comptable": {
     "sousTitre": "Voici la situation financière du jour.",
     "totalAVerserAujourdhui": "Total à verser aujourd'hui",
@@ -44,7 +44,6 @@
     "recouvrementJour": "Recouvrement du jour",
     "creancesEchues": "Créances échues"
   },
-
   "agentRecouvrement": {
     "sousTitre": "Voici le suivi des créances clients.",
     "creancesEnCours": "Créances en cours",
@@ -56,7 +55,6 @@
     "echeance": "échéance",
     "voirToutesEchues": "Voir toutes les créances échues →"
   },
-
   "gestionnaireStock": {
     "sousTitre": "Voici la situation du stock.",
     "valeurStockMagasin": "Valeur du stock magasin",

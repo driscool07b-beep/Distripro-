@@ -2,7 +2,6 @@
   "bonjour": "مرحبًا {{prenom}} 👋",
   "restants": "متبقٍ",
   "chargement": "جارٍ التحميل…",
-
   "entreprise": {
     "sousTitre": "إليك نشاط شركتك اليوم.",
     "ventesJour": "مبيعات اليوم",
@@ -21,9 +20,11 @@
     "comparaisonAnnuelleTitre": "مقارنة على 3 سنوات (حسب الشهر)",
     "aucuneVentePeriode": "لم يتم تسجيل أي مبيعات خلال هذه الفترة.",
     "produitsEnAlerte": "منتجات في حالة تنبيه",
-    "aucunProduitSeuil": "لا يوجد منتج دون حد التنبيه."
+    "aucunProduitSeuil": "لا يوجد منتج دون حد التنبيه.",
+    "commerciauxInactifsTitre": "{{n}} مندوب(ين) بلا نشاط منذ 24 ساعة",
+    "jamaisConnecte": "لم يسجل الدخول أبدًا",
+    "dernierAcces": "آخر دخول: {{date}}"
   },
-
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",
     "mesVentesJour": "مبيعاتي اليوم",
@@ -35,7 +36,6 @@
     "monObjectifMois": "هدفي لهذا الشهر",
     "mesVentes7j": "مبيعاتي في آخر 7 أيام"
   },
-
   "comptable": {
     "sousTitre": "إليك الوضع المالي لليوم.",
     "totalAVerserAujourdhui": "الإجمالي الواجب إيداعه اليوم",
@@ -44,7 +44,6 @@
     "recouvrementJour": "التحصيل اليوم",
     "creancesEchues": "الديون المتأخرة"
   },
-
   "agentRecouvrement": {
     "sousTitre": "إليك متابعة ديون العملاء.",
     "creancesEnCours": "الديون الجارية",
@@ -56,7 +55,6 @@
     "echeance": "الاستحقاق",
     "voirToutesEchues": "عرض جميع الديون المتأخرة ←"
   },
-
   "gestionnaireStock": {
     "sousTitre": "إليك وضع المخزون.",
     "valeurStockMagasin": "قيمة مخزون المستودع",

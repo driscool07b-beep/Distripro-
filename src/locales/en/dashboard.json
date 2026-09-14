@@ -2,7 +2,6 @@
   "bonjour": "Hi {{prenom}} 👋",
   "restants": "left",
   "chargement": "Loading…",
-
   "entreprise": {
     "sousTitre": "Here's your company's activity today.",
     "ventesJour": "Today's sales",
@@ -21,9 +20,11 @@
     "comparaisonAnnuelleTitre": "3-year comparison (by month)",
     "aucuneVentePeriode": "No sales recorded for this period.",
     "produitsEnAlerte": "Products in alert",
-    "aucunProduitSeuil": "No product below the alert threshold."
+    "aucunProduitSeuil": "No product below the alert threshold.",
+    "commerciauxInactifsTitre": "{{n}} sales rep(s) inactive for 24h+",
+    "jamaisConnecte": "Never signed in",
+    "dernierAcces": "Last seen: {{date}}"
   },
-
   "commercial": {
     "sousTitre": "Here's your personal activity.",
     "mesVentesJour": "My sales today",
@@ -35,7 +36,6 @@
     "monObjectifMois": "My monthly target",
     "mesVentes7j": "My sales over the last 7 days"
   },
-
   "comptable": {
     "sousTitre": "Here's today's financial situation.",
     "totalAVerserAujourdhui": "Total to deposit today",
@@ -44,7 +44,6 @@
     "recouvrementJour": "Collections today",
     "creancesEchues": "Overdue receivables"
   },
-
   "agentRecouvrement": {
     "sousTitre": "Here's the receivables follow-up.",
     "creancesEnCours": "Open receivables",
@@ -56,7 +55,6 @@
     "echeance": "due",
     "voirToutesEchues": "View all overdue receivables →"
   },
-
   "gestionnaireStock": {
     "sousTitre": "Here's the stock situation.",
     "valeurStockMagasin": "Warehouse stock value",
