@@ -105,7 +105,10 @@ export function exporterPDF(nomFichier, titre, sousTitre, colonnes, lignes, tota
   autoTable(doc, {
     startY: y + 2,
     head: [colonnes.map((c) => c.titre)],
-    body: lignes.map((ligne) => colonnes.map((c) => String(ligne[c.cle] ?? ''))),
+    body: lignes.map((ligne) => colonnes.map((c) => {
+      const valeur = ligne[c.cle]
+      return typeof valeur === 'number' ? formatNombre(valeur) : String(valeur ?? '')
+    })),
     styles: { fontSize: 9 },
     headStyles: { fillColor: [10, 31, 38] },
     columnStyles: colonnes.reduce((acc, c, i) => {
