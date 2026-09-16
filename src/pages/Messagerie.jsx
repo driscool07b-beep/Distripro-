@@ -275,13 +275,20 @@ function FilConversation({ conversationId, onRetour }) {
       }
     }
 
-    await supabase.rpc('envoyer_message', {
+    const { data: messageId } = await supabase.rpc('envoyer_message', {
       p_conversation_id: conversationId,
       p_contenu: texte,
       p_piece_jointe_path: cheminPiece,
       p_piece_jointe_nom: nomPiece,
       p_piece_jointe_type: typePiece,
     })
+
+    if (messageId) {
+      // Notification push aux autres membres — best-effort, on n'attend
+      // pas le résultat (le message est déjà bien enregistré même si
+      // ça échoue, ex. Edge Function pas encore déployée).
+      supabase.functions.invoke('envoyer-notification-push', { body: { message_id: messageId } }).catch(() => {})
+    }
 
     setTexte('')
     setFichier(null)

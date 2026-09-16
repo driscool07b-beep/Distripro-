@@ -19,5 +19,16 @@
   },
   "enregistrement": "保存中…",
   "enregistrer": "保存",
-  "enregistre": "已保存。"
+  "enregistre": "已保存。",
+  "notifications": {
+    "titre": "通知",
+    "sousTitre": "即使应用已关闭，也能在此手机/浏览器上接收新消息提醒。",
+    "verification": "检查中…",
+    "recevoir": "接收通知",
+    "actives": "已在此设备上启用。",
+    "inactives": "已在此设备上停用。",
+    "erreurRefuse": "权限被拒绝。请检查您浏览器针对此网站的通知设置。",
+    "erreurNonSupporte": "此设备/浏览器不支持通知功能。",
+    "erreurGenerique": "暂时无法启用通知。"
+  }
 }

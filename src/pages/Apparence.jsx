@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { appliquerApparence, TAILLES_POLICE } from '../lib/apparence'
+import { pushSupporte, estAbonne, activerNotifications, desactiverNotifications } from '../lib/push'
 
 const APERCU_THEMES = {
   petrol: { fond: '#123640', accent: '#d69428' },
@@ -19,6 +20,36 @@ export default function Apparence() {
   const [taillePolice, setTaillePolice] = useState(profil?.taille_police || 'normal')
   const [enregistrement, setEnregistrement] = useState(false)
   const [confirmation, setConfirmation] = useState(false)
+  const [abonnePush, setAbonnePush] = useState(null)
+  const [enCoursPush, setEnCoursPush] = useState(false)
+  const [erreurPush, setErreurPush] = useState('')
+
+  useEffect(() => {
+    if (pushSupporte()) {
+      estAbonne().then(setAbonnePush)
+    } else {
+      setAbonnePush(false)
+    }
+  }, [])
+
+  async function basculerPush() {
+    setErreurPush('')
+    setEnCoursPush(true)
+    try {
+      if (abonnePush) {
+        await desactiverNotifications()
+        setAbonnePush(false)
+      } else {
+        await activerNotifications()
+        setAbonnePush(true)
+      }
+    } catch (err) {
+      if (err.message === 'denied') setErreurPush(t('notifications.erreurRefuse'))
+      else if (err.message === 'unsupported') setErreurPush(t('notifications.erreurNonSupporte'))
+      else setErreurPush(t('notifications.erreurGenerique'))
+    }
+    setEnCoursPush(false)
+  }
 
   function previsualiser(nouveauTheme, nouvelleTaille) {
     appliquerApparence(nouveauTheme, nouvelleTaille)
@@ -94,6 +125,40 @@ export default function Apparence() {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="card p-4 mb-4">
+        <h2 className="font-semibold mb-1">{t('notifications.titre')}</h2>
+        <p className="text-xs text-petrol-500 mb-3">{t('notifications.sousTitre')}</p>
+        {abonnePush === null ? (
+          <p className="text-sm text-petrol-400">{t('notifications.verification')}</p>
+        ) : (
+          <>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="font-medium text-sm">{t('notifications.recevoir')}</p>
+                <p className="text-xs text-petrol-500">
+                  {abonnePush ? t('notifications.actives') : t('notifications.inactives')}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={basculerPush}
+                disabled={enCoursPush}
+                className={`shrink-0 w-12 h-7 rounded-full transition-colors relative disabled:opacity-50 ${
+                  abonnePush ? 'bg-amber-500' : 'bg-line'
+                }`}
+              >
+                <span
+                  className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${
+                    abonnePush ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+            {erreurPush && <p className="text-xs text-red-600 mt-2">{erreurPush}</p>}
+          </>
+        )}
       </div>
 
       <button onClick={enregistrer} disabled={enregistrement} className="btn-primary w-full">

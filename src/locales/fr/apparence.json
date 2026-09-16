@@ -19,5 +19,16 @@
   },
   "enregistrement": "Enregistrement…",
   "enregistrer": "Enregistrer",
-  "enregistre": "Enregistré."
+  "enregistre": "Enregistré.",
+  "notifications": {
+    "titre": "Notifications",
+    "sousTitre": "Recevez une alerte sur ce téléphone/navigateur quand vous recevez un message, même l'application fermée.",
+    "verification": "Vérification…",
+    "recevoir": "Recevoir les notifications",
+    "actives": "Activées sur cet appareil.",
+    "inactives": "Désactivées sur cet appareil.",
+    "erreurRefuse": "Autorisation refusée. Vérifiez les réglages de notifications de votre navigateur pour ce site.",
+    "erreurNonSupporte": "Les notifications ne sont pas prises en charge sur cet appareil/navigateur.",
+    "erreurGenerique": "Impossible d'activer les notifications pour le moment."
+  }
 }

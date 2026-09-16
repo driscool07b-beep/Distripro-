@@ -19,5 +19,16 @@
   },
   "enregistrement": "Saving…",
   "enregistrer": "Save",
-  "enregistre": "Saved."
+  "enregistre": "Saved.",
+  "notifications": {
+    "titre": "Notifications",
+    "sousTitre": "Get an alert on this phone/browser when you receive a message, even with the app closed.",
+    "verification": "Checking…",
+    "recevoir": "Receive notifications",
+    "actives": "Enabled on this device.",
+    "inactives": "Disabled on this device.",
+    "erreurRefuse": "Permission denied. Check your browser's notification settings for this site.",
+    "erreurNonSupporte": "Notifications aren't supported on this device/browser.",
+    "erreurGenerique": "Couldn't enable notifications right now."
+  }
 }

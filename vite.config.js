@@ -6,6 +6,18 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // injectManifest plutôt que generateSW : on écrit notre propre
+      // service worker (src/sw.js) pour pouvoir y gérer les
+      // notifications push (évènements 'push' / 'notificationclick'),
+      // tout en gardant le pré-cache Workbox pour le fonctionnement
+      // hors-ligne existant.
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      },
       registerType: 'autoUpdate',
       includeAssets: ['icons/apple-touch-icon.png'],
       manifest: {
@@ -22,16 +34,6 @@ export default defineConfig({
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
           { src: '/icons/icon-512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
-      },
-      workbox: {
-        // Ne met en cache que les fichiers de l'app (JS/CSS/HTML/icônes) pour
-        // qu'elle s'ouvre hors-ligne — jamais les appels réseau vers Supabase,
-        // qui doivent toujours passer par la file d'attente de synchronisation
-        // (voir src/lib/offline.js), pas par un cache HTTP générique.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        navigateFallback: '/index.html',
-        runtimeCaching: [],
       },
       devOptions: {
         enabled: false,
