@@ -1,0 +1,23 @@
+{
+  "titre": "Apparence",
+  "sousTitre": "Personnalisez les couleurs et la taille du texte selon votre confort — ces réglages sont propres à votre compte, pas à toute l'entreprise.",
+  "couleurs": {
+    "titre": "Thème de couleurs",
+    "sousTitre": "Choisissez la palette de l'interface.",
+    "petrol": "Pétrole (par défaut)",
+    "ocean": "Océan",
+    "forest": "Forêt",
+    "sunset": "Coucher de soleil",
+    "contraste": "Contraste élevé"
+  },
+  "taillePolice": {
+    "titre": "Taille du texte",
+    "sousTitre": "Utile en cas de gêne à la lecture — agrandit le texte dans toute l'application.",
+    "normal": "Normale",
+    "grand": "Grande",
+    "tres_grand": "Très grande"
+  },
+  "enregistrement": "Enregistrement…",
+  "enregistrer": "Enregistrer",
+  "enregistre": "Enregistré."
+}

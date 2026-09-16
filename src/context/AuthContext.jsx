@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import { supabase } from '../lib/supabase'
 import i18n from '../lib/i18n'
 import { definirDevise } from '../lib/format'
+import { appliquerApparence } from '../lib/apparence'
 
 const AuthContext = createContext(null)
 
@@ -33,7 +34,7 @@ export function AuthProvider({ children }) {
   async function chargerProfilInterne(userId) {
     let { data: profilData, error: profilError } = await supabase
       .from('profils')
-      .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, langue')
+      .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, langue, theme, taille_police')
       .eq('id', userId)
       .single()
 
@@ -54,7 +55,7 @@ export function AuthProvider({ children }) {
       if (finalise) {
         const retry = await supabase
           .from('profils')
-          .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, langue')
+          .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, langue, theme, taille_police')
           .eq('id', userId)
           .single()
         profilData = retry.data
@@ -80,6 +81,7 @@ export function AuthProvider({ children }) {
     setProfil(profilData)
     if (profilData.langue && profilData.langue !== i18n.language) {
       i18n.changeLanguage(profilData.langue)
+      appliquerApparence(profilData.theme, profilData.taille_police)
     }
 
     const { data: entrepriseData, error: entrepriseError } = await supabase

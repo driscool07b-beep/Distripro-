@@ -1,0 +1,23 @@
+{
+  "titre": "外观",
+  "sousTitre": "根据您的喜好自定义颜色和文字大小 — 这些设置仅适用于您的个人账户，而非整个公司。",
+  "couleurs": {
+    "titre": "配色主题",
+    "sousTitre": "选择界面配色方案。",
+    "petrol": "深蓝绿（默认）",
+    "ocean": "海洋蓝",
+    "forest": "森林绿",
+    "sunset": "日落橙",
+    "contraste": "高对比度"
+  },
+  "taillePolice": {
+    "titre": "文字大小",
+    "sousTitre": "如阅读不适可使用此选项 — 放大整个应用的文字。",
+    "normal": "正常",
+    "grand": "较大",
+    "tres_grand": "特大"
+  },
+  "enregistrement": "保存中…",
+  "enregistrer": "保存",
+  "enregistre": "已保存。"
+}

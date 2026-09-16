@@ -1,0 +1,23 @@
+{
+  "titre": "Appearance",
+  "sousTitre": "Customize colors and text size to your comfort — these settings are personal to your account, not company-wide.",
+  "couleurs": {
+    "titre": "Color theme",
+    "sousTitre": "Choose the interface palette.",
+    "petrol": "Petrol (default)",
+    "ocean": "Ocean",
+    "forest": "Forest",
+    "sunset": "Sunset",
+    "contraste": "High contrast"
+  },
+  "taillePolice": {
+    "titre": "Text size",
+    "sousTitre": "Useful if reading feels uncomfortable — enlarges text throughout the app.",
+    "normal": "Normal",
+    "grand": "Large",
+    "tres_grand": "Extra large"
+  },
+  "enregistrement": "Saving…",
+  "enregistrer": "Save",
+  "enregistre": "Saved."
+}

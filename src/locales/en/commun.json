@@ -25,7 +25,8 @@
     "stockCommerciaux": "Sales reps' stock",
     "fermerMenu": "Close menu",
     "ouvrirMenu": "Open menu",
-    "messagerie": "Messaging"
+    "messagerie": "Messaging",
+    "apparence": "Appearance"
   },
   "actions": {
     "annuler": "Cancel",

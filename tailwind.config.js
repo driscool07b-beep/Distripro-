@@ -4,21 +4,26 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Références à des variables CSS (définies dans index.css, par
+        // thème) plutôt que des hex fixes — permet de changer la
+        // palette entière au survol d'un attribut data-theme, sans
+        // toucher à aucune des classes bg-petrol-800 / text-amber-500
+        // etc. déjà utilisées dans toute l'app.
         petrol: {
-          950: '#0a1f26',
-          900: '#0d2830',
-          800: '#123640',
-          700: '#1a4752',
-          600: '#255a67',
-          500: '#347080',
+          950: 'rgb(var(--petrol-950) / <alpha-value>)',
+          900: 'rgb(var(--petrol-900) / <alpha-value>)',
+          800: 'rgb(var(--petrol-800) / <alpha-value>)',
+          700: 'rgb(var(--petrol-700) / <alpha-value>)',
+          600: 'rgb(var(--petrol-600) / <alpha-value>)',
+          500: 'rgb(var(--petrol-500) / <alpha-value>)',
         },
         amber: {
-          400: '#e8a83c',
-          500: '#d69428',
-          600: '#b87a1c',
+          400: 'rgb(var(--amber-400) / <alpha-value>)',
+          500: 'rgb(var(--amber-500) / <alpha-value>)',
+          600: 'rgb(var(--amber-600) / <alpha-value>)',
         },
-        canvas: '#f5f6f4',
-        line: '#e2e4df',
+        canvas: 'rgb(var(--canvas) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],

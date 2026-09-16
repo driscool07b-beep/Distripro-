@@ -3,6 +3,68 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Thème par défaut ("petrol") — valeurs identiques à l'ancienne
+       palette figée, pour ne rien changer visuellement par défaut. */
+    --petrol-950: 10 31 38;
+    --petrol-900: 13 40 48;
+    --petrol-800: 18 54 64;
+    --petrol-700: 26 71 82;
+    --petrol-600: 37 90 103;
+    --petrol-500: 52 112 128;
+    --amber-400: 232 168 60;
+    --amber-500: 214 148 40;
+    --amber-600: 184 122 28;
+    --canvas: 245 246 244;
+    --line: 226 228 223;
+    --font-scale: 1;
+  }
+
+  [data-theme='ocean'] {
+    --petrol-950: 7 26 46;
+    --petrol-900: 10 37 64;
+    --petrol-800: 15 52 87;
+    --petrol-700: 23 70 111;
+    --petrol-600: 35 92 135;
+    --petrol-500: 53 119 163;
+  }
+
+  [data-theme='forest'] {
+    --petrol-950: 12 31 22;
+    --petrol-900: 18 43 30;
+    --petrol-800: 26 58 41;
+    --petrol-700: 37 77 55;
+    --petrol-600: 51 100 71;
+    --petrol-500: 72 125 92;
+  }
+
+  [data-theme='sunset'] {
+    --petrol-950: 36 16 9;
+    --petrol-900: 51 23 13;
+    --petrol-800: 69 32 18;
+    --petrol-700: 92 44 24;
+    --petrol-600: 120 60 32;
+    --petrol-500: 150 78 42;
+  }
+
+  [data-theme='contraste'] {
+    /* Contraste élevé — pensé pour l'accessibilité (basse vision),
+       pas juste une préférence esthétique : noir quasi-pur sur blanc
+       pur, bordures nettement visibles. */
+    --petrol-950: 0 0 0;
+    --petrol-900: 10 10 10;
+    --petrol-800: 26 26 26;
+    --petrol-700: 46 46 46;
+    --petrol-600: 70 70 70;
+    --petrol-500: 97 97 97;
+    --canvas: 255 255 255;
+    --line: 51 51 51;
+  }
+
+  html {
+    font-size: calc(16px * var(--font-scale, 1));
+  }
+
   html, body, #root {
     @apply overflow-x-hidden;
     max-width: 100vw;

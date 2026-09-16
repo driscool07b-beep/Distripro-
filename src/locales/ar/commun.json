@@ -25,7 +25,8 @@
     "stockCommerciaux": "مخزون المندوبين",
     "fermerMenu": "إغلاق القائمة",
     "ouvrirMenu": "فتح القائمة",
-    "messagerie": "المراسلة"
+    "messagerie": "المراسلة",
+    "apparence": "المظهر"
   },
   "actions": {
     "annuler": "إلغاء",

@@ -25,7 +25,8 @@
     "stockCommerciaux": "销售代表库存",
     "fermerMenu": "关闭菜单",
     "ouvrirMenu": "打开菜单",
-    "messagerie": "消息"
+    "messagerie": "消息",
+    "apparence": "外观"
   },
   "actions": {
     "annuler": "取消",
