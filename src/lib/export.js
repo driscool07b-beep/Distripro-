@@ -515,3 +515,48 @@ export function genererAccuseVersement({ entreprise, versement, commercial, cais
 
   return doc
 }
+
+export function genererBonCaisse({ entreprise, demande, caisse, demandePar, validePar, payePar }) {
+  const doc = new jsPDF()
+  const y0 = ecrireEnTeteEntreprise(doc, entreprise)
+  const formatMontant = (n) => formatMontantDevise(n)
+
+  doc.setFontSize(11)
+  doc.setTextColor(60)
+  doc.text('BON DE CAISSE — SORTIE', 14, y0)
+
+  doc.setTextColor(0)
+  doc.setFontSize(11)
+  const yInfo = y0 + 14
+  doc.text(`Caisse : ${caisse?.nom || '—'}`, 14, yInfo)
+  doc.text(`Libellé : ${demande.libelle}`, 14, yInfo + 8)
+  doc.text(`Demandé par : ${demandePar?.nom || '—'} — ${formatDate(demande.created_at)}`, 14, yInfo + 16)
+  doc.text(`Montant demandé : ${formatMontant(demande.montant_demande)}`, 14, yInfo + 24)
+  if (validePar) {
+    doc.text(`Validé par : ${validePar.nom} — ${formatDateHeure(demande.valide_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 32)
+  } else {
+    doc.text("Validé automatiquement (montant sous le seuil de l'entreprise)", 14, yInfo + 32)
+  }
+  doc.text(`Payé par : ${payePar?.nom || '—'} — ${formatDateHeure(demande.payee_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 40)
+
+  doc.setFontSize(16)
+  doc.text(`Montant payé : ${formatMontant(demande.montant_valide)}`, 14, yInfo + 58)
+  if (Number(demande.montant_valide) < Number(demande.montant_demande)) {
+    doc.setFontSize(9)
+    doc.setTextColor(150, 90, 20)
+    doc.text(`(réduit par rapport au montant demandé de ${formatMontant(demande.montant_demande)})`, 14, yInfo + 66)
+    doc.setTextColor(0)
+  }
+
+  doc.setFontSize(9)
+  doc.text('Signature du caissier', 14, yInfo + 90)
+  doc.rect(14, yInfo + 94, 80, 22)
+  doc.text('Signature du bénéficiaire', 110, yInfo + 90)
+  doc.rect(110, yInfo + 94, 80, 22)
+
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
+
+  return doc
+}

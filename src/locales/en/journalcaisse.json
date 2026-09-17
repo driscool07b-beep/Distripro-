@@ -1,0 +1,46 @@
+{
+  "accesRefuse": "This page is reserved for administration, managers, and accounting.",
+  "titre": "Cash journal",
+  "nouvelleDemande": "+ New request",
+  "caisse": "Cash register",
+  "aucuneCaisse": "No active cash register — create one in Settings.",
+  "chargement": "Loading…",
+  "soldeActuel": "Current balance",
+  "soldeProjete": "Balance if everything is approved",
+  "avertissementSoldeNegatif": "⚠️ The balance would go negative if these amounts were approved as they stand.",
+
+  "sections": {
+    "aValider": "To approve ({{n}})",
+    "aPayer": "Approved — to pay ({{n}})",
+    "historique": "History"
+  },
+
+  "demandePar": "Requested by {{nom}} — {{date}}",
+  "pieceJustificative": "Supporting document",
+  "motifRefusPlaceholder": "Reason for rejection (optional)",
+  "annuler": "Cancel",
+  "confirmerRefus": "Confirm rejection",
+  "aValiderSurDemande": "to approve out of {{montant}} requested",
+  "refuser": "Reject",
+  "valider": "Approve",
+  "valideParLe": "Approved by {{nom}} — {{date}}",
+  "autoValide": "auto-approved (below threshold)",
+  "payerMontant": "Pay amount",
+  "payeParLe": "Paid by {{nom}} — {{date}}",
+  "refuseeMotif": "Rejected — {{motif}}",
+  "sansMotif": "no reason given",
+  "aucuneDemande": "No requests for this cash register.",
+
+  "libelle": "Description",
+  "libellePlaceholder": "E.g. Office supplies purchase",
+  "montant": "Amount",
+  "pieceJustificativeOptionnelle": "Supporting document (optional)",
+  "envoi": "Sending…",
+  "envoyerDemande": "Submit request",
+
+  "erreurs": {
+    "erreur": "Error",
+    "libelleRequis": "The description is required.",
+    "montantInvalide": "Enter a valid amount."
+  }
+}

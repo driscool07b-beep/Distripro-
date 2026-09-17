@@ -26,7 +26,8 @@
     "fermerMenu": "إغلاق القائمة",
     "ouvrirMenu": "فتح القائمة",
     "messagerie": "المراسلة",
-    "apparence": "المظهر"
+    "apparence": "المظهر",
+    "journalCaisse": "دفتر الصندوق"
   },
   "actions": {
     "annuler": "إلغاء",

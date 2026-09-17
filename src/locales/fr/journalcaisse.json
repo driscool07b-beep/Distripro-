@@ -1,0 +1,46 @@
+{
+  "accesRefuse": "Cette page est réservée à l'administration, aux managers et à la comptabilité.",
+  "titre": "Journal de caisse",
+  "nouvelleDemande": "+ Nouvelle demande",
+  "caisse": "Caisse",
+  "aucuneCaisse": "Aucune caisse active — créez-en une dans Paramètres.",
+  "chargement": "Chargement…",
+  "soldeActuel": "Solde actuel",
+  "soldeProjete": "Solde si tout est accordé",
+  "avertissementSoldeNegatif": "⚠️ Le solde deviendrait négatif si ces montants étaient accordés en l'état.",
+
+  "sections": {
+    "aValider": "À valider ({{n}})",
+    "aPayer": "Validées — à payer ({{n}})",
+    "historique": "Historique"
+  },
+
+  "demandePar": "Demandé par {{nom}} — {{date}}",
+  "pieceJustificative": "Pièce justificative",
+  "motifRefusPlaceholder": "Motif du refus (optionnel)",
+  "annuler": "Annuler",
+  "confirmerRefus": "Confirmer le refus",
+  "aValiderSurDemande": "à valider sur {{montant}} demandés",
+  "refuser": "Refuser",
+  "valider": "Valider",
+  "valideParLe": "Validé par {{nom}} — {{date}}",
+  "autoValide": "auto-validé (sous le seuil)",
+  "payerMontant": "Payer montant",
+  "payeParLe": "Payé par {{nom}} — {{date}}",
+  "refuseeMotif": "Refusée — {{motif}}",
+  "sansMotif": "sans motif indiqué",
+  "aucuneDemande": "Aucune demande pour cette caisse.",
+
+  "libelle": "Libellé",
+  "libellePlaceholder": "Ex. Achat fournitures bureau",
+  "montant": "Montant",
+  "pieceJustificativeOptionnelle": "Pièce justificative (optionnel)",
+  "envoi": "Envoi…",
+  "envoyerDemande": "Envoyer la demande",
+
+  "erreurs": {
+    "erreur": "Erreur",
+    "libelleRequis": "Le libellé est requis.",
+    "montantInvalide": "Indiquez un montant valide."
+  }
+}

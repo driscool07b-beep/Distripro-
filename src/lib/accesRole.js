@@ -11,6 +11,7 @@ export const ROLES_PAGES = {
   tournees: ['admin', 'manager', 'commercial'],
   rapports: ['admin', 'manager', 'commercial'],
   creances: ['admin', 'manager', 'commercial', 'comptable', 'agent_recouvrement'],
+  journalCaisse: ['admin', 'manager', 'comptable'],
 }
 
 export function accesAutorise(page, role) {

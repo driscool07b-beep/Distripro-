@@ -26,7 +26,8 @@
     "fermerMenu": "Close menu",
     "ouvrirMenu": "Open menu",
     "messagerie": "Messaging",
-    "apparence": "Appearance"
+    "apparence": "Appearance",
+    "journalCaisse": "Cash journal"
   },
   "actions": {
     "annuler": "Cancel",

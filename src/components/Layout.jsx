@@ -177,6 +177,22 @@ export default function Layout() {
               {t('menu.versements')}
             </NavLink>
           )}
+          {['admin', 'manager', 'comptable'].includes(profil?.role) && (
+            <NavLink
+              to="/journal-caisse"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <JournalCaisseIcon className="w-4 h-4 shrink-0" />
+              {t('menu.journalCaisse')}
+            </NavLink>
+          )}
           {profil?.role === 'admin' && (
             <NavLink
               to="/utilisateurs"
@@ -284,6 +300,15 @@ function MessagerieIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+    </svg>
+  )
+}
+function JournalCaisseIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <rect x="2" y="6" width="20" height="14" rx="2" />
+      <path d="M2 10h20" /><circle cx="8" cy="15" r="1.5" fill="currentColor" stroke="none" />
+      <path d="M14 15h4" />
     </svg>
   )
 }

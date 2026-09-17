@@ -1,0 +1,46 @@
+{
+  "accesRefuse": "هذه الصفحة مخصصة للإدارة والمديرين والمحاسبة.",
+  "titre": "دفتر الصندوق",
+  "nouvelleDemande": "+ طلب جديد",
+  "caisse": "الصندوق",
+  "aucuneCaisse": "لا يوجد صندوق نشط — أنشئ واحدًا في الإعدادات.",
+  "chargement": "جارٍ التحميل…",
+  "soldeActuel": "الرصيد الحالي",
+  "soldeProjete": "الرصيد إذا تمت الموافقة على كل شيء",
+  "avertissementSoldeNegatif": "⚠️ سيصبح الرصيد سالبًا إذا تمت الموافقة على هذه المبالغ كما هي.",
+
+  "sections": {
+    "aValider": "بانتظار الموافقة ({{n}})",
+    "aPayer": "تمت الموافقة — بانتظار الدفع ({{n}})",
+    "historique": "السجل"
+  },
+
+  "demandePar": "طلبه {{nom}} — {{date}}",
+  "pieceJustificative": "مستند داعم",
+  "motifRefusPlaceholder": "سبب الرفض (اختياري)",
+  "annuler": "إلغاء",
+  "confirmerRefus": "تأكيد الرفض",
+  "aValiderSurDemande": "للموافقة عليه من أصل {{montant}} المطلوب",
+  "refuser": "رفض",
+  "valider": "موافقة",
+  "valideParLe": "تمت الموافقة من قبل {{nom}} — {{date}}",
+  "autoValide": "تمت الموافقة تلقائيًا (أقل من الحد)",
+  "payerMontant": "دفع المبلغ",
+  "payeParLe": "دفعه {{nom}} — {{date}}",
+  "refuseeMotif": "مرفوض — {{motif}}",
+  "sansMotif": "دون ذكر سبب",
+  "aucuneDemande": "لا توجد طلبات لهذا الصندوق.",
+
+  "libelle": "البيان",
+  "libellePlaceholder": "مثال: شراء لوازم مكتبية",
+  "montant": "المبلغ",
+  "pieceJustificativeOptionnelle": "مستند داعم (اختياري)",
+  "envoi": "جارٍ الإرسال…",
+  "envoyerDemande": "إرسال الطلب",
+
+  "erreurs": {
+    "erreur": "خطأ",
+    "libelleRequis": "البيان مطلوب.",
+    "montantInvalide": "أدخل مبلغًا صحيحًا."
+  }
+}

@@ -6,7 +6,6 @@
   "enregistrer": "Enregistrer",
   "enregistre": "Enregistré.",
   "ajout": "Ajout…",
-
   "infosLegales": {
     "titre": "Informations légales",
     "sousTitre": "Affichées sur tous les documents générés (factures, reçus, bons de livraison, proforma).",
@@ -16,7 +15,6 @@
     "ncc": "NCC (numéro de compte contribuable)",
     "rccm": "RCCM (registre de commerce)"
   },
-
   "caisses": {
     "titre": "Caisses",
     "sousTitre": "Où les commerciaux remettent leurs versements (espèces et autres modes de règlement encaissés).",
@@ -26,24 +24,20 @@
     "placeholder": "Ex. Caisse 1",
     "ajouter": "+ Ajouter"
   },
-
   "remises": {
     "titre": "Politique de remises",
     "sousTitre": "Au-delà de ce seuil, un commercial ne peut plus valider seul la remise — seuls un manager ou un administrateur peuvent l'appliquer.",
     "seuil": "Seuil (%)",
     "erreurSeuil": "Le seuil doit être un pourcentage entre 0 et 100."
   },
-
   "stock": {
     "titre": "Politique de stock",
     "exigerJustificatif": "Exiger un justificatif (photo/PDF) pour tout ajustement manuel de stock"
   },
-
   "devise": {
     "titre": "Devise",
     "sousTitre": "S'applique à tous les montants affichés dans l'app (ventes, stock, créances, reçus…)."
   },
-
   "organigramme": {
     "titre": "Organigramme commercial",
     "sousTitre": "Affiliez chaque commercial à une équipe gérée par un chef d'équipe (manager) — l'objectif fixé au chef d'équipe sera alors calculé comme la somme des ventes de tous les commerciaux de son équipe.",
@@ -60,7 +54,6 @@
     "creer": "+ Créer",
     "erreurNomEquipe": "Le nom de l'équipe est requis."
   },
-
   "facturation": {
     "titre": "Facturation & taxes",
     "sousTitre": "À vérifier avec ton comptable avant de t'appuyer sur ces calculs pour de vraies factures.",
@@ -81,7 +74,6 @@
     "ajouterTaxe": "+ Ajouter cette taxe",
     "erreurNomTaux": "Le nom et le taux sont requis."
   },
-
   "rapportsVisite": {
     "titre": "Rapports de visite commerciale",
     "sousTitre": "Lorsqu'un commercial valide une visite pendant une tournée, il peut saisir l'état du stock chez le client (rayon et réserve) avec jusqu'à 3 photos à l'appui.",
@@ -89,7 +81,6 @@
     "activeTexte": "Activé : au moins une photo doit être ajoutée.",
     "desactiveTexte": "Désactivé : le rapport peut être envoyé sans photo."
   },
-
   "champsPersonnalises": {
     "titre": "Informations supplémentaires à collecter",
     "sousTitre": "Ajoutez vos propres questions pour votre étude commerciale — elles apparaîtront automatiquement dans le formulaire de rapport de visite des commerciaux.",
@@ -106,14 +97,12 @@
     "erreurLibelle": "Le libellé est requis.",
     "erreurOptions": "Indiquez au moins une option, séparée par des virgules."
   },
-
   "typesChamp": {
     "texte": "Texte libre",
     "nombre": "Nombre",
     "oui_non": "Oui / Non",
     "choix_multiple": "Choix parmi une liste"
   },
-
   "concurrents": {
     "titre": "Produits concurrents",
     "sousTitre": "Enregistrez les produits concurrents à surveiller — les commerciaux pourront cocher leur présence en rayon chez chaque client visité, pour calculer votre taux de présence.",
@@ -126,5 +115,14 @@
     "marque": "Marque (optionnel)",
     "ajouterProduit": "+ Ajouter ce produit concurrent",
     "erreurNom": "Le nom du produit est requis."
+  },
+  "journalCaisse": {
+    "titre": "Journal de caisse — validation des décaissements",
+    "sousTitre": "Définissez qui doit approuver une sortie de caisse, et à partir de quel montant.",
+    "toujoursValider": "Toujours exiger une validation, quel que soit le montant",
+    "seuil": "Seuil de validation (F CFA)",
+    "seuilPlaceholder": "Ex. 50000",
+    "seuilAide": "En dessous de ce montant, la demande est acceptée automatiquement à la création (sans validateur humain).",
+    "rolesValidateurs": "Qui peut valider une sortie de caisse"
   }
 }

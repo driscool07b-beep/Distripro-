@@ -6,7 +6,6 @@
   "enregistrer": "Save",
   "enregistre": "Saved.",
   "ajout": "Adding…",
-
   "infosLegales": {
     "titre": "Legal information",
     "sousTitre": "Displayed on every document generated (invoices, receipts, delivery notes, proforma).",
@@ -16,7 +15,6 @@
     "ncc": "NCC (taxpayer account number)",
     "rccm": "RCCM (trade register)"
   },
-
   "caisses": {
     "titre": "Cash registers",
     "sousTitre": "Where sales reps hand over their deposits (cash and other collected payment methods).",
@@ -26,24 +24,20 @@
     "placeholder": "E.g. Register 1",
     "ajouter": "+ Add"
   },
-
   "remises": {
     "titre": "Discount policy",
     "sousTitre": "Beyond this threshold, a sales rep can no longer approve the discount alone — only a manager or admin can apply it.",
     "seuil": "Threshold (%)",
     "erreurSeuil": "The threshold must be a percentage between 0 and 100."
   },
-
   "stock": {
     "titre": "Stock policy",
     "exigerJustificatif": "Require a supporting document (photo/PDF) for any manual stock adjustment"
   },
-
   "devise": {
     "titre": "Currency",
     "sousTitre": "Applies to every amount shown in the app (sales, stock, receivables, receipts…)."
   },
-
   "organigramme": {
     "titre": "Sales org chart",
     "sousTitre": "Affiliate each sales rep with a team run by a team leader (manager) — the target set for the team leader will then be calculated as the sum of sales from all the sales reps on their team.",
@@ -60,7 +54,6 @@
     "creer": "+ Create",
     "erreurNomEquipe": "The team name is required."
   },
-
   "facturation": {
     "titre": "Billing & taxes",
     "sousTitre": "Check with your accountant before relying on these calculations for real invoices.",
@@ -81,7 +74,6 @@
     "ajouterTaxe": "+ Add this tax",
     "erreurNomTaux": "Name and rate are required."
   },
-
   "rapportsVisite": {
     "titre": "Sales visit reports",
     "sousTitre": "When a sales rep confirms a visit during a route, they can record the stock situation at the client (shelf and back-stock) with up to 3 supporting photos.",
@@ -89,7 +81,6 @@
     "activeTexte": "Enabled: at least one photo must be added.",
     "desactiveTexte": "Disabled: the report can be sent without a photo."
   },
-
   "champsPersonnalises": {
     "titre": "Additional information to collect",
     "sousTitre": "Add your own questions for your market research — they'll appear automatically in sales reps' visit report form.",
@@ -106,14 +97,12 @@
     "erreurLibelle": "The label is required.",
     "erreurOptions": "Enter at least one option, comma-separated."
   },
-
   "typesChamp": {
     "texte": "Free text",
     "nombre": "Number",
     "oui_non": "Yes / No",
     "choix_multiple": "Choice from a list"
   },
-
   "concurrents": {
     "titre": "Competitor products",
     "sousTitre": "Record the competitor products to monitor — sales reps will be able to check their presence on the shelf at each client visited, to calculate your shelf presence rate.",
@@ -126,5 +115,14 @@
     "marque": "Brand (optional)",
     "ajouterProduit": "+ Add this competitor product",
     "erreurNom": "The product name is required."
+  },
+  "journalCaisse": {
+    "titre": "Cash journal — disbursement approval",
+    "sousTitre": "Define who must approve a cash outflow, and above what amount.",
+    "toujoursValider": "Always require approval, regardless of amount",
+    "seuil": "Approval threshold (F CFA)",
+    "seuilPlaceholder": "E.g. 50000",
+    "seuilAide": "Below this amount, the request is automatically accepted when created (no human approver).",
+    "rolesValidateurs": "Who can approve a cash outflow"
   }
 }

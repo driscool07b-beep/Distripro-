@@ -26,7 +26,8 @@
     "fermerMenu": "Fermer le menu",
     "ouvrirMenu": "Ouvrir le menu",
     "messagerie": "Messagerie",
-    "apparence": "Apparence"
+    "apparence": "Apparence",
+    "journalCaisse": "Journal de caisse"
   },
   "actions": {
     "annuler": "Annuler",

@@ -33,6 +33,11 @@ export default function Parametres() {
   const [enregistrementTva, setEnregistrementTva] = useState(false)
   const [devise, setDevise] = useState('XOF')
   const [enregistrementDevise, setEnregistrementDevise] = useState(false)
+  const [seuilCaisse, setSeuilCaisse] = useState('')
+  const [toujoursValider, setToujoursValider] = useState(true)
+  const [rolesValidateurs, setRolesValidateurs] = useState(['admin', 'manager'])
+  const [enregistrementCaisse, setEnregistrementCaisse] = useState(false)
+  const [confirmationCaisse, setConfirmationCaisse] = useState(false)
   const [equipes, setEquipes] = useState([])
   const [commerciauxEtManagers, setCommerciauxEtManagers] = useState([])
   const [nouvelleEquipeNom, setNouvelleEquipeNom] = useState('')
@@ -56,6 +61,9 @@ export default function Parametres() {
       setJustificatifObligatoire(entreprise.justificatif_stock_obligatoire ?? true)
       setAssujettiTva(entreprise.assujetti_tva ?? false)
       setDevise(entreprise.devise ?? 'XOF')
+      setToujoursValider(entreprise.caisse_seuil_validation == null)
+      setSeuilCaisse(entreprise.caisse_seuil_validation != null ? String(entreprise.caisse_seuil_validation) : '')
+      setRolesValidateurs(entreprise.caisse_roles_validateurs || ['admin', 'manager'])
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -135,6 +143,24 @@ export default function Parametres() {
     setEnregistrementTva(false)
     if (!error) {
       setAssujettiTva(valeur)
+      rechargerProfil?.()
+    }
+  }
+
+  function toggleRoleValidateur(role) {
+    setRolesValidateurs((prev) => (prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]))
+  }
+
+  async function enregistrerParametrageCaisse() {
+    setEnregistrementCaisse(true)
+    const { error } = await supabase.rpc('modifier_parametrage_caisse', {
+      p_seuil: toujoursValider ? null : (seuilCaisse === '' ? null : Number(seuilCaisse)),
+      p_roles_validateurs: rolesValidateurs,
+    })
+    setEnregistrementCaisse(false)
+    if (!error) {
+      setConfirmationCaisse(true)
+      setTimeout(() => setConfirmationCaisse(false), 2500)
       rechargerProfil?.()
     }
   }
@@ -625,6 +651,48 @@ export default function Parametres() {
             </div>
             {erreurEquipe && <p className="text-xs text-red-600 mt-2">{erreurEquipe}</p>}
           </div>
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">{t('journalCaisse.titre')}</h2>
+          <p className="text-xs text-petrol-500 mb-3">{t('journalCaisse.sousTitre')}</p>
+
+          <label className="flex items-center gap-2 text-sm mb-2">
+            <input type="checkbox" checked={toujoursValider} onChange={(e) => setToujoursValider(e.target.checked)} />
+            {t('journalCaisse.toujoursValider')}
+          </label>
+
+          {!toujoursValider && (
+            <div className="mb-3">
+              <label className="label">{t('journalCaisse.seuil')}</label>
+              <input
+                type="number"
+                min="0"
+                className="input-field max-w-xs"
+                value={seuilCaisse}
+                onChange={(e) => setSeuilCaisse(e.target.value)}
+                placeholder={t('journalCaisse.seuilPlaceholder')}
+              />
+              <p className="text-xs text-petrol-500 mt-1">{t('journalCaisse.seuilAide')}</p>
+            </div>
+          )}
+
+          <p className="text-xs font-medium text-petrol-600 mb-2 mt-4">{t('journalCaisse.rolesValidateurs')}</p>
+          <div className="flex flex-wrap gap-3 mb-3">
+            {['admin', 'manager', 'comptable'].map((role) => (
+              <label key={role} className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={rolesValidateurs.includes(role)} onChange={() => toggleRoleValidateur(role)} />
+                {t(`roles.${role}`, { ns: 'utilisateurs' })}
+              </label>
+            ))}
+          </div>
+
+          <button onClick={enregistrerParametrageCaisse} disabled={enregistrementCaisse} className="btn-primary text-sm">
+            {enregistrementCaisse ? t('enregistrement') : t('enregistrer')}
+          </button>
+          {confirmationCaisse && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 
