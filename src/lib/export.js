@@ -2,6 +2,7 @@ import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { formatNombre, formatXOF as formatMontantDevise, formatDate, formatDateHeure, DEVISES, deviseCourante } from './format'
+import { montantEnLettresAvecDevise } from './nombreEnLettres'
 
 const LIBELLES_MODE = {
   espece: 'Espèces',
@@ -221,6 +222,16 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes }) {
       }
     },
   })
+
+  doc.setFontSize(9)
+  doc.setTextColor(60)
+  const nomDevise = DEVISES[deviseCourante()]?.nom || 'francs CFA'
+  const texteEnLettres = doc.splitTextToSize(
+    `Arrêtée la présente ${aDesTaxes ? 'facture' : 'vente'} à la somme de : ${montantEnLettresAvecDevise(vente.total, nomDevise)}.`,
+    182
+  )
+  doc.text(texteEnLettres, 14, doc.lastAutoTable.finalY + 10)
+  doc.setTextColor(0)
 
   doc.setFontSize(8)
   doc.setTextColor(130)
@@ -520,39 +531,51 @@ export function genererBonCaisse({ entreprise, demande, caisse, demandePar, vali
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
   const formatMontant = (n) => formatMontantDevise(n)
+  const nomDevise = DEVISES[deviseCourante()]?.nom || 'francs CFA'
 
   doc.setFontSize(11)
   doc.setTextColor(60)
-  doc.text('BON DE CAISSE — SORTIE', 14, y0)
+  doc.text(`BON DE CAISSE — SORTIE${demande.numero ? '  N° ' + demande.numero : ''}`, 14, y0)
 
   doc.setTextColor(0)
   doc.setFontSize(11)
   const yInfo = y0 + 14
   doc.text(`Caisse : ${caisse?.nom || '—'}`, 14, yInfo)
   doc.text(`Libellé : ${demande.libelle}`, 14, yInfo + 8)
-  doc.text(`Demandé par : ${demandePar?.nom || '—'} — ${formatDate(demande.created_at)}`, 14, yInfo + 16)
-  doc.text(`Montant demandé : ${formatMontant(demande.montant_demande)}`, 14, yInfo + 24)
+  doc.text(`Bénéficiaire : ${demande.beneficiaire || demandePar?.nom || '—'}`, 14, yInfo + 16)
+  doc.text(`Demandé par : ${demandePar?.nom || '—'} — ${formatDate(demande.created_at)}`, 14, yInfo + 24)
+  doc.text(`Montant demandé : ${formatMontant(demande.montant_demande)}`, 14, yInfo + 32)
   if (validePar) {
-    doc.text(`Validé par : ${validePar.nom} — ${formatDateHeure(demande.valide_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 32)
+    doc.text(`Validé par : ${validePar.nom} — ${formatDateHeure(demande.valide_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 40)
   } else {
-    doc.text("Validé automatiquement (montant sous le seuil de l'entreprise)", 14, yInfo + 32)
+    doc.text("Validé automatiquement (montant sous le seuil de l'entreprise)", 14, yInfo + 40)
   }
-  doc.text(`Payé par : ${payePar?.nom || '—'} — ${formatDateHeure(demande.payee_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 40)
+  doc.text(`Payé par : ${payePar?.nom || '—'} — ${formatDateHeure(demande.payee_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 48)
 
   doc.setFontSize(16)
-  doc.text(`Montant payé : ${formatMontant(demande.montant_valide)}`, 14, yInfo + 58)
+  doc.text(`Montant payé : ${formatMontant(demande.montant_valide)}`, 14, yInfo + 64)
   if (Number(demande.montant_valide) < Number(demande.montant_demande)) {
     doc.setFontSize(9)
     doc.setTextColor(150, 90, 20)
-    doc.text(`(réduit par rapport au montant demandé de ${formatMontant(demande.montant_demande)})`, 14, yInfo + 66)
+    doc.text(`(réduit par rapport au montant demandé de ${formatMontant(demande.montant_demande)})`, 14, yInfo + 72)
     doc.setTextColor(0)
   }
 
   doc.setFontSize(9)
-  doc.text('Signature du caissier', 14, yInfo + 90)
-  doc.rect(14, yInfo + 94, 80, 22)
-  doc.text('Signature du bénéficiaire', 110, yInfo + 90)
-  doc.rect(110, yInfo + 94, 80, 22)
+  doc.setTextColor(60)
+  const texteEnLettres = doc.splitTextToSize(
+    `Arrêté le présent montant à la somme de : ${montantEnLettresAvecDevise(demande.montant_valide, nomDevise)}.`,
+    182
+  )
+  doc.text(texteEnLettres, 14, yInfo + 84)
+  doc.setTextColor(0)
+
+  const ySignatures = yInfo + 84 + texteEnLettres.length * 5 + 14
+  doc.setFontSize(9)
+  doc.text('Signature du caissier', 14, ySignatures)
+  doc.rect(14, ySignatures + 4, 80, 22)
+  doc.text(`Signature du bénéficiaire (${demande.beneficiaire || demandePar?.nom || '—'})`, 110, ySignatures)
+  doc.rect(110, ySignatures + 4, 80, 22)
 
   doc.setFontSize(8)
   doc.setTextColor(130)
