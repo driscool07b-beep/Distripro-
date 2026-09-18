@@ -1,0 +1,286 @@
+{
+  "titre": "Help",
+  "rechercher": "Search help…",
+  "aucunResultat": "No results for this search.",
+  "contact": "Can't find the answer to your question? Write to your administrator or via internal Messaging.",
+  "categories": [
+    {
+      "titre": "Getting started",
+      "items": [
+        {
+          "q": "How do I log in?",
+          "r": "Use the email and password your administrator gave you. If you were invited, you must first create your account via the invitation link received by email, using exactly the same email address you were invited on."
+        },
+        {
+          "q": "What are the different roles and what do they give access to?",
+          "r": "Admin: full access, including Settings and Billing. Manager: nearly everything except a few sensitive settings. Sales rep: sales, routes, their own clients and the stock they carry. Accountant: sales, receivables, deposits, cash journal. Stock manager: products, movements, transfers. Collection agent: receivables only. Any user can also be given extended or read-only access, configurable by an admin in Team."
+        },
+        {
+          "q": "How do I change the app's language?",
+          "r": "The language selector is at the bottom of the side menu (or in the menu on mobile). French, English, Arabic (with adapted right-to-left layout) and Chinese are available."
+        },
+        {
+          "q": "How do I install the app on my phone?",
+          "r": "Open the app in your phone's browser, then choose 'Add to Home Screen' (Android/Chrome) or 'Add to Home Screen' from the share menu (iPhone/Safari). It will then open like a real app, and keep working for sales/visits even without network."
+        }
+      ]
+    },
+    {
+      "titre": "Clients",
+      "items": [
+        {
+          "q": "How do I create a client?",
+          "r": "Clients → '+ New client'. Only the name is required. You can also capture their GPS position automatically (useful for the map and directions), set a credit limit, negotiated prices per product, and a photo of their storefront."
+        },
+        {
+          "q": "What are client groups for?",
+          "r": "To group several outlets of the same chain (a store chain, for example) to get a unified delivery summary, rather than tracking each store separately."
+        },
+        {
+          "q": "How does client credit work?",
+          "r": "If you set a credit limit on a client's record, their sales can be partially paid, with the rest added to their receivables. A refund of an overpayment (an advance on a cancelled order, for example) appears as an available credit, usable on their next sale."
+        },
+        {
+          "q": "How do I import several clients at once?",
+          "r": "Clients → 'Import' → download the Excel template, fill it in keeping the column order, then re-import it."
+        }
+      ]
+    },
+    {
+      "titre": "Products & Stock",
+      "items": [
+        {
+          "q": "How do I adjust a product's stock (in or out)?",
+          "r": "Stock → click the product → 'Adjust stock'. A supporting document (photo or PDF) may be required depending on the policy set in Settings."
+        },
+        {
+          "q": "What's the difference between 'adjust stock' and 'transfer between warehouses'?",
+          "r": "An adjustment changes the total quantity (e.g. breakage, inventory count). A transfer moves stock from one warehouse to another without changing the total quantity — stock leaves the source warehouse immediately, and only arrives at the destination once its manager confirms receipt."
+        },
+        {
+          "q": "How do I locate a product at my clients?",
+          "r": "'Locate a product' menu — combines recent visit reports and latest deliveries to show which clients have recently had a product, useful when a client calls asking where to find it."
+        },
+        {
+          "q": "Where can I see a product's price history?",
+          "r": "Stock → on the product's row → 'History' — shows every price change, with the date."
+        }
+      ]
+    },
+    {
+      "titre": "Sales",
+      "items": [
+        {
+          "q": "How do I create a sale?",
+          "r": "Sales → '+ New sale'. Choose the client, add products, specify the payment method. If the client has available credit, you can apply it to reduce the amount due."
+        },
+        {
+          "q": "Can a sales rep sell from their own stock, without going through a warehouse?",
+          "r": "Yes — by indicating the sale is made by the sales rep themselves (rather than an 'office sale'), stock is deducted from what they're carrying, without going through a warehouse. This is also the mode that works offline."
+        },
+        {
+          "q": "How do I cancel a sale?",
+          "r": "Open the sale's detail → 'Cancel this sale'. A reason is required. This generates a credit note and returns the stock to its original warehouse."
+        },
+        {
+          "q": "Above what discount amount is approval required?",
+          "r": "The threshold is set in Settings → Discount policy. Beyond it, only a manager or admin can approve the discount."
+        }
+      ]
+    },
+    {
+      "titre": "Orders",
+      "items": [
+        {
+          "q": "What is an order's lifecycle?",
+          "r": "Draft → Confirmed → Being prepared → Delivered (or Cancelled at any point before delivery). Each step is recorded with the date and the person who performed it."
+        },
+        {
+          "q": "What happens if I can only deliver part of the order?",
+          "r": "At delivery time, enter the quantity actually delivered per product — the gap versus the ordered quantity is visible and kept on record, useful for analyzing recurring shortages (see Analytics)."
+        },
+        {
+          "q": "How do I plan production from pending orders?",
+          "r": "The 'Pending orders summary' card at the top of the Orders page automatically adds up quantities per product across all orders not yet delivered."
+        }
+      ]
+    },
+    {
+      "titre": "Routes & visits",
+      "items": [
+        {
+          "q": "How do I create a route for a sales rep?",
+          "r": "Routes → '+ New route' → choose the date and the clients to visit. The route is automatically optimized (shortest path)."
+        },
+        {
+          "q": "How do I confirm a visit at a client?",
+          "r": "From the route's detail, 'Mark as visited' — the phone's GPS position is checked against the client's, to confirm the visit actually took place on site."
+        },
+        {
+          "q": "What exactly is the visit report?",
+          "r": "After confirming a visit, a form lets you record the stock situation at the client (shelf and back-stock), photos, the presence of competitor products, and any custom question your company defined in Settings."
+        },
+        {
+          "q": "Does it work without network?",
+          "r": "Yes, for a sales rep: creating a sale (from their own stock), confirming a visit, and submitting a report all work offline — everything syncs automatically once the connection returns. A banner at the top of the app shows the number of pending actions."
+        }
+      ]
+    },
+    {
+      "titre": "Receivables",
+      "items": [
+        {
+          "q": "How do I see what a client still owes?",
+          "r": "Receivables lists all credit sales not yet fully paid, with the due date. Overdue receivables are highlighted."
+        },
+        {
+          "q": "How do I record a payment received from a client?",
+          "r": "Open the relevant receivable → 'Record a payment' → enter the amount and payment method. You can also specify which sales rep collected it in the field."
+        },
+        {
+          "q": "How do I import existing client balances (before using DistribPro)?",
+          "r": "Receivables → 'Import' — client names must exactly match clients already created in the app."
+        }
+      ]
+    },
+    {
+      "titre": "Deposits",
+      "items": [
+        {
+          "q": "What are 'cash registers' for?",
+          "r": "A cash register represents a physical collection point (e.g. the main office) where sales reps hand over the cash from sales and receivable collections they took in the field."
+        },
+        {
+          "q": "How does a sales rep deposit their cash?",
+          "r": "'My deposits' page — enter the amount they're depositing and to which register. A PDF deposit receipt is generated."
+        },
+        {
+          "q": "Where can I see what each sales rep still needs to deposit?",
+          "r": "Deposits page (accounting/admin) — calculates, for each sales rep, the total due (cash sales + collections) minus what they've already deposited today."
+        }
+      ]
+    },
+    {
+      "titre": "Cash journal",
+      "items": [
+        {
+          "q": "How does a disbursement request (cash outflow) work?",
+          "r": "'+ New request' → description, amount, and optionally a supporting document and the beneficiary's name. Depending on the configured threshold, it's either auto-approved or held pending an approver."
+        },
+        {
+          "q": "Who can approve a cash outflow, and how?",
+          "r": "The roles allowed to approve are set in Settings → Cash journal. The approver can grant the full amount or reduce it based on available cash, line by line — they see the current balance and the projected balance live before deciding."
+        },
+        {
+          "q": "Once approved, how do I actually pay the request?",
+          "r": "'Pay amount' button on the approved request — this records the outflow entry and automatically downloads a cash voucher PDF, with the amount spelled out in words and a signature space for the beneficiary."
+        },
+        {
+          "q": "How does a cash inflow work?",
+          "r": "'+ Cash inflow' is used to record money entering the register that doesn't come from a sale — a bank transfer, a loan, or another source. It increases the available balance."
+        },
+        {
+          "q": "How do I transfer money from one register to another, or to the bank?",
+          "r": "'+ Transfer' — choose the destination register (the amount leaves the source register immediately, and is only credited to the destination once receipt is confirmed, just like a stock transfer) or 'To a bank' if the money is leaving the system."
+        },
+        {
+          "q": "What is a fund return?",
+          "r": "Useful when a payment already made needs to be partially refunded — a purchase cancelled after payment, or an overpayment returned. '+ Fund return', optionally linked to the original disbursement."
+        },
+        {
+          "q": "What is the Ledger?",
+          "r": "The page's second tab — a classic accounting view combining all transactions (deposits, cash inflows, paid disbursements, transfers, returns) with a running balance recalculated line by line, filterable by period."
+        },
+        {
+          "q": "Can a cashier cancel or correct their own request?",
+          "r": "Yes, as long as it's still 'pending' (not yet processed by an approver) — 'Edit' and 'Cancel my request' buttons appear on their own requests."
+        },
+        {
+          "q": "Why am I asked for a code before I can approve?",
+          "r": "If an approval code (PIN) has been set up for your account, the approval section locks after 1 minute of inactivity, to prevent a session left open from letting someone else approve on your behalf. If you forget it, an admin can regenerate your code from Team."
+        }
+      ]
+    },
+    {
+      "titre": "Targets & Analytics",
+      "items": [
+        {
+          "q": "How do I set a sales target?",
+          "r": "Targets → '+ New target' — for a sales rep, a team leader, or leadership, over a given period, in amount and/or quantity of a specific product."
+        },
+        {
+          "q": "How is a team leader's achieved target calculated?",
+          "r": "It's the sum of sales from all sales reps affiliated with their team — not their own personal sales. Affiliation is set in Settings → Sales org chart. A leadership target represents the company's total sales."
+        },
+        {
+          "q": "What does the Analytics page show?",
+          "r": "A daily route summary, product turnover rate (based on successive visit reports), shelf presence rate versus competitors, and cancelled or partially delivered orders (lost revenue)."
+        }
+      ]
+    },
+    {
+      "titre": "Team & Org chart",
+      "items": [
+        {
+          "q": "How do I invite a new team member?",
+          "r": "Team → '+ Invite a colleague' — enter their email and role. The person must then create their own account, using exactly that email address."
+        },
+        {
+          "q": "How do I organize my sales reps into teams?",
+          "r": "Settings → Sales org chart (admin/manager) — create named teams, assign a team leader (manager or admin), then affiliate each sales rep with the appropriate team. This is used in particular for calculating team targets."
+        },
+        {
+          "q": "A member forgot their password, what do I do?",
+          "r": "Team → on their row → 'Reset password' — generates a temporary password to give them, which they'll have to change on their next login. As an admin, you'll never see either the old or the new password."
+        }
+      ]
+    },
+    {
+      "titre": "Messaging",
+      "items": [
+        {
+          "q": "How do I send a message to a colleague?",
+          "r": "Messaging → '+ New message' → choose a colleague. Photos and PDFs can be attached."
+        },
+        {
+          "q": "How do I create a group channel?",
+          "r": "Messaging → '+ New channel' → give it a name and choose the members."
+        },
+        {
+          "q": "How do I get notified even with the app closed?",
+          "r": "Appearance → Notifications → enable the toggle, then allow notifications in your browser when it asks."
+        }
+      ]
+    },
+    {
+      "titre": "Appearance",
+      "items": [
+        {
+          "q": "How do I change the app's colors?",
+          "r": "Appearance menu — 5 themes to choose from, including a 'High contrast' theme designed for visual comfort. This is a personal setting, specific to your account, not shared with the rest of the team."
+        },
+        {
+          "q": "How do I enlarge the text if I have trouble reading?",
+          "r": "Appearance menu → Text size — Normal, Large, or Extra large. Applies to the whole app immediately."
+        }
+      ]
+    },
+    {
+      "titre": "General settings",
+      "items": [
+        {
+          "q": "How do I change the currency shown across the app?",
+          "r": "Settings → Currency (admin) — F CFA, Euro, US Dollar, Pound sterling, Ghanaian cedi, or Nigerian naira."
+        },
+        {
+          "q": "How do I enable VAT on sales?",
+          "r": "Settings → Billing & taxes (admin). Once enabled, each product must be configured individually (applicable rate) from the Stock page — the rate often varies by type of goods. Check with your accountant before relying on it for real invoices."
+        },
+        {
+          "q": "How do I add my own questions to the visit report?",
+          "r": "Settings → Additional information to collect — add a question (free text, number, yes/no, or choice from a list), it will automatically appear in every sales rep's visit report form."
+        }
+      ]
+    }
+  ]
+}
