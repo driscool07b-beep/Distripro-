@@ -123,5 +123,15 @@
     "attenteSynchro": "等待网络连接",
     "echec": "失败：{{message}}",
     "supprimer": "删除"
+  },
+  "mdpObligatoire": {
+    "titre": "需要设置新密码",
+    "sousTitre": "您的密码已被管理员重置。请设置新密码以继续。",
+    "nouveauMdp": "新密码",
+    "confirmerMdp": "确认密码",
+    "erreurLongueur": "密码必须至少包含6个字符。",
+    "erreurConfirmation": "两次输入的密码不一致。",
+    "enCours": "保存中…",
+    "valider": "确认"
   }
 }

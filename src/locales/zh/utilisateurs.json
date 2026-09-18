@@ -51,5 +51,13 @@
   "lectureSeuleLabel": "只读（可查看所有内容，但无法保存或修改任何内容）",
   "responsableTourneesLabel": "路线负责人（可以安排和修改销售代表的路线）",
   "depotsAttribues": "已分配仓库",
-  "depotsAttribuesAide": "该成员只能在下方勾选的仓库中记录变动。未勾选任何仓库 = 无权限。"
+  "depotsAttribuesAide": "该成员只能在下方勾选的仓库中记录变动。未勾选任何仓库 = 无权限。",
+  "reinitialiserMdp": "重置密码",
+  "regenererPin": "重新生成审批码",
+  "confirmerReinitialisationMdp": "确定重置 {{nom}} 的密码吗？系统将生成一个临时密码供您告知对方——对方需在下次登录时更改密码。",
+  "confirmerRegenerationPin": "确定重新生成 {{nom}} 的审批码吗？系统将生成一个新审批码供您告知对方——对方需在下次审批前更改。",
+  "mdpTemporaireTitre": "临时密码 — {{nom}}",
+  "pinTemporaireTitre": "临时审批码 — {{nom}}",
+  "noterMaintenant": "请立即记录并告知对方——此信息将不再显示。",
+  "fermer": "关闭"
 }

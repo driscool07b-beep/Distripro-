@@ -34,6 +34,7 @@ export default function Utilisateurs() {
   const [zone, setZone] = useState('')
   const [envoi, setEnvoi] = useState(false)
   const [erreur, setErreur] = useState('')
+  const [valeurGeneree, setValeurGeneree] = useState(null)
 
   const [membreEnEdition, setMembreEnEdition] = useState(null)
   const [modalMembreOuvert, setModalMembreOuvert] = useState(false)
@@ -240,6 +241,28 @@ export default function Utilisateurs() {
     charger()
   }
 
+  async function reinitialiserMotDePasse(membre) {
+    if (!window.confirm(t('confirmerReinitialisationMdp', { nom: membre.nom_complet || membre.nom }))) return
+    const { data, error } = await supabase.functions.invoke('reinitialiser-mot-de-passe', {
+      body: { profil_id: membre.id },
+    })
+    if (error || data?.error) {
+      alert(`${t('erreur')} : ${data?.error || error.message}`)
+      return
+    }
+    setValeurGeneree({ titre: t('mdpTemporaireTitre', { nom: membre.nom_complet || membre.nom }), valeur: data.mot_de_passe_temporaire })
+  }
+
+  async function regenererPin(membre) {
+    if (!window.confirm(t('confirmerRegenerationPin', { nom: membre.nom_complet || membre.nom }))) return
+    const { data, error } = await supabase.rpc('regenerer_pin_validation', { p_profil_id: membre.id })
+    if (error) {
+      alert(`${t('erreur')} : ${traduireErreur(error.message)}`)
+      return
+    }
+    setValeurGeneree({ titre: t('pinTemporaireTitre', { nom: membre.nom_complet || membre.nom }), valeur: data })
+  }
+
   if (profil?.role !== 'admin') {
     return (
       <div className="p-4 max-w-2xl mx-auto">
@@ -328,7 +351,7 @@ export default function Utilisateurs() {
                     {m.telephone ? ` — ${m.telephone}` : ''}
                   </p>
                 </div>
-                <div className="flex gap-3 shrink-0">
+                <div className="flex gap-3 shrink-0 flex-wrap justify-end">
                   <button onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
                     {t('modifier')}
                   </button>
@@ -337,11 +360,34 @@ export default function Utilisateurs() {
                       {m.actif ? t('desactiver') : t('reactiver')}
                     </button>
                   )}
+                  {m.id !== profil.id && (
+                    <button onClick={() => reinitialiserMotDePasse(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
+                      {t('reinitialiserMdp')}
+                    </button>
+                  )}
+                  {m.id !== profil.id && (
+                    <button onClick={() => regenererPin(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
+                      {t('regenererPin')}
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
             {membres.length === 0 && <p className="text-xs text-petrol-400">{t('aucunMembre')}</p>}
           </div>
+
+          {valeurGeneree && (
+            <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+              <div className="card bg-white p-5 w-full max-w-sm">
+                <h2 className="font-semibold text-lg mb-2">{valeurGeneree.titre}</h2>
+                <p className="text-xs text-petrol-600 mb-3">{t('noterMaintenant')}</p>
+                <div className="bg-canvas border border-line rounded-lg p-3 text-center font-mono text-lg tracking-wider mb-4">
+                  {valeurGeneree.valeur}
+                </div>
+                <button onClick={() => setValeurGeneree(null)} className="btn-primary w-full">{t('fermer')}</button>
+              </div>
+            </div>
+          )}
 
           {journal.length > 0 && (
             <div className="mt-8">

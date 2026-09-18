@@ -11,24 +11,20 @@
   "soldeActuel": "Current balance",
   "soldeProjete": "Balance if everything is approved",
   "avertissementSoldeNegatif": "⚠️ The balance would go negative if these amounts were approved as they stand.",
-
   "onglets": {
     "demandes": "Requests",
     "grandLivre": "Ledger"
   },
-
   "transfertsEnAttente": "{{n}} incoming transfer(s) to receive",
   "depuisCaisse": "from {{nom}}",
   "envoyeParLe": "sent by {{nom}} — {{date}}",
   "receptionner": "Receive",
-
   "sections": {
     "aValider": "To approve ({{n}})",
     "mesDemandesEnAttente": "My pending requests ({{n}})",
     "aPayer": "Approved — to pay ({{n}})",
     "historique": "History"
   },
-
   "demandePar": "Requested by {{nom}} — {{date}}",
   "beneficiaireLabel": "Beneficiary: {{nom}}",
   "pieceJustificative": "Supporting document",
@@ -49,7 +45,6 @@
   "annulerMaDemande": "Cancel my request",
   "enAttenteDeValidation": "Awaiting approval",
   "corriger": "Edit",
-
   "libelle": "Description",
   "libellePlaceholder": "E.g. Office supplies purchase",
   "libelleOptionnel": "Description (optional)",
@@ -62,14 +57,12 @@
   "envoyerDemande": "Submit request",
   "enregistrer": "Save",
   "envoyer": "Send",
-
   "source": "Source",
   "sourceBanque": "Bank",
   "sourcePret": "Loan",
   "sourceAutre": "Other",
   "approLibellePlaceholder": "E.g. Current account transfer",
   "referenceOptionnelle": "Reference (optional)",
-
   "versAutreCaisse": "To another cash register",
   "versBanque": "To a bank",
   "caisseDestination": "Destination cash register",
@@ -77,12 +70,10 @@
   "nomBanque": "Bank",
   "nomBanquePlaceholder": "E.g. Ecobank, current account",
   "referenceBancaireOptionnelle": "Bank reference (optional)",
-
   "demandeLieeOptionnelle": "Related disbursement (optional)",
   "aucuneDemandeLiee": "— None —",
   "motif": "Reason",
   "motifRetourPlaceholder": "E.g. Overpaid purchase, cancelled purchase…",
-
   "du": "From",
   "au": "To",
   "filtrer": "Filter",
@@ -95,12 +86,25 @@
     "solde": "Balance",
     "aucunMouvement": "No transactions for this period."
   },
-
   "erreurs": {
     "erreur": "Error",
     "libelleRequis": "The description is required.",
     "montantInvalide": "Enter a valid amount.",
     "destinationRequise": "Specify a destination.",
     "motifRequis": "The reason is required."
+  },
+  "pin": {
+    "nouveauPinRequis": "🔑 New approval code required",
+    "nouveauPinRequisAide": "Your code was reset by an administrator. Choose a new one (at least 4 digits) to be able to approve disbursements.",
+    "nouveauCode": "New code",
+    "confirmerCode": "Confirm code",
+    "definirLeCode": "Set this code",
+    "verrouille": "Section locked",
+    "verrouilleAide": "Enter your approval code to continue.",
+    "deverrouiller": "Unlock",
+    "codeIncorrect": "Incorrect code.",
+    "erreurLongueur": "The code must be at least 4 digits.",
+    "erreurConfirmation": "The codes don't match.",
+    "erreurEnregistrement": "Error saving the code."
   }
 }

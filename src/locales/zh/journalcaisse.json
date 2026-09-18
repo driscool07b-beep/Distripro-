@@ -11,24 +11,20 @@
   "soldeActuel": "当前余额",
   "soldeProjete": "全部批准后的余额",
   "avertissementSoldeNegatif": "⚠️ 如果按当前金额全部批准，余额将变为负数。",
-
   "onglets": {
     "demandes": "申请",
     "grandLivre": "总账"
   },
-
   "transfertsEnAttente": "{{n}} 笔转入待接收",
   "depuisCaisse": "来自 {{nom}}",
   "envoyeParLe": "发送人：{{nom}} — {{date}}",
   "receptionner": "接收",
-
   "sections": {
     "aValider": "待审批 ({{n}})",
     "mesDemandesEnAttente": "我的待处理申请 ({{n}})",
     "aPayer": "已批准 — 待支付 ({{n}})",
     "historique": "历史记录"
   },
-
   "demandePar": "申请人：{{nom}} — {{date}}",
   "beneficiaireLabel": "受益人：{{nom}}",
   "pieceJustificative": "凭证",
@@ -49,7 +45,6 @@
   "annulerMaDemande": "取消我的申请",
   "enAttenteDeValidation": "待审批",
   "corriger": "编辑",
-
   "libelle": "摘要",
   "libellePlaceholder": "例如：办公用品采购",
   "libelleOptionnel": "摘要（可选）",
@@ -62,14 +57,12 @@
   "envoyerDemande": "提交申请",
   "enregistrer": "保存",
   "envoyer": "发送",
-
   "source": "来源",
   "sourceBanque": "银行",
   "sourcePret": "贷款",
   "sourceAutre": "其他",
   "approLibellePlaceholder": "例如：活期账户转账",
   "referenceOptionnelle": "参考号（可选）",
-
   "versAutreCaisse": "转至另一收银台",
   "versBanque": "转至银行",
   "caisseDestination": "目标收银台",
@@ -77,12 +70,10 @@
   "nomBanque": "银行",
   "nomBanquePlaceholder": "例如：Ecobank，活期账户",
   "referenceBancaireOptionnelle": "银行参考号（可选）",
-
   "demandeLieeOptionnelle": "关联支出（可选）",
   "aucuneDemandeLiee": "— 无 —",
   "motif": "原因",
   "motifRetourPlaceholder": "例如：采购多付、采购取消……",
-
   "du": "从",
   "au": "至",
   "filtrer": "筛选",
@@ -95,12 +86,25 @@
     "solde": "余额",
     "aucunMouvement": "该时间段内没有交易记录。"
   },
-
   "erreurs": {
     "erreur": "错误",
     "libelleRequis": "摘要为必填项。",
     "montantInvalide": "请输入有效金额。",
     "destinationRequise": "请指定目标。",
     "motifRequis": "原因为必填项。"
+  },
+  "pin": {
+    "nouveauPinRequis": "🔑 需要新的审批码",
+    "nouveauPinRequisAide": "您的审批码已被管理员重置。请设置一个新的（至少4位数字）以便批准支出。",
+    "nouveauCode": "新审批码",
+    "confirmerCode": "确认审批码",
+    "definirLeCode": "设置此审批码",
+    "verrouille": "该区域已锁定",
+    "verrouilleAide": "请输入您的审批码以继续。",
+    "deverrouiller": "解锁",
+    "codeIncorrect": "审批码错误。",
+    "erreurLongueur": "审批码必须至少为4位数字。",
+    "erreurConfirmation": "两次输入的审批码不一致。",
+    "erreurEnregistrement": "保存审批码时出错。"
   }
 }

@@ -11,24 +11,20 @@
   "soldeActuel": "الرصيد الحالي",
   "soldeProjete": "الرصيد إذا تمت الموافقة على كل شيء",
   "avertissementSoldeNegatif": "⚠️ سيصبح الرصيد سالبًا إذا تمت الموافقة على هذه المبالغ كما هي.",
-
   "onglets": {
     "demandes": "الطلبات",
     "grandLivre": "دفتر الأستاذ"
   },
-
   "transfertsEnAttente": "{{n}} تحويل(ات) واردة بانتظار الاستلام",
   "depuisCaisse": "من {{nom}}",
   "envoyeParLe": "أرسله {{nom}} — {{date}}",
   "receptionner": "استلام",
-
   "sections": {
     "aValider": "بانتظار الموافقة ({{n}})",
     "mesDemandesEnAttente": "طلباتي المعلقة ({{n}})",
     "aPayer": "تمت الموافقة — بانتظار الدفع ({{n}})",
     "historique": "السجل"
   },
-
   "demandePar": "طلبه {{nom}} — {{date}}",
   "beneficiaireLabel": "المستفيد: {{nom}}",
   "pieceJustificative": "مستند داعم",
@@ -49,7 +45,6 @@
   "annulerMaDemande": "إلغاء طلبي",
   "enAttenteDeValidation": "بانتظار الموافقة",
   "corriger": "تصحيح",
-
   "libelle": "البيان",
   "libellePlaceholder": "مثال: شراء لوازم مكتبية",
   "libelleOptionnel": "البيان (اختياري)",
@@ -62,14 +57,12 @@
   "envoyerDemande": "إرسال الطلب",
   "enregistrer": "حفظ",
   "envoyer": "إرسال",
-
   "source": "المصدر",
   "sourceBanque": "بنك",
   "sourcePret": "قرض",
   "sourceAutre": "أخرى",
   "approLibellePlaceholder": "مثال: تحويل من الحساب الجاري",
   "referenceOptionnelle": "المرجع (اختياري)",
-
   "versAutreCaisse": "إلى صندوق آخر",
   "versBanque": "إلى بنك",
   "caisseDestination": "الصندوق الوجهة",
@@ -77,12 +70,10 @@
   "nomBanque": "البنك",
   "nomBanquePlaceholder": "مثال: Ecobank، الحساب الجاري",
   "referenceBancaireOptionnelle": "المرجع البنكي (اختياري)",
-
   "demandeLieeOptionnelle": "الصرف المرتبط (اختياري)",
   "aucuneDemandeLiee": "— لا شيء —",
   "motif": "السبب",
   "motifRetourPlaceholder": "مثال: مبلغ زائد عن الشراء، شراء ملغى…",
-
   "du": "من",
   "au": "إلى",
   "filtrer": "تصفية",
@@ -95,12 +86,25 @@
     "solde": "الرصيد",
     "aucunMouvement": "لا توجد حركات خلال هذه الفترة."
   },
-
   "erreurs": {
     "erreur": "خطأ",
     "libelleRequis": "البيان مطلوب.",
     "montantInvalide": "أدخل مبلغًا صحيحًا.",
     "destinationRequise": "حدد وجهة.",
     "motifRequis": "السبب مطلوب."
+  },
+  "pin": {
+    "nouveauPinRequis": "🔑 مطلوب رمز موافقة جديد",
+    "nouveauPinRequisAide": "قام أحد المسؤولين بإعادة تعيين رمزك. اختر رمزًا جديدًا (4 أرقام على الأقل) للتمكن من الموافقة على الصرفيات.",
+    "nouveauCode": "الرمز الجديد",
+    "confirmerCode": "تأكيد الرمز",
+    "definirLeCode": "تعيين هذا الرمز",
+    "verrouille": "القسم مقفل",
+    "verrouilleAide": "أدخل رمز الموافقة الخاص بك للمتابعة.",
+    "deverrouiller": "فتح القفل",
+    "codeIncorrect": "رمز غير صحيح.",
+    "erreurLongueur": "يجب أن يتكون الرمز من 4 أرقام على الأقل.",
+    "erreurConfirmation": "الرمزان غير متطابقين.",
+    "erreurEnregistrement": "خطأ أثناء حفظ الرمز."
   }
 }

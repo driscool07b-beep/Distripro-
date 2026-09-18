@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
 import BandeauHorsLigne from './BandeauHorsLigne'
+import ChangementMotDePasseObligatoire from './ChangementMotDePasseObligatoire'
 
 const TOUS_ROLES = ['admin', 'manager', 'commercial', 'comptable', 'gestionnaire_stock', 'agent_recouvrement']
 
@@ -31,6 +32,10 @@ export default function Layout() {
   const { t } = useTranslation()
   const { profil, entreprise, deconnexion } = useAuth()
   const [menuOuvert, setMenuOuvert] = useState(false)
+
+  if (profil?.doit_changer_mot_de_passe) {
+    return <ChangementMotDePasseObligatoire />
+  }
 
   return (
     <div className="min-h-screen flex bg-canvas overflow-x-hidden">

@@ -71,6 +71,72 @@ export default function JournalCaisse() {
   const peutCreer = ['admin', 'manager', 'comptable'].includes(profil?.role)
   const peutValider = (entreprise?.caisse_roles_validateurs || ['admin', 'manager']).includes(profil?.role)
 
+  const [pinConfigure, setPinConfigure] = useState(false)
+  const [pinDoitChanger, setPinDoitChanger] = useState(false)
+  const [deverrouille, setDeverrouille] = useState(false)
+  const [saisiePin, setSaisiePin] = useState('')
+  const [nouveauPin, setNouveauPin] = useState('')
+  const [confirmationPin, setConfirmationPin] = useState('')
+  const [erreurPin, setErreurPin] = useState('')
+  const [envoiPin, setEnvoiPin] = useState(false)
+
+  useEffect(() => {
+    if (peutValider) {
+      supabase.rpc('statut_pin_validation').then(({ data }) => {
+        const ligne = Array.isArray(data) ? data[0] : data
+        setPinConfigure(!!ligne?.pin_configure)
+        setPinDoitChanger(!!ligne?.doit_changer)
+        setDeverrouille(!ligne?.pin_configure)
+      })
+    }
+  }, [peutValider])
+
+  useEffect(() => {
+    if (!deverrouille || !pinConfigure) return
+    let minuteur = setTimeout(() => setDeverrouille(false), 60000)
+    function reinitialiserMinuteur() {
+      clearTimeout(minuteur)
+      minuteur = setTimeout(() => setDeverrouille(false), 60000)
+    }
+    window.addEventListener('mousemove', reinitialiserMinuteur)
+    window.addEventListener('keydown', reinitialiserMinuteur)
+    window.addEventListener('click', reinitialiserMinuteur)
+    return () => {
+      clearTimeout(minuteur)
+      window.removeEventListener('mousemove', reinitialiserMinuteur)
+      window.removeEventListener('keydown', reinitialiserMinuteur)
+      window.removeEventListener('click', reinitialiserMinuteur)
+    }
+  }, [deverrouille, pinConfigure])
+
+  async function verifierPin() {
+    setErreurPin('')
+    setEnvoiPin(true)
+    const { data, error } = await supabase.rpc('verifier_pin_validation', { p_pin: saisiePin })
+    setEnvoiPin(false)
+    if (error || !data) {
+      setErreurPin(t('pin.codeIncorrect'))
+      return
+    }
+    setSaisiePin('')
+    setDeverrouille(true)
+  }
+
+  async function definirNouveauPin(e) {
+    e.preventDefault()
+    setErreurPin('')
+    if (nouveauPin.length < 4) { setErreurPin(t('pin.erreurLongueur')); return }
+    if (nouveauPin !== confirmationPin) { setErreurPin(t('pin.erreurConfirmation')); return }
+    setEnvoiPin(true)
+    const { error } = await supabase.rpc('definir_pin_validation', { p_pin: nouveauPin })
+    setEnvoiPin(false)
+    if (error) { setErreurPin(t('pin.erreurEnregistrement')); return }
+    setNouveauPin(''); setConfirmationPin('')
+    setPinDoitChanger(false)
+    setPinConfigure(true)
+    setDeverrouille(true)
+  }
+
   useEffect(() => {
     chargerCaisses()
   }, [])
@@ -390,7 +456,46 @@ export default function JournalCaisse() {
           {onglet === 'demandes' && (
             chargement ? <p className="text-sm text-petrol-500">{t('chargement')}</p> : (
               <>
-                {peutValider && demandesEnAttente.length > 0 && (
+                {peutValider && demandesEnAttente.length > 0 && pinConfigure && pinDoitChanger && (
+                  <div className="mb-6 card p-4 border-amber-300 bg-amber-50">
+                    <p className="text-sm font-semibold mb-1">{t('pin.nouveauPinRequis')}</p>
+                    <p className="text-xs text-petrol-600 mb-3">{t('pin.nouveauPinRequisAide')}</p>
+                    <form onSubmit={definirNouveauPin} className="space-y-2">
+                      <input
+                        type="password" inputMode="numeric" className="input-field text-sm"
+                        placeholder={t('pin.nouveauCode')} value={nouveauPin} onChange={(e) => setNouveauPin(e.target.value)}
+                      />
+                      <input
+                        type="password" inputMode="numeric" className="input-field text-sm"
+                        placeholder={t('pin.confirmerCode')} value={confirmationPin} onChange={(e) => setConfirmationPin(e.target.value)}
+                      />
+                      {erreurPin && <p className="text-xs text-red-600">{erreurPin}</p>}
+                      <button type="submit" disabled={envoiPin} className="btn-primary text-sm w-full">
+                        {envoiPin ? '…' : t('pin.definirLeCode')}
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                {peutValider && demandesEnAttente.length > 0 && pinConfigure && !pinDoitChanger && !deverrouille && (
+                  <div className="mb-6 card p-5 text-center">
+                    <p className="text-2xl mb-2">🔒</p>
+                    <p className="text-sm font-semibold mb-1">{t('pin.verrouille')}</p>
+                    <p className="text-xs text-petrol-500 mb-3">{t('pin.verrouilleAide')}</p>
+                    <input
+                      type="password" inputMode="numeric" className="input-field text-sm max-w-[160px] mx-auto text-center tracking-widest"
+                      placeholder="••••" value={saisiePin} onChange={(e) => setSaisiePin(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && verifierPin()}
+                      autoFocus
+                    />
+                    {erreurPin && <p className="text-xs text-red-600 mt-2">{erreurPin}</p>}
+                    <button onClick={verifierPin} disabled={envoiPin} className="btn-primary text-sm mt-3">
+                      {envoiPin ? '…' : t('pin.deverrouiller')}
+                    </button>
+                  </div>
+                )}
+
+                {peutValider && demandesEnAttente.length > 0 && (!pinConfigure || (deverrouille && !pinDoitChanger)) && (
                   <div className="mb-6">
                     <h2 className="font-semibold text-sm mb-2">{t('sections.aValider', { n: demandesEnAttente.length })}</h2>
                     <div className="space-y-2">

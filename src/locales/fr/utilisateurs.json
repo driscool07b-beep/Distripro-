@@ -51,5 +51,13 @@
   "lectureSeuleLabel": "Lecture seule (peut tout consulter, ne peut plus rien enregistrer ni modifier)",
   "responsableTourneesLabel": "Responsable des tournées (peut programmer et modifier les tournées des commerciaux)",
   "depotsAttribues": "Dépôts attribués",
-  "depotsAttribuesAide": "Ce membre ne pourra enregistrer de mouvements que sur les dépôts cochés ci-dessous. Aucune case cochée = aucun accès."
+  "depotsAttribuesAide": "Ce membre ne pourra enregistrer de mouvements que sur les dépôts cochés ci-dessous. Aucune case cochée = aucun accès.",
+  "reinitialiserMdp": "Réinit. mot de passe",
+  "regenererPin": "Régén. code validation",
+  "confirmerReinitialisationMdp": "Réinitialiser le mot de passe de {{nom}} ? Un mot de passe temporaire sera généré, à lui communiquer — il devra le changer à sa prochaine connexion.",
+  "confirmerRegenerationPin": "Régénérer le code de validation de {{nom}} ? Un nouveau code sera généré, à lui communiquer — il devra le changer avant sa prochaine validation.",
+  "mdpTemporaireTitre": "Mot de passe temporaire — {{nom}}",
+  "pinTemporaireTitre": "Code de validation temporaire — {{nom}}",
+  "noterMaintenant": "À noter et communiquer maintenant — il ne sera plus jamais affiché.",
+  "fermer": "Fermer"
 }

@@ -11,24 +11,20 @@
   "soldeActuel": "Solde actuel",
   "soldeProjete": "Solde si tout est accordé",
   "avertissementSoldeNegatif": "⚠️ Le solde deviendrait négatif si ces montants étaient accordés en l'état.",
-
   "onglets": {
     "demandes": "Demandes",
     "grandLivre": "Grand livre"
   },
-
   "transfertsEnAttente": "{{n}} transfert(s) entrant(s) à réceptionner",
   "depuisCaisse": "depuis {{nom}}",
   "envoyeParLe": "envoyé par {{nom}} — {{date}}",
   "receptionner": "Réceptionner",
-
   "sections": {
     "aValider": "À valider ({{n}})",
     "mesDemandesEnAttente": "Mes demandes en attente ({{n}})",
     "aPayer": "Validées — à payer ({{n}})",
     "historique": "Historique"
   },
-
   "demandePar": "Demandé par {{nom}} — {{date}}",
   "beneficiaireLabel": "Bénéficiaire : {{nom}}",
   "pieceJustificative": "Pièce justificative",
@@ -49,7 +45,6 @@
   "annulerMaDemande": "Annuler ma demande",
   "enAttenteDeValidation": "En attente de validation",
   "corriger": "Corriger",
-
   "libelle": "Libellé",
   "libellePlaceholder": "Ex. Achat fournitures bureau",
   "libelleOptionnel": "Libellé (optionnel)",
@@ -62,14 +57,12 @@
   "envoyerDemande": "Envoyer la demande",
   "enregistrer": "Enregistrer",
   "envoyer": "Envoyer",
-
   "source": "Source",
   "sourceBanque": "Banque",
   "sourcePret": "Prêt",
   "sourceAutre": "Autre",
   "approLibellePlaceholder": "Ex. Virement compte courant",
   "referenceOptionnelle": "Référence (optionnel)",
-
   "versAutreCaisse": "Vers une autre caisse",
   "versBanque": "Vers une banque",
   "caisseDestination": "Caisse de destination",
@@ -77,12 +70,10 @@
   "nomBanque": "Banque",
   "nomBanquePlaceholder": "Ex. Ecobank, compte courant",
   "referenceBancaireOptionnelle": "Référence bancaire (optionnel)",
-
   "demandeLieeOptionnelle": "Décaissement lié (optionnel)",
   "aucuneDemandeLiee": "— Aucun —",
   "motif": "Motif",
   "motifRetourPlaceholder": "Ex. Trop perçu sur achat, achat annulé…",
-
   "du": "Du",
   "au": "Au",
   "filtrer": "Filtrer",
@@ -95,12 +86,25 @@
     "solde": "Solde",
     "aucunMouvement": "Aucun mouvement sur cette période."
   },
-
   "erreurs": {
     "erreur": "Erreur",
     "libelleRequis": "Le libellé est requis.",
     "montantInvalide": "Indiquez un montant valide.",
     "destinationRequise": "Précisez une destination.",
     "motifRequis": "Le motif est requis."
+  },
+  "pin": {
+    "nouveauPinRequis": "🔑 Nouveau code de validation requis",
+    "nouveauPinRequisAide": "Votre code a été réinitialisé par un administrateur. Choisissez-en un nouveau (4 chiffres minimum) pour pouvoir valider des décaissements.",
+    "nouveauCode": "Nouveau code",
+    "confirmerCode": "Confirmer le code",
+    "definirLeCode": "Définir ce code",
+    "verrouille": "Section verrouillée",
+    "verrouilleAide": "Entrez votre code de validation pour continuer.",
+    "deverrouiller": "Déverrouiller",
+    "codeIncorrect": "Code incorrect.",
+    "erreurLongueur": "Le code doit contenir au moins 4 chiffres.",
+    "erreurConfirmation": "Les codes ne correspondent pas.",
+    "erreurEnregistrement": "Erreur lors de l'enregistrement du code."
   }
 }

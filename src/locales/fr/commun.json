@@ -123,5 +123,15 @@
     "attenteSynchro": "En attente de connexion",
     "echec": "Échec : {{message}}",
     "supprimer": "Supprimer"
+  },
+  "mdpObligatoire": {
+    "titre": "Nouveau mot de passe requis",
+    "sousTitre": "Votre mot de passe a été réinitialisé par un administrateur. Choisissez-en un nouveau pour continuer.",
+    "nouveauMdp": "Nouveau mot de passe",
+    "confirmerMdp": "Confirmer le mot de passe",
+    "erreurLongueur": "Le mot de passe doit contenir au moins 6 caractères.",
+    "erreurConfirmation": "Les mots de passe ne correspondent pas.",
+    "enCours": "Enregistrement…",
+    "valider": "Valider"
   }
 }

@@ -123,5 +123,15 @@
     "attenteSynchro": "Waiting for connection",
     "echec": "Failed: {{message}}",
     "supprimer": "Remove"
+  },
+  "mdpObligatoire": {
+    "titre": "New password required",
+    "sousTitre": "Your password was reset by an administrator. Choose a new one to continue.",
+    "nouveauMdp": "New password",
+    "confirmerMdp": "Confirm password",
+    "erreurLongueur": "The password must be at least 6 characters.",
+    "erreurConfirmation": "The passwords don't match.",
+    "enCours": "Saving…",
+    "valider": "Confirm"
   }
 }

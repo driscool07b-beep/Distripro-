@@ -51,5 +51,13 @@
   "lectureSeuleLabel": "Read only (can view everything, can no longer save or edit anything)",
   "responsableTourneesLabel": "Route manager (can schedule and edit sales reps' routes)",
   "depotsAttribues": "Assigned warehouses",
-  "depotsAttribuesAide": "This member will only be able to record movements on the warehouses checked below. No box checked = no access."
+  "depotsAttribuesAide": "This member will only be able to record movements on the warehouses checked below. No box checked = no access.",
+  "reinitialiserMdp": "Reset password",
+  "regenererPin": "Regen. approval code",
+  "confirmerReinitialisationMdp": "Reset {{nom}}'s password? A temporary password will be generated for you to share with them — they'll have to change it on their next login.",
+  "confirmerRegenerationPin": "Regenerate {{nom}}'s approval code? A new code will be generated for you to share with them — they'll have to change it before their next approval.",
+  "mdpTemporaireTitre": "Temporary password — {{nom}}",
+  "pinTemporaireTitre": "Temporary approval code — {{nom}}",
+  "noterMaintenant": "Write this down and share it now — it will never be shown again.",
+  "fermer": "Close"
 }
