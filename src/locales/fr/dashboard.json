@@ -21,15 +21,18 @@
     "aucuneVentePeriode": "Aucune vente enregistrée sur cette période.",
     "produitsEnAlerte": "Produits en alerte",
     "aucunProduitSeuil": "Aucun produit sous le seuil d'alerte.",
-    "commerciauxInactifsTitre": "{{n}} commercial(aux) sans activité depuis 24h",
     "jamaisConnecte": "Jamais connecté",
-    "dernierAcces": "Dernier accès : {{date}}",
     "objectifsTitre": "Objectifs — somme des équipes et de la direction",
     "objectifsSousTitre": "Cumul des objectifs assignés à chaque commercial, chef d'équipe et à la direction.",
     "aucunObjectifDefini": "Aucun objectif défini pour le mois ou l'année en cours.",
     "objectifMois": "Ce mois",
     "objectifAnnee": "Cette année",
-    "nbObjectifs": "{{n}} objectif(s)"
+    "nbObjectifs": "{{n}} objectif(s)",
+    "commerciauxInactifsTitreSeuil": "{{n}} commercial(aux) sans activité depuis plus de 24h",
+    "dernierAccesDuree": "Dernier accès : {{date}} — il y a {{duree}}",
+    "dureeHeures": "{{h}}h",
+    "dureeJours": "{{j}} jour(s)",
+    "dureeJoursHeures": "{{j}} jour(s) et {{h}}h"
   },
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",

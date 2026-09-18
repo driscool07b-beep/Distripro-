@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { formatXOF, formatDateHeure } from '../lib/format'
@@ -302,7 +302,7 @@ function DashboardEntreprise() {
       {commerciauxInactifs.length > 0 && (
         <div className="card p-4 mb-6 border-amber-300 bg-amber-50">
           <p className="text-sm font-semibold text-amber-800 mb-2">
-            ⚠️ {t('entreprise.commerciauxInactifsTitre', { n: commerciauxInactifs.length })}
+            ⚠️ {t('entreprise.commerciauxInactifsTitreSeuil', { n: commerciauxInactifs.length })}
           </p>
           <div className="space-y-1">
             {commerciauxInactifs.map((c) => (
@@ -311,7 +311,10 @@ function DashboardEntreprise() {
                 <span className="text-amber-700 text-xs">
                   {c.jamais_connecte
                     ? t('entreprise.jamaisConnecte')
-                    : t('entreprise.dernierAcces', { date: formatDateHeure(c.derniere_connexion) })}
+                    : t('entreprise.dernierAccesDuree', {
+                        date: formatDateHeure(c.derniere_connexion),
+                        duree: formaterDureeEcoulee(c.derniere_connexion, t),
+                      })}
                 </span>
               </div>
             ))}
@@ -885,3 +888,14 @@ function CarteKpi({ label, valeur, accent, alerte, to }) {
   return to ? <Link to={to}>{contenu}</Link> : contenu
 }
 
+function formaterDureeEcoulee(dateIso, t) {
+  const maintenant = new Date()
+  const alors = new Date(dateIso)
+  const totalHeures = Math.floor((maintenant - alors) / (1000 * 60 * 60))
+  const jours = Math.floor(totalHeures / 24)
+  const heures = totalHeures % 24
+
+  if (jours === 0) return t('entreprise.dureeHeures', { h: heures })
+  if (heures === 0) return t('entreprise.dureeJours', { j: jours })
+  return t('entreprise.dureeJoursHeures', { j: jours, h: heures })
+}

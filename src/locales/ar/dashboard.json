@@ -21,15 +21,18 @@
     "aucuneVentePeriode": "لم يتم تسجيل أي مبيعات خلال هذه الفترة.",
     "produitsEnAlerte": "منتجات في حالة تنبيه",
     "aucunProduitSeuil": "لا يوجد منتج دون حد التنبيه.",
-    "commerciauxInactifsTitre": "{{n}} مندوب(ين) بلا نشاط منذ 24 ساعة",
     "jamaisConnecte": "لم يسجل الدخول أبدًا",
-    "dernierAcces": "آخر دخول: {{date}}",
     "objectifsTitre": "الأهداف — مجموع الفرق والإدارة",
     "objectifsSousTitre": "مجموع الأهداف المخصصة لكل مندوب مبيعات، ورئيس فريق، والإدارة.",
     "aucunObjectifDefini": "لا يوجد هدف محدد للشهر أو السنة الحالية.",
     "objectifMois": "هذا الشهر",
     "objectifAnnee": "هذه السنة",
-    "nbObjectifs": "{{n}} هدف(أهداف)"
+    "nbObjectifs": "{{n}} هدف(أهداف)",
+    "commerciauxInactifsTitreSeuil": "{{n}} مندوب(ين) بلا نشاط منذ أكثر من 24 ساعة",
+    "dernierAccesDuree": "آخر دخول: {{date}} — منذ {{duree}}",
+    "dureeHeures": "{{h}} س",
+    "dureeJours": "{{j}} يوم(أيام)",
+    "dureeJoursHeures": "{{j}} يوم(أيام) و{{h}} س"
   },
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",

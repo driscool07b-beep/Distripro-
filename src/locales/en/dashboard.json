@@ -21,15 +21,18 @@
     "aucuneVentePeriode": "No sales recorded for this period.",
     "produitsEnAlerte": "Products in alert",
     "aucunProduitSeuil": "No product below the alert threshold.",
-    "commerciauxInactifsTitre": "{{n}} sales rep(s) inactive for 24h+",
     "jamaisConnecte": "Never signed in",
-    "dernierAcces": "Last seen: {{date}}",
     "objectifsTitre": "Targets — sum across teams and leadership",
     "objectifsSousTitre": "Combined targets assigned to each sales rep, team leader, and leadership.",
     "aucunObjectifDefini": "No target defined for the current month or year.",
     "objectifMois": "This month",
     "objectifAnnee": "This year",
-    "nbObjectifs": "{{n}} target(s)"
+    "nbObjectifs": "{{n}} target(s)",
+    "commerciauxInactifsTitreSeuil": "{{n}} sales rep(s) inactive for more than 24h",
+    "dernierAccesDuree": "Last seen: {{date}} — {{duree}} ago",
+    "dureeHeures": "{{h}}h",
+    "dureeJours": "{{j}} day(s)",
+    "dureeJoursHeures": "{{j}} day(s) and {{h}}h"
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",
