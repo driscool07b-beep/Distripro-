@@ -32,6 +32,9 @@ export default function Parametres() {
   const [assujettiTva, setAssujettiTva] = useState(false)
   const [enregistrementTva, setEnregistrementTva] = useState(false)
   const [devise, setDevise] = useState('XOF')
+  const [envoiFondConnexion, setEnvoiFondConnexion] = useState(false)
+  const [confirmationFondConnexion, setConfirmationFondConnexion] = useState(false)
+  const [erreurFondConnexion, setErreurFondConnexion] = useState('')
   const [enregistrementDevise, setEnregistrementDevise] = useState(false)
   const [seuilCaisse, setSeuilCaisse] = useState('')
   const [toujoursValider, setToujoursValider] = useState(true)
@@ -163,6 +166,24 @@ export default function Parametres() {
       setTimeout(() => setConfirmationCaisse(false), 2500)
       rechargerProfil?.()
     }
+  }
+
+  async function televerserFondConnexion(e) {
+    const fichier = e.target.files?.[0]
+    if (!fichier) return
+    setErreurFondConnexion('')
+    setEnvoiFondConnexion(true)
+    const { error } = await supabase.storage
+      .from('plateforme-publique')
+      .upload('connexion-fond.jpg', fichier, { upsert: true, contentType: fichier.type })
+    setEnvoiFondConnexion(false)
+    if (error) {
+      setErreurFondConnexion(`Erreur : ${traduireErreur(error.message)}`)
+      return
+    }
+    setConfirmationFondConnexion(true)
+    setTimeout(() => setConfirmationFondConnexion(false), 3000)
+    e.target.value = ''
   }
 
   async function changerDevise(code) {
@@ -569,6 +590,23 @@ export default function Parametres() {
             <option value="GHS">Cedi ghanéen — GH₵</option>
             <option value="NGN">Naira nigérian — ₦</option>
           </select>
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">{t('fondConnexion.titre')}</h2>
+          <p className="text-xs text-petrol-500 mb-3">{t('fondConnexion.sousTitre')}</p>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={televerserFondConnexion}
+            disabled={envoiFondConnexion}
+            className="text-sm"
+          />
+          {envoiFondConnexion && <p className="text-xs text-petrol-500 mt-2">{t('fondConnexion.envoi')}</p>}
+          {confirmationFondConnexion && <p className="text-xs text-green-600 mt-2">{t('fondConnexion.confirmation')}</p>}
+          {erreurFondConnexion && <p className="text-xs text-red-600 mt-2">{erreurFondConnexion}</p>}
         </div>
       )}
 

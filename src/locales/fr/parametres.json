@@ -124,5 +124,11 @@
     "seuilPlaceholder": "Ex. 50000",
     "seuilAide": "En dessous de ce montant, la demande est acceptée automatiquement à la création (sans validateur humain).",
     "rolesValidateurs": "Qui peut valider une sortie de caisse"
+  },
+  "fondConnexion": {
+    "titre": "Image de la page de connexion",
+    "sousTitre": "Remplace l'illustration de fond affichée sur l'écran de connexion — commune à toutes les entreprises pour l'instant (pas encore de page dédiée par entreprise).",
+    "envoi": "Envoi en cours…",
+    "confirmation": "Image mise à jour. Rechargez la page de connexion pour la voir."
   }
 }

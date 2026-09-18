@@ -124,5 +124,11 @@
     "seuilPlaceholder": "E.g. 50000",
     "seuilAide": "Below this amount, the request is automatically accepted when created (no human approver).",
     "rolesValidateurs": "Who can approve a cash outflow"
+  },
+  "fondConnexion": {
+    "titre": "Login page image",
+    "sousTitre": "Replaces the background illustration shown on the login screen — shared across all companies for now (no per-company login page yet).",
+    "envoi": "Uploading…",
+    "confirmation": "Image updated. Reload the login page to see it."
   }
 }

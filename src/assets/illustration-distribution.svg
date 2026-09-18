@@ -1,0 +1,114 @@
+<svg viewBox="0 0 1000 1400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a1f26" />
+      <stop offset="55%" stop-color="#0d2830" />
+      <stop offset="100%" stop-color="#123640" />
+    </linearGradient>
+    <linearGradient id="sol" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a1f26" />
+      <stop offset="100%" stop-color="#071a20" />
+    </linearGradient>
+    <radialGradient id="lueur" cx="72%" cy="18%" r="55%">
+      <stop offset="0%" stop-color="#d69428" stop-opacity="0.16" />
+      <stop offset="100%" stop-color="#d69428" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1000" height="1400" fill="url(#ciel)" />
+  <rect width="1000" height="1400" fill="url(#lueur)" />
+
+  <!-- Réseau de distribution en pointillés (routes/liaisons) -->
+  <g stroke="#347080" stroke-width="2" stroke-dasharray="2 10" opacity="0.5" fill="none">
+    <path d="M -50 220 Q 300 160 650 260 T 1050 200" />
+    <path d="M -50 340 Q 350 420 700 330 T 1050 380" />
+  </g>
+  <g fill="#d69428" opacity="0.7">
+    <circle cx="120" cy="235" r="4" />
+    <circle cx="480" cy="205" r="4" />
+    <circle cx="820" cy="240" r="4" />
+    <circle cx="260" cy="380" r="4" />
+    <circle cx="640" cy="350" r="4" />
+  </g>
+
+  <!-- Silhouette d'entrepôts en arrière-plan -->
+  <g fill="#123640" opacity="0.9">
+    <rect x="-20" y="520" width="260" height="220" />
+    <polygon points="-20,520 110,460 240,520" />
+    <rect x="230" y="560" width="220" height="180" />
+    <polygon points="230,560 340,505 450,560" />
+    <rect x="760" y="540" width="260" height="200" />
+    <polygon points="760,540 890,480 1020,540" />
+  </g>
+  <g fill="#1a4752" opacity="0.85">
+    <rect x="440" y="600" width="340" height="140" />
+    <polygon points="440,600 610,545 780,600" />
+  </g>
+  <!-- Fenêtres des entrepôts -->
+  <g fill="#d69428" opacity="0.35">
+    <rect x="20" y="570" width="26" height="34" />
+    <rect x="70" y="570" width="26" height="34" />
+    <rect x="120" y="570" width="26" height="34" />
+    <rect x="480" y="640" width="24" height="32" />
+    <rect x="525" y="640" width="24" height="32" />
+    <rect x="570" y="640" width="24" height="32" />
+    <rect x="800" y="590" width="24" height="32" />
+    <rect x="850" y="590" width="24" height="32" />
+    <rect x="900" y="590" width="24" height="32" />
+  </g>
+
+  <!-- Sol -->
+  <rect x="0" y="740" width="1000" height="660" fill="url(#sol)" />
+  <rect x="0" y="740" width="1000" height="6" fill="#255a67" opacity="0.6" />
+
+  <!-- Palettes de marchandises, avant-plan gauche -->
+  <g transform="translate(60,920)">
+    <g fill="#8a5a2b">
+      <rect x="0" y="150" width="220" height="14" rx="2" />
+      <rect x="0" y="150" width="14" height="70" rx="2" />
+      <rect x="206" y="150" width="14" height="70" rx="2" />
+      <rect x="100" y="150" width="14" height="70" rx="2" />
+    </g>
+    <g fill="#d69428">
+      <rect x="10" y="60" width="90" height="90" rx="4" />
+      <rect x="110" y="70" width="80" height="80" rx="4" />
+    </g>
+    <g fill="#e8a83c">
+      <rect x="30" y="10" width="60" height="55" rx="4" />
+    </g>
+    <g stroke="#452b12" stroke-width="3" opacity="0.5" fill="none">
+      <line x1="10" y1="60" x2="100" y2="150" />
+      <line x1="100" y1="60" x2="10" y2="150" />
+    </g>
+  </g>
+
+  <!-- Camion de livraison, centre -->
+  <g transform="translate(360,960)">
+    <rect x="0" y="30" width="330" height="130" rx="6" fill="#123640" />
+    <rect x="16" y="46" width="298" height="60" rx="3" fill="#1a4752" />
+    <rect x="330" y="70" width="100" height="90" rx="6" fill="#255a67" />
+    <rect x="345" y="82" width="55" height="42" rx="3" fill="#a7c4cc" opacity="0.75" />
+    <rect x="0" y="16" width="330" height="16" rx="4" fill="#d69428" />
+    <circle cx="90" cy="168" r="34" fill="#0a1f26" />
+    <circle cx="90" cy="168" r="14" fill="#5b6b70" />
+    <circle cx="360" cy="168" r="34" fill="#0a1f26" />
+    <circle cx="360" cy="168" r="14" fill="#5b6b70" />
+    <text x="165" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#d69428" letter-spacing="2">DISTRIBPRO</text>
+  </g>
+
+  <!-- Palettes avant-plan droite -->
+  <g transform="translate(760,1000)">
+    <g fill="#8a5a2b">
+      <rect x="0" y="110" width="170" height="12" rx="2" />
+      <rect x="0" y="110" width="12" height="55" rx="2" />
+      <rect x="158" y="110" width="12" height="55" rx="2" />
+    </g>
+    <g fill="#347080">
+      <rect x="8" y="40" width="70" height="70" rx="4" />
+      <rect x="88" y="55" width="70" height="55" rx="4" />
+    </g>
+  </g>
+
+  <!-- Sol : ombre et ligne de perspective -->
+  <ellipse cx="500" cy="1160" rx="480" ry="26" fill="#000000" opacity="0.18" />
+</svg>

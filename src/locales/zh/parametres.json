@@ -124,5 +124,11 @@
     "seuilPlaceholder": "例如：50000",
     "seuilAide": "低于此金额的申请将在创建时自动通过（无需人工审批）。",
     "rolesValidateurs": "谁可以批准现金支出"
+  },
+  "fondConnexion": {
+    "titre": "登录页面图片",
+    "sousTitre": "替换登录界面显示的背景插图——目前所有公司共用（暂无按公司区分的登录页面）。",
+    "envoi": "上传中…",
+    "confirmation": "图片已更新。请重新加载登录页面查看效果。"
   }
 }
