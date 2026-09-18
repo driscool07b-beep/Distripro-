@@ -32,7 +32,14 @@
     "dernierAccesDuree": "Dernier accès : {{date}} — il y a {{duree}}",
     "dureeHeures": "{{h}}h",
     "dureeJours": "{{j}} jour(s)",
-    "dureeJoursHeures": "{{j}} jour(s) et {{h}}h"
+    "dureeJoursHeures": "{{j}} jour(s) et {{h}}h",
+    "soldesCaissesTitre": "Soldes des caisses",
+    "repartitionCaTitre": "Répartition du chiffre d'affaires (ce mois)",
+    "repartition": {
+      "produit": "Par produit",
+      "zone": "Par ville",
+      "groupe": "Par groupe"
+    }
   },
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",

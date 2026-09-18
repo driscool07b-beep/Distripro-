@@ -32,7 +32,14 @@
     "dernierAccesDuree": "最后登录：{{date}} — {{duree}}前",
     "dureeHeures": "{{h}}小时",
     "dureeJours": "{{j}}天",
-    "dureeJoursHeures": "{{j}}天{{h}}小时"
+    "dureeJoursHeures": "{{j}}天{{h}}小时",
+    "soldesCaissesTitre": "收银台余额",
+    "repartitionCaTitre": "营收分布（本月）",
+    "repartition": {
+      "produit": "按产品",
+      "zone": "按城市",
+      "groupe": "按分组"
+    }
   },
   "commercial": {
     "sousTitre": "这是您的个人活动情况。",

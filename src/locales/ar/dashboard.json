@@ -32,7 +32,14 @@
     "dernierAccesDuree": "آخر دخول: {{date}} — منذ {{duree}}",
     "dureeHeures": "{{h}} س",
     "dureeJours": "{{j}} يوم(أيام)",
-    "dureeJoursHeures": "{{j}} يوم(أيام) و{{h}} س"
+    "dureeJoursHeures": "{{j}} يوم(أيام) و{{h}} س",
+    "soldesCaissesTitre": "أرصدة الصناديق",
+    "repartitionCaTitre": "توزيع رقم الأعمال (هذا الشهر)",
+    "repartition": {
+      "produit": "حسب المنتج",
+      "zone": "حسب المدينة",
+      "groupe": "حسب المجموعة"
+    }
   },
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",

@@ -32,7 +32,14 @@
     "dernierAccesDuree": "Last seen: {{date}} — {{duree}} ago",
     "dureeHeures": "{{h}}h",
     "dureeJours": "{{j}} day(s)",
-    "dureeJoursHeures": "{{j}} day(s) and {{h}}h"
+    "dureeJoursHeures": "{{j}} day(s) and {{h}}h",
+    "soldesCaissesTitre": "Cash register balances",
+    "repartitionCaTitre": "Revenue breakdown (this month)",
+    "repartition": {
+      "produit": "By product",
+      "zone": "By city",
+      "groupe": "By group"
+    }
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",

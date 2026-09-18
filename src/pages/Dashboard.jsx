@@ -380,6 +380,9 @@ function DashboardEntreprise() {
         </div>
       </div>
 
+      <CartesSoldesCaisses />
+      <CamembertRepartitionCA />
+
       <div className="card p-6 mb-6">
         <h2 className="font-semibold mb-1">{t('entreprise.objectifsTitre')}</h2>
         <p className="text-xs text-petrol-500 mb-4">{t('entreprise.objectifsSousTitre')}</p>
@@ -669,6 +672,9 @@ function DashboardComptable() {
               to="/creances?filtre=echues"
             />
           </div>
+
+          <CartesSoldesCaisses />
+          <CamembertRepartitionCA />
         </>
       )}
     </div>
@@ -898,4 +904,111 @@ function formaterDureeEcoulee(dateIso, t) {
   if (jours === 0) return t('entreprise.dureeHeures', { h: heures })
   if (heures === 0) return t('entreprise.dureeJours', { j: jours })
   return t('entreprise.dureeJoursHeures', { j: jours, h: heures })
+}
+
+function CartesSoldesCaisses() {
+  const { t } = useTranslation('dashboard')
+  const [caisses, setCaisses] = useState([])
+  const [chargement, setChargement] = useState(true)
+
+  useEffect(() => {
+    charger()
+  }, [])
+
+  async function charger() {
+    setChargement(true)
+    const { data } = await supabase.from('caisses').select('id, nom').eq('actif', true).order('nom')
+    const avecSolde = await Promise.all(
+      (data || []).map(async (c) => {
+        const { data: solde } = await supabase.rpc('solde_caisse', { p_caisse_id: c.id })
+        return { ...c, solde: solde || 0 }
+      })
+    )
+    setCaisses(avecSolde)
+    setChargement(false)
+  }
+
+  if (chargement || caisses.length === 0) return null
+
+  return (
+    <div className="card p-4 mb-6">
+      <h2 className="font-semibold mb-3">{t('entreprise.soldesCaissesTitre')}</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {caisses.map((c) => (
+          <Link
+            key={c.id}
+            to="/journal-caisse"
+            className="flex justify-between items-center border border-line rounded-lg px-3 py-2 hover:bg-canvas transition-colors"
+          >
+            <span className="text-sm">{c.nom}</span>
+            <span className={`font-mono font-semibold ${c.solde < 0 ? 'text-red-600' : ''}`}>{formatXOF(c.solde)}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const COULEURS_CAMEMBERT = ['#123640', '#d69428', '#255a67', '#e8a83c', '#347080', '#b87a1c', '#1a4752', '#0d2830']
+
+function CamembertRepartitionCA() {
+  const { t } = useTranslation('dashboard')
+  const [type, setType] = useState('produit')
+  const [donnees, setDonnees] = useState([])
+  const [chargement, setChargement] = useState(true)
+
+  useEffect(() => {
+    charger()
+  }, [type])
+
+  async function charger() {
+    setChargement(true)
+    const maintenant = new Date()
+    const debut = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1).toISOString().split('T')[0]
+    const fin = new Date(maintenant.getFullYear(), maintenant.getMonth() + 1, 0).toISOString().split('T')[0]
+    const { data } = await supabase.rpc('repartition_ca', { p_type: type, p_debut: debut, p_fin: fin })
+    setDonnees((data || []).filter((d) => Number(d.montant) > 0).slice(0, 8))
+    setChargement(false)
+  }
+
+  return (
+    <div className="card p-4 mb-6">
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h2 className="font-semibold">{t('entreprise.repartitionCaTitre')}</h2>
+        <div className="flex gap-1.5">
+          {['produit', 'zone', 'groupe'].map((tp) => (
+            <button
+              key={tp}
+              onClick={() => setType(tp)}
+              className={`text-xs px-2.5 py-1 rounded-full border ${type === tp ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
+            >
+              {t(`entreprise.repartition.${tp}`)}
+            </button>
+          ))}
+        </div>
+      </div>
+      {chargement ? (
+        <p className="text-sm text-petrol-500">{t('chargement')}</p>
+      ) : donnees.length === 0 ? (
+        <p className="text-sm text-petrol-400 text-center py-8">{t('entreprise.aucuneVentePeriode')}</p>
+      ) : (
+        <ResponsiveContainer width="100%" height={280}>
+          <PieChart>
+            <Pie
+              data={donnees}
+              dataKey="montant"
+              nameKey="label"
+              cx="50%"
+              cy="50%"
+              outerRadius={90}
+              label={({ label, percent }) => `${label} (${(percent * 100).toFixed(0)}%)`}
+            >
+              {donnees.map((_, i) => <Cell key={i} fill={COULEURS_CAMEMBERT[i % COULEURS_CAMEMBERT.length]} />)}
+            </Pie>
+            <Tooltip formatter={(v) => formatXOF(v)} />
+          </PieChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  )
 }
