@@ -48,7 +48,15 @@
       "personnalisee": "مخصصة…"
     },
     "du": "من",
-    "au": "إلى"
+    "au": "إلى",
+    "versementsEnCoursTitre": "الإيداعات الجارية (اليوم)",
+    "enDirect": "مباشر",
+    "ventesCashCommerciaux": "المبيعات النقدية — المندوبون",
+    "recouvrementCommerciaux": "التحصيل — المندوبون",
+    "ventesCashBureau": "المبيعات النقدية — المكتب",
+    "recouvrementBureau": "التحصيل — المكتب",
+    "dejaVerseAujourdhui": "تم إيداعه اليوم",
+    "resteAVerser": "المتبقي للإيداع"
   },
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",

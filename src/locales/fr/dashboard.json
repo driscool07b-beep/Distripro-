@@ -48,7 +48,15 @@
       "personnalisee": "Personnalisée…"
     },
     "du": "Du",
-    "au": "Au"
+    "au": "Au",
+    "versementsEnCoursTitre": "Versements en cours (aujourd'hui)",
+    "enDirect": "En direct",
+    "ventesCashCommerciaux": "Ventes cash — commerciaux",
+    "recouvrementCommerciaux": "Recouvrement — commerciaux",
+    "ventesCashBureau": "Ventes cash — bureau",
+    "recouvrementBureau": "Recouvrement — bureau",
+    "dejaVerseAujourdhui": "Déjà versé aujourd'hui",
+    "resteAVerser": "Reste à verser"
   },
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",

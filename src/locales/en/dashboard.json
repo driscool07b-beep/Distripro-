@@ -48,7 +48,15 @@
       "personnalisee": "Custom…"
     },
     "du": "From",
-    "au": "To"
+    "au": "To",
+    "versementsEnCoursTitre": "Pending deposits (today)",
+    "enDirect": "Live",
+    "ventesCashCommerciaux": "Cash sales — sales reps",
+    "recouvrementCommerciaux": "Collections — sales reps",
+    "ventesCashBureau": "Cash sales — office",
+    "recouvrementBureau": "Collections — office",
+    "dejaVerseAujourdhui": "Already deposited today",
+    "resteAVerser": "Remaining to deposit"
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",

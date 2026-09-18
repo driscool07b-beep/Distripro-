@@ -48,7 +48,15 @@
       "personnalisee": "自定义…"
     },
     "du": "从",
-    "au": "至"
+    "au": "至",
+    "versementsEnCoursTitre": "待存款项（今日）",
+    "enDirect": "实时",
+    "ventesCashCommerciaux": "现金销售 — 销售代表",
+    "recouvrementCommerciaux": "回收款 — 销售代表",
+    "ventesCashBureau": "现金销售 — 办公室",
+    "recouvrementBureau": "回收款 — 办公室",
+    "dejaVerseAujourdhui": "今日已存",
+    "resteAVerser": "待存余额"
   },
   "commercial": {
     "sousTitre": "这是您的个人活动情况。",

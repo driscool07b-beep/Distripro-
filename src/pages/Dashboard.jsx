@@ -381,6 +381,7 @@ function DashboardEntreprise() {
         </div>
       </div>
 
+      <CarteVersementsEnCours />
       <CartesSoldesCaisses />
       <CamembertRepartitionCA />
 
@@ -674,6 +675,7 @@ function DashboardComptable() {
             />
           </div>
 
+          <CarteVersementsEnCours />
           <CartesSoldesCaisses />
           <CamembertRepartitionCA />
         </>
@@ -905,6 +907,74 @@ function formaterDureeEcoulee(dateIso, t) {
   if (jours === 0) return t('entreprise.dureeHeures', { h: heures })
   if (heures === 0) return t('entreprise.dureeJours', { j: jours })
   return t('entreprise.dureeJoursHeures', { j: jours, h: heures })
+}
+
+function CarteVersementsEnCours() {
+  const { t } = useTranslation('dashboard')
+  const [donnees, setDonnees] = useState(null)
+  const [chargement, setChargement] = useState(true)
+
+  useEffect(() => {
+    charger()
+
+    // Temps réel : se remet à jour tout seul dès qu'une vente, un
+    // règlement ou un versement est enregistré, sans recharger la page.
+    const canal = supabase
+      .channel('versements-en-cours-dashboard')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ventes' }, charger)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ventes' }, charger)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reglements' }, charger)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'versements_caisse' }, charger)
+      .subscribe()
+
+    return () => supabase.removeChannel(canal)
+  }, [])
+
+  async function charger() {
+    const { data } = await supabase.rpc('versements_en_cours')
+    const ligne = Array.isArray(data) ? data[0] : data
+    setDonnees(ligne)
+    setChargement(false)
+  }
+
+  if (chargement || !donnees) return null
+
+  const lignes = [
+    { libelle: t('entreprise.ventesCashCommerciaux'), valeur: donnees.ventes_cash_commerciaux },
+    { libelle: t('entreprise.recouvrementCommerciaux'), valeur: donnees.recouvrement_commerciaux },
+    { libelle: t('entreprise.ventesCashBureau'), valeur: donnees.ventes_cash_bureau },
+    { libelle: t('entreprise.recouvrementBureau'), valeur: donnees.recouvrement_bureau },
+  ]
+
+  return (
+    <div className="card p-4 mb-6">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-semibold">{t('entreprise.versementsEnCoursTitre')}</h2>
+        <span className="flex items-center gap-1.5 text-xs text-green-700">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          {t('entreprise.enDirect')}
+        </span>
+      </div>
+      <div className="space-y-1.5 mb-3">
+        {lignes.map((l) => (
+          <div key={l.libelle} className="flex justify-between text-sm">
+            <span className="text-petrol-600">{l.libelle}</span>
+            <span className="font-mono">{formatXOF(l.valeur)}</span>
+          </div>
+        ))}
+      </div>
+      <div className="border-t border-line pt-2 flex justify-between text-sm">
+        <span className="text-petrol-600">{t('entreprise.dejaVerseAujourdhui')}</span>
+        <span className="font-mono text-green-700">{formatXOF(donnees.deja_verse)}</span>
+      </div>
+      <div className="flex justify-between mt-1">
+        <span className="font-medium text-sm">{t('entreprise.resteAVerser')}</span>
+        <span className={`font-mono font-semibold ${donnees.reste_a_verser > 0 ? 'text-amber-700' : ''}`}>
+          {formatXOF(donnees.reste_a_verser)}
+        </span>
+      </div>
+    </div>
+  )
 }
 
 function CartesSoldesCaisses() {
