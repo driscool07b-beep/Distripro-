@@ -27,7 +27,8 @@
     "ouvrirMenu": "打开菜单",
     "messagerie": "消息",
     "apparence": "外观",
-    "journalCaisse": "现金日记账"
+    "journalCaisse": "现金日记账",
+    "aide": "帮助"
   },
   "actions": {
     "annuler": "取消",

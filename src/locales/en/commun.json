@@ -27,7 +27,8 @@
     "ouvrirMenu": "Open menu",
     "messagerie": "Messaging",
     "apparence": "Appearance",
-    "journalCaisse": "Cash journal"
+    "journalCaisse": "Cash journal",
+    "aide": "Help"
   },
   "actions": {
     "annuler": "Cancel",

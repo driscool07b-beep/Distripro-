@@ -1,0 +1,286 @@
+{
+  "titre": "Aide",
+  "rechercher": "Rechercher dans l'aide…",
+  "aucunResultat": "Aucun résultat pour cette recherche.",
+  "contact": "Tu ne trouves pas la réponse à ta question ? Écris à ton administrateur ou via la Messagerie interne.",
+  "categories": [
+    {
+      "titre": "Démarrage",
+      "items": [
+        {
+          "q": "Comment me connecter ?",
+          "r": "Utilise l'email et le mot de passe que ton administrateur t'a communiqués. Si tu as été invité, tu dois d'abord créer ton compte via le lien d'invitation reçu par email, avec exactement la même adresse email que celle sur laquelle tu as été invité."
+        },
+        {
+          "q": "Quels sont les différents rôles et à quoi donnent-ils accès ?",
+          "r": "Admin : accès total, y compris Paramètres et Facturation. Manager : quasiment tout sauf certains réglages sensibles. Commercial : ventes, tournées, ses propres clients et son stock porté. Comptable : ventes, créances, versements, journal de caisse. Gestionnaire de stock : produits, mouvements, transferts. Agent de recouvrement : créances uniquement. Un même utilisateur peut aussi avoir un accès élargi ou en lecture seule, réglable par un admin dans Équipe."
+        },
+        {
+          "q": "Comment changer la langue de l'application ?",
+          "r": "Le sélecteur de langue est en bas du menu latéral (ou dans le menu sur mobile). Français, anglais, arabe (avec mise en page adaptée de droite à gauche) et chinois sont disponibles."
+        },
+        {
+          "q": "Comment installer l'application sur mon téléphone ?",
+          "r": "Ouvre l'app dans le navigateur de ton téléphone, puis choisis 'Ajouter à l'écran d'accueil' (Android/Chrome) ou 'Sur l'écran d'accueil' (iPhone/Safari, dans le menu de partage). Elle s'ouvrira ensuite comme une vraie application, et continuera à fonctionner pour les ventes/visites même sans réseau."
+        }
+      ]
+    },
+    {
+      "titre": "Clients",
+      "items": [
+        {
+          "q": "Comment créer un client ?",
+          "r": "Clients → '+ Nouveau client'. Seul le nom est obligatoire. Tu peux aussi capturer sa position GPS automatiquement (utile pour la carte et les itinéraires), définir une limite de crédit, des tarifs négociés par produit, et une photo de sa devanture."
+        },
+        {
+          "q": "À quoi servent les groupes de clients ?",
+          "r": "À rassembler plusieurs points de vente d'une même enseigne (une chaîne de magasins, par exemple) pour obtenir un récapitulatif de livraisons unifié, plutôt que de suivre chaque magasin séparément."
+        },
+        {
+          "q": "Comment fonctionne le crédit client ?",
+          "r": "Si tu définis une limite de crédit sur la fiche client, ses ventes peuvent être réglées partiellement, le reste s'ajoutant à ses créances. Un remboursement de trop-perçu (avance sur commande annulée, par exemple) apparaît comme un crédit disponible, utilisable sur sa prochaine vente."
+        },
+        {
+          "q": "Comment importer plusieurs clients d'un coup ?",
+          "r": "Clients → 'Importer' → télécharge le modèle Excel, remplis-le en gardant l'ordre des colonnes, puis réimporte-le."
+        }
+      ]
+    },
+    {
+      "titre": "Produits & Stock",
+      "items": [
+        {
+          "q": "Comment ajuster le stock d'un produit (entrée ou sortie) ?",
+          "r": "Stock → clique sur le produit → 'Ajuster le stock'. Un justificatif (photo ou PDF) peut être exigé selon la politique définie dans Paramètres."
+        },
+        {
+          "q": "Quelle différence entre 'ajuster le stock' et 'transférer entre dépôts' ?",
+          "r": "Un ajustement change la quantité totale (ex. casse, inventaire). Un transfert déplace du stock d'un dépôt à un autre sans changer la quantité totale — le stock sort immédiatement du dépôt source, et n'arrive dans le dépôt destination qu'une fois la réception confirmée par le responsable de ce dépôt."
+        },
+        {
+          "q": "Comment localiser un produit chez mes clients ?",
+          "r": "Menu 'Localiser un produit' — combine les rapports de visite récents et les dernières livraisons pour indiquer chez quels clients un produit a été vu récemment, utile quand un client appelle pour savoir où en trouver."
+        },
+        {
+          "q": "Où voir l'historique des prix d'un produit ?",
+          "r": "Stock → sur la ligne du produit → 'Historique' — montre chaque changement de prix, avec la date."
+        }
+      ]
+    },
+    {
+      "titre": "Ventes",
+      "items": [
+        {
+          "q": "Comment créer une vente ?",
+          "r": "Ventes → '+ Nouvelle vente'. Choisis le client, ajoute les produits, indique le mode de paiement. Si le client a un crédit disponible, tu peux l'appliquer pour réduire le montant à payer."
+        },
+        {
+          "q": "Un commercial peut-il vendre depuis son propre stock, sans passer par le dépôt ?",
+          "r": "Oui — en indiquant que la vente est réalisée par le commercial lui-même (plutôt que 'vente de bureau'), le stock est déduit de ce qu'il porte sur lui, sans passer par un dépôt. C'est aussi ce mode qui fonctionne hors-ligne."
+        },
+        {
+          "q": "Comment annuler une vente ?",
+          "r": "Ouvre le détail de la vente → 'Annuler cette vente'. Un motif est obligatoire. Ça génère un avoir (remboursement comptable) et remet le stock au dépôt d'origine."
+        },
+        {
+          "q": "Au-delà de quel montant de remise faut-il une autorisation ?",
+          "r": "Le seuil est réglable dans Paramètres → Politique de remises. Au-delà, seuls un manager ou un admin peuvent valider la remise."
+        }
+      ]
+    },
+    {
+      "titre": "Commandes",
+      "items": [
+        {
+          "q": "Quel est le cycle de vie d'une commande ?",
+          "r": "Brouillon → Confirmée → En préparation → Livrée (ou Annulée à tout moment avant livraison). Chaque étape est enregistrée avec la date et la personne qui l'a effectuée."
+        },
+        {
+          "q": "Que se passe-t-il si je ne peux livrer qu'une partie de la commande ?",
+          "r": "Au moment de la livraison, indique la quantité réellement livrée par produit — l'écart avec la quantité commandée est visible et gardé en mémoire, utile pour analyser les ruptures récurrentes (voir Analytique)."
+        },
+        {
+          "q": "Comment planifier la production à partir des commandes en attente ?",
+          "r": "La carte 'Récap commandes en cours' en haut de la page Commandes additionne automatiquement les quantités par produit sur toutes les commandes pas encore livrées."
+        }
+      ]
+    },
+    {
+      "titre": "Tournées & visites",
+      "items": [
+        {
+          "q": "Comment créer une tournée pour un commercial ?",
+          "r": "Tournées → '+ Nouvelle tournée' → choisis la date et les clients à visiter. L'itinéraire est optimisé automatiquement (plus court trajet)."
+        },
+        {
+          "q": "Comment valider une visite chez un client ?",
+          "r": "Depuis le détail de la tournée, 'Marquer comme visitée' — la position GPS du téléphone est vérifiée par rapport à celle du client, pour confirmer que la visite a bien eu lieu sur place."
+        },
+        {
+          "q": "Le rapport de visite, c'est quoi exactement ?",
+          "r": "Après validation d'une visite, un formulaire permet de noter l'état du stock chez le client (rayon et réserve), des photos, la présence de produits concurrents, et toute question personnalisée définie par ton entreprise dans Paramètres."
+        },
+        {
+          "q": "Est-ce que ça marche sans réseau ?",
+          "r": "Oui, pour un commercial : créer une vente (depuis son propre stock), valider une visite, et envoyer un rapport fonctionnent hors-ligne — tout se synchronise automatiquement dès que la connexion revient. Un bandeau en haut de l'app indique le nombre d'actions en attente."
+        }
+      ]
+    },
+    {
+      "titre": "Créances",
+      "items": [
+        {
+          "q": "Comment voir ce qu'un client doit encore ?",
+          "r": "Créances liste toutes les ventes à crédit non totalement réglées, avec la date d'échéance. Les créances en retard sont mises en évidence."
+        },
+        {
+          "q": "Comment enregistrer un paiement reçu d'un client ?",
+          "r": "Ouvre la créance concernée → 'Enregistrer un paiement' → indique le montant et le mode de règlement. Tu peux aussi préciser quel commercial a effectué la collecte sur le terrain."
+        },
+        {
+          "q": "Comment importer des soldes clients existants (avant d'utiliser DistribPro) ?",
+          "r": "Créances → 'Importer' — les noms de clients doivent correspondre exactement à des clients déjà créés dans l'app."
+        }
+      ]
+    },
+    {
+      "titre": "Versements",
+      "items": [
+        {
+          "q": "À quoi servent les 'caisses' ?",
+          "r": "Une caisse représente un point de collecte physique (ex. le bureau principal) où les commerciaux remettent l'argent des ventes cash et des recouvrements de créances qu'ils ont encaissés sur le terrain."
+        },
+        {
+          "q": "Comment un commercial dépose-t-il son argent ?",
+          "r": "Page 'Mes versements' — indique le montant qu'il verse et dans quelle caisse. Un accusé de versement en PDF est généré."
+        },
+        {
+          "q": "Où voir ce que chaque commercial doit encore verser ?",
+          "r": "Page Versements (comptabilité/admin) — calcule pour chaque commercial le total dû (ventes cash + recouvrements) moins ce qu'il a déjà versé aujourd'hui."
+        }
+      ]
+    },
+    {
+      "titre": "Journal de caisse",
+      "items": [
+        {
+          "q": "Comment fonctionne une demande de décaissement (sortie de caisse) ?",
+          "r": "'+ Nouvelle demande' → libellé, montant, et éventuellement une pièce justificative et le nom du bénéficiaire. Selon le seuil configuré, elle est soit auto-validée, soit mise en attente d'un validateur."
+        },
+        {
+          "q": "Qui peut valider une sortie de caisse, et comment ?",
+          "r": "Les rôles autorisés à valider sont réglables dans Paramètres → Journal de caisse. Le validateur peut accorder le montant intégral ou le réduire selon la trésorerie disponible, ligne par ligne — il voit en direct le solde actuel et le solde projeté avant de décider."
+        },
+        {
+          "q": "Une fois validée, comment payer réellement la demande ?",
+          "r": "Bouton 'Payer montant' sur la demande validée — ça enregistre l'écriture de sortie et télécharge automatiquement un bon de caisse en PDF, avec le montant écrit en toutes lettres et un espace de signature pour le bénéficiaire."
+        },
+        {
+          "q": "Comment fonctionne un approvisionnement de caisse ?",
+          "r": "'+ Approvisionnement' sert à enregistrer de l'argent qui entre dans la caisse sans venir d'une vente — un virement bancaire, un prêt, ou une autre source. Ça augmente le solde disponible."
+        },
+        {
+          "q": "Comment transférer de l'argent d'une caisse à une autre, ou vers la banque ?",
+          "r": "'+ Transfert' — choisis la caisse de destination (le montant sort immédiatement de la caisse source, et n'est crédité à la destination qu'après confirmation de réception, comme pour un transfert de stock) ou 'Vers une banque' si l'argent quitte le système."
+        },
+        {
+          "q": "Qu'est-ce qu'un retour de fonds ?",
+          "r": "Utile quand un décaissement déjà payé doit être partiellement remboursé — un achat annulé après paiement, ou un trop-perçu rendu. '+ Retour de fonds', éventuellement lié au décaissement d'origine."
+        },
+        {
+          "q": "Qu'est-ce que le Grand livre ?",
+          "r": "Deuxième onglet de la page — une vue comptable classique combinant tous les mouvements (versements, approvisionnements, décaissements payés, transferts, retours) avec un solde qui se recalcule ligne par ligne, filtrable par période."
+        },
+        {
+          "q": "Un caissier peut-il annuler ou corriger sa propre demande ?",
+          "r": "Oui, tant qu'elle est encore 'en attente' (pas encore traitée par un validateur) — boutons 'Corriger' et 'Annuler ma demande' visibles sur ses propres demandes."
+        },
+        {
+          "q": "Pourquoi un code me demande-t-il de me reconnecter avant de valider ?",
+          "r": "Si un code de validation (PIN) a été configuré pour ton compte, la section de validation se verrouille après 1 minute d'inactivité, pour éviter qu'une session restée ouverte permette à quelqu'un d'autre de valider à ta place. En cas d'oubli, un admin peut régénérer ton code depuis Équipe."
+        }
+      ]
+    },
+    {
+      "titre": "Objectifs & Analytique",
+      "items": [
+        {
+          "q": "Comment fixer un objectif de vente ?",
+          "r": "Objectifs → '+ Nouvel objectif' — pour un commercial, un chef d'équipe, ou la direction, sur une période donnée, en montant et/ou en quantité d'un produit précis."
+        },
+        {
+          "q": "Comment est calculé l'objectif réalisé d'un chef d'équipe ?",
+          "r": "C'est la somme des ventes de tous les commerciaux affiliés à son équipe — pas ses propres ventes personnelles. L'affiliation se règle dans Paramètres → Organigramme commercial. Un objectif de la direction représente l'ensemble des ventes de l'entreprise."
+        },
+        {
+          "q": "Que montre la page Analytique ?",
+          "r": "Récap quotidien des tournées, taux de rotation des produits (basé sur les rapports de visite successifs), taux de présence en rayon face à la concurrence, et les commandes annulées ou partiellement livrées (manque à gagner)."
+        }
+      ]
+    },
+    {
+      "titre": "Équipe & Organigramme",
+      "items": [
+        {
+          "q": "Comment inviter un nouveau membre de l'équipe ?",
+          "r": "Équipe → '+ Inviter un collègue' — indique son email et son rôle. La personne doit ensuite créer son compte elle-même, avec exactement cette adresse email."
+        },
+        {
+          "q": "Comment organiser mes commerciaux en équipes ?",
+          "r": "Paramètres → Organigramme commercial (admin/manager) — crée des équipes nommées, assigne un chef d'équipe (manager ou admin), puis affilie chaque commercial à l'équipe correspondante. Ça sert notamment au calcul des objectifs d'équipe."
+        },
+        {
+          "q": "Un membre a oublié son mot de passe, que faire ?",
+          "r": "Équipe → sur sa ligne → 'Réinit. mot de passe' — génère un mot de passe temporaire à lui transmettre, qu'il devra changer à sa prochaine connexion. Toi-même en tant qu'admin ne verras jamais ni l'ancien ni le nouveau mot de passe."
+        }
+      ]
+    },
+    {
+      "titre": "Messagerie",
+      "items": [
+        {
+          "q": "Comment envoyer un message à un collègue ?",
+          "r": "Messagerie → '+ Nouveau message' → choisis un collègue. Photos et PDF peuvent être joints."
+        },
+        {
+          "q": "Comment créer un canal de groupe ?",
+          "r": "Messagerie → '+ Nouveau canal' → donne-lui un nom et choisis les membres."
+        },
+        {
+          "q": "Comment recevoir une notification même app fermée ?",
+          "r": "Apparence → Notifications → active le bouton, puis autorise les notifications dans ton navigateur quand il te le demande."
+        }
+      ]
+    },
+    {
+      "titre": "Apparence",
+      "items": [
+        {
+          "q": "Comment changer les couleurs de l'application ?",
+          "r": "Menu Apparence — 5 thèmes au choix, y compris un thème 'Contraste élevé' pensé pour le confort visuel. C'est un réglage personnel, propre à ton compte, pas partagé avec le reste de l'équipe."
+        },
+        {
+          "q": "Comment agrandir le texte si j'ai du mal à lire ?",
+          "r": "Menu Apparence → Taille du texte — Normale, Grande, ou Très grande. S'applique à toute l'application immédiatement."
+        }
+      ]
+    },
+    {
+      "titre": "Paramètres généraux",
+      "items": [
+        {
+          "q": "Comment changer la devise affichée dans toute l'app ?",
+          "r": "Paramètres → Devise (admin) — F CFA, Euro, Dollar, Livre sterling, Cedi ghanéen, ou Naira nigérian."
+        },
+        {
+          "q": "Comment activer la TVA sur les ventes ?",
+          "r": "Paramètres → Facturation & taxes (admin). Une fois activée, chaque produit doit être configuré individuellement (taux applicable) depuis la page Stock — le taux varie souvent selon la nature de la marchandise. À vérifier avec ton comptable avant de t'appuyer dessus pour de vraies factures."
+        },
+        {
+          "q": "Comment ajouter mes propres questions au rapport de visite ?",
+          "r": "Paramètres → Informations supplémentaires à collecter — ajoute une question (texte libre, nombre, oui/non, ou choix dans une liste), elle apparaîtra automatiquement dans le formulaire de rapport de visite de tous les commerciaux."
+        }
+      ]
+    }
+  ]
+}
