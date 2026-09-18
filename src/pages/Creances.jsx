@@ -8,6 +8,7 @@ import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF } fro
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
+import i18n from '../lib/i18n'
 
 export default function Creances() {
   const { t } = useTranslation('creances')
@@ -381,11 +382,11 @@ export default function Creances() {
           <>
             <div>
               <label className="label">{t('du')}</label>
-              <input type="date" className="input-field text-sm" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
+              <input type="date" lang={i18n.language} className="input-field text-sm" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
             </div>
             <div>
               <label className="label">{t('au')}</label>
-              <input type="date" className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
+              <input type="date" lang={i18n.language} className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
             </div>
           </>
         )}

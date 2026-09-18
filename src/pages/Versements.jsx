@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, genererAccuseVersement, formatMontantPDF } from '../lib/export'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
+import i18n from '../lib/i18n'
 
 export default function Versements() {
   const { t } = useTranslation('versements')
@@ -168,7 +169,7 @@ export default function Versements() {
       </p>
 
       <div className="flex items-center gap-3 mb-2 flex-wrap">
-        <input type="date" className="input-field max-w-xs" value={date} onChange={(e) => setDate(e.target.value)} />
+        <input type="date" lang={i18n.language} className="input-field max-w-xs" value={date} onChange={(e) => setDate(e.target.value)} />
         <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterExcel(`versements-${date}`, COLONNES, lignes)}>
           📊 {t('excel')}
         </button>

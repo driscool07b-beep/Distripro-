@@ -5,6 +5,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Ca
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { formatXOF, formatDateHeure } from '../lib/format'
+import i18n from '../lib/i18n'
 
 export default function Dashboard() {
   const { profil } = useAuth()
@@ -1032,11 +1033,11 @@ function CamembertRepartitionCA() {
         <div className="flex gap-2 mb-4 items-end flex-wrap">
           <div>
             <label className="label">{t('entreprise.du')}</label>
-            <input type="date" className="input-field text-sm" value={dateDebutPerso} onChange={(e) => setDateDebutPerso(e.target.value)} />
+            <input type="date" lang={i18n.language} className="input-field text-sm" value={dateDebutPerso} onChange={(e) => setDateDebutPerso(e.target.value)} />
           </div>
           <div>
             <label className="label">{t('entreprise.au')}</label>
-            <input type="date" className="input-field text-sm" value={dateFinPerso} onChange={(e) => setDateFinPerso(e.target.value)} />
+            <input type="date" lang={i18n.language} className="input-field text-sm" value={dateFinPerso} onChange={(e) => setDateFinPerso(e.target.value)} />
           </div>
         </div>
       )}

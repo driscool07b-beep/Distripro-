@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF } from '../lib/export'
 import { formatXOF } from '../lib/format'
+import i18n from '../lib/i18n'
 
 export default function Groupes() {
   const { t } = useTranslation('groupes')
@@ -141,11 +142,11 @@ export default function Groupes() {
             <div className="flex gap-2 items-end mb-3">
               <div className="flex-1">
                 <label className="label">{t('du')}</label>
-                <input type="date" className="input-field" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
+                <input type="date" lang={i18n.language} className="input-field" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
               </div>
               <div className="flex-1">
                 <label className="label">{t('au')}</label>
-                <input type="date" className="input-field" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
+                <input type="date" lang={i18n.language} className="input-field" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
               </div>
               <button onClick={genererRapport} disabled={chargementRapport} className="btn-primary">
                 {chargementRapport ? '…' : t('generer')}

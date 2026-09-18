@@ -9,6 +9,7 @@ import SelectRecherche from '../components/SelectRecherche'
 import { traduireErreur } from '../lib/erreurs'
 import { ajouterActionEnAttente } from '../lib/offline'
 import { formatXOF } from '../lib/format'
+import i18n from '../lib/i18n'
 
 export default function Ventes() {
   const { t } = useTranslation('ventes')
@@ -538,7 +539,7 @@ export default function Ventes() {
             <div>
               <label className="label">{t('filtres.du')}</label>
               <input
-                type="date"
+                type="date" lang={i18n.language}
                 className="input-field"
                 value={filtres.dateDebut}
                 onChange={(e) => setFiltres({ ...filtres, dateDebut: e.target.value })}
@@ -547,7 +548,7 @@ export default function Ventes() {
             <div>
               <label className="label">{t('filtres.au')}</label>
               <input
-                type="date"
+                type="date" lang={i18n.language}
                 className="input-field"
                 value={filtres.dateFin}
                 onChange={(e) => setFiltres({ ...filtres, dateFin: e.target.value })}
@@ -848,7 +849,7 @@ export default function Ventes() {
                     <div>
                       <label className="label">{t('form.soldeAPayer', { montant: formatXOF(resteAPayer) })}</label>
                       <input
-                        type="date"
+                        type="date" lang={i18n.language}
                         className="input-field"
                         value={dateEcheance}
                         onChange={(e) => setDateEcheance(e.target.value)}

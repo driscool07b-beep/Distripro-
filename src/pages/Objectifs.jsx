@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
+import i18n from '../lib/i18n'
 
 export default function Objectifs() {
   const { t } = useTranslation('objectifs')
@@ -260,11 +261,11 @@ export default function Objectifs() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label">{t('debutPeriode')}</label>
-                  <input type="date" className="input-field" value={periodeDebut} onChange={(e) => setPeriodeDebut(e.target.value)} />
+                  <input type="date" lang={i18n.language} className="input-field" value={periodeDebut} onChange={(e) => setPeriodeDebut(e.target.value)} />
                 </div>
                 <div>
                   <label className="label">{t('finPeriode')}</label>
-                  <input type="date" className="input-field" value={periodeFin} onChange={(e) => setPeriodeFin(e.target.value)} />
+                  <input type="date" lang={i18n.language} className="input-field" value={periodeFin} onChange={(e) => setPeriodeFin(e.target.value)} />
                 </div>
               </div>
 

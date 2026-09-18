@@ -6,6 +6,7 @@ import { accesAutorise } from '../lib/accesRole'
 import { formatXOF, formatDate, formatDateHeure } from '../lib/format'
 import { genererBonCaisse, exporterExcel, exporterPDF } from '../lib/export'
 import { traduireErreur } from '../lib/erreurs'
+import i18n from '../lib/i18n'
 
 export default function JournalCaisse() {
   const { t } = useTranslation('journalcaisse')
@@ -680,11 +681,11 @@ export default function JournalCaisse() {
               <div className="flex gap-2 mb-3 items-end flex-wrap">
                 <div>
                   <label className="label">{t('du')}</label>
-                  <input type="date" className="input-field text-sm" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
+                  <input type="date" lang={i18n.language} className="input-field text-sm" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
                 </div>
                 <div>
                   <label className="label">{t('au')}</label>
-                  <input type="date" className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
+                  <input type="date" lang={i18n.language} className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
                 </div>
                 <button onClick={chargerGrandLivre} className="btn-secondary text-sm">{t('filtrer')}</button>
                 <div className="flex-1" />

@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { accesAutorise } from '../lib/accesRole';
 import { traduireErreur } from '../lib/erreurs'
 import { ajouterActionEnAttente } from '../lib/offline'
+import i18n from '../lib/i18n'
 
 export default function Tournees() {
   const { t } = useTranslation('tournees');
@@ -561,7 +562,7 @@ export default function Tournees() {
           <div>
             <label className="block text-sm font-medium mb-1">{t('dateTournee')}</label>
             <input
-              type="date"
+              type="date" lang={i18n.language}
               value={formData.date_tournee}
               onChange={(e) => setFormData({ ...formData, date_tournee: e.target.value })}
               className="w-full border rounded px-3 py-2"

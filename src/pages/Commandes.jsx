@@ -7,6 +7,7 @@ import { exporterExcel, exporterPDF, genererFactureProforma } from '../lib/expor
 import SelectRecherche from '../components/SelectRecherche'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
+import i18n from '../lib/i18n'
 
 function libellesStatut(t) {
   return {
@@ -562,7 +563,7 @@ export default function Commandes() {
 
               <div>
                 <label className="label">{t('form.dateLivraison')}</label>
-                <input type="date" className="input-field" value={dateLivraison} onChange={(e) => setDateLivraison(e.target.value)} />
+                <input type="date" lang={i18n.language} className="input-field" value={dateLivraison} onChange={(e) => setDateLivraison(e.target.value)} />
               </div>
 
               <div>
