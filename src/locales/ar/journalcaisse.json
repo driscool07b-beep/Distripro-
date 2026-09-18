@@ -2,6 +2,9 @@
   "accesRefuse": "هذه الصفحة مخصصة للإدارة والمديرين والمحاسبة.",
   "titre": "دفتر الصندوق",
   "nouvelleDemande": "+ طلب جديد",
+  "approvisionnement": "+ تزويد نقدي",
+  "transfert": "+ تحويل",
+  "retourFonds": "+ إرجاع مبلغ",
   "caisse": "الصندوق",
   "aucuneCaisse": "لا يوجد صندوق نشط — أنشئ واحدًا في الإعدادات.",
   "chargement": "جارٍ التحميل…",
@@ -9,13 +12,25 @@
   "soldeProjete": "الرصيد إذا تمت الموافقة على كل شيء",
   "avertissementSoldeNegatif": "⚠️ سيصبح الرصيد سالبًا إذا تمت الموافقة على هذه المبالغ كما هي.",
 
+  "onglets": {
+    "demandes": "الطلبات",
+    "grandLivre": "دفتر الأستاذ"
+  },
+
+  "transfertsEnAttente": "{{n}} تحويل(ات) واردة بانتظار الاستلام",
+  "depuisCaisse": "من {{nom}}",
+  "envoyeParLe": "أرسله {{nom}} — {{date}}",
+  "receptionner": "استلام",
+
   "sections": {
     "aValider": "بانتظار الموافقة ({{n}})",
+    "mesDemandesEnAttente": "طلباتي المعلقة ({{n}})",
     "aPayer": "تمت الموافقة — بانتظار الدفع ({{n}})",
     "historique": "السجل"
   },
 
   "demandePar": "طلبه {{nom}} — {{date}}",
+  "beneficiaireLabel": "المستفيد: {{nom}}",
   "pieceJustificative": "مستند داعم",
   "motifRefusPlaceholder": "سبب الرفض (اختياري)",
   "annuler": "إلغاء",
@@ -28,19 +43,64 @@
   "payerMontant": "دفع المبلغ",
   "payeParLe": "دفعه {{nom}} — {{date}}",
   "refuseeMotif": "مرفوض — {{motif}}",
+  "annuleeParDemandeur": "ألغاه صاحب الطلب",
   "sansMotif": "دون ذكر سبب",
   "aucuneDemande": "لا توجد طلبات لهذا الصندوق.",
+  "annulerMaDemande": "إلغاء طلبي",
+  "enAttenteDeValidation": "بانتظار الموافقة",
+  "corriger": "تصحيح",
 
   "libelle": "البيان",
   "libellePlaceholder": "مثال: شراء لوازم مكتبية",
+  "libelleOptionnel": "البيان (اختياري)",
   "montant": "المبلغ",
+  "beneficiaire": "المستفيد",
+  "beneficiaireOptionnel": "المستفيد (اختياري — إن كان مختلفًا عن مقدم الطلب)",
+  "beneficiairePlaceholder": "اسم الشخص الذي سيستلم المبلغ",
   "pieceJustificativeOptionnelle": "مستند داعم (اختياري)",
   "envoi": "جارٍ الإرسال…",
   "envoyerDemande": "إرسال الطلب",
+  "enregistrer": "حفظ",
+  "envoyer": "إرسال",
+
+  "source": "المصدر",
+  "sourceBanque": "بنك",
+  "sourcePret": "قرض",
+  "sourceAutre": "أخرى",
+  "approLibellePlaceholder": "مثال: تحويل من الحساب الجاري",
+  "referenceOptionnelle": "المرجع (اختياري)",
+
+  "versAutreCaisse": "إلى صندوق آخر",
+  "versBanque": "إلى بنك",
+  "caisseDestination": "الصندوق الوجهة",
+  "selectionner": "— اختر —",
+  "nomBanque": "البنك",
+  "nomBanquePlaceholder": "مثال: Ecobank، الحساب الجاري",
+  "referenceBancaireOptionnelle": "المرجع البنكي (اختياري)",
+
+  "demandeLieeOptionnelle": "الصرف المرتبط (اختياري)",
+  "aucuneDemandeLiee": "— لا شيء —",
+  "motif": "السبب",
+  "motifRetourPlaceholder": "مثال: مبلغ زائد عن الشراء، شراء ملغى…",
+
+  "du": "من",
+  "au": "إلى",
+  "filtrer": "تصفية",
+  "grandLivre": {
+    "date": "التاريخ",
+    "numero": "الرقم",
+    "libelle": "البيان",
+    "debit": "مدين",
+    "credit": "دائن",
+    "solde": "الرصيد",
+    "aucunMouvement": "لا توجد حركات خلال هذه الفترة."
+  },
 
   "erreurs": {
     "erreur": "خطأ",
     "libelleRequis": "البيان مطلوب.",
-    "montantInvalide": "أدخل مبلغًا صحيحًا."
+    "montantInvalide": "أدخل مبلغًا صحيحًا.",
+    "destinationRequise": "حدد وجهة.",
+    "motifRequis": "السبب مطلوب."
   }
 }

@@ -2,6 +2,9 @@
   "accesRefuse": "This page is reserved for administration, managers, and accounting.",
   "titre": "Cash journal",
   "nouvelleDemande": "+ New request",
+  "approvisionnement": "+ Cash inflow",
+  "transfert": "+ Transfer",
+  "retourFonds": "+ Fund return",
   "caisse": "Cash register",
   "aucuneCaisse": "No active cash register — create one in Settings.",
   "chargement": "Loading…",
@@ -9,13 +12,25 @@
   "soldeProjete": "Balance if everything is approved",
   "avertissementSoldeNegatif": "⚠️ The balance would go negative if these amounts were approved as they stand.",
 
+  "onglets": {
+    "demandes": "Requests",
+    "grandLivre": "Ledger"
+  },
+
+  "transfertsEnAttente": "{{n}} incoming transfer(s) to receive",
+  "depuisCaisse": "from {{nom}}",
+  "envoyeParLe": "sent by {{nom}} — {{date}}",
+  "receptionner": "Receive",
+
   "sections": {
     "aValider": "To approve ({{n}})",
+    "mesDemandesEnAttente": "My pending requests ({{n}})",
     "aPayer": "Approved — to pay ({{n}})",
     "historique": "History"
   },
 
   "demandePar": "Requested by {{nom}} — {{date}}",
+  "beneficiaireLabel": "Beneficiary: {{nom}}",
   "pieceJustificative": "Supporting document",
   "motifRefusPlaceholder": "Reason for rejection (optional)",
   "annuler": "Cancel",
@@ -28,19 +43,64 @@
   "payerMontant": "Pay amount",
   "payeParLe": "Paid by {{nom}} — {{date}}",
   "refuseeMotif": "Rejected — {{motif}}",
+  "annuleeParDemandeur": "Cancelled by the requester",
   "sansMotif": "no reason given",
   "aucuneDemande": "No requests for this cash register.",
+  "annulerMaDemande": "Cancel my request",
+  "enAttenteDeValidation": "Awaiting approval",
+  "corriger": "Edit",
 
   "libelle": "Description",
   "libellePlaceholder": "E.g. Office supplies purchase",
+  "libelleOptionnel": "Description (optional)",
   "montant": "Amount",
+  "beneficiaire": "Beneficiary",
+  "beneficiaireOptionnel": "Beneficiary (optional — if different from requester)",
+  "beneficiairePlaceholder": "Name of the person who will receive the money",
   "pieceJustificativeOptionnelle": "Supporting document (optional)",
   "envoi": "Sending…",
   "envoyerDemande": "Submit request",
+  "enregistrer": "Save",
+  "envoyer": "Send",
+
+  "source": "Source",
+  "sourceBanque": "Bank",
+  "sourcePret": "Loan",
+  "sourceAutre": "Other",
+  "approLibellePlaceholder": "E.g. Current account transfer",
+  "referenceOptionnelle": "Reference (optional)",
+
+  "versAutreCaisse": "To another cash register",
+  "versBanque": "To a bank",
+  "caisseDestination": "Destination cash register",
+  "selectionner": "— Select —",
+  "nomBanque": "Bank",
+  "nomBanquePlaceholder": "E.g. Ecobank, current account",
+  "referenceBancaireOptionnelle": "Bank reference (optional)",
+
+  "demandeLieeOptionnelle": "Related disbursement (optional)",
+  "aucuneDemandeLiee": "— None —",
+  "motif": "Reason",
+  "motifRetourPlaceholder": "E.g. Overpaid purchase, cancelled purchase…",
+
+  "du": "From",
+  "au": "To",
+  "filtrer": "Filter",
+  "grandLivre": {
+    "date": "Date",
+    "numero": "No.",
+    "libelle": "Description",
+    "debit": "Debit",
+    "credit": "Credit",
+    "solde": "Balance",
+    "aucunMouvement": "No transactions for this period."
+  },
 
   "erreurs": {
     "erreur": "Error",
     "libelleRequis": "The description is required.",
-    "montantInvalide": "Enter a valid amount."
+    "montantInvalide": "Enter a valid amount.",
+    "destinationRequise": "Specify a destination.",
+    "motifRequis": "The reason is required."
   }
 }

@@ -2,6 +2,9 @@
   "accesRefuse": "Cette page est réservée à l'administration, aux managers et à la comptabilité.",
   "titre": "Journal de caisse",
   "nouvelleDemande": "+ Nouvelle demande",
+  "approvisionnement": "+ Approvisionnement",
+  "transfert": "+ Transfert",
+  "retourFonds": "+ Retour de fonds",
   "caisse": "Caisse",
   "aucuneCaisse": "Aucune caisse active — créez-en une dans Paramètres.",
   "chargement": "Chargement…",
@@ -9,13 +12,25 @@
   "soldeProjete": "Solde si tout est accordé",
   "avertissementSoldeNegatif": "⚠️ Le solde deviendrait négatif si ces montants étaient accordés en l'état.",
 
+  "onglets": {
+    "demandes": "Demandes",
+    "grandLivre": "Grand livre"
+  },
+
+  "transfertsEnAttente": "{{n}} transfert(s) entrant(s) à réceptionner",
+  "depuisCaisse": "depuis {{nom}}",
+  "envoyeParLe": "envoyé par {{nom}} — {{date}}",
+  "receptionner": "Réceptionner",
+
   "sections": {
     "aValider": "À valider ({{n}})",
+    "mesDemandesEnAttente": "Mes demandes en attente ({{n}})",
     "aPayer": "Validées — à payer ({{n}})",
     "historique": "Historique"
   },
 
   "demandePar": "Demandé par {{nom}} — {{date}}",
+  "beneficiaireLabel": "Bénéficiaire : {{nom}}",
   "pieceJustificative": "Pièce justificative",
   "motifRefusPlaceholder": "Motif du refus (optionnel)",
   "annuler": "Annuler",
@@ -28,19 +43,64 @@
   "payerMontant": "Payer montant",
   "payeParLe": "Payé par {{nom}} — {{date}}",
   "refuseeMotif": "Refusée — {{motif}}",
+  "annuleeParDemandeur": "Annulée par le demandeur",
   "sansMotif": "sans motif indiqué",
   "aucuneDemande": "Aucune demande pour cette caisse.",
+  "annulerMaDemande": "Annuler ma demande",
+  "enAttenteDeValidation": "En attente de validation",
+  "corriger": "Corriger",
 
   "libelle": "Libellé",
   "libellePlaceholder": "Ex. Achat fournitures bureau",
+  "libelleOptionnel": "Libellé (optionnel)",
   "montant": "Montant",
+  "beneficiaire": "Bénéficiaire",
+  "beneficiaireOptionnel": "Bénéficiaire (optionnel — si différent du demandeur)",
+  "beneficiairePlaceholder": "Nom de la personne qui recevra l'argent",
   "pieceJustificativeOptionnelle": "Pièce justificative (optionnel)",
   "envoi": "Envoi…",
   "envoyerDemande": "Envoyer la demande",
+  "enregistrer": "Enregistrer",
+  "envoyer": "Envoyer",
+
+  "source": "Source",
+  "sourceBanque": "Banque",
+  "sourcePret": "Prêt",
+  "sourceAutre": "Autre",
+  "approLibellePlaceholder": "Ex. Virement compte courant",
+  "referenceOptionnelle": "Référence (optionnel)",
+
+  "versAutreCaisse": "Vers une autre caisse",
+  "versBanque": "Vers une banque",
+  "caisseDestination": "Caisse de destination",
+  "selectionner": "— Sélectionner —",
+  "nomBanque": "Banque",
+  "nomBanquePlaceholder": "Ex. Ecobank, compte courant",
+  "referenceBancaireOptionnelle": "Référence bancaire (optionnel)",
+
+  "demandeLieeOptionnelle": "Décaissement lié (optionnel)",
+  "aucuneDemandeLiee": "— Aucun —",
+  "motif": "Motif",
+  "motifRetourPlaceholder": "Ex. Trop perçu sur achat, achat annulé…",
+
+  "du": "Du",
+  "au": "Au",
+  "filtrer": "Filtrer",
+  "grandLivre": {
+    "date": "Date",
+    "numero": "N°",
+    "libelle": "Libellé",
+    "debit": "Débit",
+    "credit": "Crédit",
+    "solde": "Solde",
+    "aucunMouvement": "Aucun mouvement sur cette période."
+  },
 
   "erreurs": {
     "erreur": "Erreur",
     "libelleRequis": "Le libellé est requis.",
-    "montantInvalide": "Indiquez un montant valide."
+    "montantInvalide": "Indiquez un montant valide.",
+    "destinationRequise": "Précisez une destination.",
+    "motifRequis": "Le motif est requis."
   }
 }
