@@ -39,7 +39,16 @@
       "produit": "حسب المنتج",
       "zone": "حسب المدينة",
       "groupe": "حسب المجموعة"
-    }
+    },
+    "periodesCamembert": {
+      "mois": "هذا الشهر",
+      "trimestre": "هذا الربع",
+      "semestre": "هذا النصف سنوي",
+      "annee": "هذه السنة",
+      "personnalisee": "مخصصة…"
+    },
+    "du": "من",
+    "au": "إلى"
   },
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",

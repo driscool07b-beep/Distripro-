@@ -39,7 +39,16 @@
       "produit": "By product",
       "zone": "By city",
       "groupe": "By group"
-    }
+    },
+    "periodesCamembert": {
+      "mois": "This month",
+      "trimestre": "This quarter",
+      "semestre": "This half-year",
+      "annee": "This year",
+      "personnalisee": "Custom…"
+    },
+    "du": "From",
+    "au": "To"
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",

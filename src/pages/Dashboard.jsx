@@ -954,18 +954,46 @@ const COULEURS_CAMEMBERT = ['#123640', '#d69428', '#255a67', '#e8a83c', '#347080
 function CamembertRepartitionCA() {
   const { t } = useTranslation('dashboard')
   const [type, setType] = useState('produit')
+  const [periode, setPeriode] = useState('mois')
+  const [dateDebutPerso, setDateDebutPerso] = useState('')
+  const [dateFinPerso, setDateFinPerso] = useState('')
   const [donnees, setDonnees] = useState([])
   const [chargement, setChargement] = useState(true)
 
   useEffect(() => {
-    charger()
-  }, [type])
+    if (periode !== 'personnalisee' || (dateDebutPerso && dateFinPerso)) charger()
+  }, [type, periode, dateDebutPerso, dateFinPerso])
+
+  function calculerBornes() {
+    const maintenant = new Date()
+    const annee = maintenant.getFullYear()
+    const mois = maintenant.getMonth()
+
+    if (periode === 'mois') {
+      return [new Date(annee, mois, 1), new Date(annee, mois + 1, 0)]
+    }
+    if (periode === 'trimestre') {
+      const debutTrimestre = Math.floor(mois / 3) * 3
+      return [new Date(annee, debutTrimestre, 1), new Date(annee, debutTrimestre + 3, 0)]
+    }
+    if (periode === 'semestre') {
+      const debutSemestre = mois < 6 ? 0 : 6
+      return [new Date(annee, debutSemestre, 1), new Date(annee, debutSemestre + 6, 0)]
+    }
+    if (periode === 'annee') {
+      return [new Date(annee, 0, 1), new Date(annee, 11, 31)]
+    }
+    if (periode === 'personnalisee') {
+      return [new Date(dateDebutPerso), new Date(dateFinPerso)]
+    }
+    return [new Date(annee, mois, 1), new Date(annee, mois + 1, 0)]
+  }
 
   async function charger() {
     setChargement(true)
-    const maintenant = new Date()
-    const debut = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1).toISOString().split('T')[0]
-    const fin = new Date(maintenant.getFullYear(), maintenant.getMonth() + 1, 0).toISOString().split('T')[0]
+    const [debutDate, finDate] = calculerBornes()
+    const debut = debutDate.toISOString().split('T')[0]
+    const fin = finDate.toISOString().split('T')[0]
     const { data } = await supabase.rpc('repartition_ca', { p_type: type, p_debut: debut, p_fin: fin })
     setDonnees((data || []).filter((d) => Number(d.montant) > 0).slice(0, 8))
     setChargement(false)
@@ -987,6 +1015,32 @@ function CamembertRepartitionCA() {
           ))}
         </div>
       </div>
+
+      <div className="flex gap-1.5 mb-4 flex-wrap">
+        {['mois', 'trimestre', 'semestre', 'annee', 'personnalisee'].map((p) => (
+          <button
+            key={p}
+            onClick={() => setPeriode(p)}
+            className={`text-xs px-2.5 py-1 rounded-full border ${periode === p ? 'bg-amber-500 text-petrol-950 border-amber-500' : 'border-line text-petrol-600'}`}
+          >
+            {t(`entreprise.periodesCamembert.${p}`)}
+          </button>
+        ))}
+      </div>
+
+      {periode === 'personnalisee' && (
+        <div className="flex gap-2 mb-4 items-end flex-wrap">
+          <div>
+            <label className="label">{t('entreprise.du')}</label>
+            <input type="date" className="input-field text-sm" value={dateDebutPerso} onChange={(e) => setDateDebutPerso(e.target.value)} />
+          </div>
+          <div>
+            <label className="label">{t('entreprise.au')}</label>
+            <input type="date" className="input-field text-sm" value={dateFinPerso} onChange={(e) => setDateFinPerso(e.target.value)} />
+          </div>
+        </div>
+      )}
+
       {chargement ? (
         <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : donnees.length === 0 ? (

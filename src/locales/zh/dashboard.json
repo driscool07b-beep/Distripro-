@@ -39,7 +39,16 @@
       "produit": "按产品",
       "zone": "按城市",
       "groupe": "按分组"
-    }
+    },
+    "periodesCamembert": {
+      "mois": "本月",
+      "trimestre": "本季度",
+      "semestre": "本半年",
+      "annee": "本年度",
+      "personnalisee": "自定义…"
+    },
+    "du": "从",
+    "au": "至"
   },
   "commercial": {
     "sousTitre": "这是您的个人活动情况。",

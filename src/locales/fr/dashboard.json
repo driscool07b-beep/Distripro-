@@ -39,7 +39,16 @@
       "produit": "Par produit",
       "zone": "Par ville",
       "groupe": "Par groupe"
-    }
+    },
+    "periodesCamembert": {
+      "mois": "Ce mois",
+      "trimestre": "Ce trimestre",
+      "semestre": "Ce semestre",
+      "annee": "Cette année",
+      "personnalisee": "Personnalisée…"
+    },
+    "du": "Du",
+    "au": "Au"
   },
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",
