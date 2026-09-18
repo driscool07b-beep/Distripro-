@@ -106,5 +106,11 @@
     "erreurLongueur": "يجب أن يتكون الرمز من 4 أرقام على الأقل.",
     "erreurConfirmation": "الرمزان غير متطابقين.",
     "erreurEnregistrement": "خطأ أثناء حفظ الرمز."
-  }
+  },
+  "excel": "Excel",
+  "pdf": "PDF",
+  "imprimer": "🖨️ طباعة",
+  "grandLivreTitrePdf": "دفتر الأستاذ — {{nom}}",
+  "periodePdf": "من {{debut}} إلى {{fin}}",
+  "soldeFinalPdf": "الرصيد النهائي"
 }

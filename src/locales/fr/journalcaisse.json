@@ -106,5 +106,11 @@
     "erreurLongueur": "Le code doit contenir au moins 4 chiffres.",
     "erreurConfirmation": "Les codes ne correspondent pas.",
     "erreurEnregistrement": "Erreur lors de l'enregistrement du code."
-  }
+  },
+  "excel": "Excel",
+  "pdf": "PDF",
+  "imprimer": "🖨️ Imprimer",
+  "grandLivreTitrePdf": "Grand livre — {{nom}}",
+  "periodePdf": "Du {{debut}} au {{fin}}",
+  "soldeFinalPdf": "Solde final"
 }

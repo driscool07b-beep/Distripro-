@@ -106,5 +106,11 @@
     "erreurLongueur": "The code must be at least 4 digits.",
     "erreurConfirmation": "The codes don't match.",
     "erreurEnregistrement": "Error saving the code."
-  }
+  },
+  "excel": "Excel",
+  "pdf": "PDF",
+  "imprimer": "🖨️ Print",
+  "grandLivreTitrePdf": "Ledger — {{nom}}",
+  "periodePdf": "From {{debut}} to {{fin}}",
+  "soldeFinalPdf": "Final balance"
 }

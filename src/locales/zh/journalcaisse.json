@@ -106,5 +106,11 @@
     "erreurLongueur": "审批码必须至少为4位数字。",
     "erreurConfirmation": "两次输入的审批码不一致。",
     "erreurEnregistrement": "保存审批码时出错。"
-  }
+  },
+  "excel": "Excel",
+  "pdf": "PDF",
+  "imprimer": "🖨️ 打印",
+  "grandLivreTitrePdf": "总账 — {{nom}}",
+  "periodePdf": "从 {{debut}} 至 {{fin}}",
+  "soldeFinalPdf": "最终余额"
 }

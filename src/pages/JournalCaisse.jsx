@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { formatXOF, formatDate, formatDateHeure } from '../lib/format'
-import { genererBonCaisse } from '../lib/export'
+import { genererBonCaisse, exporterExcel, exporterPDF } from '../lib/export'
 import { traduireErreur } from '../lib/erreurs'
 
 export default function JournalCaisse() {
@@ -186,6 +186,46 @@ export default function JournalCaisse() {
     })
     setGrandLivre(data || [])
     setChargementGrandLivre(false)
+  }
+
+  const colonnesGrandLivre = [
+    { cle: 'date', titre: t('grandLivre.date') },
+    { cle: 'numero', titre: t('grandLivre.numero') },
+    { cle: 'libelle', titre: t('grandLivre.libelle') },
+    { cle: 'debit', titre: t('grandLivre.debit'), alignDroite: true },
+    { cle: 'credit', titre: t('grandLivre.credit'), alignDroite: true },
+    { cle: 'solde', titre: t('grandLivre.solde'), alignDroite: true },
+  ]
+
+  function lignesGrandLivrePourExport() {
+    return grandLivre.map((l) => ({
+      date: formatDateHeure(l.date_mouvement, { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      numero: l.numero,
+      libelle: l.libelle,
+      debit: Number(l.debit) > 0 ? Number(l.debit) : '',
+      credit: Number(l.credit) > 0 ? Number(l.credit) : '',
+      solde: Number(l.solde),
+    }))
+  }
+
+  function exporterGrandLivreExcel() {
+    const nomCaisse = caisses.find((c) => c.id === caisseId)?.nom || 'caisse'
+    exporterExcel(`grand-livre-${nomCaisse}`, colonnesGrandLivre, lignesGrandLivrePourExport())
+  }
+
+  function exporterGrandLivrePDF() {
+    const nomCaisse = caisses.find((c) => c.id === caisseId)?.nom || ''
+    const soldeFinal = grandLivre.length > 0 ? Number(grandLivre[grandLivre.length - 1].solde) : 0
+    exporterPDF(
+      `grand-livre-${nomCaisse}`,
+      t('grandLivreTitrePdf', { nom: nomCaisse }),
+      dateDebut && dateFin ? t('periodePdf', { debut: formatDate(dateDebut), fin: formatDate(dateFin) }) : '',
+      colonnesGrandLivre,
+      lignesGrandLivrePourExport(),
+      t('soldeFinalPdf'),
+      formatXOF(soldeFinal),
+      entreprise
+    )
   }
 
   const demandesEnAttente = demandes.filter((d) => d.statut === 'en_attente')
@@ -647,6 +687,10 @@ export default function JournalCaisse() {
                   <input type="date" className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
                 </div>
                 <button onClick={chargerGrandLivre} className="btn-secondary text-sm">{t('filtrer')}</button>
+                <div className="flex-1" />
+                <button onClick={exporterGrandLivreExcel} className="btn-secondary text-sm no-print">{t('excel')}</button>
+                <button onClick={exporterGrandLivrePDF} className="btn-secondary text-sm no-print">{t('pdf')}</button>
+                <button onClick={() => window.print()} className="btn-secondary text-sm no-print">{t('imprimer')}</button>
               </div>
 
               {chargementGrandLivre ? (
