@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
-import { formatXOF } from '../lib/format'
+import { formatXOF, formatDate } from '../lib/format'
 
 export default function StockCommercial() {
   const { t } = useTranslation('stockcommercial')
@@ -297,7 +297,7 @@ function SortiesRetours() {
               <div>
                 <p className="font-medium text-sm">{s.profils?.nom || t('commercial')}</p>
                 <p className="text-xs text-petrol-500">
-                  {new Date(s.date_sortie).toLocaleDateString('fr-FR')} — {t('articles', { n: s.sortie_stock_lignes?.length || 0 })}
+                  {formatDate(s.date_sortie)} — {t('articles', { n: s.sortie_stock_lignes?.length || 0 })}
                 </p>
               </div>
               <span className={`text-xs px-2 py-1 rounded-full border ${s.statut === 'ouverte' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
@@ -385,7 +385,7 @@ function SortiesRetours() {
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="font-semibold text-lg">{detail.profils?.nom}</h2>
-                    <p className="text-xs text-petrol-500">{new Date(detail.date_sortie).toLocaleDateString('fr-FR')}</p>
+                    <p className="text-xs text-petrol-500">{formatDate(detail.date_sortie)}</p>
                   </div>
                   <button onClick={fermerDetail} className="text-petrol-400 text-xl leading-none">✕</button>
                 </div>

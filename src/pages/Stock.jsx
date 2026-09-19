@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF, formatMontantPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise } from '../lib/export'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
@@ -472,11 +472,11 @@ export default function Stock() {
   const valeurTotaleStock = produits.reduce((s, p) => s + p.quantite * (p.prix_vente || 0), 0)
 
   const COLONNES_EXPORT = [
-    { cle: 'nom', titre: 'Produit' },
-    { cle: 'categorie', titre: 'Catégorie' },
-    { cle: 'prix', titre: 'Prix unitaire (F CFA)', alignDroite: true },
-    { cle: 'stock', titre: 'Stock', alignDroite: true },
-    { cle: 'valeur', titre: 'Valeur (F CFA)', alignDroite: true },
+    { cle: 'nom', titre: t('export.produit') },
+    { cle: 'categorie', titre: t('export.categorie') },
+    { cle: 'prix', titre: `${t('export.prixUnitaire')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'stock', titre: t('export.stock'), alignDroite: true },
+    { cle: 'valeur', titre: `${t('export.valeur')} (${symboleDevise()})`, alignDroite: true },
   ]
   function donneesExport() {
     return (produitsFiltres || []).map((p) => ({

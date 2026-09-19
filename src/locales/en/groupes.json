@@ -23,5 +23,11 @@
   "valeur": "Value",
   "total": "Total",
   "aucuneLivraison": "No deliveries for this period.",
-  "inconnu": "Unknown"
+  "inconnu": "Unknown",
+  "export": {
+    "magasin": "Store",
+    "produit": "Product",
+    "quantite": "Quantity",
+    "valeur": "Value"
+  }
 }

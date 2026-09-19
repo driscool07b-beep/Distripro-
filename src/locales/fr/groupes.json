@@ -23,5 +23,11 @@
   "valeur": "Valeur",
   "total": "Total",
   "aucuneLivraison": "Aucune livraison sur cette période.",
-  "inconnu": "Inconnu"
+  "inconnu": "Inconnu",
+  "export": {
+    "magasin": "Magasin",
+    "produit": "Produit",
+    "quantite": "Quantité",
+    "valeur": "Valeur"
+  }
 }

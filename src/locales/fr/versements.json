@@ -28,5 +28,12 @@
   "enregistrement": "Enregistrement…",
   "validerGenererAccuse": "Valider et générer l'accusé",
   "erreurSelectionnerCaisse": "Sélectionnez une caisse.",
-  "erreurMontantValide": "Indiquez un montant valide."
+  "erreurMontantValide": "Indiquez un montant valide.",
+  "export": {
+    "commercial": "Commercial",
+    "ventesCash": "Ventes cash",
+    "recouvrement": "Recouvrement créances",
+    "total": "Total à verser",
+    "resteAVerser": "Reste à verser"
+  }
 }

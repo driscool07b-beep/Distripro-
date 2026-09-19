@@ -5,7 +5,6 @@
   "excel": "Excel",
   "pdf": "PDF",
   "nouvelleVente": "+ 新建销售",
-
   "filtres": {
     "periode": "时间段",
     "tout": "全部",
@@ -21,7 +20,6 @@
     "zoneVille": "区域/城市",
     "produit": "产品"
   },
-
   "table": {
     "date": "日期",
     "client": "客户",
@@ -34,7 +32,6 @@
     "annulee": "已取消",
     "nbArticles": "{{n}} 项"
   },
-
   "form": {
     "titre": "新建销售",
     "client": "客户 *",
@@ -82,7 +79,6 @@
     "erreurMotifRemise": "应用折扣需要填写原因。",
     "erreurCreationVente": "错误（创建销售）"
   },
-
   "detail": {
     "chargement": "加载中…",
     "detailVente": "销售详情",
@@ -116,6 +112,14 @@
     "partagePasDisponible": "此浏览器不支持直接分享。请下载 PDF 后手动分享（WhatsApp、邮件等）。",
     "titrePartage": "销售收据"
   },
-
-  "accesRefuse": "此页面不适用于您的角色。"
+  "accesRefuse": "此页面不适用于您的角色。",
+  "export": {
+    "numeroVente": "销售编号",
+    "date": "日期",
+    "client": "客户",
+    "ville": "城市",
+    "commercial": "销售代表",
+    "articles": "商品",
+    "total": "总计"
+  }
 }

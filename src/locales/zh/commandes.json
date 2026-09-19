@@ -6,7 +6,6 @@
   "nouvelleCommande": "+ 新建订单",
   "accesRefuse": "此页面不适用于您的角色。",
   "chargementCommandes": "正在加载订单…",
-
   "statuts": {
     "brouillon": "草稿",
     "confirmee": "已确认",
@@ -15,7 +14,6 @@
     "annulee": "已取消",
     "toutes": "全部"
   },
-
   "recap": {
     "titre": "📦 进行中订单汇总 — {{unites}} 件，{{valeur}}",
     "titreVide": "📦 进行中订单汇总",
@@ -24,13 +22,11 @@
     "quantite": "数量",
     "valeurEstimee": "预估价值"
   },
-
   "liste": {
     "articles": "{{n}} 项",
     "aucuneCommande": "没有订单。",
     "aucuneCommandeStatut": "没有状态为“{{statut}}”的订单。"
   },
-
   "form": {
     "titre": "新建订单",
     "client": "客户",
@@ -58,7 +54,6 @@
     "erreurSelectionnerClient": "请选择客户。",
     "erreurArticleValide": "请至少添加一项有效商品。"
   },
-
   "detail": {
     "chargement": "加载中…",
     "commercial": "销售代表",
@@ -87,5 +82,13 @@
     "historique": "历史记录",
     "par": "由",
     "impossibleChargerDetail": "无法加载详情。"
+  },
+  "export": {
+    "numero": "编号",
+    "client": "客户",
+    "commercial": "销售代表",
+    "statut": "状态",
+    "montantTtc": "含税总额",
+    "date": "日期"
   }
 }

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
-import { formatXOF } from '../lib/format'
+import { formatXOF, formatDate } from '../lib/format'
 import i18n from '../lib/i18n'
 
 export default function Objectifs() {
@@ -339,7 +339,7 @@ function CarteObjectif({ objectif: o, onSupprimer }) {
             {roleCible && <span className="ml-1.5 text-xs bg-petrol-100 text-petrol-600 px-1.5 py-0.5 rounded">{roleCible}</span>}
           </p>
           <p className="text-xs text-petrol-500">
-            {new Date(o.periode_debut).toLocaleDateString('fr-FR')} — {new Date(o.periode_fin).toLocaleDateString('fr-FR')}
+            {formatDate(o.periode_debut)} — {formatDate(o.periode_fin)}
             {o.produits?.nom ? ` — ${o.produits.nom}` : ''}
           </p>
         </div>

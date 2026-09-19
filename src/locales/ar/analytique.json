@@ -10,7 +10,6 @@
   "excel": "Excel",
   "pdf": "PDF",
   "chargement": "جارٍ التحميل…",
-
   "recap": {
     "commercial": "المندوب",
     "visitesFaites": "الزيارات المنجزة",
@@ -19,7 +18,6 @@
     "rapports": "التقارير",
     "aucunCommercial": "لا يوجد مندوب أو جولة في ذلك اليوم."
   },
-
   "rotation": {
     "explication": "يُحتسب من رصدات المخزون المتتالية على الرف المسجلة في تقارير الزيارة، لدى نفس العميل. يتطلب رصدين على الأقل لنفس زوج المنتج/العميل.",
     "produit": "المنتج",
@@ -27,7 +25,6 @@
     "rotationMoyenne": "متوسط الدوران (وحدة/يوم)",
     "pasAssezDeDonnees": "لا توجد بيانات كافية بعد (مطلوب رصدان على الأقل لكل منتج/عميل)."
   },
-
   "presence": {
     "explication": "يعتمد فقط على الزيارات التي تم فيها رصد المنتج صراحةً (على الرف أو في قائمة المنافسين) — المنتج الذي لم يُرصد أبدًا لا يدخل في الحساب.",
     "nosProduits": "منتجاتنا",
@@ -36,7 +33,6 @@
     "taux": "المعدل",
     "aucuneDonnee": "لا توجد بيانات."
   },
-
   "manque": {
     "commandesAnnulees": "الطلبات الملغاة",
     "valeurTotalePerdue": "إجمالي القيمة المفقودة",
@@ -58,5 +54,23 @@
     "ecartVsSouhaite": "الفرق مقابل التاريخ المطلوب",
     "aTemps": "في الموعد",
     "pasAssezDeDonneesDelai": "لا توجد بيانات كافية (تاريخ التسليم المطلوب غير متوفر)."
+  },
+  "export": {
+    "commercial": "المندوب",
+    "visitesFaites": "الزيارات المنجزة",
+    "visitesPrevues": "الزيارات المخطط لها",
+    "distanceKm": "المسافة (كم)",
+    "rapportsEnvoyes": "التقارير المرسلة",
+    "produit": "المنتج",
+    "observations": "الملاحظات",
+    "rotationMoyenne": "متوسط الدوران (وحدة/يوم)",
+    "visitesOuReleve": "الزيارات التي تم فيها الرصد",
+    "tauxPresence": "معدل التواجد (%)",
+    "commande": "الطلب",
+    "client": "العميل",
+    "date": "التاريخ",
+    "montantPerdu": "المبلغ المفقود",
+    "qteManquante": "الكمية الناقصة",
+    "valeurManquante": "القيمة الناقصة"
   }
 }

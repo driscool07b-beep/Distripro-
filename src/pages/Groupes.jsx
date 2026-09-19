@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
-import { exporterExcel, exporterPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, symboleDevise } from '../lib/export'
 import { formatXOF } from '../lib/format'
 import i18n from '../lib/i18n'
 
@@ -85,10 +85,10 @@ export default function Groupes() {
   const groupeNom = groupes.find((g) => g.id === groupeSelectionne)?.nom || ''
 
   const COLONNES = [
-    { cle: 'magasin', titre: 'Magasin' },
-    { cle: 'produit', titre: 'Produit' },
-    { cle: 'quantite', titre: 'Quantité', alignDroite: true },
-    { cle: 'valeur', titre: 'Valeur (F CFA)', alignDroite: true },
+    { cle: 'magasin', titre: t('export.magasin') },
+    { cle: 'produit', titre: t('export.produit') },
+    { cle: 'quantite', titre: t('export.quantite'), alignDroite: true },
+    { cle: 'valeur', titre: `${t('export.valeur')} (${symboleDevise()})`, alignDroite: true },
   ]
 
   if (!accesAutorise('groupes', profil?.role)) {

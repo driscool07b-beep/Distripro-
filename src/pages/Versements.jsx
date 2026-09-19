@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF, genererAccuseVersement, formatMontantPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererAccuseVersement, formatMontantPDF, symboleDevise } from '../lib/export'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
 import i18n from '../lib/i18n'
@@ -154,11 +154,11 @@ export default function Versements() {
   const totalResteAVerser = lignes.reduce((s, l) => s + Math.max(l.resteAVerser, 0), 0)
 
   const COLONNES = [
-    { cle: 'commercial', titre: 'Commercial' },
-    { cle: 'ventesCash', titre: 'Ventes cash (F CFA)', alignDroite: true },
-    { cle: 'recouvrement', titre: 'Recouvrement créances (F CFA)', alignDroite: true },
-    { cle: 'total', titre: 'Total à verser (F CFA)', alignDroite: true },
-    { cle: 'resteAVerser', titre: 'Reste à verser (F CFA)', alignDroite: true },
+    { cle: 'commercial', titre: t('export.commercial') },
+    { cle: 'ventesCash', titre: `${t('export.ventesCash')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'recouvrement', titre: `${t('export.recouvrement')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'total', titre: `${t('export.total')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'resteAVerser', titre: `${t('export.resteAVerser')} (${symboleDevise()})`, alignDroite: true },
   ]
 
   return (

@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
-import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF, symboleDevise } from '../lib/export'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
-import { formatXOF } from '../lib/format'
+import { formatXOF, formatDate } from '../lib/format'
 import i18n from '../lib/i18n'
 
 export default function Creances() {
@@ -112,18 +112,18 @@ export default function Creances() {
   const totalAffiche = creancesAffichees.reduce((s, v) => s + (Number(v.total) - Number(v.montant_regle)), 0)
 
   const COLONNES_EXPORT = [
-    { cle: 'client', titre: 'Client' },
-    { cle: 'commercial', titre: 'Commercial' },
-    { cle: 'echeance', titre: 'Échéance' },
-    { cle: 'statut', titre: 'Statut' },
-    { cle: 'resteDu', titre: 'Reste dû (F CFA)', alignDroite: true },
+    { cle: 'client', titre: t('export.client') },
+    { cle: 'commercial', titre: t('export.commercial') },
+    { cle: 'echeance', titre: t('export.echeance') },
+    { cle: 'statut', titre: t('export.statut') },
+    { cle: 'resteDu', titre: `${t('export.resteDu')} (${symboleDevise()})`, alignDroite: true },
   ]
   function donneesExport() {
     return creancesAffichees.map((v) => ({
       client: v.clients?.nom || '—',
       commercial: v.profils?.nom || '—',
-      echeance: v.date_echeance ? new Date(v.date_echeance).toLocaleDateString('fr-FR') : '—',
-      statut: estEchue(v) ? 'En retard' : 'En cours',
+      echeance: v.date_echeance ? formatDate(v.date_echeance) : '—',
+      statut: estEchue(v) ? t('export.enRetard') : t('export.enCours'),
       resteDu: Number(v.total) - Number(v.montant_regle),
     }))
   }
@@ -417,7 +417,7 @@ export default function Creances() {
                   {t('commercial')} : {v.profils?.nom || '—'}
                   {v.date_echeance && (
                     <>
-                      {' '}— {t('echeance')} : {new Date(v.date_echeance).toLocaleDateString('fr-FR')}
+                      {' '}— {t('echeance')} : {formatDate(v.date_echeance)}
                       {echue && <span className="text-red-600 font-medium"> {t('enRetard')}</span>}
                     </>
                   )}
@@ -443,7 +443,7 @@ export default function Creances() {
                   <div>
                     <h2 className="font-semibold text-lg">{detail.vente?.clients?.nom}</h2>
                     <p className="text-xs text-petrol-500">
-                      {t('detail.venteDu', { date: new Date(detail.vente?.created_at).toLocaleDateString('fr-FR'), commercial: detail.vente?.profils?.nom || '—' })}
+                      {t('detail.venteDu', { date: formatDate(detail.vente?.created_at), commercial: detail.vente?.profils?.nom || '—' })}
                     </p>
                   </div>
                   <button onClick={fermerDetail} className="text-petrol-400 hover:text-petrol-700 text-xl leading-none">✕</button>
@@ -496,7 +496,7 @@ export default function Creances() {
                     {detail.paiements.map((p, i) => (
                       <p key={i} className="text-xs text-petrol-600 flex justify-between gap-2">
                         <span>
-                          {new Date(p.created_at).toLocaleDateString('fr-FR')}
+                          {formatDate(p.created_at)}
                           {' — '}
                           <span className="text-petrol-500">
                             {p.commercial?.nom || p.enregistre_par?.nom || t('detail.inconnu')}

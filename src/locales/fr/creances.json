@@ -68,5 +68,14 @@
     "resultatReussis": "✓ {{reussis}} solde(s) importé(s) sur {{total}}.",
     "erreurAucuneLigne": "Aucune ligne valide trouvée.",
     "erreurFichierIllisible": "Fichier illisible : {{message}}"
+  },
+  "export": {
+    "client": "Client",
+    "commercial": "Commercial",
+    "echeance": "Échéance",
+    "statut": "Statut",
+    "resteDu": "Reste dû",
+    "enRetard": "En retard",
+    "enCours": "En cours"
   }
 }

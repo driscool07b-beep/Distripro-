@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF } from '../lib/export'
+import { formatDate } from '../lib/format'
 
 export default function Rapports() {
   const { t } = useTranslation('rapports')
@@ -18,17 +19,17 @@ export default function Rapports() {
   const voitTout = profil?.role === 'admin' || profil?.role === 'manager'
 
   const COLONNES_EXPORT = [
-    { cle: 'client', titre: 'Client' },
-    { cle: 'commercial', titre: 'Commercial' },
-    { cle: 'date', titre: 'Date' },
-    { cle: 'notesRayon', titre: 'Notes rayon' },
-    { cle: 'notesReserve', titre: 'Notes réserve' },
+    { cle: 'client', titre: t('export.client') },
+    { cle: 'commercial', titre: t('export.commercial') },
+    { cle: 'date', titre: t('export.date') },
+    { cle: 'notesRayon', titre: t('export.notesRayon') },
+    { cle: 'notesReserve', titre: t('export.notesReserve') },
   ]
   function donneesExport() {
     return rapports.map((r) => ({
       client: r.clients?.nom || '—',
       commercial: r.profils?.nom || '—',
-      date: new Date(r.created_at).toLocaleDateString('fr-FR'),
+      date: formatDate(r.created_at),
       notesRayon: r.notes_rayon || '—',
       notesReserve: r.notes_reserve || '—',
     }))
@@ -37,7 +38,7 @@ export default function Rapports() {
     exporterExcel('rapports-visite', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('rapports-visite', 'Rapports de visite', null, COLONNES_EXPORT, donneesExport(), undefined, undefined, entreprise)
+    exporterPDF('rapports-visite', t('titre'), null, COLONNES_EXPORT, donneesExport(), undefined, undefined, entreprise)
   }
 
   useEffect(() => {

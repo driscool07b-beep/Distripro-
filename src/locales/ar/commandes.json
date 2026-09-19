@@ -6,7 +6,6 @@
   "nouvelleCommande": "+ طلب جديد",
   "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
   "chargementCommandes": "جارٍ تحميل الطلبات…",
-
   "statuts": {
     "brouillon": "مسودة",
     "confirmee": "مؤكدة",
@@ -15,7 +14,6 @@
     "annulee": "ملغاة",
     "toutes": "الكل"
   },
-
   "recap": {
     "titre": "📦 ملخص الطلبات الجارية — {{unites}} وحدة(وحدات)، {{valeur}}",
     "titreVide": "📦 ملخص الطلبات الجارية",
@@ -24,13 +22,11 @@
     "quantite": "الكمية",
     "valeurEstimee": "القيمة المقدرة"
   },
-
   "liste": {
     "articles": "{{n}} صنف(أصناف)",
     "aucuneCommande": "لا توجد طلبات.",
     "aucuneCommandeStatut": "لا توجد طلبات بحالة \"{{statut}}\"."
   },
-
   "form": {
     "titre": "طلب جديد",
     "client": "العميل",
@@ -58,7 +54,6 @@
     "erreurSelectionnerClient": "اختر عميلًا.",
     "erreurArticleValide": "أضف صنفًا صحيحًا واحدًا على الأقل."
   },
-
   "detail": {
     "chargement": "جارٍ التحميل…",
     "commercial": "المندوب",
@@ -87,5 +82,13 @@
     "historique": "السجل",
     "par": "بواسطة",
     "impossibleChargerDetail": "تعذر تحميل التفاصيل."
+  },
+  "export": {
+    "numero": "الرقم",
+    "client": "العميل",
+    "commercial": "المندوب",
+    "statut": "الحالة",
+    "montantTtc": "المبلغ الإجمالي",
+    "date": "التاريخ"
   }
 }

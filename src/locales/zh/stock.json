@@ -10,17 +10,14 @@
   "pdf": "PDF",
   "importer": "导入",
   "nouveauProduit": "+ 新建产品",
-
   "transfertsEnAttente": "{{n}} 笔调拨待接收",
   "unites": "件",
   "envoyePar": "发送人",
   "le": "于",
   "receptionner": "接收",
-
   "rechercherProduit": "搜索产品…",
   "filtreAlertes": "已筛选：库存警报产品",
   "retirerFiltre": "移除筛选",
-
   "table": {
     "produit": "产品",
     "categorie": "类别",
@@ -35,7 +32,6 @@
     "modifier": "编辑",
     "historique": "历史记录"
   },
-
   "formProduit": {
     "titreModifier": "编辑产品",
     "titreNouveau": "新建产品",
@@ -54,7 +50,6 @@
     "erreurTauxTva": "请输入税率。",
     "erreurNomPrix": "名称和单价为必填项。"
   },
-
   "mouvement": {
     "titre": "调整库存",
     "avertissementTransfert": "⚠️ 如需将库存移至另一仓库，请勿使用“出库”——请使用“仓库间调拨”，该功能会记录调拨过程并要求到货时确认接收。",
@@ -85,7 +80,6 @@
     "erreurStockInsuffisant": "此次出库库存不足。",
     "erreurPlusieursDepots": "存在多个仓库 — 该选择功能即将推出，请联系管理员。"
   },
-
   "transfert": {
     "titre": "仓库间调拨",
     "stockTotal": "总库存",
@@ -107,7 +101,6 @@
     "erreurJustificatifObligatoire": "任何库存调拨都必须提供凭证（照片或PDF）。",
     "erreurStockInsuffisant": "来源仓库库存不足。"
   },
-
   "reception": {
     "titre": "接收调拨",
     "quantiteEnvoyee": "已发送数量",
@@ -123,7 +116,6 @@
     "erreurQuantite": "请输入实际接收数量（若无货物到达则填0）。",
     "erreurJustificatifObligatoire": "确认接收必须提供凭证（照片或PDF）。"
   },
-
   "import": {
     "titre": "导入产品（Excel）",
     "consigne": "下载模板，按列顺序填写，然后导入。",
@@ -140,10 +132,16 @@
     "erreurAucuneLigne": "没有有效行（名称和售价为必填项）。",
     "erreurFichierIllisible": "文件无法读取：{{message}}"
   },
-
   "historiquePrix": {
     "titre": "价格历史",
     "aucunChangement": "没有记录的价格变动。",
     "fermer": "关闭"
+  },
+  "export": {
+    "produit": "产品",
+    "categorie": "类别",
+    "prixUnitaire": "单价",
+    "stock": "库存",
+    "valeur": "价值"
   }
 }

@@ -6,7 +6,6 @@
   "nouvelleCommande": "+ New order",
   "accesRefuse": "This page isn't accessible for your role.",
   "chargementCommandes": "Loading orders…",
-
   "statuts": {
     "brouillon": "Draft",
     "confirmee": "Confirmed",
@@ -15,7 +14,6 @@
     "annulee": "Cancelled",
     "toutes": "All"
   },
-
   "recap": {
     "titre": "📦 Pending orders summary — {{unites}} unit(s), {{valeur}}",
     "titreVide": "📦 Pending orders summary",
@@ -24,13 +22,11 @@
     "quantite": "Quantity",
     "valeurEstimee": "Estimated value"
   },
-
   "liste": {
     "articles": "{{n}} item(s)",
     "aucuneCommande": "No orders.",
     "aucuneCommandeStatut": "No orders with status \"{{statut}}\"."
   },
-
   "form": {
     "titre": "New order",
     "client": "Client",
@@ -58,7 +54,6 @@
     "erreurSelectionnerClient": "Select a client.",
     "erreurArticleValide": "Add at least one valid item."
   },
-
   "detail": {
     "chargement": "Loading…",
     "commercial": "Sales rep",
@@ -87,5 +82,13 @@
     "historique": "History",
     "par": "by",
     "impossibleChargerDetail": "Unable to load details."
+  },
+  "export": {
+    "numero": "Number",
+    "client": "Client",
+    "commercial": "Sales rep",
+    "statut": "Status",
+    "montantTtc": "Total amount",
+    "date": "Date"
   }
 }

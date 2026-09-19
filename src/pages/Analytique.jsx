@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF } from '../lib/export'
-import { formatXOF } from '../lib/format'
+import { exporterExcel, exporterPDF, symboleDevise } from '../lib/export'
+import { formatXOF, formatDate } from '../lib/format'
 import i18n from '../lib/i18n'
 
 export default function Analytique() {
@@ -108,11 +108,11 @@ function RecapQuotidien({ entreprise }) {
   }
 
   const COLONNES = [
-    { cle: 'commercial', titre: 'Commercial' },
-    { cle: 'visitesFaites', titre: 'Visites faites', alignDroite: true },
-    { cle: 'visitesPrevues', titre: 'Visites prévues', alignDroite: true },
-    { cle: 'distanceKm', titre: 'Distance (km)', alignDroite: true },
-    { cle: 'rapports', titre: 'Rapports envoyés', alignDroite: true },
+    { cle: 'commercial', titre: t('export.commercial') },
+    { cle: 'visitesFaites', titre: t('export.visitesFaites'), alignDroite: true },
+    { cle: 'visitesPrevues', titre: t('export.visitesPrevues'), alignDroite: true },
+    { cle: 'distanceKm', titre: t('export.distanceKm'), alignDroite: true },
+    { cle: 'rapports', titre: t('export.rapportsEnvoyes'), alignDroite: true },
   ]
 
   return (
@@ -231,9 +231,9 @@ function TauxRotation({ entreprise }) {
   }
 
   const COLONNES = [
-    { cle: 'produit', titre: 'Produit' },
-    { cle: 'observations', titre: 'Observations', alignDroite: true },
-    { cle: 'rotationMoyenne', titre: 'Rotation moy. (unités/jour)', alignDroite: true },
+    { cle: 'produit', titre: t('export.produit') },
+    { cle: 'observations', titre: t('export.observations'), alignDroite: true },
+    { cle: 'rotationMoyenne', titre: t('export.rotationMoyenne'), alignDroite: true },
   ]
 
   return (
@@ -327,9 +327,9 @@ function TauxPresence({ entreprise }) {
   }
 
   const COLONNES = [
-    { cle: 'produit', titre: 'Produit' },
-    { cle: 'visites', titre: 'Visites où relevé', alignDroite: true },
-    { cle: 'taux', titre: 'Taux de présence (%)', alignDroite: true },
+    { cle: 'produit', titre: t('export.produit') },
+    { cle: 'visites', titre: t('export.visitesOuReleve'), alignDroite: true },
+    { cle: 'taux', titre: t('export.tauxPresence'), alignDroite: true },
   ]
 
   return (
@@ -430,7 +430,7 @@ function ManqueAGagner({ entreprise }) {
         numero: c.numero,
         client: c.clients?.nom || '—',
         montant: Number(c.montant_ttc || 0),
-        date: new Date(c.created_at).toLocaleDateString('fr-FR'),
+        date: formatDate(c.created_at),
       }))
     )
 
@@ -473,17 +473,17 @@ function ManqueAGagner({ entreprise }) {
   const enRetard = delais.filter((d) => d.jours > 0).length
 
   const COLONNES_ANNULEES = [
-    { cle: 'numero', titre: 'Commande' },
-    { cle: 'client', titre: 'Client' },
-    { cle: 'date', titre: 'Date' },
-    { cle: 'montant', titre: 'Montant perdu (F CFA)', alignDroite: true },
+    { cle: 'numero', titre: t('export.commande') },
+    { cle: 'client', titre: t('export.client') },
+    { cle: 'date', titre: t('export.date') },
+    { cle: 'montant', titre: `${t('export.montantPerdu')} (${symboleDevise()})`, alignDroite: true },
   ]
   const COLONNES_ECARTS = [
-    { cle: 'numero', titre: 'Commande' },
-    { cle: 'client', titre: 'Client' },
-    { cle: 'produit', titre: 'Produit' },
-    { cle: 'manqueQte', titre: 'Qté manquante', alignDroite: true },
-    { cle: 'manqueValeur', titre: 'Valeur manquante (F CFA)', alignDroite: true },
+    { cle: 'numero', titre: t('export.commande') },
+    { cle: 'client', titre: t('export.client') },
+    { cle: 'produit', titre: t('export.produit') },
+    { cle: 'manqueQte', titre: t('export.qteManquante'), alignDroite: true },
+    { cle: 'manqueValeur', titre: `${t('export.valeurManquante')} (${symboleDevise()})`, alignDroite: true },
   ]
 
   if (chargement) return <p className="text-sm text-petrol-500">{t('chargement')}</p>

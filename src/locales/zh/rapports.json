@@ -20,5 +20,12 @@
   "absent": "无",
   "photos": "照片",
   "rapportVide": "空报告（拜访已确认但无详情）。",
-  "aucunRapport": "目前没有报告。"
+  "aucunRapport": "目前没有报告。",
+  "export": {
+    "client": "客户",
+    "commercial": "销售代表",
+    "date": "日期",
+    "notesRayon": "货架备注",
+    "notesReserve": "库房备注"
+  }
 }

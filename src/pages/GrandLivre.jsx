@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { formatXOF } from '../lib/format'
+import { formatXOF, formatDate } from '../lib/format'
 
 export default function GrandLivre() {
   const { t } = useTranslation('grandlivre')
@@ -150,7 +150,7 @@ export default function GrandLivre() {
             <tbody>
               {mouvements.map((m, i) => (
                 <tr key={i} className="border-b border-line last:border-0">
-                  <td className="py-2 text-petrol-600">{new Date(m.date).toLocaleDateString('fr-FR')}</td>
+                  <td className="py-2 text-petrol-600">{formatDate(m.date)}</td>
                   <td className="py-2">{m.libelle}</td>
                   <td className="py-2 text-right font-mono">{m.debit > 0 ? formatXOF(m.debit) : '—'}</td>
                   <td className="py-2 text-right font-mono text-green-700">{m.credit > 0 ? formatXOF(m.credit) : '—'}</td>

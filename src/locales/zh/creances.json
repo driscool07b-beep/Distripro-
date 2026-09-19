@@ -68,5 +68,14 @@
     "resultatReussis": "✓ 成功导入 {{reussis}} / {{total}} 条余额。",
     "erreurAucuneLigne": "未找到有效行。",
     "erreurFichierIllisible": "文件无法读取：{{message}}"
+  },
+  "export": {
+    "client": "客户",
+    "commercial": "销售代表",
+    "echeance": "到期日",
+    "statut": "状态",
+    "resteDu": "待付余额",
+    "enRetard": "已逾期",
+    "enCours": "进行中"
   }
 }

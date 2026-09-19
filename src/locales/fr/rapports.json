@@ -20,5 +20,12 @@
   "absent": "Absent",
   "photos": "Photos",
   "rapportVide": "Rapport vide (visite validée sans détail).",
-  "aucunRapport": "Aucun rapport pour le moment."
+  "aucunRapport": "Aucun rapport pour le moment.",
+  "export": {
+    "client": "Client",
+    "commercial": "Commercial",
+    "date": "Date",
+    "notesRayon": "Notes rayon",
+    "notesReserve": "Notes réserve"
+  }
 }

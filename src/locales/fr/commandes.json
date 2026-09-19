@@ -6,7 +6,6 @@
   "nouvelleCommande": "+ Nouvelle commande",
   "accesRefuse": "Cette page n'est pas accessible pour votre rôle.",
   "chargementCommandes": "Chargement des commandes…",
-
   "statuts": {
     "brouillon": "Brouillon",
     "confirmee": "Confirmée",
@@ -15,7 +14,6 @@
     "annulee": "Annulée",
     "toutes": "Toutes"
   },
-
   "recap": {
     "titre": "📦 Récap commandes en cours — {{unites}} unité(s), {{valeur}}",
     "titreVide": "📦 Récap commandes en cours",
@@ -24,13 +22,11 @@
     "quantite": "Quantité",
     "valeurEstimee": "Valeur estimée"
   },
-
   "liste": {
     "articles": "{{n}} article(s)",
     "aucuneCommande": "Aucune commande.",
     "aucuneCommandeStatut": "Aucune commande au statut \"{{statut}}\"."
   },
-
   "form": {
     "titre": "Nouvelle commande",
     "client": "Client",
@@ -58,7 +54,6 @@
     "erreurSelectionnerClient": "Sélectionnez un client.",
     "erreurArticleValide": "Ajoutez au moins un article valide."
   },
-
   "detail": {
     "chargement": "Chargement…",
     "commercial": "Commercial",
@@ -87,5 +82,13 @@
     "historique": "Historique",
     "par": "par",
     "impossibleChargerDetail": "Impossible de charger le détail."
+  },
+  "export": {
+    "numero": "Numéro",
+    "client": "Client",
+    "commercial": "Commercial",
+    "statut": "Statut",
+    "montantTtc": "Montant TTC",
+    "date": "Date"
   }
 }

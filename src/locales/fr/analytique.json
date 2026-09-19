@@ -10,7 +10,6 @@
   "excel": "Excel",
   "pdf": "PDF",
   "chargement": "Chargement…",
-
   "recap": {
     "commercial": "Commercial",
     "visitesFaites": "Visites faites",
@@ -19,7 +18,6 @@
     "rapports": "Rapports",
     "aucunCommercial": "Aucun commercial ou aucune tournée ce jour-là."
   },
-
   "rotation": {
     "explication": "Calculé à partir des relevés de stock rayon successifs saisis dans les rapports de visite, chez un même client. Nécessite au moins 2 relevés pour un même couple produit/client.",
     "produit": "Produit",
@@ -27,7 +25,6 @@
     "rotationMoyenne": "Rotation moy. (unités/jour)",
     "pasAssezDeDonnees": "Pas encore assez de données (au moins 2 relevés par produit/client nécessaires)."
   },
-
   "presence": {
     "explication": "Basé uniquement sur les visites où le produit a été explicitement relevé (rayon ou checklist concurrent) — un produit jamais relevé n'entre pas dans le calcul.",
     "nosProduits": "Nos produits",
@@ -36,7 +33,6 @@
     "taux": "Taux",
     "aucuneDonnee": "Aucune donnée."
   },
-
   "manque": {
     "commandesAnnulees": "Commandes annulées",
     "valeurTotalePerdue": "Valeur totale perdue",
@@ -58,5 +54,23 @@
     "ecartVsSouhaite": "Écart vs souhaité",
     "aTemps": "À temps",
     "pasAssezDeDonneesDelai": "Pas assez de données (date de livraison souhaitée requise)."
+  },
+  "export": {
+    "commercial": "Commercial",
+    "visitesFaites": "Visites faites",
+    "visitesPrevues": "Visites prévues",
+    "distanceKm": "Distance (km)",
+    "rapportsEnvoyes": "Rapports envoyés",
+    "produit": "Produit",
+    "observations": "Observations",
+    "rotationMoyenne": "Rotation moy. (unités/jour)",
+    "visitesOuReleve": "Visites où relevé",
+    "tauxPresence": "Taux de présence (%)",
+    "commande": "Commande",
+    "client": "Client",
+    "date": "Date",
+    "montantPerdu": "Montant perdu",
+    "qteManquante": "Qté manquante",
+    "valeurManquante": "Valeur manquante"
   }
 }

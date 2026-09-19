@@ -10,7 +10,6 @@
   "excel": "Excel",
   "pdf": "PDF",
   "chargement": "加载中…",
-
   "recap": {
     "commercial": "销售代表",
     "visitesFaites": "已完成拜访",
@@ -19,7 +18,6 @@
     "rapports": "报告",
     "aucunCommercial": "当天没有销售代表或路线。"
   },
-
   "rotation": {
     "explication": "根据同一客户处连续记录的货架库存数据计算得出。每个产品/客户组合至少需要2次记录。",
     "produit": "产品",
@@ -27,7 +25,6 @@
     "rotationMoyenne": "平均周转率（件/天）",
     "pasAssezDeDonnees": "数据尚不足（每个产品/客户至少需要2次记录）。"
   },
-
   "presence": {
     "explication": "仅基于明确记录了该产品的拜访（货架或竞品清单）——从未被记录的产品不计入统计。",
     "nosProduits": "我方产品",
@@ -36,7 +33,6 @@
     "taux": "比率",
     "aucuneDonnee": "没有数据。"
   },
-
   "manque": {
     "commandesAnnulees": "已取消订单",
     "valeurTotalePerdue": "损失总价值",
@@ -58,5 +54,23 @@
     "ecartVsSouhaite": "与要求日期的差异",
     "aTemps": "准时",
     "pasAssezDeDonneesDelai": "数据不足（缺少要求交付日期）。"
+  },
+  "export": {
+    "commercial": "销售代表",
+    "visitesFaites": "已完成拜访",
+    "visitesPrevues": "计划拜访",
+    "distanceKm": "距离（公里）",
+    "rapportsEnvoyes": "已提交报告",
+    "produit": "产品",
+    "observations": "观察次数",
+    "rotationMoyenne": "平均周转率（件/天）",
+    "visitesOuReleve": "记录次数",
+    "tauxPresence": "铺货率（%）",
+    "commande": "订单",
+    "client": "客户",
+    "date": "日期",
+    "montantPerdu": "损失金额",
+    "qteManquante": "缺失数量",
+    "valeurManquante": "缺失价值"
   }
 }

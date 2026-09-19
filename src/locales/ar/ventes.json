@@ -5,7 +5,6 @@
   "excel": "Excel",
   "pdf": "PDF",
   "nouvelleVente": "+ عملية بيع جديدة",
-
   "filtres": {
     "periode": "الفترة",
     "tout": "الكل",
@@ -21,7 +20,6 @@
     "zoneVille": "المنطقة / المدينة",
     "produit": "المنتج"
   },
-
   "table": {
     "date": "التاريخ",
     "client": "العميل",
@@ -34,7 +32,6 @@
     "annulee": "ملغاة",
     "nbArticles": "{{n}} صنف(أصناف)"
   },
-
   "form": {
     "titre": "عملية بيع جديدة",
     "client": "العميل *",
@@ -82,7 +79,6 @@
     "erreurMotifRemise": "سبب الخصم مطلوب لتطبيقه.",
     "erreurCreationVente": "خطأ (إنشاء عملية البيع)"
   },
-
   "detail": {
     "chargement": "جارٍ التحميل…",
     "detailVente": "تفاصيل عملية البيع",
@@ -116,6 +112,14 @@
     "partagePasDisponible": "المشاركة المباشرة غير متاحة على هذا المتصفح. نزّل ملف PDF ثم شاركه يدويًا (واتساب، بريد إلكتروني…).",
     "titrePartage": "إيصال بيع"
   },
-
-  "accesRefuse": "هذه الصفحة غير متاحة لدورك."
+  "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
+  "export": {
+    "numeroVente": "رقم البيع",
+    "date": "التاريخ",
+    "client": "العميل",
+    "ville": "المدينة",
+    "commercial": "المندوب",
+    "articles": "الأصناف",
+    "total": "المجموع"
+  }
 }

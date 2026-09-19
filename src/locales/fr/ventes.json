@@ -5,7 +5,6 @@
   "excel": "Excel",
   "pdf": "PDF",
   "nouvelleVente": "+ Nouvelle vente",
-
   "filtres": {
     "periode": "Période",
     "tout": "Tout",
@@ -21,7 +20,6 @@
     "zoneVille": "Zone / ville",
     "produit": "Produit"
   },
-
   "table": {
     "date": "Date",
     "client": "Client",
@@ -34,7 +32,6 @@
     "annulee": "Annulée",
     "nbArticles": "{{n}} article(s)"
   },
-
   "form": {
     "titre": "Nouvelle vente",
     "client": "Client *",
@@ -62,7 +59,8 @@
     "venteRealiseePar": "Vente réalisée par (stock terrain)",
     "vousMeme": "Vous-même — débitée de votre stock en main",
     "venteDeBureau": "Vente de bureau (débite le stock magasin)",
-    "montantPayeMaintenant": "Montant payé maintenant",    "laisserVide": "Laissez vide pour un paiement intégral (cash).",
+    "montantPayeMaintenant": "Montant payé maintenant",
+    "laisserVide": "Laissez vide pour un paiement intégral (cash).",
     "totalPlaceholder": "Total : {{montant}}",
     "soldeAPayer": "Solde à payer : {{montant}}",
     "echeanceSolde": "Échéance du solde",
@@ -81,7 +79,6 @@
     "erreurMotifRemise": "Un motif est requis pour appliquer une remise.",
     "erreurCreationVente": "Erreur (création vente)"
   },
-
   "detail": {
     "chargement": "Chargement…",
     "detailVente": "Détail de vente",
@@ -115,6 +112,14 @@
     "partagePasDisponible": "Le partage direct n'est pas disponible sur ce navigateur. Téléchargez le PDF puis partagez-le manuellement (WhatsApp, email…).",
     "titrePartage": "Reçu de vente"
   },
-
-  "accesRefuse": "Cette page n'est pas accessible pour votre rôle."
+  "accesRefuse": "Cette page n'est pas accessible pour votre rôle.",
+  "export": {
+    "numeroVente": "N° vente",
+    "date": "Date",
+    "client": "Client",
+    "ville": "Ville",
+    "commercial": "Commercial",
+    "articles": "Articles",
+    "total": "Total"
+  }
 }

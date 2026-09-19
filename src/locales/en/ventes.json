@@ -5,7 +5,6 @@
   "excel": "Excel",
   "pdf": "PDF",
   "nouvelleVente": "+ New sale",
-
   "filtres": {
     "periode": "Period",
     "tout": "All",
@@ -21,7 +20,6 @@
     "zoneVille": "Zone / city",
     "produit": "Product"
   },
-
   "table": {
     "date": "Date",
     "client": "Client",
@@ -34,7 +32,6 @@
     "annulee": "Cancelled",
     "nbArticles": "{{n}} item(s)"
   },
-
   "form": {
     "titre": "New sale",
     "client": "Client *",
@@ -82,7 +79,6 @@
     "erreurMotifRemise": "A reason is required to apply a discount.",
     "erreurCreationVente": "Error (sale creation)"
   },
-
   "detail": {
     "chargement": "Loading…",
     "detailVente": "Sale details",
@@ -116,6 +112,14 @@
     "partagePasDisponible": "Direct sharing isn't available on this browser. Download the PDF and share it manually (WhatsApp, email…).",
     "titrePartage": "Sales receipt"
   },
-
-  "accesRefuse": "This page isn't accessible for your role."
+  "accesRefuse": "This page isn't accessible for your role.",
+  "export": {
+    "numeroVente": "Sale No.",
+    "date": "Date",
+    "client": "Client",
+    "ville": "City",
+    "commercial": "Sales rep",
+    "articles": "Items",
+    "total": "Total"
+  }
 }

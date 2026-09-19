@@ -28,5 +28,12 @@
   "enregistrement": "Saving…",
   "validerGenererAccuse": "Confirm and generate receipt",
   "erreurSelectionnerCaisse": "Select a cash register.",
-  "erreurMontantValide": "Enter a valid amount."
+  "erreurMontantValide": "Enter a valid amount.",
+  "export": {
+    "commercial": "Sales rep",
+    "ventesCash": "Cash sales",
+    "recouvrement": "Receivables collected",
+    "total": "Total due",
+    "resteAVerser": "Remaining to deposit"
+  }
 }

@@ -735,7 +735,7 @@ export default function Clients() {
                         <div key={t3.id} className="flex items-center justify-between text-xs border border-line rounded px-2 py-1.5">
                           <span>{t3.produits?.nom}</span>
                           <span className="flex items-center gap-2">
-                            <span className="font-mono">{Number(t3.prix_negocie).toLocaleString('fr-FR')} F CFA</span>
+                            <span className="font-mono">{formatXOF(t3.prix_negocie)}</span>
                             <button type="button" onClick={() => retirerTarif(t3.id)} className="text-red-600">✕</button>
                           </span>
                         </div>

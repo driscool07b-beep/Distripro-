@@ -20,5 +20,12 @@
   "absent": "Absent",
   "photos": "Photos",
   "rapportVide": "Empty report (visit confirmed without details).",
-  "aucunRapport": "No reports yet."
+  "aucunRapport": "No reports yet.",
+  "export": {
+    "client": "Client",
+    "commercial": "Sales rep",
+    "date": "Date",
+    "notesRayon": "Shelf notes",
+    "notesReserve": "Back-stock notes"
+  }
 }

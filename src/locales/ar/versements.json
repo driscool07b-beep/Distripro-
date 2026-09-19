@@ -28,5 +28,12 @@
   "enregistrement": "جارٍ الحفظ…",
   "validerGenererAccuse": "تأكيد وإنشاء الإيصال",
   "erreurSelectionnerCaisse": "اختر صندوقًا.",
-  "erreurMontantValide": "أدخل مبلغًا صحيحًا."
+  "erreurMontantValide": "أدخل مبلغًا صحيحًا.",
+  "export": {
+    "commercial": "المندوب",
+    "ventesCash": "المبيعات النقدية",
+    "recouvrement": "تحصيل الديون",
+    "total": "الإجمالي المستحق",
+    "resteAVerser": "المتبقي للإيداع"
+  }
 }

@@ -23,5 +23,11 @@
   "valeur": "价值",
   "total": "总计",
   "aucuneLivraison": "该时间段内没有送货记录。",
-  "inconnu": "未知"
+  "inconnu": "未知",
+  "export": {
+    "magasin": "门店",
+    "produit": "产品",
+    "quantite": "数量",
+    "valeur": "价值"
+  }
 }

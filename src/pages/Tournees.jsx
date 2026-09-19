@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { accesAutorise } from '../lib/accesRole';
 import { traduireErreur } from '../lib/erreurs'
+import { formatDate } from '../lib/format'
 import { ajouterActionEnAttente } from '../lib/offline'
 import i18n from '../lib/i18n'
 
@@ -440,7 +441,7 @@ export default function Tournees() {
         </button>
 
         <h1 className="text-xl font-bold mb-1">
-          {t('detail.titreTourneeDu', { date: new Date(selectedTournee.date_tournee).toLocaleDateString('fr-FR') })}
+          {t('detail.titreTourneeDu', { date: formatDate(selectedTournee.date_tournee) })}
         </h1>
         <p className="text-sm text-gray-500 mb-4">
           {t('detail.compteurVisites', { n: visites.length })}
@@ -612,7 +613,7 @@ export default function Tournees() {
           >
             <div>
               <p className="font-medium">
-                {new Date(tournee.date_tournee).toLocaleDateString('fr-FR')}
+                {formatDate(tournee.date_tournee)}
               </p>
               <p className="text-xs text-gray-500">{t('detail.statutLabel')} : {tournee.statut || t('statutPlanifiee')}</p>
             </div>

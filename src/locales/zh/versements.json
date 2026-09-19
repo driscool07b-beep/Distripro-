@@ -28,5 +28,12 @@
   "enregistrement": "保存中…",
   "validerGenererAccuse": "确认并生成收据",
   "erreurSelectionnerCaisse": "请选择一个收银台。",
-  "erreurMontantValide": "请输入有效金额。"
+  "erreurMontantValide": "请输入有效金额。",
+  "export": {
+    "commercial": "销售代表",
+    "ventesCash": "现金销售",
+    "recouvrement": "应收账款回收",
+    "total": "应存总额",
+    "resteAVerser": "待存余额"
+  }
 }

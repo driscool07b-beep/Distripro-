@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
-import { exporterExcel, exporterPDF, genererFactureProforma } from '../lib/export'
+import { exporterExcel, exporterPDF, genererFactureProforma, symboleDevise } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
 import { traduireErreur } from '../lib/erreurs'
-import { formatXOF } from '../lib/format'
+import { formatXOF, formatDate } from '../lib/format'
 import i18n from '../lib/i18n'
 
 function libellesStatut(t) {
@@ -350,12 +350,12 @@ export default function Commandes() {
   }
 
   const COLONNES_EXPORT = [
-    { cle: 'numero', titre: 'Numéro' },
-    { cle: 'client', titre: 'Client' },
-    { cle: 'commercial', titre: 'Commercial' },
-    { cle: 'statut', titre: 'Statut' },
-    { cle: 'montant', titre: 'Montant TTC (F CFA)', alignDroite: true },
-    { cle: 'date', titre: 'Date' },
+    { cle: 'numero', titre: t('export.numero') },
+    { cle: 'client', titre: t('export.client') },
+    { cle: 'commercial', titre: t('export.commercial') },
+    { cle: 'statut', titre: t('export.statut') },
+    { cle: 'montant', titre: `${t('export.montantTtc')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'date', titre: t('export.date') },
   ]
   function donneesExport() {
     return commandes.map((c) => ({
@@ -364,7 +364,7 @@ export default function Commandes() {
       commercial: c.profils?.nom || '—',
       statut: LIBELLES_STATUT[c.statut] || c.statut,
       montant: Number(c.montant_ttc || 0),
-      date: new Date(c.created_at).toLocaleDateString('fr-FR'),
+      date: formatDate(c.created_at),
     }))
   }
 
@@ -465,7 +465,7 @@ export default function Commandes() {
             <div>
               <p className="font-medium text-sm">{c.numero} — {c.clients?.nom || 'Client'}</p>
               <p className="text-xs text-petrol-500">
-                {t('liste.articles', { n: c.lignes_commande?.length || 0 })} — {new Date(c.created_at).toLocaleDateString('fr-FR')}
+                {t('liste.articles', { n: c.lignes_commande?.length || 0 })} — {formatDate(c.created_at)}
                 {c.profils?.nom ? ` — ${c.profils.nom}` : ''}
               </p>
             </div>
@@ -622,7 +622,7 @@ export default function Commandes() {
                 {detail.commande?.notes && <p className="text-sm text-petrol-600">{detail.commande.notes}</p>}
                 {detail.commande?.date_livraison_souhaitee && (
                   <p className="text-xs text-petrol-500">
-                    {t('detail.livraisonSouhaitee', { date: new Date(detail.commande.date_livraison_souhaitee).toLocaleDateString('fr-FR') })}
+                    {t('detail.livraisonSouhaitee', { date: formatDate(detail.commande.date_livraison_souhaitee) })}
                   </p>
                 )}
 

@@ -10,17 +10,14 @@
   "pdf": "PDF",
   "importer": "Importer",
   "nouveauProduit": "+ Nouveau produit",
-
   "transfertsEnAttente": "{{n}} transfert(s) en attente de réception",
   "unites": "unité(s)",
   "envoyePar": "envoyé par",
   "le": "le",
   "receptionner": "Réceptionner",
-
   "rechercherProduit": "Rechercher un produit…",
   "filtreAlertes": "Filtré : produits en alerte de stock",
   "retirerFiltre": "Retirer le filtre",
-
   "table": {
     "produit": "Produit",
     "categorie": "Catégorie",
@@ -35,7 +32,6 @@
     "modifier": "Modifier",
     "historique": "Historique"
   },
-
   "formProduit": {
     "titreModifier": "Modifier le produit",
     "titreNouveau": "Nouveau produit",
@@ -54,7 +50,6 @@
     "erreurTauxTva": "Indiquez le taux de TVA.",
     "erreurNomPrix": "Le nom et le prix unitaire sont requis."
   },
-
   "mouvement": {
     "titre": "Ajuster le stock",
     "avertissementTransfert": "⚠️ Pour déplacer du stock vers un autre dépôt, n'utilisez pas \"Sortie\" — utilisez \"Transférer entre dépôts\", qui trace le mouvement et exige une confirmation de réception à l'arrivée.",
@@ -85,7 +80,6 @@
     "erreurStockInsuffisant": "Stock insuffisant pour cette sortie.",
     "erreurPlusieursDepots": "Plusieurs dépôts existent — cette fonctionnalité de sélection arrive bientôt, contactez un administrateur."
   },
-
   "transfert": {
     "titre": "Transférer entre dépôts",
     "stockTotal": "stock total",
@@ -107,7 +101,6 @@
     "erreurJustificatifObligatoire": "Un justificatif (photo ou PDF) est obligatoire pour tout transfert de stock.",
     "erreurStockInsuffisant": "Stock insuffisant dans le dépôt source."
   },
-
   "reception": {
     "titre": "Réceptionner le transfert",
     "quantiteEnvoyee": "Quantité envoyée",
@@ -123,7 +116,6 @@
     "erreurQuantite": "Indiquez la quantité réellement reçue (0 si rien n'est arrivé).",
     "erreurJustificatifObligatoire": "Un justificatif (photo ou PDF) est obligatoire pour valider une réception."
   },
-
   "import": {
     "titre": "Importer des produits (Excel)",
     "consigne": "Téléchargez le modèle, remplissez-le en gardant l'ordre des colonnes, puis importez-le.",
@@ -140,10 +132,16 @@
     "erreurAucuneLigne": "Aucune ligne valide (nom et prix de vente obligatoires).",
     "erreurFichierIllisible": "Fichier illisible : {{message}}"
   },
-
   "historiquePrix": {
     "titre": "Historique des prix",
     "aucunChangement": "Aucun changement de prix enregistré.",
     "fermer": "Fermer"
+  },
+  "export": {
+    "produit": "Produit",
+    "categorie": "Catégorie",
+    "prixUnitaire": "Prix unitaire",
+    "stock": "Stock",
+    "valeur": "Valeur"
   }
 }

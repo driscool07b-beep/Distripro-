@@ -23,5 +23,11 @@
   "valeur": "القيمة",
   "total": "المجموع",
   "aucuneLivraison": "لا توجد تسليمات خلال هذه الفترة.",
-  "inconnu": "غير معروف"
+  "inconnu": "غير معروف",
+  "export": {
+    "magasin": "المتجر",
+    "produit": "المنتج",
+    "quantite": "الكمية",
+    "valeur": "القيمة"
+  }
 }

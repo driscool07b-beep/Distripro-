@@ -10,17 +10,14 @@
   "pdf": "PDF",
   "importer": "استيراد",
   "nouveauProduit": "+ منتج جديد",
-
   "transfertsEnAttente": "{{n}} تحويل(ات) بانتظار الاستلام",
   "unites": "وحدة(وحدات)",
   "envoyePar": "أُرسل بواسطة",
   "le": "بتاريخ",
   "receptionner": "استلام",
-
   "rechercherProduit": "بحث عن منتج…",
   "filtreAlertes": "مُصفّى: منتجات في حالة تنبيه مخزون",
   "retirerFiltre": "إزالة الفلتر",
-
   "table": {
     "produit": "المنتج",
     "categorie": "الفئة",
@@ -35,7 +32,6 @@
     "modifier": "تعديل",
     "historique": "السجل"
   },
-
   "formProduit": {
     "titreModifier": "تعديل المنتج",
     "titreNouveau": "منتج جديد",
@@ -54,7 +50,6 @@
     "erreurTauxTva": "أدخل نسبة الضريبة.",
     "erreurNomPrix": "الاسم وسعر الوحدة مطلوبان."
   },
-
   "mouvement": {
     "titre": "تعديل المخزون",
     "avertissementTransfert": "⚠️ لنقل مخزون إلى مستودع آخر، لا تستخدم \"صادر\" — استخدم \"تحويل بين المستودعات\"، الذي يوثّق الحركة ويتطلب تأكيد الاستلام عند الوصول.",
@@ -85,7 +80,6 @@
     "erreurStockInsuffisant": "المخزون غير كافٍ لهذا الصرف.",
     "erreurPlusieursDepots": "توجد عدة مستودعات — ميزة الاختيار هذه ستتوفر قريبًا، تواصل مع مسؤول."
   },
-
   "transfert": {
     "titre": "تحويل بين المستودعات",
     "stockTotal": "المخزون الإجمالي",
@@ -107,7 +101,6 @@
     "erreurJustificatifObligatoire": "مستند داعم (صورة أو PDF) إلزامي لأي تحويل مخزون.",
     "erreurStockInsuffisant": "المخزون غير كافٍ في المستودع المصدر."
   },
-
   "reception": {
     "titre": "استلام التحويل",
     "quantiteEnvoyee": "الكمية المرسلة",
@@ -123,7 +116,6 @@
     "erreurQuantite": "أدخل الكمية المستلمة فعليًا (0 إذا لم يصل شيء).",
     "erreurJustificatifObligatoire": "مستند داعم (صورة أو PDF) إلزامي لتأكيد الاستلام."
   },
-
   "import": {
     "titre": "استيراد منتجات (Excel)",
     "consigne": "قم بتنزيل النموذج، واملأه مع الحفاظ على ترتيب الأعمدة، ثم استورده.",
@@ -140,10 +132,16 @@
     "erreurAucuneLigne": "لا يوجد سطر صالح (الاسم وسعر البيع إلزاميان).",
     "erreurFichierIllisible": "ملف غير قابل للقراءة: {{message}}"
   },
-
   "historiquePrix": {
     "titre": "سجل الأسعار",
     "aucunChangement": "لا يوجد تغيير في الأسعار مسجل.",
     "fermer": "إغلاق"
+  },
+  "export": {
+    "produit": "المنتج",
+    "categorie": "الفئة",
+    "prixUnitaire": "سعر الوحدة",
+    "stock": "المخزون",
+    "valeur": "القيمة"
   }
 }

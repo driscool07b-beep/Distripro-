@@ -68,5 +68,14 @@
     "resultatReussis": "✓ تم استيراد {{reussis}} رصيد(أرصدة) من أصل {{total}}.",
     "erreurAucuneLigne": "لم يتم العثور على أي سطر صالح.",
     "erreurFichierIllisible": "ملف غير قابل للقراءة: {{message}}"
+  },
+  "export": {
+    "client": "العميل",
+    "commercial": "المندوب",
+    "echeance": "تاريخ الاستحقاق",
+    "statut": "الحالة",
+    "resteDu": "المتبقي",
+    "enRetard": "متأخر",
+    "enCours": "جارٍ"
   }
 }

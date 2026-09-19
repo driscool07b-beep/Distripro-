@@ -68,5 +68,14 @@
     "resultatReussis": "✓ {{reussis}} balance(s) imported out of {{total}}.",
     "erreurAucuneLigne": "No valid rows found.",
     "erreurFichierIllisible": "Unreadable file: {{message}}"
+  },
+  "export": {
+    "client": "Client",
+    "commercial": "Sales rep",
+    "echeance": "Due date",
+    "statut": "Status",
+    "resteDu": "Balance due",
+    "enRetard": "Overdue",
+    "enCours": "Current"
   }
 }

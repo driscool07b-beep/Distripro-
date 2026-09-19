@@ -10,17 +10,14 @@
   "pdf": "PDF",
   "importer": "Import",
   "nouveauProduit": "+ New product",
-
   "transfertsEnAttente": "{{n}} transfer(s) awaiting receipt",
   "unites": "unit(s)",
   "envoyePar": "sent by",
   "le": "on",
   "receptionner": "Receive",
-
   "rechercherProduit": "Search a product…",
   "filtreAlertes": "Filtered: products in stock alert",
   "retirerFiltre": "Remove filter",
-
   "table": {
     "produit": "Product",
     "categorie": "Category",
@@ -35,7 +32,6 @@
     "modifier": "Edit",
     "historique": "History"
   },
-
   "formProduit": {
     "titreModifier": "Edit product",
     "titreNouveau": "New product",
@@ -54,7 +50,6 @@
     "erreurTauxTva": "Enter the VAT rate.",
     "erreurNomPrix": "Name and unit price are required."
   },
-
   "mouvement": {
     "titre": "Adjust stock",
     "avertissementTransfert": "⚠️ To move stock to another warehouse, don't use \"Out\" — use \"Transfer between warehouses\", which tracks the movement and requires a receipt confirmation on arrival.",
@@ -85,7 +80,6 @@
     "erreurStockInsuffisant": "Insufficient stock for this outgoing movement.",
     "erreurPlusieursDepots": "Multiple warehouses exist — this selection feature is coming soon, contact an administrator."
   },
-
   "transfert": {
     "titre": "Transfer between warehouses",
     "stockTotal": "total stock",
@@ -107,7 +101,6 @@
     "erreurJustificatifObligatoire": "A supporting document (photo or PDF) is required for any stock transfer.",
     "erreurStockInsuffisant": "Insufficient stock in the source warehouse."
   },
-
   "reception": {
     "titre": "Receive transfer",
     "quantiteEnvoyee": "Quantity sent",
@@ -123,7 +116,6 @@
     "erreurQuantite": "Enter the quantity actually received (0 if nothing arrived).",
     "erreurJustificatifObligatoire": "A supporting document (photo or PDF) is required to confirm receipt."
   },
-
   "import": {
     "titre": "Import products (Excel)",
     "consigne": "Download the template, fill it in keeping the column order, then import it.",
@@ -140,10 +132,16 @@
     "erreurAucuneLigne": "No valid rows (name and sale price are required).",
     "erreurFichierIllisible": "Unreadable file: {{message}}"
   },
-
   "historiquePrix": {
     "titre": "Price history",
     "aucunChangement": "No price change recorded.",
     "fermer": "Close"
+  },
+  "export": {
+    "produit": "Product",
+    "categorie": "Category",
+    "prixUnitaire": "Unit price",
+    "stock": "Stock",
+    "valeur": "Value"
   }
 }

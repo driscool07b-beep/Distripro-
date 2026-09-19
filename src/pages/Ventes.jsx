@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
-import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, genererFactureAvoir, formatMontantPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, genererFactureAvoir, formatMontantPDF, symboleDevise } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
 import { traduireErreur } from '../lib/erreurs'
 import { ajouterActionEnAttente } from '../lib/offline'
-import { formatXOF } from '../lib/format'
+import { formatXOF, formatDate } from '../lib/format'
 import i18n from '../lib/i18n'
 
 export default function Ventes() {
@@ -380,18 +380,18 @@ export default function Ventes() {
   const totalFiltre = ventes.reduce((s, v) => (v.statut === 'annulee' ? s : s + Number(v.total || 0)), 0)
 
   const COLONNES_EXPORT = [
-    { cle: 'numero', titre: 'N° vente' },
-    { cle: 'date', titre: 'Date' },
-    { cle: 'client', titre: 'Client' },
-    { cle: 'ville', titre: 'Ville' },
-    { cle: 'commercial', titre: 'Commercial' },
-    { cle: 'articles', titre: 'Articles', alignDroite: true },
-    { cle: 'total', titre: 'Total (F CFA)', alignDroite: true },
+    { cle: 'numero', titre: t('export.numeroVente') },
+    { cle: 'date', titre: t('export.date') },
+    { cle: 'client', titre: t('export.client') },
+    { cle: 'ville', titre: t('export.ville') },
+    { cle: 'commercial', titre: t('export.commercial') },
+    { cle: 'articles', titre: t('export.articles'), alignDroite: true },
+    { cle: 'total', titre: `${t('export.total')} (${symboleDevise()})`, alignDroite: true },
   ]
   function donneesExport() {
     return ventes.map((v) => ({
       numero: v.numero_vente || '—',
-      date: new Date(v.created_at).toLocaleDateString('fr-FR'),
+      date: formatDate(v.created_at),
       client: v.clients?.nom || '—',
       ville: v.clients?.ville || '—',
       commercial: v.profils?.nom || '—',

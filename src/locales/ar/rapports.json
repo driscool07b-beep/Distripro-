@@ -20,5 +20,12 @@
   "absent": "غير موجود",
   "photos": "الصور",
   "rapportVide": "تقرير فارغ (تم تأكيد الزيارة دون تفاصيل).",
-  "aucunRapport": "لا يوجد تقرير حاليًا."
+  "aucunRapport": "لا يوجد تقرير حاليًا.",
+  "export": {
+    "client": "العميل",
+    "commercial": "المندوب",
+    "date": "التاريخ",
+    "notesRayon": "ملاحظات الرف",
+    "notesReserve": "ملاحظات المستودع"
+  }
 }
