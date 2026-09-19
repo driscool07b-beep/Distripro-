@@ -86,7 +86,29 @@
     "inviteRejoindre": "Invité(e) à rejoindre une équipe ?",
     "creerCompte": "Créer votre compte",
     "nouvelleEntreprise": "Nouvelle entreprise ?",
-    "creerEspace": "Créer votre espace DistribPro"
+    "creerEspace": "Créer votre espace DistribPro",
+    "motDePasseOublie": "Mot de passe oublié ?",
+    "oubli": {
+      "titre": "Réinitialiser votre mot de passe",
+      "sousTitre": "Indiquez votre email — si un compte existe, un lien de réinitialisation vous sera envoyé.",
+      "retour": "Retour",
+      "envoyer": "Envoyer le lien",
+      "envoye": "Si un compte existe avec cette adresse, un email vient de vous être envoyé — vérifiez aussi vos spams.",
+      "erreur": "Une erreur est survenue. Réessayez dans quelques instants."
+    },
+    "reinitialisation": {
+      "titre": "Nouveau mot de passe",
+      "sousTitre": "Choisissez votre nouveau mot de passe.",
+      "chargement": "Vérification du lien…",
+      "nouveauMdp": "Nouveau mot de passe",
+      "confirmerMdp": "Confirmer le mot de passe",
+      "erreurLongueur": "Le mot de passe doit contenir au moins 6 caractères.",
+      "erreurConfirmation": "Les mots de passe ne correspondent pas.",
+      "erreurGenerique": "Ce lien n'est plus valide ou a expiré — redemandez-en un depuis la page de connexion.",
+      "enCours": "Enregistrement…",
+      "valider": "Valider",
+      "succes": "Mot de passe modifié — redirection en cours…"
+    }
   },
   "inscription": {
     "mdpMinLength": "Le mot de passe doit contenir au moins 6 caractères.",

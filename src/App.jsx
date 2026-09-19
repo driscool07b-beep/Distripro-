@@ -5,6 +5,7 @@ import { direction } from './lib/i18n'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
+import ReinitialiserMotDePasse from './pages/ReinitialiserMotDePasse'
 import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
 import Stock from './pages/Stock'
@@ -46,6 +47,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/connexion" element={<Login />} />
+      <Route path="/reinitialiser-mot-de-passe" element={<ReinitialiserMotDePasse />} />
       <Route path="/inscription" element={<Inscription />} />
       <Route path="/creer-entreprise" element={<CreerEntreprise />} />
 

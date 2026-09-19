@@ -86,7 +86,29 @@
     "inviteRejoindre": "Invited to join a team?",
     "creerCompte": "Create your account",
     "nouvelleEntreprise": "New company?",
-    "creerEspace": "Create your DistribPro space"
+    "creerEspace": "Create your DistribPro space",
+    "motDePasseOublie": "Forgot password?",
+    "oubli": {
+      "titre": "Reset your password",
+      "sousTitre": "Enter your email — if an account exists, a reset link will be sent to you.",
+      "retour": "Back",
+      "envoyer": "Send link",
+      "envoye": "If an account exists with this address, an email was just sent — check your spam folder too.",
+      "erreur": "Something went wrong. Please try again shortly."
+    },
+    "reinitialisation": {
+      "titre": "New password",
+      "sousTitre": "Choose your new password.",
+      "chargement": "Verifying link…",
+      "nouveauMdp": "New password",
+      "confirmerMdp": "Confirm password",
+      "erreurLongueur": "The password must be at least 6 characters.",
+      "erreurConfirmation": "The passwords don't match.",
+      "erreurGenerique": "This link is no longer valid or has expired — request a new one from the login page.",
+      "enCours": "Saving…",
+      "valider": "Confirm",
+      "succes": "Password changed — redirecting…"
+    }
   },
   "inscription": {
     "mdpMinLength": "Password must be at least 6 characters long.",

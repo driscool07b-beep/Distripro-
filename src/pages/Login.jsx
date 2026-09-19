@@ -15,6 +15,10 @@ export default function Login() {
   const [erreur, setErreur] = useState('')
   const [chargement, setChargement] = useState(false)
   const [fondEcran, setFondEcran] = useState(illustrationParDefaut)
+  const [modeOubli, setModeOubli] = useState(false)
+  const [emailOubli, setEmailOubli] = useState('')
+  const [envoiOubli, setEnvoiOubli] = useState(false)
+  const [messageOubli, setMessageOubli] = useState('')
 
   useEffect(() => {
     const { data } = supabase.storage.from('plateforme-publique').getPublicUrl('connexion-fond.jpg')
@@ -39,6 +43,19 @@ export default function Login() {
     }
   }
 
+  async function envoyerLienReinitialisation(e) {
+    e.preventDefault()
+    setMessageOubli('')
+    setEnvoiOubli(true)
+    const { error } = await supabase.auth.resetPasswordForEmail(emailOubli, {
+      redirectTo: `${window.location.origin}/reinitialiser-mot-de-passe`,
+    })
+    setEnvoiOubli(false)
+    // Message identique en succès ou en erreur : on ne confirme jamais
+    // si un compte existe ou non pour cette adresse, par sécurité.
+    setMessageOubli(error ? t('connexion.oubli.erreur') : t('connexion.oubli.envoye'))
+  }
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-petrol-950">
       <img
@@ -59,39 +76,81 @@ export default function Login() {
             <div className="text-sm text-white/70 mt-1 drop-shadow-sm">{t('connexion.tagline')}</div>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-6 space-y-4">
-            <div>
-              <label className="label">{t('connexion.email')}</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-field"
-                placeholder="vous@entreprise.com"
-                autoComplete="email"
-              />
-            </div>
-            <div>
-              <label className="label">{t('connexion.motDePasse')}</label>
-              <ChampMotDePasse
-                value={motDePasse}
-                onChange={(e) => setMotDePasse(e.target.value)}
-                placeholder="••••••••"
-                autoComplete="current-password"
-              />
-            </div>
-
-            {erreur && (
-              <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-                {erreur}
+          {!modeOubli ? (
+            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-6 space-y-4">
+              <div>
+                <label className="label">{t('connexion.email')}</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input-field"
+                  placeholder="vous@entreprise.com"
+                  autoComplete="email"
+                />
               </div>
-            )}
+              <div>
+                <div className="flex items-center justify-between">
+                  <label className="label mb-0">{t('connexion.motDePasse')}</label>
+                  <button
+                    type="button"
+                    onClick={() => { setModeOubli(true); setEmailOubli(email); setMessageOubli('') }}
+                    className="text-xs text-petrol-600 underline mb-1"
+                  >
+                    {t('connexion.motDePasseOublie')}
+                  </button>
+                </div>
+                <ChampMotDePasse
+                  value={motDePasse}
+                  onChange={(e) => setMotDePasse(e.target.value)}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+              </div>
 
-            <button type="submit" disabled={chargement} className="btn-primary w-full">
-              {chargement ? t('connexion.enCours') : t('connexion.seConnecter')}
-            </button>
-          </form>
+              {erreur && (
+                <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                  {erreur}
+                </div>
+              )}
+
+              <button type="submit" disabled={chargement} className="btn-primary w-full">
+                {chargement ? t('connexion.enCours') : t('connexion.seConnecter')}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={envoyerLienReinitialisation} className="bg-white rounded-2xl shadow-xl p-6 space-y-4">
+              <div>
+                <h2 className="font-semibold text-petrol-900">{t('connexion.oubli.titre')}</h2>
+                <p className="text-xs text-petrol-500 mt-1">{t('connexion.oubli.sousTitre')}</p>
+              </div>
+              <div>
+                <label className="label">{t('connexion.email')}</label>
+                <input
+                  type="email"
+                  required
+                  value={emailOubli}
+                  onChange={(e) => setEmailOubli(e.target.value)}
+                  className="input-field"
+                  placeholder="vous@entreprise.com"
+                />
+              </div>
+              {messageOubli && (
+                <div className="text-sm text-petrol-700 bg-canvas border border-line rounded-lg px-3 py-2">
+                  {messageOubli}
+                </div>
+              )}
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setModeOubli(false)} className="btn-secondary flex-1">
+                  {t('connexion.oubli.retour')}
+                </button>
+                <button type="submit" disabled={envoiOubli} className="btn-primary flex-1">
+                  {envoiOubli ? t('connexion.enCours') : t('connexion.oubli.envoyer')}
+                </button>
+              </div>
+            </form>
+          )}
 
           <p className="text-center text-xs text-white/70 mt-6 drop-shadow-sm">
             {t('connexion.inviteRejoindre')}{' '}

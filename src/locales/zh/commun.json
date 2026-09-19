@@ -86,7 +86,29 @@
     "inviteRejoindre": "受邀加入团队？",
     "creerCompte": "创建您的账户",
     "nouvelleEntreprise": "新公司？",
-    "creerEspace": "创建您的 DistribPro 空间"
+    "creerEspace": "创建您的 DistribPro 空间",
+    "motDePasseOublie": "忘记密码？",
+    "oubli": {
+      "titre": "重置您的密码",
+      "sousTitre": "请输入您的电子邮件——如果账户存在，重置链接将发送给您。",
+      "retour": "返回",
+      "envoyer": "发送链接",
+      "envoye": "如果该地址存在账户，一封邮件已发送——请同时查看垃圾邮件文件夹。",
+      "erreur": "出现错误，请稍后重试。"
+    },
+    "reinitialisation": {
+      "titre": "新密码",
+      "sousTitre": "请设置您的新密码。",
+      "chargement": "正在验证链接…",
+      "nouveauMdp": "新密码",
+      "confirmerMdp": "确认密码",
+      "erreurLongueur": "密码必须至少包含6个字符。",
+      "erreurConfirmation": "两次输入的密码不一致。",
+      "erreurGenerique": "此链接已失效或已过期——请从登录页面重新申请。",
+      "enCours": "保存中…",
+      "valider": "确认",
+      "succes": "密码已更改——正在跳转…"
+    }
   },
   "inscription": {
     "mdpMinLength": "密码必须至少包含6个字符。",
