@@ -12,6 +12,10 @@
           "r": "Use the email and password your administrator gave you. If you were invited, you must first create your account via the invitation link received by email, using exactly the same email address you were invited on."
         },
         {
+          "q": "I forgot my password, how do I recover it?",
+          "r": "On the login screen, click 'Forgot password?', enter your email — if an account exists, you'll receive a link to choose a new password (check your spam folder too). If that's not enough, an administrator can also reset your password from Team."
+        },
+        {
           "q": "What are the different roles and what do they give access to?",
           "r": "Admin: full access, including Settings and Billing. Manager: nearly everything except a few sensitive settings. Sales rep: sales, routes, their own clients and the stock they carry. Accountant: sales, receivables, deposits, cash journal. Stock manager: products, movements, transfers. Collection agent: receivables only. Any user can also be given extended or read-only access, configurable by an admin in Team."
         },
@@ -122,7 +126,7 @@
         },
         {
           "q": "Does it work without network?",
-          "r": "Yes, for a sales rep: creating a sale (from their own stock), confirming a visit, and submitting a report all work offline — everything syncs automatically once the connection returns. A banner at the top of the app shows the number of pending actions."
+          "r": "Yes, for a sales rep: creating a sale (from their own stock), confirming a visit, submitting a report, and recording a payment received on a receivable all work offline — collection also works offline for a collection agent. Everything syncs automatically once the connection returns. A banner at the top of the app shows the number of pending actions."
         }
       ]
     },
@@ -206,7 +210,7 @@
       "items": [
         {
           "q": "How do I set a sales target?",
-          "r": "Targets → '+ New target' — for a sales rep, a team leader, or leadership, over a given period, in amount and/or quantity of a specific product."
+          "r": "Targets → '+ New target' — for a sales rep, a team leader, leadership, or the office (sales made from the warehouse, not attributed to a sales rep), over a given period, in amount and/or quantity of a specific product."
         },
         {
           "q": "How is a team leader's achieved target calculated?",
@@ -215,6 +219,19 @@
         {
           "q": "What does the Analytics page show?",
           "r": "A daily route summary, product turnover rate (based on successive visit reports), shelf presence rate versus competitors, and cancelled or partially delivered orders (lost revenue)."
+        }
+      ]
+    },
+    {
+      "titre": "Dashboard",
+      "items": [
+        {
+          "q": "What does an admin, manager, or accountant see on the Dashboard that other roles don't?",
+          "r": "The balance of each active cash register (clickable to go straight to the Cash journal), a revenue breakdown pie chart — by product, by city, or by client group, over a chosen period (month, quarter, half-year, year, or custom dates) — and the sum of company-wide targets (this month and this year)."
+        },
+        {
+          "q": "How does the inactive sales rep alert work?",
+          "r": "Visible to admin and manager — lists sales reps who haven't logged into the app for more than 24h, with the exact time elapsed since their last access (in days and hours)."
         }
       ]
     },

@@ -12,6 +12,10 @@
           "r": "Utilise l'email et le mot de passe que ton administrateur t'a communiqués. Si tu as été invité, tu dois d'abord créer ton compte via le lien d'invitation reçu par email, avec exactement la même adresse email que celle sur laquelle tu as été invité."
         },
         {
+          "q": "J'ai oublié mon mot de passe, comment le récupérer ?",
+          "r": "Sur l'écran de connexion, clique sur 'Mot de passe oublié ?', indique ton email — si un compte existe, tu recevras un lien pour choisir un nouveau mot de passe (vérifie aussi tes spams). Si ça ne suffit pas, un administrateur peut aussi réinitialiser ton mot de passe depuis Équipe."
+        },
+        {
           "q": "Quels sont les différents rôles et à quoi donnent-ils accès ?",
           "r": "Admin : accès total, y compris Paramètres et Facturation. Manager : quasiment tout sauf certains réglages sensibles. Commercial : ventes, tournées, ses propres clients et son stock porté. Comptable : ventes, créances, versements, journal de caisse. Gestionnaire de stock : produits, mouvements, transferts. Agent de recouvrement : créances uniquement. Un même utilisateur peut aussi avoir un accès élargi ou en lecture seule, réglable par un admin dans Équipe."
         },
@@ -122,7 +126,7 @@
         },
         {
           "q": "Est-ce que ça marche sans réseau ?",
-          "r": "Oui, pour un commercial : créer une vente (depuis son propre stock), valider une visite, et envoyer un rapport fonctionnent hors-ligne — tout se synchronise automatiquement dès que la connexion revient. Un bandeau en haut de l'app indique le nombre d'actions en attente."
+          "r": "Oui, pour un commercial : créer une vente (depuis son propre stock), valider une visite, envoyer un rapport, et enregistrer un paiement reçu sur une créance fonctionnent hors-ligne — le recouvrement fonctionne aussi hors-ligne pour un agent de recouvrement. Tout se synchronise automatiquement dès que la connexion revient. Un bandeau en haut de l'app indique le nombre d'actions en attente."
         }
       ]
     },
@@ -206,7 +210,7 @@
       "items": [
         {
           "q": "Comment fixer un objectif de vente ?",
-          "r": "Objectifs → '+ Nouvel objectif' — pour un commercial, un chef d'équipe, ou la direction, sur une période donnée, en montant et/ou en quantité d'un produit précis."
+          "r": "Objectifs → '+ Nouvel objectif' — pour un commercial, un chef d'équipe, la direction, ou le bureau (les ventes réalisées depuis le dépôt, non attribuées à un commercial), sur une période donnée, en montant et/ou en quantité d'un produit précis."
         },
         {
           "q": "Comment est calculé l'objectif réalisé d'un chef d'équipe ?",
@@ -215,6 +219,19 @@
         {
           "q": "Que montre la page Analytique ?",
           "r": "Récap quotidien des tournées, taux de rotation des produits (basé sur les rapports de visite successifs), taux de présence en rayon face à la concurrence, et les commandes annulées ou partiellement livrées (manque à gagner)."
+        }
+      ]
+    },
+    {
+      "titre": "Dashboard",
+      "items": [
+        {
+          "q": "Que voit un admin, un manager ou un comptable sur le Dashboard que les autres ne voient pas ?",
+          "r": "Le solde de chaque caisse active (cliquable pour aller directement au Journal de caisse), un camembert de répartition du chiffre d'affaires — au choix par produit, par ville, ou par groupe de client, sur une période au choix (mois, trimestre, semestre, année, ou dates personnalisées) — et la somme des objectifs de toute l'entreprise (ce mois et cette année)."
+        },
+        {
+          "q": "Comment fonctionne l'alerte de commerciaux inactifs ?",
+          "r": "Visible par l'admin et le manager — liste les commerciaux qui ne se sont pas connectés à l'app depuis plus de 24h, avec la durée exacte écoulée depuis leur dernier accès (en jours et heures)."
         }
       ]
     },
