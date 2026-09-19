@@ -50,7 +50,9 @@
     "valider": "Confirm",
     "impossibleChargerDetail": "Unable to load details.",
     "erreurMontantValide": "Enter a valid amount.",
-    "erreurMontantDepasseSolde": "The amount exceeds the balance due ({{solde}})."
+    "erreurMontantDepasseSolde": "The amount exceeds the balance due ({{solde}}).",
+    "banqueLabel": "Which bank? (optional)",
+    "banqueNonPrecisee": "Not specified"
   },
   "import": {
     "titre": "Import receivable balances",

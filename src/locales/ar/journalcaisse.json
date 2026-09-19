@@ -112,5 +112,7 @@
   "imprimer": "🖨️ طباعة",
   "grandLivreTitrePdf": "دفتر الأستاذ — {{nom}}",
   "periodePdf": "من {{debut}} إلى {{fin}}",
-  "soldeFinalPdf": "الرصيد النهائي"
+  "soldeFinalPdf": "الرصيد النهائي",
+  "depuisBanque": "من {{nom}}",
+  "aucuneBanqueCreee": "لم يتم إنشاء أي بنك بعد — أضف واحدًا من قائمة البنوك."
 }

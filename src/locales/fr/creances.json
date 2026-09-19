@@ -50,7 +50,9 @@
     "valider": "Valider",
     "impossibleChargerDetail": "Impossible de charger le détail.",
     "erreurMontantValide": "Indiquez un montant valide.",
-    "erreurMontantDepasseSolde": "Le montant dépasse le solde restant dû ({{solde}})."
+    "erreurMontantDepasseSolde": "Le montant dépasse le solde restant dû ({{solde}}).",
+    "banqueLabel": "Sur quelle banque ? (optionnel)",
+    "banqueNonPrecisee": "Non précisé"
   },
   "import": {
     "titre": "Importer des soldes de créances",

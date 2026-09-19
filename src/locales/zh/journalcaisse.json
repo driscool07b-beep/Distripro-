@@ -112,5 +112,7 @@
   "imprimer": "🖨️ 打印",
   "grandLivreTitrePdf": "总账 — {{nom}}",
   "periodePdf": "从 {{debut}} 至 {{fin}}",
-  "soldeFinalPdf": "最终余额"
+  "soldeFinalPdf": "最终余额",
+  "depuisBanque": "来自 {{nom}}",
+  "aucuneBanqueCreee": "尚未创建银行账户——请在「银行」菜单中添加。"
 }

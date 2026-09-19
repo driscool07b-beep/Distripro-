@@ -34,6 +34,8 @@ export default function Creances() {
   const [chargementDetail, setChargementDetail] = useState(false)
   const [montantPaiement, setMontantPaiement] = useState('')
   const [modePaiementCreance, setModePaiementCreance] = useState('espece')
+  const [banqueReglementId, setBanqueReglementId] = useState('')
+  const [banques, setBanques] = useState([])
   const [commercialRecouvrement, setCommercialRecouvrement] = useState('')
   const [commerciaux, setCommerciaux] = useState([])
   const [envoiPaiement, setEnvoiPaiement] = useState(false)
@@ -45,6 +47,7 @@ export default function Creances() {
       chargerAvancesCommandes()
     }
     supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom').then(({ data }) => setCommerciaux(data || []))
+    supabase.from('banques').select('id, nom').eq('actif', true).order('nom').then(({ data }) => setBanques(data || []))
   }, [profil])
 
   async function chargerAvancesCommandes() {
@@ -272,6 +275,7 @@ export default function Creances() {
       p_montant: montant,
       p_mode: modePaiementCreance,
       p_commercial_id: commercialRecouvrement || null,
+      p_banque_id: ['cheque', 'virement'].includes(modePaiementCreance) ? (banqueReglementId || null) : null,
     }
 
     // Hors-ligne : uniquement pour un commercial ou un agent de
@@ -288,6 +292,7 @@ export default function Creances() {
       )
       setVenteOuverte(null)
       setMontantPaiement('')
+      setBanqueReglementId('')
       chargerCreances()
       return
     }
@@ -306,6 +311,7 @@ export default function Creances() {
         )
         setVenteOuverte(null)
         setMontantPaiement('')
+        setBanqueReglementId('')
         chargerCreances()
         return
       }
@@ -332,6 +338,7 @@ export default function Creances() {
       receptionnePar: nomRecouvrement,
     })
     doc.save(`${reglement?.numero || 'recu-paiement-' + venteOuverte.slice(0, 8)}.pdf`)
+    setBanqueReglementId('')
 
     await ouvrirDetail(venteOuverte)
     chargerCreances()
@@ -566,6 +573,15 @@ export default function Creances() {
                         <option value="virement">{t('detail.virement')}</option>
                       </select>
                     </div>
+                    {['cheque', 'virement'].includes(modePaiementCreance) && (
+                      <div className="mb-2">
+                        <label className="text-xs text-petrol-500">{t('detail.banqueLabel')}</label>
+                        <select className="input-field mt-1" value={banqueReglementId} onChange={(e) => setBanqueReglementId(e.target.value)}>
+                          <option value="">{t('detail.banqueNonPrecisee')}</option>
+                          {banques.map((b) => <option key={b.id} value={b.id}>{b.nom}</option>)}
+                        </select>
+                      </div>
+                    )}
                     <div className="mb-2">
                       <label className="text-xs text-petrol-500">{t('detail.recouvrementParLabel')}</label>
                       {['commercial', 'agent_recouvrement'].includes(profil?.role) ? (

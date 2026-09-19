@@ -112,5 +112,7 @@
   "imprimer": "🖨️ Print",
   "grandLivreTitrePdf": "Ledger — {{nom}}",
   "periodePdf": "From {{debut}} to {{fin}}",
-  "soldeFinalPdf": "Final balance"
+  "soldeFinalPdf": "Final balance",
+  "depuisBanque": "from {{nom}}",
+  "aucuneBanqueCreee": "No bank created yet — add one from the Banks menu."
 }

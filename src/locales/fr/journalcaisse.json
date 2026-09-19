@@ -112,5 +112,7 @@
   "imprimer": "🖨️ Imprimer",
   "grandLivreTitrePdf": "Grand livre — {{nom}}",
   "periodePdf": "Du {{debut}} au {{fin}}",
-  "soldeFinalPdf": "Solde final"
+  "soldeFinalPdf": "Solde final",
+  "depuisBanque": "depuis {{nom}}",
+  "aucuneBanqueCreee": "Aucune banque créée — ajoutez-en une depuis le menu Banques."
 }

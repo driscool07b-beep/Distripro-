@@ -50,7 +50,9 @@
     "valider": "تأكيد",
     "impossibleChargerDetail": "تعذر تحميل التفاصيل.",
     "erreurMontantValide": "أدخل مبلغًا صحيحًا.",
-    "erreurMontantDepasseSolde": "المبلغ يتجاوز الرصيد المتبقي ({{solde}})."
+    "erreurMontantDepasseSolde": "المبلغ يتجاوز الرصيد المتبقي ({{solde}}).",
+    "banqueLabel": "أي بنك؟ (اختياري)",
+    "banqueNonPrecisee": "غير محدد"
   },
   "import": {
     "titre": "استيراد أرصدة الديون",

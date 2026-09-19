@@ -47,7 +47,8 @@ export default function JournalCaisse() {
   const [modalTransfert, setModalTransfert] = useState(false)
   const [transfertDestinationType, setTransfertDestinationType] = useState('caisse')
   const [transfertCaisseDestId, setTransfertCaisseDestId] = useState('')
-  const [transfertBanque, setTransfertBanque] = useState('')
+  const [transfertBanqueDestId, setTransfertBanqueDestId] = useState('')
+  const [banquesDisponibles, setBanquesDisponibles] = useState([])
   const [transfertMontant, setTransfertMontant] = useState('')
   const [transfertLibelle, setTransfertLibelle] = useState('')
   const [transfertReference, setTransfertReference] = useState('')
@@ -154,11 +155,12 @@ export default function JournalCaisse() {
     setCaisses(data || [])
     if (data && data.length > 0) setCaisseId(data[0].id)
     else setChargement(false)
+    supabase.from('banques').select('id, nom').eq('actif', true).order('nom').then(({ data }) => setBanquesDisponibles(data || []))
   }
 
   async function charger() {
     setChargement(true)
-    const [{ data: soldeData }, { data: demandesData }, { data: transfertsData }] = await Promise.all([
+    const [{ data: soldeData }, { data: demandesData }, { data: transfertsCaisseData }, { data: transfertsBanqueData }] = await Promise.all([
       supabase.rpc('solde_caisse', { p_caisse_id: caisseId }),
       supabase
         .from('demandes_decaissement')
@@ -171,10 +173,19 @@ export default function JournalCaisse() {
         .eq('caisse_destination_id', caisseId)
         .eq('statut', 'en_attente')
         .order('created_at', { ascending: false }),
+      supabase
+        .from('transferts_banque_caisse')
+        .select('id, numero, montant, libelle, created_at, banque_source:banques!banque_source_id(nom), auteur:profils!created_by(nom)')
+        .eq('caisse_destination_id', caisseId)
+        .eq('statut', 'en_attente')
+        .order('created_at', { ascending: false }),
     ])
     setSolde(soldeData || 0)
     setDemandes(demandesData || [])
-    setTransfertsEntrants(transfertsData || [])
+    setTransfertsEntrants([
+      ...(transfertsCaisseData || []).map((tr) => ({ ...tr, origine: 'caisse', nomOrigine: tr.caisse_source?.nom })),
+      ...(transfertsBanqueData || []).map((tr) => ({ ...tr, origine: 'banque', nomOrigine: tr.banque_source?.nom })),
+    ])
     setChargement(false)
   }
 
@@ -370,26 +381,27 @@ export default function JournalCaisse() {
     setErreurTransfert('')
     if (!transfertMontant || Number(transfertMontant) <= 0) { setErreurTransfert(t('erreurs.montantInvalide')); return }
     if (transfertDestinationType === 'caisse' && !transfertCaisseDestId) { setErreurTransfert(t('erreurs.destinationRequise')); return }
-    if (transfertDestinationType === 'banque' && !transfertBanque.trim()) { setErreurTransfert(t('erreurs.destinationRequise')); return }
+    if (transfertDestinationType === 'banque' && !transfertBanqueDestId) { setErreurTransfert(t('erreurs.destinationRequise')); return }
     setEnvoiTransfert(true)
     const { error } = await supabase.rpc('creer_transfert_caisse', {
       p_caisse_source_id: caisseId,
       p_caisse_destination_id: transfertDestinationType === 'caisse' ? transfertCaisseDestId : null,
-      p_destination_banque: transfertDestinationType === 'banque' ? transfertBanque.trim() : null,
+      p_banque_destination_id: transfertDestinationType === 'banque' ? transfertBanqueDestId : null,
       p_montant: Number(transfertMontant),
       p_libelle: transfertLibelle.trim() || null,
       p_reference_bancaire: transfertReference.trim() || null,
     })
     setEnvoiTransfert(false)
     if (error) { setErreurTransfert(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
-    setTransfertCaisseDestId(''); setTransfertBanque(''); setTransfertMontant(''); setTransfertLibelle(''); setTransfertReference('')
+    setTransfertCaisseDestId(''); setTransfertBanqueDestId(''); setTransfertMontant(''); setTransfertLibelle(''); setTransfertReference('')
     setModalTransfert(false)
     charger(); chargerGrandLivre()
   }
 
-  async function receptionnerTransfert(transfertId) {
+  async function receptionnerTransfert(transfertId, origine) {
     setEnvoiAction(transfertId)
-    const { error } = await supabase.rpc('receptionner_transfert_caisse', { p_transfert_id: transfertId })
+    const nomFonction = origine === 'banque' ? 'receptionner_transfert_banque_caisse' : 'receptionner_transfert_caisse'
+    const { error } = await supabase.rpc(nomFonction, { p_transfert_id: transfertId })
     setEnvoiAction(null)
     if (error) { setErreurAction(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
     charger(); chargerGrandLivre()
@@ -463,13 +475,15 @@ export default function JournalCaisse() {
                 {transfertsEntrants.map((tr) => (
                   <div key={tr.id} className="flex items-center justify-between bg-white rounded-lg border border-blue-200 px-3 py-2 text-sm">
                     <div>
-                      <p className="font-medium">{tr.numero} — {t('depuisCaisse', { nom: tr.caisse_source?.nom || '—' })}</p>
+                      <p className="font-medium">
+                        {tr.numero} — {tr.origine === 'banque' ? t('depuisBanque', { nom: tr.nomOrigine || '—' }) : t('depuisCaisse', { nom: tr.nomOrigine || '—' })}
+                      </p>
                       <p className="text-xs text-petrol-500">{tr.libelle} — {t('envoyeParLe', { nom: tr.auteur?.nom || '—', date: formatDate(tr.created_at) })}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="font-mono">{formatXOF(tr.montant)}</span>
                       <button
-                        onClick={() => receptionnerTransfert(tr.id)}
+                        onClick={() => receptionnerTransfert(tr.id, tr.origine)}
                         disabled={envoiAction === tr.id}
                         className="bg-blue-600 text-white text-xs rounded-lg px-3 py-1.5"
                       >
@@ -823,7 +837,11 @@ export default function JournalCaisse() {
               ) : (
                 <div>
                   <label className="label">{t('nomBanque')}</label>
-                  <input className="input-field" value={transfertBanque} onChange={(e) => setTransfertBanque(e.target.value)} placeholder={t('nomBanquePlaceholder')} />
+                  <select className="input-field" value={transfertBanqueDestId} onChange={(e) => setTransfertBanqueDestId(e.target.value)}>
+                    <option value="">{t('selectionner')}</option>
+                    {banquesDisponibles.map((b) => <option key={b.id} value={b.id}>{b.nom}</option>)}
+                  </select>
+                  {banquesDisponibles.length === 0 && <p className="text-xs text-petrol-400 mt-1">{t('aucuneBanqueCreee')}</p>}
                 </div>
               )}
               <div>
