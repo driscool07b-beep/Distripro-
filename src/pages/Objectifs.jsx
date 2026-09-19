@@ -37,7 +37,7 @@ export default function Objectifs() {
     setChargement(true)
     const { data } = await supabase
       .from('objectifs')
-      .select('id, commercial_id, zone, produit_id, periode_debut, periode_fin, montant_cible, quantite_cible, notes, profils!commercial_id(nom, role), produits(nom)')
+      .select('id, commercial_id, zone, cible_bureau, produit_id, periode_debut, periode_fin, montant_cible, quantite_cible, notes, profils!commercial_id(nom, role), produits(nom)')
       .order('periode_debut', { ascending: false })
 
     const avecProgression = await Promise.all(
@@ -92,6 +92,15 @@ export default function Objectifs() {
         .select('id, total, ventes_lignes(produit_id, quantite), clients!inner(ville)')
         .neq('statut', 'annulee')
         .eq('clients.ville', o.zone)
+        .gte('created_at', `${o.periode_debut}T00:00:00`)
+        .lt('created_at', `${o.periode_fin}T23:59:59.999`)
+      ventes = data
+    } else if (o.cible_bureau) {
+      const { data } = await supabase
+        .from('ventes')
+        .select('id, total, ventes_lignes(produit_id, quantite)')
+        .neq('statut', 'annulee')
+        .is('commercial_id', null)
         .gte('created_at', `${o.periode_debut}T00:00:00`)
         .lt('created_at', `${o.periode_fin}T23:59:59.999`)
       ventes = data
@@ -160,6 +169,7 @@ export default function Objectifs() {
       entreprise_id: profil.entreprise_id,
       commercial_id: typeCible === 'commercial' ? commercialId : null,
       zone: typeCible === 'zone' ? zone.trim() : null,
+      cible_bureau: typeCible === 'bureau',
       produit_id: produitId || null,
       periode_debut: periodeDebut,
       periode_fin: periodeFin,
@@ -232,6 +242,13 @@ export default function Objectifs() {
                   >
                     {t('uneZone')}
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setTypeCible('bureau')}
+                    className={`flex-1 text-sm px-3 py-2 rounded-lg border ${typeCible === 'bureau' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
+                  >
+                    {t('leBureau')}
+                  </button>
                 </div>
                 {typeCible === 'commercial' ? (
                   <>
@@ -248,13 +265,15 @@ export default function Objectifs() {
                       <p className="text-xs text-petrol-500 mt-1">{t('noteRealiseAdmin')}</p>
                     )}
                   </>
-                ) : (
+                ) : typeCible === 'zone' ? (
                   <input
                     className="input-field"
                     value={zone}
                     onChange={(e) => setZone(e.target.value)}
                     placeholder={t('zonePlaceholder')}
                   />
+                ) : (
+                  <p className="text-xs text-petrol-500">{t('noteRealiseBureau')}</p>
                 )}
               </div>
 
@@ -325,7 +344,7 @@ export default function Objectifs() {
 
 function CarteObjectif({ objectif: o, onSupprimer }) {
   const { t } = useTranslation('objectifs')
-  const cible = o.profils?.nom || o.zone
+  const cible = o.profils?.nom || o.zone || (o.cible_bureau ? t('leBureau') : '')
   const roleCible = o.profils?.role && o.profils.role !== 'commercial' ? t(`roles.${o.profils.role}`) : null
   const pctMontant = o.montant_cible ? Math.min(100, Math.round((o.montantRealise / o.montant_cible) * 100)) : null
   const pctQuantite = o.quantite_cible ? Math.min(100, Math.round((o.quantiteRealisee / o.quantite_cible) * 100)) : null

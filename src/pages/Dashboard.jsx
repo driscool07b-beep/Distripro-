@@ -105,6 +105,15 @@ function DashboardEntreprise() {
         .gte('created_at', `${o.periode_debut}T00:00:00`)
         .lt('created_at', `${o.periode_fin}T23:59:59.999`)
       ventes = data
+    } else if (o.cible_bureau) {
+      const { data } = await supabase
+        .from('ventes')
+        .select('total')
+        .neq('statut', 'annulee')
+        .is('commercial_id', null)
+        .gte('created_at', `${o.periode_debut}T00:00:00`)
+        .lt('created_at', `${o.periode_fin}T23:59:59.999`)
+      ventes = data
     }
     return (ventes || []).reduce((s, v) => s + Number(v.total || 0), 0)
   }
@@ -119,7 +128,7 @@ function DashboardEntreprise() {
 
     const { data } = await supabase
       .from('objectifs')
-      .select('id, commercial_id, zone, periode_debut, periode_fin, montant_cible, profils!commercial_id(role)')
+      .select('id, commercial_id, zone, cible_bureau, periode_debut, periode_fin, montant_cible, profils!commercial_id(role)')
       .not('montant_cible', 'is', null)
       .lte('periode_debut', finAnnee)
       .gte('periode_fin', debutAnnee)
