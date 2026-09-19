@@ -198,6 +198,22 @@ export default function Layout() {
               {t('menu.journalCaisse')}
             </NavLink>
           )}
+          {['admin', 'manager', 'comptable'].includes(profil?.role) && (
+            <NavLink
+              to="/banques"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <BanquesIcon className="w-4 h-4 shrink-0" />
+              {t('menu.banques')}
+            </NavLink>
+          )}
           {profil?.role === 'admin' && (
             <NavLink
               to="/utilisateurs"
@@ -328,6 +344,15 @@ function JournalCaisseIcon(props) {
       <rect x="2" y="6" width="20" height="14" rx="2" />
       <path d="M2 10h20" /><circle cx="8" cy="15" r="1.5" fill="currentColor" stroke="none" />
       <path d="M14 15h4" />
+    </svg>
+  )
+}
+function BanquesIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M3 10l9-6 9 6" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="4" y="10" width="16" height="9" rx="1" />
+      <path d="M4 19h16M8 13v4M12 13v4M16 13v4" strokeLinecap="round" />
     </svg>
   )
 }

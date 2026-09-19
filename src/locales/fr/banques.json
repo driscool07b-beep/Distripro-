@@ -1,0 +1,86 @@
+{
+  "titre": "Banques",
+  "accesRefuse": "Cette page est réservée à l'administration, aux managers et à la comptabilité.",
+  "chargement": "Chargement…",
+  "aucuneBanque": "Aucune banque créée pour l'instant.",
+  "nouvelleBanque": "+ Nouvelle banque",
+  "modifierBanque": "Modifier la banque",
+  "nomBanque": "Nom de la banque",
+  "nomBanquePlaceholder": "Ex. Ecobank",
+  "numeroCompte": "Numéro de compte (RIB)",
+  "numeroComptePlaceholder": "CI05 CI...",
+  "intituleCompte": "Intitulé du compte",
+  "rib": "RIB",
+  "modifier": "Modifier",
+  "desactiver": "Désactiver",
+  "reactiver": "Réactiver",
+  "annuler": "Annuler",
+  "enregistrer": "Enregistrer",
+  "enCours": "Enregistrement…",
+  "envoyer": "Envoyer",
+  "banque": "Banque",
+  "du": "Du",
+  "au": "Au",
+  "selectionner": "— Sélectionner —",
+  "montant": "Montant",
+  "libelleOptionnel": "Libellé (optionnel)",
+
+  "onglets": {
+    "banques": "Banques",
+    "grandLivre": "Grand livre",
+    "transferts": "Transferts",
+    "rapprochement": "Rapprochement"
+  },
+
+  "grandLivre": {
+    "date": "Date",
+    "numero": "N°",
+    "libelle": "Libellé",
+    "debit": "Débit",
+    "credit": "Crédit",
+    "solde": "Solde",
+    "aucunMouvement": "Aucun mouvement sur cette période."
+  },
+
+  "nouveauTransfert": "+ Transfert vers une caisse",
+  "transfertVersCaisse": "Transfert vers une caisse",
+  "caisseDestination": "Caisse de destination",
+  "noteTransfertCaisseVersBanque": "Pour transférer une caisse VERS une banque, ça se fait depuis le Journal de caisse de la caisse concernée.",
+  "versCaisse": "vers {{nom}}",
+  "receptionne": "Réceptionné",
+  "enAttenteReception": "En attente de réception",
+  "aucunTransfert": "Aucun transfert pour cette banque.",
+
+  "releveExcel": "Relevé bancaire (Excel)",
+  "telechargerModele": "Télécharger le modèle",
+  "lignesDetectees": "{{n}} lignes détectées dans {{fichier}}",
+  "lancerRapprochement": "Lancer le rapprochement",
+
+  "modele": {
+    "date": "Date",
+    "libelle": "Libellé",
+    "montant": "Montant (positif = entrée, négatif = sortie)",
+    "exempleLibelle1": "Virement reçu client X",
+    "exempleLibelle2": "Frais de tenue de compte"
+  },
+
+  "resultat": {
+    "rapprochees": "{{n}} mouvement(s) rapproché(s) automatiquement (montant identique trouvé des deux côtés).",
+    "chezNousTitre": "Chez nous, pas encore vu à la banque ({{n}})",
+    "chezNousAide": "Enregistrés dans DistribPro mais absents du relevé — souvent un chèque pas encore encaissé, ou un virement pas encore arrivé.",
+    "banqueTitre": "À la banque, pas chez nous ({{n}})",
+    "banqueAide": "Présents dans le relevé mais absents de DistribPro — souvent des frais bancaires, ou un mouvement non enregistré dans l'app.",
+    "aucunEcart": "Aucun écart de ce côté."
+  },
+
+  "erreurs": {
+    "erreur": "Erreur",
+    "nomRequis": "Le nom de la banque est requis.",
+    "caisseRequise": "Sélectionnez une caisse.",
+    "montantInvalide": "Indiquez un montant valide.",
+    "periodeRequise": "Indiquez une période (début et fin).",
+    "releveRequis": "Téléversez un relevé avant de lancer le rapprochement.",
+    "aucuneLigneReleve": "Aucune ligne exploitable trouvée dans ce fichier — vérifiez qu'il suit le modèle.",
+    "fichierIllisible": "Impossible de lire ce fichier — vérifiez que c'est bien un fichier Excel (.xlsx)."
+  }
+}

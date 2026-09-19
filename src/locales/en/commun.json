@@ -28,7 +28,8 @@
     "messagerie": "Messaging",
     "apparence": "Appearance",
     "journalCaisse": "Cash journal",
-    "aide": "Help"
+    "aide": "Help",
+    "banques": "Banks"
   },
   "actions": {
     "annuler": "Cancel",
