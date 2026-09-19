@@ -124,6 +124,11 @@ const EXECUTEURS = {
     if (error) throw error
   },
 
+  enregistrer_reglement: async (payload) => {
+    const { error } = await supabase.rpc('enregistrer_reglement', payload)
+    if (error) throw error
+  },
+
   valider_visite: async (payload) => {
     const { data, error } = await supabase.rpc('valider_visite', payload)
     if (error) throw error

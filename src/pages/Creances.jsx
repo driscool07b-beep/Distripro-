@@ -7,6 +7,7 @@ import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF, symboleDevise } from '../lib/export'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
+import { ajouterActionEnAttente } from '../lib/offline'
 import { formatXOF, formatDate } from '../lib/format'
 import i18n from '../lib/i18n'
 
@@ -265,15 +266,49 @@ export default function Creances() {
       setErreurPaiement(t('detail.erreurMontantDepasseSolde', { solde: formatXOF(resteDu) }))
       return
     }
-    setEnvoiPaiement(true)
-    const { data: reglementId, error } = await supabase.rpc('enregistrer_reglement', {
+
+    const parametresReglement = {
       p_vente_id: venteOuverte,
       p_montant: montant,
       p_mode: modePaiementCreance,
       p_commercial_id: commercialRecouvrement || null,
-    })
+    }
+
+    // Hors-ligne : uniquement pour un commercial ou un agent de
+    // recouvrement enregistrant sa propre collecte sur le terrain —
+    // pas de génération de reçu PDF possible tant que ce n'est pas
+    // synchronisé (le numéro de règlement est attribué côté serveur).
+    const eligibleHorsLigne = ['commercial', 'agent_recouvrement'].includes(profil?.role)
+
+    if (eligibleHorsLigne && !navigator.onLine) {
+      await ajouterActionEnAttente(
+        'enregistrer_reglement',
+        parametresReglement,
+        `${t('detail.paiementRecu') || 'Paiement'} — ${detail.vente.clients?.nom || ''} — ${formatXOF(montant)}`
+      )
+      setVenteOuverte(null)
+      setMontantPaiement('')
+      chargerCreances()
+      return
+    }
+
+    setEnvoiPaiement(true)
+    const { data: reglementId, error } = await supabase.rpc('enregistrer_reglement', parametresReglement)
     setEnvoiPaiement(false)
+
     if (error) {
+      const erreurReseau = /failed to fetch|network|timeout|load failed/i.test(error.message || '')
+      if (eligibleHorsLigne && erreurReseau) {
+        await ajouterActionEnAttente(
+          'enregistrer_reglement',
+          parametresReglement,
+          `${detail.vente.clients?.nom || ''} — ${formatXOF(montant)}`
+        )
+        setVenteOuverte(null)
+        setMontantPaiement('')
+        chargerCreances()
+        return
+      }
       setErreurPaiement(`${t('erreur')} : ${traduireErreur(error.message)}`)
       return
     }
@@ -533,7 +568,7 @@ export default function Creances() {
                     </div>
                     <div className="mb-2">
                       <label className="text-xs text-petrol-500">{t('detail.recouvrementParLabel')}</label>
-                      {profil?.role === 'commercial' ? (
+                      {['commercial', 'agent_recouvrement'].includes(profil?.role) ? (
                         <p className="text-sm text-petrol-600 border border-line rounded px-2 py-1.5 mt-1">{t('detail.vousMeme')}</p>
                       ) : (
                         <select
