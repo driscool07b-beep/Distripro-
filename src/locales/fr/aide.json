@@ -231,6 +231,10 @@
         {
           "q": "Comment faire un inventaire de caisse ?",
           "r": "Journal de caisse → onglet Inventaire → '+ Nouvel inventaire' — saisis le montant réellement compté dans la caisse. Il est automatiquement comparé au solde théorique (comptable), l'écart est mis en évidence, et un rapport PDF est généré avec des espaces de signature."
+        },
+        {
+          "q": "Comment tracer un numéro de chèque ou une référence de virement ?",
+          "r": "Trois cas : un règlement client par chèque/virement (dans Créances, champ 'Numéro de chèque / référence') ; un retrait à la banque pour approvisionner une caisse (Banques → Transferts, champ référence bancaire) ; un chèque émis pour régler un fournisseur (Banques → Transferts → '+ Décaissement' — nouveau mouvement direct, avec bénéficiaire, mode, référence et pièce justificative optionnelle). Toutes ces références apparaissent dans le Grand livre de la banque, colonne dédiée."
         }
       ]
     },

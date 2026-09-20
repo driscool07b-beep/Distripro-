@@ -36,6 +36,18 @@ export default function Banques() {
   const [transfertCaisseId, setTransfertCaisseId] = useState('')
   const [transfertMontant, setTransfertMontant] = useState('')
   const [transfertLibelle, setTransfertLibelle] = useState('')
+  const [transfertReferenceBanqueCaisse, setTransfertReferenceBanqueCaisse] = useState('')
+
+  const [modalDecaissement, setModalDecaissement] = useState(false)
+  const [decaissementBeneficiaire, setDecaissementBeneficiaire] = useState('')
+  const [decaissementMontant, setDecaissementMontant] = useState('')
+  const [decaissementMode, setDecaissementMode] = useState('cheque')
+  const [decaissementReference, setDecaissementReference] = useState('')
+  const [decaissementLibelle, setDecaissementLibelle] = useState('')
+  const [decaissementFichier, setDecaissementFichier] = useState(null)
+  const [envoiDecaissement, setEnvoiDecaissement] = useState(false)
+  const [erreurDecaissement, setErreurDecaissement] = useState('')
+  const [decaissements, setDecaissements] = useState([])
   const [envoiTransfert, setEnvoiTransfert] = useState(false)
   const [erreurTransfert, setErreurTransfert] = useState('')
   const [transfertsSortants, setTransfertsSortants] = useState([])
@@ -152,6 +164,50 @@ export default function Banques() {
   }
   useEffect(() => { if (onglet === 'transferts') chargerTransfertsSortants() }, [onglet, transfertBanqueId])
 
+  async function chargerDecaissements() {
+    if (!transfertBanqueId) return
+    const { data } = await supabase
+      .from('decaissements_banque')
+      .select('id, numero, beneficiaire, montant, mode, reference_paiement, libelle, piece_justificative_path, created_at, auteur:profils!created_by(nom)')
+      .eq('banque_id', transfertBanqueId)
+      .order('created_at', { ascending: false })
+      .limit(20)
+    setDecaissements(data || [])
+  }
+  useEffect(() => { if (onglet === 'transferts') chargerDecaissements() }, [onglet, transfertBanqueId])
+
+  async function creerDecaissementBanque(e) {
+    e.preventDefault()
+    setErreurDecaissement('')
+    if (!decaissementBeneficiaire.trim()) { setErreurDecaissement(t('erreurs.beneficiaireRequis')); return }
+    if (!decaissementMontant || Number(decaissementMontant) <= 0) { setErreurDecaissement(t('erreurs.montantInvalide')); return }
+    setEnvoiDecaissement(true)
+
+    let cheminPiece = null
+    let nomPiece = null
+    if (decaissementFichier) {
+      nomPiece = decaissementFichier.name
+      cheminPiece = `${entreprise?.id}/decaissements/banque/${transfertBanqueId}-${Date.now()}-${decaissementFichier.name}`
+      const { error: erreurUpload } = await supabase.storage.from('pieces-jointes').upload(cheminPiece, decaissementFichier)
+      if (erreurUpload) {
+        setEnvoiDecaissement(false)
+        setErreurDecaissement(`${t('erreurs.erreur')} : ${traduireErreur(erreurUpload.message)}`)
+        return
+      }
+    }
+
+    const { error } = await supabase.rpc('creer_decaissement_banque', {
+      p_banque_id: transfertBanqueId, p_beneficiaire: decaissementBeneficiaire, p_montant: Number(decaissementMontant),
+      p_mode: decaissementMode, p_reference_paiement: decaissementReference, p_libelle: decaissementLibelle,
+      p_piece_path: cheminPiece, p_piece_nom: nomPiece,
+    })
+    setEnvoiDecaissement(false)
+    if (error) { setErreurDecaissement(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    setDecaissementBeneficiaire(''); setDecaissementMontant(''); setDecaissementReference(''); setDecaissementLibelle(''); setDecaissementFichier(null)
+    setModalDecaissement(false)
+    charger(); chargerDecaissements()
+  }
+
   async function chargerTransfertsEntrants() {
     if (!transfertBanqueId) return
     const { data } = await supabase
@@ -205,11 +261,11 @@ export default function Banques() {
     setEnvoiTransfert(true)
     const { error } = await supabase.rpc('creer_transfert_banque_caisse', {
       p_banque_source_id: transfertBanqueId, p_caisse_destination_id: transfertCaisseId,
-      p_montant: Number(transfertMontant), p_libelle: transfertLibelle,
+      p_montant: Number(transfertMontant), p_libelle: transfertLibelle, p_reference_bancaire: transfertReferenceBanqueCaisse,
     })
     setEnvoiTransfert(false)
     if (error) { setErreurTransfert(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
-    setTransfertCaisseId(''); setTransfertMontant(''); setTransfertLibelle('')
+    setTransfertCaisseId(''); setTransfertMontant(''); setTransfertLibelle(''); setTransfertReferenceBanqueCaisse('')
     setModalTransfert(false)
     charger(); chargerTransfertsSortants()
   }
@@ -379,12 +435,13 @@ export default function Banques() {
                 <p className="text-sm text-petrol-500">{t('chargement')}</p>
               ) : (
                 <div className="card overflow-x-auto">
-                  <table className="w-full text-xs min-w-[560px]">
+                  <table className="w-full text-xs min-w-[640px]">
                     <thead>
                       <tr className="border-b border-line bg-canvas text-left text-petrol-600">
                         <th className="px-3 py-2 font-medium">{t('grandLivre.date')}</th>
                         <th className="px-3 py-2 font-medium">{t('grandLivre.numero')}</th>
                         <th className="px-3 py-2 font-medium">{t('grandLivre.libelle')}</th>
+                        <th className="px-3 py-2 font-medium">{t('grandLivre.reference')}</th>
                         <th className="px-3 py-2 font-medium text-right">{t('grandLivre.debit')}</th>
                         <th className="px-3 py-2 font-medium text-right">{t('grandLivre.credit')}</th>
                         <th className="px-3 py-2 font-medium text-right">{t('grandLivre.solde')}</th>
@@ -396,13 +453,14 @@ export default function Banques() {
                           <td className="px-3 py-2 whitespace-nowrap">{formatDateHeure(ligne.date_mouvement, { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
                           <td className="px-3 py-2 whitespace-nowrap">{ligne.numero}</td>
                           <td className="px-3 py-2">{ligne.libelle}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-petrol-500">{ligne.reference || '—'}</td>
                           <td className="px-3 py-2 text-right font-mono">{Number(ligne.debit) > 0 ? formatXOF(ligne.debit) : '—'}</td>
                           <td className="px-3 py-2 text-right font-mono text-green-700">{Number(ligne.credit) > 0 ? formatXOF(ligne.credit) : '—'}</td>
                           <td className="px-3 py-2 text-right font-mono font-medium">{formatXOF(ligne.solde)}</td>
                         </tr>
                       ))}
                       {grandLivre.length === 0 && (
-                        <tr><td colSpan={6} className="px-3 py-8 text-center text-petrol-400">{t('grandLivre.aucunMouvement')}</td></tr>
+                        <tr><td colSpan={7} className="px-3 py-8 text-center text-petrol-400">{t('grandLivre.aucunMouvement')}</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -421,6 +479,7 @@ export default function Banques() {
                   </select>
                 </div>
                 <button onClick={() => setModalTransfert(true)} className="btn-primary text-sm">{t('nouveauTransfert')}</button>
+                <button onClick={() => setModalDecaissement(true)} className="btn-secondary text-sm">{t('nouveauDecaissement')}</button>
               </div>
 
               {transfertsEntrants.length > 0 && (
@@ -493,6 +552,22 @@ export default function Banques() {
                   </div>
                 ))}
                 {transfertsSortants.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">{t('aucunTransfert')}</p>}
+              </div>
+
+              <h3 className="font-semibold text-sm mt-5 mb-2">{t('decaissementsBanque')}</h3>
+              <div className="space-y-1.5">
+                {decaissements.map((d) => (
+                  <div key={d.id} className="border border-line rounded-lg p-2.5 flex items-center justify-between text-sm">
+                    <div>
+                      <p>{d.numero} — {d.beneficiaire}</p>
+                      <p className="text-xs text-petrol-500">
+                        {(d.mode === 'cheque' ? t('modeCheque') : t('modeVirement'))}{d.reference_paiement ? ` — ${d.reference_paiement}` : ''} — {formatDate(d.created_at)} — {d.auteur?.nom || '—'}
+                      </p>
+                    </div>
+                    <span className="font-mono">{formatXOF(d.montant)}</span>
+                  </div>
+                ))}
+                {decaissements.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">{t('aucunDecaissement')}</p>}
               </div>
             </div>
           )}
@@ -618,10 +693,56 @@ export default function Banques() {
                 <label className="label">{t('libelleOptionnel')}</label>
                 <input className="input-field" value={transfertLibelle} onChange={(e) => setTransfertLibelle(e.target.value)} />
               </div>
+              <div>
+                <label className="label">{t('referencePaiementOptionnelle')}</label>
+                <input className="input-field" value={transfertReferenceBanqueCaisse} onChange={(e) => setTransfertReferenceBanqueCaisse(e.target.value)} placeholder={t('referencePaiementPlaceholder')} />
+              </div>
               {erreurTransfert && <p className="text-xs text-red-600">{erreurTransfert}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="button" onClick={() => setModalTransfert(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiTransfert} className="btn-primary flex-1">{envoiTransfert ? t('enCours') : t('envoyer')}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {modalDecaissement && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-5 w-full max-w-sm">
+            <h2 className="font-semibold text-lg mb-3">{t('nouveauDecaissement')}</h2>
+            <form onSubmit={creerDecaissementBanque} className="space-y-3">
+              <div>
+                <label className="label">{t('beneficiaire')}</label>
+                <input className="input-field" value={decaissementBeneficiaire} onChange={(e) => setDecaissementBeneficiaire(e.target.value)} placeholder={t('beneficiairePlaceholder')} />
+              </div>
+              <div>
+                <label className="label">{t('montant')}</label>
+                <input type="number" min="0" className="input-field" value={decaissementMontant} onChange={(e) => setDecaissementMontant(e.target.value)} />
+              </div>
+              <div>
+                <label className="label">{t('mode')}</label>
+                <select className="input-field" value={decaissementMode} onChange={(e) => setDecaissementMode(e.target.value)}>
+                  <option value="cheque">{t('modeCheque')}</option>
+                  <option value="virement">{t('modeVirement')}</option>
+                </select>
+              </div>
+              <div>
+                <label className="label">{t('referencePaiementOptionnelle')}</label>
+                <input className="input-field" value={decaissementReference} onChange={(e) => setDecaissementReference(e.target.value)} placeholder={t('referencePaiementPlaceholder')} />
+              </div>
+              <div>
+                <label className="label">{t('libelleOptionnel')}</label>
+                <input className="input-field" value={decaissementLibelle} onChange={(e) => setDecaissementLibelle(e.target.value)} />
+              </div>
+              <div>
+                <label className="label">{t('pieceJustificativeOptionnelle')}</label>
+                <input type="file" accept="image/*,application/pdf" className="text-sm" onChange={(e) => setDecaissementFichier(e.target.files?.[0] || null)} />
+              </div>
+              {erreurDecaissement && <p className="text-xs text-red-600">{erreurDecaissement}</p>}
+              <div className="flex gap-2 pt-2">
+                <button type="button" onClick={() => setModalDecaissement(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button type="submit" disabled={envoiDecaissement} className="btn-primary flex-1">{envoiDecaissement ? t('enCours') : t('enregistrer')}</button>
               </div>
             </form>
           </div>

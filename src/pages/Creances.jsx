@@ -35,6 +35,7 @@ export default function Creances() {
   const [montantPaiement, setMontantPaiement] = useState('')
   const [modePaiementCreance, setModePaiementCreance] = useState('espece')
   const [banqueReglementId, setBanqueReglementId] = useState('')
+  const [referencePaiement, setReferencePaiement] = useState('')
   const [banques, setBanques] = useState([])
   const [commercialRecouvrement, setCommercialRecouvrement] = useState('')
   const [commerciaux, setCommerciaux] = useState([])
@@ -276,6 +277,7 @@ export default function Creances() {
       p_mode: modePaiementCreance,
       p_commercial_id: commercialRecouvrement || null,
       p_banque_id: ['cheque', 'virement'].includes(modePaiementCreance) ? (banqueReglementId || null) : null,
+      p_reference_paiement: ['cheque', 'virement'].includes(modePaiementCreance) ? (referencePaiement.trim() || null) : null,
     }
 
     // Hors-ligne : uniquement pour un commercial ou un agent de
@@ -292,7 +294,7 @@ export default function Creances() {
       )
       setVenteOuverte(null)
       setMontantPaiement('')
-      setBanqueReglementId('')
+      setBanqueReglementId(''); setReferencePaiement('')
       chargerCreances()
       return
     }
@@ -311,7 +313,7 @@ export default function Creances() {
         )
         setVenteOuverte(null)
         setMontantPaiement('')
-        setBanqueReglementId('')
+        setBanqueReglementId(''); setReferencePaiement('')
         chargerCreances()
         return
       }
@@ -338,7 +340,7 @@ export default function Creances() {
       receptionnePar: nomRecouvrement,
     })
     doc.save(`${reglement?.numero || 'recu-paiement-' + venteOuverte.slice(0, 8)}.pdf`)
-    setBanqueReglementId('')
+    setBanqueReglementId(''); setReferencePaiement('')
 
     await ouvrirDetail(venteOuverte)
     chargerCreances()
@@ -580,6 +582,17 @@ export default function Creances() {
                           <option value="">{t('detail.banqueNonPrecisee')}</option>
                           {banques.map((b) => <option key={b.id} value={b.id}>{b.nom}</option>)}
                         </select>
+                      </div>
+                    )}
+                    {['cheque', 'virement'].includes(modePaiementCreance) && (
+                      <div className="mb-2">
+                        <label className="text-xs text-petrol-500">{t('detail.referencePaiementLabel')}</label>
+                        <input
+                          className="input-field mt-1"
+                          value={referencePaiement}
+                          onChange={(e) => setReferencePaiement(e.target.value)}
+                          placeholder={modePaiementCreance === 'cheque' ? t('detail.referenceChequePlaceholder') : t('detail.referenceVirementPlaceholder')}
+                        />
                       </div>
                     )}
                     <div className="mb-2">

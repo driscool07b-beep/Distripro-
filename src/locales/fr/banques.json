@@ -37,7 +37,8 @@
     "debit": "Débit",
     "credit": "Crédit",
     "solde": "Solde",
-    "aucunMouvement": "Aucun mouvement sur cette période."
+    "aucunMouvement": "Aucun mouvement sur cette période.",
+    "reference": "Référence"
   },
   "nouveauTransfert": "+ Transfert vers une caisse",
   "transfertVersCaisse": "Transfert vers une caisse",
@@ -75,9 +76,24 @@
     "releveRequis": "Téléversez un relevé avant de lancer le rapprochement.",
     "aucuneLigneReleve": "Aucune ligne exploitable trouvée dans ce fichier — vérifiez qu'il suit le modèle.",
     "fichierIllisible": "Impossible de lire ce fichier — vérifiez que c'est bien un fichier Excel (.xlsx).",
-    "justificatifRequis": "Une pièce justificative (bordereau) est requise pour confirmer ce transfert."
+    "justificatifRequis": "Une pièce justificative (bordereau) est requise pour confirmer ce transfert.",
+    "beneficiaireRequis": "Le bénéficiaire est requis."
   },
   "transfertsEntrantsEnAttente": "{{n}} transfert(s) entrant(s) à confirmer",
   "justificatifBordereauLabel": "Bordereau de versement (photo ou PDF)",
-  "confirmerAvecJustificatif": "Confirmer"
+  "confirmerAvecJustificatif": "Confirmer",
+  "depuisCaisse": "depuis {{nom}}",
+  "envoyeParLe": "envoyé par {{nom}} — {{date}}",
+  "receptionner": "Réceptionner",
+  "referencePaiementOptionnelle": "Référence bancaire (optionnel)",
+  "referencePaiementPlaceholder": "N° de retrait, référence...",
+  "nouveauDecaissement": "+ Décaissement (chèque/virement)",
+  "decaissementsBanque": "Décaissements directs",
+  "aucunDecaissement": "Aucun décaissement direct pour cette banque.",
+  "beneficiaire": "Bénéficiaire",
+  "beneficiairePlaceholder": "Ex. Fournisseur XYZ",
+  "mode": "Mode",
+  "modeCheque": "Chèque",
+  "modeVirement": "Virement",
+  "pieceJustificativeOptionnelle": "Pièce justificative (optionnel)"
 }

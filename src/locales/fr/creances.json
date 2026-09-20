@@ -52,7 +52,11 @@
     "erreurMontantValide": "Indiquez un montant valide.",
     "erreurMontantDepasseSolde": "Le montant dépasse le solde restant dû ({{solde}}).",
     "banqueLabel": "Sur quelle banque ? (optionnel)",
-    "banqueNonPrecisee": "Non précisé"
+    "banqueNonPrecisee": "Non précisé",
+    "referencePaiementLabel": "Numéro de chèque / référence (optionnel)",
+    "referenceChequePlaceholder": "N° du chèque",
+    "referenceVirementPlaceholder": "Référence du virement",
+    "paiementRecu": "Paiement"
   },
   "import": {
     "titre": "Importer des soldes de créances",

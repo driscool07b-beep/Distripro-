@@ -52,7 +52,10 @@
     "erreurMontantValide": "أدخل مبلغًا صحيحًا.",
     "erreurMontantDepasseSolde": "المبلغ يتجاوز الرصيد المتبقي ({{solde}}).",
     "banqueLabel": "أي بنك؟ (اختياري)",
-    "banqueNonPrecisee": "غير محدد"
+    "banqueNonPrecisee": "غير محدد",
+    "referencePaiementLabel": "رقم الشيك / المرجع (اختياري)",
+    "referenceChequePlaceholder": "رقم الشيك",
+    "referenceVirementPlaceholder": "مرجع التحويل"
   },
   "import": {
     "titre": "استيراد أرصدة الديون",

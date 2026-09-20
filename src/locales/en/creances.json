@@ -52,7 +52,10 @@
     "erreurMontantValide": "Enter a valid amount.",
     "erreurMontantDepasseSolde": "The amount exceeds the balance due ({{solde}}).",
     "banqueLabel": "Which bank? (optional)",
-    "banqueNonPrecisee": "Not specified"
+    "banqueNonPrecisee": "Not specified",
+    "referencePaiementLabel": "Cheque number / reference (optional)",
+    "referenceChequePlaceholder": "Cheque no.",
+    "referenceVirementPlaceholder": "Transfer reference"
   },
   "import": {
     "titre": "Import receivable balances",

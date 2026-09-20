@@ -52,7 +52,10 @@
     "erreurMontantValide": "请输入有效金额。",
     "erreurMontantDepasseSolde": "金额超过了待付余额（{{solde}}）。",
     "banqueLabel": "哪家银行？（可选）",
-    "banqueNonPrecisee": "未指定"
+    "banqueNonPrecisee": "未指定",
+    "referencePaiementLabel": "支票号码/参考号（可选）",
+    "referenceChequePlaceholder": "支票号码",
+    "referenceVirementPlaceholder": "转账参考号"
   },
   "import": {
     "titre": "导入应收账款余额",
