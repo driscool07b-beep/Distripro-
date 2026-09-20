@@ -222,7 +222,7 @@
         },
         {
           "q": "Comment transférer de l'argent entre une caisse et une banque ?",
-          "r": "Caisse vers banque : depuis le Journal de caisse, bouton '+ Transfert' → 'Vers une banque'. Banque vers caisse (sens inverse) : depuis Banques → onglet Transferts. Dans les deux cas, le montant sort immédiatement de la source et n'est crédité à la destination qu'après confirmation de réception."
+          "r": "Caisse vers banque : depuis le Journal de caisse, bouton '+ Transfert' → 'Vers une banque'. Banque vers caisse (sens inverse) : depuis Banques → onglet Transferts. Dans tous les cas, le montant sort immédiatement de la source, et la confirmation de réception (côté Journal de caisse pour une caisse destinataire, côté Banques pour une banque destinataire) représente le moment où le dépôt ou le retrait a réellement été effectué au guichet — pas une confirmation venant de la banque elle-même."
         },
         {
           "q": "Comment fonctionne le rapprochement bancaire ?",
@@ -333,6 +333,10 @@
         {
           "q": "Comment configurer des rappels périodiques d'inventaire ?",
           "r": "Paramètres → Rappels d'inventaire (admin) — choisis une fréquence pour le stock et pour la caisse, indépendamment l'une de l'autre : chaque semaine, chaque mois, chaque trimestre, ou désactivé. Une alerte apparaît alors sur le Dashboard dès que le délai est dépassé."
+        },
+        {
+          "q": "Comment exiger une preuve pour confirmer un transfert ?",
+          "r": "Paramètres → Transferts entre caisses/banques (admin) — active 'Exiger une pièce justificative pour confirmer un transfert' pour obliger à joindre une photo du bordereau de versement/retrait à chaque confirmation. Désactivé par défaut (une simple confirmation suffit)."
         }
       ]
     }

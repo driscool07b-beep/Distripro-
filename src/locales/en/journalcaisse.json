@@ -92,7 +92,8 @@
     "libelleRequis": "The description is required.",
     "montantInvalide": "Enter a valid amount.",
     "destinationRequise": "Specify a destination.",
-    "motifRequis": "The reason is required."
+    "motifRequis": "The reason is required.",
+    "justificatifRequis": "A supporting document (slip) is required to confirm this transfer."
   },
   "pin": {
     "nouveauPinRequis": "🔑 New approval code required",
@@ -129,5 +130,7 @@
     "soldeCompteLabel": "Amount actually counted",
     "notesOptionnelles": "Notes (optional)",
     "valider": "Confirm inventory"
-  }
+  },
+  "justificatifBordereauLabel": "Deposit/withdrawal slip (photo or PDF)",
+  "confirmerAvecJustificatif": "Confirm"
 }

@@ -140,5 +140,10 @@
     "hebdomadaire": "Chaque semaine",
     "mensuel": "Chaque mois",
     "trimestriel": "Chaque trimestre"
+  },
+  "transferts": {
+    "titre": "Transferts entre caisses/banques",
+    "sousTitre": "Détermine si la confirmation de réception d'un transfert (entre deux caisses, ou entre une caisse et une banque) doit être appuyée d'une pièce justificative (photo du bordereau de versement/retrait).",
+    "exigerJustificatif": "Exiger une pièce justificative pour confirmer un transfert"
   }
 }

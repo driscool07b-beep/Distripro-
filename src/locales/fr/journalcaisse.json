@@ -92,7 +92,8 @@
     "libelleRequis": "Le libellé est requis.",
     "montantInvalide": "Indiquez un montant valide.",
     "destinationRequise": "Précisez une destination.",
-    "motifRequis": "Le motif est requis."
+    "motifRequis": "Le motif est requis.",
+    "justificatifRequis": "Une pièce justificative (bordereau) est requise pour confirmer ce transfert."
   },
   "pin": {
     "nouveauPinRequis": "🔑 Nouveau code de validation requis",
@@ -129,5 +130,7 @@
     "soldeCompteLabel": "Montant réellement compté",
     "notesOptionnelles": "Notes (optionnel)",
     "valider": "Valider l'inventaire"
-  }
+  },
+  "justificatifBordereauLabel": "Bordereau de versement/retrait (photo ou PDF)",
+  "confirmerAvecJustificatif": "Confirmer"
 }

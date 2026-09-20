@@ -24,14 +24,12 @@
   "selectionner": "— Sélectionner —",
   "montant": "Montant",
   "libelleOptionnel": "Libellé (optionnel)",
-
   "onglets": {
     "banques": "Banques",
     "grandLivre": "Grand livre",
     "transferts": "Transferts",
     "rapprochement": "Rapprochement"
   },
-
   "grandLivre": {
     "date": "Date",
     "numero": "N°",
@@ -41,7 +39,6 @@
     "solde": "Solde",
     "aucunMouvement": "Aucun mouvement sur cette période."
   },
-
   "nouveauTransfert": "+ Transfert vers une caisse",
   "transfertVersCaisse": "Transfert vers une caisse",
   "caisseDestination": "Caisse de destination",
@@ -50,12 +47,10 @@
   "receptionne": "Réceptionné",
   "enAttenteReception": "En attente de réception",
   "aucunTransfert": "Aucun transfert pour cette banque.",
-
   "releveExcel": "Relevé bancaire (Excel)",
   "telechargerModele": "Télécharger le modèle",
   "lignesDetectees": "{{n}} lignes détectées dans {{fichier}}",
   "lancerRapprochement": "Lancer le rapprochement",
-
   "modele": {
     "date": "Date",
     "libelle": "Libellé",
@@ -63,7 +58,6 @@
     "exempleLibelle1": "Virement reçu client X",
     "exempleLibelle2": "Frais de tenue de compte"
   },
-
   "resultat": {
     "rapprochees": "{{n}} mouvement(s) rapproché(s) automatiquement (montant identique trouvé des deux côtés).",
     "chezNousTitre": "Chez nous, pas encore vu à la banque ({{n}})",
@@ -72,7 +66,6 @@
     "banqueAide": "Présents dans le relevé mais absents de DistribPro — souvent des frais bancaires, ou un mouvement non enregistré dans l'app.",
     "aucunEcart": "Aucun écart de ce côté."
   },
-
   "erreurs": {
     "erreur": "Erreur",
     "nomRequis": "Le nom de la banque est requis.",
@@ -81,6 +74,10 @@
     "periodeRequise": "Indiquez une période (début et fin).",
     "releveRequis": "Téléversez un relevé avant de lancer le rapprochement.",
     "aucuneLigneReleve": "Aucune ligne exploitable trouvée dans ce fichier — vérifiez qu'il suit le modèle.",
-    "fichierIllisible": "Impossible de lire ce fichier — vérifiez que c'est bien un fichier Excel (.xlsx)."
-  }
+    "fichierIllisible": "Impossible de lire ce fichier — vérifiez que c'est bien un fichier Excel (.xlsx).",
+    "justificatifRequis": "Une pièce justificative (bordereau) est requise pour confirmer ce transfert."
+  },
+  "transfertsEntrantsEnAttente": "{{n}} transfert(s) entrant(s) à confirmer",
+  "justificatifBordereauLabel": "Bordereau de versement (photo ou PDF)",
+  "confirmerAvecJustificatif": "Confirmer"
 }

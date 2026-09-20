@@ -42,6 +42,9 @@ export default function Parametres() {
   const [frequenceInventaireCaisse, setFrequenceInventaireCaisse] = useState('')
   const [enregistrementRappels, setEnregistrementRappels] = useState(false)
   const [confirmationRappels, setConfirmationRappels] = useState(false)
+  const [justificatifTransfertRequis, setJustificatifTransfertRequis] = useState(false)
+  const [enregistrementTransferts, setEnregistrementTransferts] = useState(false)
+  const [confirmationTransferts, setConfirmationTransferts] = useState(false)
   const [rolesValidateurs, setRolesValidateurs] = useState(['admin', 'manager'])
   const [enregistrementCaisse, setEnregistrementCaisse] = useState(false)
   const [confirmationCaisse, setConfirmationCaisse] = useState(false)
@@ -73,6 +76,7 @@ export default function Parametres() {
       setRolesValidateurs(entreprise.caisse_roles_validateurs || ['admin', 'manager'])
       setFrequenceInventaireStock(entreprise.frequence_inventaire_stock || '')
       setFrequenceInventaireCaisse(entreprise.frequence_inventaire_caisse || '')
+      setJustificatifTransfertRequis(entreprise.justificatif_transfert_requis ?? false)
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -184,6 +188,17 @@ export default function Parametres() {
     if (!error) {
       setConfirmationRappels(true)
       setTimeout(() => setConfirmationRappels(false), 2500)
+      rechargerProfil?.()
+    }
+  }
+
+  async function enregistrerParametrageTransferts() {
+    setEnregistrementTransferts(true)
+    const { error } = await supabase.rpc('modifier_parametrage_transferts', { p_justificatif_requis: justificatifTransfertRequis })
+    setEnregistrementTransferts(false)
+    if (!error) {
+      setConfirmationTransferts(true)
+      setTimeout(() => setConfirmationTransferts(false), 2500)
       rechargerProfil?.()
     }
   }
@@ -783,6 +798,21 @@ export default function Parametres() {
             {enregistrementRappels ? t('enregistrement') : t('enregistrer')}
           </button>
           {confirmationRappels && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">{t('transferts.titre')}</h2>
+          <p className="text-xs text-petrol-500 mb-3">{t('transferts.sousTitre')}</p>
+          <label className="flex items-center gap-2 text-sm mb-3">
+            <input type="checkbox" checked={justificatifTransfertRequis} onChange={(e) => setJustificatifTransfertRequis(e.target.checked)} />
+            {t('transferts.exigerJustificatif')}
+          </label>
+          <button onClick={enregistrerParametrageTransferts} disabled={enregistrementTransferts} className="btn-primary text-sm">
+            {enregistrementTransferts ? t('enregistrement') : t('enregistrer')}
+          </button>
+          {confirmationTransferts && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 

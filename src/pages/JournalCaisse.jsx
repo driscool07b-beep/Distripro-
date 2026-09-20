@@ -18,6 +18,8 @@ export default function JournalCaisse() {
   const [solde, setSolde] = useState(0)
   const [demandes, setDemandes] = useState([])
   const [transfertsEntrants, setTransfertsEntrants] = useState([])
+  const [confirmationTransfertId, setConfirmationTransfertId] = useState(null)
+  const [fichierConfirmationTransfert, setFichierConfirmationTransfert] = useState(null)
   const [chargement, setChargement] = useState(true)
 
   const [montantsAValider, setMontantsAValider] = useState({})
@@ -450,12 +452,37 @@ export default function JournalCaisse() {
     charger(); chargerGrandLivre()
   }
 
-  async function receptionnerTransfert(transfertId, origine) {
+  async function receptionnerTransfert(transfertId, origine, fichier) {
     setEnvoiAction(transfertId)
+    setErreurAction('')
+
+    if (entreprise?.justificatif_transfert_requis && !fichier) {
+      setErreurAction(t('erreurs.justificatifRequis'))
+      setEnvoiAction(null)
+      return
+    }
+
+    let cheminPiece = null
+    let nomPiece = null
+    if (fichier) {
+      nomPiece = fichier.name
+      cheminPiece = `${entreprise?.id}/decaissements/transferts/${transfertId}-${Date.now()}-${fichier.name}`
+      const { error: erreurUpload } = await supabase.storage.from('pieces-jointes').upload(cheminPiece, fichier)
+      if (erreurUpload) {
+        setEnvoiAction(null)
+        setErreurAction(`${t('erreurs.erreur')} : ${traduireErreur(erreurUpload.message)}`)
+        return
+      }
+    }
+
     const nomFonction = origine === 'banque' ? 'receptionner_transfert_banque_caisse' : 'receptionner_transfert_caisse'
-    const { error } = await supabase.rpc(nomFonction, { p_transfert_id: transfertId })
+    const { error } = await supabase.rpc(nomFonction, {
+      p_transfert_id: transfertId, p_piece_justificative_path: cheminPiece, p_piece_justificative_nom: nomPiece,
+    })
     setEnvoiAction(null)
     if (error) { setErreurAction(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    setConfirmationTransfertId(null)
+    setFichierConfirmationTransfert(null)
     charger(); chargerGrandLivre()
   }
 
@@ -525,26 +552,57 @@ export default function JournalCaisse() {
               <p className="text-sm font-semibold text-blue-800 mb-2">{t('transfertsEnAttente', { n: transfertsEntrants.length })}</p>
               <div className="space-y-2">
                 {transfertsEntrants.map((tr) => (
-                  <div key={tr.id} className="flex items-center justify-between bg-white rounded-lg border border-blue-200 px-3 py-2 text-sm">
-                    <div>
-                      <p className="font-medium">
-                        {tr.numero} — {tr.origine === 'banque' ? t('depuisBanque', { nom: tr.nomOrigine || '—' }) : t('depuisCaisse', { nom: tr.nomOrigine || '—' })}
-                      </p>
-                      <p className="text-xs text-petrol-500">{tr.libelle} — {t('envoyeParLe', { nom: tr.auteur?.nom || '—', date: formatDate(tr.created_at) })}</p>
+                  <div key={tr.id} className="bg-white rounded-lg border border-blue-200 px-3 py-2 text-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">
+                          {tr.numero} — {tr.origine === 'banque' ? t('depuisBanque', { nom: tr.nomOrigine || '—' }) : t('depuisCaisse', { nom: tr.nomOrigine || '—' })}
+                        </p>
+                        <p className="text-xs text-petrol-500">{tr.libelle} — {t('envoyeParLe', { nom: tr.auteur?.nom || '—', date: formatDate(tr.created_at) })}</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="font-mono">{formatXOF(tr.montant)}</span>
+                        {confirmationTransfertId !== tr.id && (
+                          <button
+                            onClick={() => (entreprise?.justificatif_transfert_requis ? setConfirmationTransfertId(tr.id) : receptionnerTransfert(tr.id, tr.origine, null))}
+                            disabled={envoiAction === tr.id}
+                            className="bg-blue-600 text-white text-xs rounded-lg px-3 py-1.5"
+                          >
+                            {t('receptionner')}
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="font-mono">{formatXOF(tr.montant)}</span>
-                      <button
-                        onClick={() => receptionnerTransfert(tr.id, tr.origine)}
-                        disabled={envoiAction === tr.id}
-                        className="bg-blue-600 text-white text-xs rounded-lg px-3 py-1.5"
-                      >
-                        {t('receptionner')}
-                      </button>
-                    </div>
+                    {confirmationTransfertId === tr.id && (
+                      <div className="mt-2 pt-2 border-t border-blue-100 space-y-2">
+                        <label className="text-xs text-petrol-600 block">{t('justificatifBordereauLabel')}</label>
+                        <input
+                          type="file" accept="image/*,application/pdf"
+                          className="text-xs"
+                          onChange={(e) => setFichierConfirmationTransfert(e.target.files?.[0] || null)}
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => { setConfirmationTransfertId(null); setFichierConfirmationTransfert(null) }}
+                            className="btn-secondary text-xs flex-1"
+                          >
+                            {t('annuler')}
+                          </button>
+                          <button
+                            onClick={() => receptionnerTransfert(tr.id, tr.origine, fichierConfirmationTransfert)}
+                            disabled={envoiAction === tr.id || !fichierConfirmationTransfert}
+                            className="bg-blue-600 text-white text-xs rounded-lg px-3 py-1.5 flex-1"
+                          >
+                            {envoiAction === tr.id ? '…' : t('confirmerAvecJustificatif')}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
+              {erreurAction && <p className="text-xs text-red-600 mt-2">{erreurAction}</p>}
             </div>
           )}
 

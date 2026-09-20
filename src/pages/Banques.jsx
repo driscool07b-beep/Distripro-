@@ -9,7 +9,7 @@ import { traduireErreur } from '../lib/erreurs'
 
 export default function Banques() {
   const { t } = useTranslation('banques')
-  const { profil } = useAuth()
+  const { profil, entreprise } = useAuth()
 
   const [onglet, setOnglet] = useState('banques')
   const [banques, setBanques] = useState([])
@@ -39,6 +39,11 @@ export default function Banques() {
   const [envoiTransfert, setEnvoiTransfert] = useState(false)
   const [erreurTransfert, setErreurTransfert] = useState('')
   const [transfertsSortants, setTransfertsSortants] = useState([])
+  const [transfertsEntrants, setTransfertsEntrants] = useState([])
+  const [confirmationEntrantId, setConfirmationEntrantId] = useState(null)
+  const [fichierConfirmationEntrant, setFichierConfirmationEntrant] = useState(null)
+  const [erreurTransfertReception, setErreurTransfertReception] = useState('')
+  const [envoiAction, setEnvoiAction] = useState(null)
 
   const [banqueRapproId, setBanqueRapproId] = useState('')
   const [periodeDebutRappro, setPeriodeDebutRappro] = useState('')
@@ -146,6 +151,51 @@ export default function Banques() {
     setTransfertsSortants(data || [])
   }
   useEffect(() => { if (onglet === 'transferts') chargerTransfertsSortants() }, [onglet, transfertBanqueId])
+
+  async function chargerTransfertsEntrants() {
+    if (!transfertBanqueId) return
+    const { data } = await supabase
+      .from('caisse_transferts')
+      .select('id, numero, montant, libelle, created_at, caisse_source:caisses!caisse_source_id(nom), auteur:profils!created_by(nom)')
+      .eq('banque_destination_id', transfertBanqueId)
+      .eq('statut', 'en_attente')
+      .order('created_at', { ascending: false })
+    setTransfertsEntrants(data || [])
+  }
+  useEffect(() => { if (onglet === 'transferts') chargerTransfertsEntrants() }, [onglet, transfertBanqueId])
+
+  async function receptionnerTransfertEntrant(transfertId, fichier) {
+    setEnvoiAction(transfertId)
+    setErreurTransfertReception('')
+
+    if (entreprise?.justificatif_transfert_requis && !fichier) {
+      setErreurTransfertReception(t('erreurs.justificatifRequis'))
+      setEnvoiAction(null)
+      return
+    }
+
+    let cheminPiece = null
+    let nomPiece = null
+    if (fichier) {
+      nomPiece = fichier.name
+      cheminPiece = `${entreprise?.id}/decaissements/transferts/${transfertId}-${Date.now()}-${fichier.name}`
+      const { error: erreurUpload } = await supabase.storage.from('pieces-jointes').upload(cheminPiece, fichier)
+      if (erreurUpload) {
+        setEnvoiAction(null)
+        setErreurTransfertReception(`${t('erreurs.erreur')} : ${traduireErreur(erreurUpload.message)}`)
+        return
+      }
+    }
+
+    const { error } = await supabase.rpc('receptionner_transfert_caisse', {
+      p_transfert_id: transfertId, p_piece_justificative_path: cheminPiece, p_piece_justificative_nom: nomPiece,
+    })
+    setEnvoiAction(null)
+    if (error) { setErreurTransfertReception(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    setConfirmationEntrantId(null)
+    setFichierConfirmationEntrant(null)
+    charger(); chargerTransfertsEntrants()
+  }
 
   async function creerTransfertBanqueCaisse(e) {
     e.preventDefault()
@@ -372,6 +422,63 @@ export default function Banques() {
                 </div>
                 <button onClick={() => setModalTransfert(true)} className="btn-primary text-sm">{t('nouveauTransfert')}</button>
               </div>
+
+              {transfertsEntrants.length > 0 && (
+                <div className="card p-3 mb-4 border-blue-200 bg-blue-50">
+                  <p className="text-sm font-semibold text-blue-800 mb-2">{t('transfertsEntrantsEnAttente', { n: transfertsEntrants.length })}</p>
+                  <div className="space-y-2">
+                    {transfertsEntrants.map((tr) => (
+                      <div key={tr.id} className="bg-white rounded-lg border border-blue-200 px-3 py-2 text-sm">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{tr.numero} — {t('depuisCaisse', { nom: tr.caisse_source?.nom || '—' })}</p>
+                            <p className="text-xs text-petrol-500">{tr.libelle} — {t('envoyeParLe', { nom: tr.auteur?.nom || '—', date: formatDate(tr.created_at) })}</p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="font-mono">{formatXOF(tr.montant)}</span>
+                            {confirmationEntrantId !== tr.id && (
+                              <button
+                                onClick={() => (entreprise?.justificatif_transfert_requis ? setConfirmationEntrantId(tr.id) : receptionnerTransfertEntrant(tr.id, null))}
+                                disabled={envoiAction === tr.id}
+                                className="bg-blue-600 text-white text-xs rounded-lg px-3 py-1.5"
+                              >
+                                {t('receptionner')}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        {confirmationEntrantId === tr.id && (
+                          <div className="mt-2 pt-2 border-t border-blue-100 space-y-2">
+                            <label className="text-xs text-petrol-600 block">{t('justificatifBordereauLabel')}</label>
+                            <input
+                              type="file" accept="image/*,application/pdf" className="text-xs"
+                              onChange={(e) => setFichierConfirmationEntrant(e.target.files?.[0] || null)}
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => { setConfirmationEntrantId(null); setFichierConfirmationEntrant(null) }}
+                                className="btn-secondary text-xs flex-1"
+                              >
+                                {t('annuler')}
+                              </button>
+                              <button
+                                onClick={() => receptionnerTransfertEntrant(tr.id, fichierConfirmationEntrant)}
+                                disabled={envoiAction === tr.id || !fichierConfirmationEntrant}
+                                className="bg-blue-600 text-white text-xs rounded-lg px-3 py-1.5 flex-1"
+                              >
+                                {envoiAction === tr.id ? '…' : t('confirmerAvecJustificatif')}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {erreurTransfertReception && <p className="text-xs text-red-600 mt-2">{erreurTransfertReception}</p>}
+                </div>
+              )}
+
               <p className="text-xs text-petrol-500 mb-3">{t('noteTransfertCaisseVersBanque')}</p>
               <div className="space-y-1.5">
                 {transfertsSortants.map((tr) => (

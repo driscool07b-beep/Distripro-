@@ -140,5 +140,10 @@
     "hebdomadaire": "每周",
     "mensuel": "每月",
     "trimestriel": "每季度"
+  },
+  "transferts": {
+    "titre": "收银台/银行之间的转账",
+    "sousTitre": "设置确认转账接收（两个收银台之间，或收银台与银行之间）是否需要提供凭证（存款/取款单据照片）。",
+    "exigerJustificatif": "要求提供凭证以确认转账"
   }
 }

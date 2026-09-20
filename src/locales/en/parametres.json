@@ -140,5 +140,10 @@
     "hebdomadaire": "Every week",
     "mensuel": "Every month",
     "trimestriel": "Every quarter"
+  },
+  "transferts": {
+    "titre": "Transfers between cash registers/banks",
+    "sousTitre": "Determines whether confirming receipt of a transfer (between two cash registers, or between a cash register and a bank) requires a supporting document (photo of the deposit/withdrawal slip).",
+    "exigerJustificatif": "Require a supporting document to confirm a transfer"
   }
 }

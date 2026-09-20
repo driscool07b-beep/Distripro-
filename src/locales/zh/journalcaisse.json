@@ -92,7 +92,8 @@
     "libelleRequis": "摘要为必填项。",
     "montantInvalide": "请输入有效金额。",
     "destinationRequise": "请指定目标。",
-    "motifRequis": "原因为必填项。"
+    "motifRequis": "原因为必填项。",
+    "justificatifRequis": "确认此转账需要提供凭证（单据）。"
   },
   "pin": {
     "nouveauPinRequis": "🔑 需要新的审批码",
@@ -129,5 +130,7 @@
     "soldeCompteLabel": "实际清点金额",
     "notesOptionnelles": "备注（可选）",
     "valider": "确认盘点"
-  }
+  },
+  "justificatifBordereauLabel": "存款/取款单据（照片或PDF）",
+  "confirmerAvecJustificatif": "确认"
 }

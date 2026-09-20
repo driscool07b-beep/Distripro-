@@ -92,7 +92,8 @@
     "libelleRequis": "البيان مطلوب.",
     "montantInvalide": "أدخل مبلغًا صحيحًا.",
     "destinationRequise": "حدد وجهة.",
-    "motifRequis": "السبب مطلوب."
+    "motifRequis": "السبب مطلوب.",
+    "justificatifRequis": "مطلوب مستند داعم (إيصال) لتأكيد هذا التحويل."
   },
   "pin": {
     "nouveauPinRequis": "🔑 مطلوب رمز موافقة جديد",
@@ -129,5 +130,7 @@
     "soldeCompteLabel": "المبلغ المعدود فعليًا",
     "notesOptionnelles": "ملاحظات (اختياري)",
     "valider": "تأكيد الجرد"
-  }
+  },
+  "justificatifBordereauLabel": "إيصال الإيداع/السحب (صورة أو PDF)",
+  "confirmerAvecJustificatif": "تأكيد"
 }
