@@ -206,6 +206,31 @@
       ]
     },
     {
+      "titre": "Banques",
+      "items": [
+        {
+          "q": "Comment créer un compte bancaire ?",
+          "r": "Banques → '+ Nouvelle banque' — nom, numéro de compte (RIB), intitulé. Une entreprise peut avoir plusieurs comptes dans des banques différentes."
+        },
+        {
+          "q": "Comment un règlement client par chèque ou virement est-il lié à une banque ?",
+          "r": "Dans Créances, lors de l'enregistrement d'un paiement en mode 'Chèque' ou 'Virement', un champ optionnel permet de préciser sur quelle banque il est déposé — utile pour le suivi et le rapprochement."
+        },
+        {
+          "q": "Comment transférer de l'argent entre une caisse et une banque ?",
+          "r": "Caisse vers banque : depuis le Journal de caisse, bouton '+ Transfert' → 'Vers une banque'. Banque vers caisse (sens inverse) : depuis Banques → onglet Transferts. Dans les deux cas, le montant sort immédiatement de la source et n'est crédité à la destination qu'après confirmation de réception."
+        },
+        {
+          "q": "Comment fonctionne le rapprochement bancaire ?",
+          "r": "Banques → onglet Rapprochement — choisis la banque et la période, téléverse le relevé bancaire au format Excel (modèle fourni dans l'app). Le système compare automatiquement (par montant identique) le relevé à nos propres mouvements enregistrés, et met en évidence ce qui ne correspond pas des deux côtés — un chèque pas encore encaissé, des frais bancaires non enregistrés, etc."
+        },
+        {
+          "q": "Comment faire un inventaire de caisse ?",
+          "r": "Journal de caisse → onglet Inventaire → '+ Nouvel inventaire' — saisis le montant réellement compté dans la caisse. Il est automatiquement comparé au solde théorique (comptable), l'écart est mis en évidence, et un rapport PDF est généré avec des espaces de signature."
+        }
+      ]
+    },
+    {
       "titre": "Objectifs & Analytique",
       "items": [
         {
