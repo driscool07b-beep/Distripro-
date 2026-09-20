@@ -153,6 +153,12 @@ as $$
     - coalesce((select sum(db.montant) from decaissements_banque db where db.banque_id = p_banque_id), 0);
 $$;
 
+-- Le nombre de colonnes retournées change par rapport à la version
+-- précédente (ajout de 'reference') — Postgres exige de supprimer la
+-- fonction avant de la recréer dans ce cas (un simple CREATE OR
+-- REPLACE ne suffit pas quand la 'forme' du retour change).
+drop function if exists journal_banque(uuid, date, date);
+
 create or replace function journal_banque(p_banque_id uuid, p_date_debut date default null, p_date_fin date default null)
 returns table (date_mouvement timestamptz, numero text, type_mouvement text, libelle text, reference text, debit numeric, credit numeric, solde numeric)
 language sql security definer stable set search_path to 'public'
