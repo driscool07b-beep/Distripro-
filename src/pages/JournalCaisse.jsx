@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { formatXOF, formatDate, formatDateHeure } from '../lib/format'
-import { genererBonCaisse, exporterExcel, exporterPDF } from '../lib/export'
+import { genererBonCaisse, genererRapportInventaireCaisse, exporterExcel, exporterPDF } from '../lib/export'
 import { traduireErreur } from '../lib/erreurs'
 import i18n from '../lib/i18n'
 
@@ -66,6 +66,14 @@ export default function JournalCaisse() {
   const [chargementGrandLivre, setChargementGrandLivre] = useState(true)
   const [dateDebut, setDateDebut] = useState('')
   const [dateFin, setDateFin] = useState('')
+
+  const [inventaires, setInventaires] = useState([])
+  const [chargementInventaires, setChargementInventaires] = useState(true)
+  const [modalInventaire, setModalInventaire] = useState(false)
+  const [soldeCompte, setSoldeCompte] = useState('')
+  const [notesInventaire, setNotesInventaire] = useState('')
+  const [envoiInventaire, setEnvoiInventaire] = useState(false)
+  const [erreurInventaire, setErreurInventaire] = useState('')
 
   const [envoiAction, setEnvoiAction] = useState(null)
   const [erreurAction, setErreurAction] = useState('')
@@ -147,6 +155,7 @@ export default function JournalCaisse() {
     if (caisseId) {
       charger()
       chargerGrandLivre()
+      chargerInventaires()
     }
   }, [caisseId])
 
@@ -198,6 +207,49 @@ export default function JournalCaisse() {
     })
     setGrandLivre(data || [])
     setChargementGrandLivre(false)
+  }
+
+  async function chargerInventaires() {
+    setChargementInventaires(true)
+    const { data } = await supabase
+      .from('inventaires_caisse')
+      .select('id, numero, solde_theorique, solde_compte, ecart, notes, created_at, controleur:profils!controle_par(nom)')
+      .eq('caisse_id', caisseId)
+      .order('created_at', { ascending: false })
+    setInventaires(data || [])
+    setChargementInventaires(false)
+  }
+
+  async function creerInventaire(e) {
+    e.preventDefault()
+    setErreurInventaire('')
+    if (soldeCompte === '' || Number(soldeCompte) < 0) { setErreurInventaire(t('erreurs.montantInvalide')); return }
+    setEnvoiInventaire(true)
+    const { data: inventaireId, error } = await supabase.rpc('creer_inventaire_caisse', {
+      p_caisse_id: caisseId, p_solde_compte: Number(soldeCompte), p_notes: notesInventaire.trim() || null,
+    })
+    setEnvoiInventaire(false)
+    if (error) { setErreurInventaire(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+
+    const { data: inventaire } = await supabase
+      .from('inventaires_caisse')
+      .select('id, numero, solde_theorique, solde_compte, ecart, notes, created_at, controleur:profils!controle_par(nom)')
+      .eq('id', inventaireId)
+      .single()
+
+    const caisse = caisses.find((c) => c.id === caisseId)
+    const doc = genererRapportInventaireCaisse({ entreprise, inventaire, caisse })
+    doc.save(`${inventaire?.numero || 'inventaire-caisse'}.pdf`)
+
+    setSoldeCompte(''); setNotesInventaire('')
+    setModalInventaire(false)
+    chargerInventaires()
+  }
+
+  function imprimerInventaire(inventaire) {
+    const caisse = caisses.find((c) => c.id === caisseId)
+    const doc = genererRapportInventaireCaisse({ entreprise, inventaire, caisse })
+    doc.save(`${inventaire.numero || 'inventaire-caisse'}.pdf`)
   }
 
   const colonnesGrandLivre = [
@@ -497,7 +549,7 @@ export default function JournalCaisse() {
           )}
 
           <div className="flex gap-2 mb-4">
-            {['demandes', 'grandLivre'].map((o) => (
+            {['demandes', 'grandLivre', 'inventaire'].map((o) => (
               <button
                 key={o}
                 onClick={() => setOnglet(o)}
@@ -743,6 +795,52 @@ export default function JournalCaisse() {
               )}
             </div>
           )}
+
+          {onglet === 'inventaire' && (
+            <div>
+              <div className="flex justify-end mb-3">
+                <button onClick={() => setModalInventaire(true)} className="btn-primary text-sm">{t('inventaire.nouveau')}</button>
+              </div>
+              <p className="text-xs text-petrol-500 mb-3">{t('inventaire.aide')}</p>
+              {chargementInventaires ? (
+                <p className="text-sm text-petrol-500">{t('chargement')}</p>
+              ) : (
+                <div className="space-y-2">
+                  {inventaires.map((inv) => (
+                    <div key={inv.id} className="card p-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-sm">{inv.numero}</p>
+                          <p className="text-xs text-petrol-500">
+                            {t('inventaire.controlePar', { nom: inv.controleur?.nom || '—', date: formatDate(inv.created_at) })}
+                          </p>
+                        </div>
+                        <button onClick={() => imprimerInventaire(inv)} className="text-xs text-blue-600 underline">{t('inventaire.imprimer')}</button>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
+                        <div>
+                          <p className="text-petrol-500">{t('inventaire.theorique')}</p>
+                          <p className="font-mono font-medium">{formatXOF(inv.solde_theorique)}</p>
+                        </div>
+                        <div>
+                          <p className="text-petrol-500">{t('inventaire.compte')}</p>
+                          <p className="font-mono font-medium">{formatXOF(inv.solde_compte)}</p>
+                        </div>
+                        <div>
+                          <p className="text-petrol-500">{t('inventaire.ecart')}</p>
+                          <p className={`font-mono font-medium ${Number(inv.ecart) !== 0 ? 'text-red-600' : 'text-green-700'}`}>
+                            {Number(inv.ecart) > 0 ? '+' : ''}{formatXOF(inv.ecart)}
+                          </p>
+                        </div>
+                      </div>
+                      {inv.notes && <p className="text-xs text-petrol-500 mt-2">{inv.notes}</p>}
+                    </div>
+                  ))}
+                  {inventaires.length === 0 && <p className="text-petrol-400 text-center py-12 text-sm">{t('inventaire.aucun')}</p>}
+                </div>
+              )}
+            </div>
+          )}
         </>
       )}
 
@@ -892,6 +990,32 @@ export default function JournalCaisse() {
               <div className="flex gap-2 pt-2">
                 <button type="button" onClick={() => setModalRetourFonds(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiRetour} className="btn-primary flex-1">{envoiRetour ? t('envoi') : t('enregistrer')}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {modalInventaire && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-5 w-full max-w-sm">
+            <h2 className="font-semibold text-lg mb-3">{t('inventaire.nouveau')}</h2>
+            <p className="text-sm text-petrol-600 mb-3">
+              {t('inventaire.soldeTheoriqueActuel', { montant: formatXOF(solde) })}
+            </p>
+            <form onSubmit={creerInventaire} className="space-y-3">
+              <div>
+                <label className="label">{t('inventaire.soldeCompteLabel')}</label>
+                <input type="number" min="0" className="input-field" value={soldeCompte} onChange={(e) => setSoldeCompte(e.target.value)} autoFocus />
+              </div>
+              <div>
+                <label className="label">{t('inventaire.notesOptionnelles')}</label>
+                <input className="input-field" value={notesInventaire} onChange={(e) => setNotesInventaire(e.target.value)} />
+              </div>
+              {erreurInventaire && <p className="text-xs text-red-600">{erreurInventaire}</p>}
+              <div className="flex gap-2 pt-2">
+                <button type="button" onClick={() => setModalInventaire(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button type="submit" disabled={envoiInventaire} className="btn-primary flex-1">{envoiInventaire ? t('envoi') : t('inventaire.valider')}</button>
               </div>
             </form>
           </div>

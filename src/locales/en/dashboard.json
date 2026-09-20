@@ -56,7 +56,8 @@
     "ventesCashBureau": "Cash sales — office",
     "recouvrementBureau": "Collections — office",
     "dejaVerseAujourdhui": "Already deposited today",
-    "resteAVerser": "Remaining to deposit"
+    "resteAVerser": "Remaining to deposit",
+    "soldesBanquesTitre": "Bank balances"
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",

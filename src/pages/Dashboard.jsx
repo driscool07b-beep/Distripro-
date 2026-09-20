@@ -392,6 +392,7 @@ function DashboardEntreprise() {
 
       <CarteVersementsEnCours />
       <CartesSoldesCaisses />
+      <CartesSoldesBanques />
       <CamembertRepartitionCA />
 
       <div className="card p-6 mb-6">
@@ -686,6 +687,7 @@ function DashboardComptable() {
 
           <CarteVersementsEnCours />
           <CartesSoldesCaisses />
+      <CartesSoldesBanques />
           <CamembertRepartitionCA />
         </>
       )}
@@ -1022,6 +1024,49 @@ function CartesSoldesCaisses() {
           >
             <span className="text-sm">{c.nom}</span>
             <span className={`font-mono font-semibold ${c.solde < 0 ? 'text-red-600' : ''}`}>{formatXOF(c.solde)}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function CartesSoldesBanques() {
+  const { t } = useTranslation('dashboard')
+  const [banques, setBanques] = useState([])
+  const [chargement, setChargement] = useState(true)
+
+  useEffect(() => {
+    charger()
+  }, [])
+
+  async function charger() {
+    setChargement(true)
+    const { data } = await supabase.from('banques').select('id, nom').eq('actif', true).order('nom')
+    const avecSolde = await Promise.all(
+      (data || []).map(async (b) => {
+        const { data: solde } = await supabase.rpc('solde_banque', { p_banque_id: b.id })
+        return { ...b, solde: solde || 0 }
+      })
+    )
+    setBanques(avecSolde)
+    setChargement(false)
+  }
+
+  if (chargement || banques.length === 0) return null
+
+  return (
+    <div className="card p-4 mb-6">
+      <h2 className="font-semibold mb-3">{t('entreprise.soldesBanquesTitre')}</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {banques.map((b) => (
+          <Link
+            key={b.id}
+            to="/banques"
+            className="flex justify-between items-center border border-line rounded-lg px-3 py-2 hover:bg-canvas transition-colors"
+          >
+            <span className="text-sm">{b.nom}</span>
+            <span className={`font-mono font-semibold ${b.solde < 0 ? 'text-red-600' : ''}`}>{formatXOF(b.solde)}</span>
           </Link>
         ))}
       </div>

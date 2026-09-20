@@ -13,7 +13,8 @@
   "avertissementSoldeNegatif": "⚠️ سيصبح الرصيد سالبًا إذا تمت الموافقة على هذه المبالغ كما هي.",
   "onglets": {
     "demandes": "الطلبات",
-    "grandLivre": "دفتر الأستاذ"
+    "grandLivre": "دفتر الأستاذ",
+    "inventaire": "الجرد"
   },
   "transfertsEnAttente": "{{n}} تحويل(ات) واردة بانتظار الاستلام",
   "depuisCaisse": "من {{nom}}",
@@ -114,5 +115,19 @@
   "periodePdf": "من {{debut}} إلى {{fin}}",
   "soldeFinalPdf": "الرصيد النهائي",
   "depuisBanque": "من {{nom}}",
-  "aucuneBanqueCreee": "لم يتم إنشاء أي بنك بعد — أضف واحدًا من قائمة البنوك."
+  "aucuneBanqueCreee": "لم يتم إنشاء أي بنك بعد — أضف واحدًا من قائمة البنوك.",
+  "inventaire": {
+    "nouveau": "+ جرد جديد",
+    "aide": "جرد فعلي دوري للصندوق — يقارن الرصيد النظري (المحاسبي) بالمبلغ المعدود فعليًا، من قبل مسؤول محاسبي.",
+    "controlePar": "راقبه {{nom}} — {{date}}",
+    "imprimer": "طباعة",
+    "theorique": "نظري",
+    "compte": "معدود",
+    "ecart": "الفارق",
+    "aucun": "لا يوجد جرد مسجل لهذا الصندوق.",
+    "soldeTheoriqueActuel": "الرصيد النظري الحالي: {{montant}}",
+    "soldeCompteLabel": "المبلغ المعدود فعليًا",
+    "notesOptionnelles": "ملاحظات (اختياري)",
+    "valider": "تأكيد الجرد"
+  }
 }

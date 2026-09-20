@@ -13,7 +13,8 @@
   "avertissementSoldeNegatif": "⚠️ 如果按当前金额全部批准，余额将变为负数。",
   "onglets": {
     "demandes": "申请",
-    "grandLivre": "总账"
+    "grandLivre": "总账",
+    "inventaire": "盘点"
   },
   "transfertsEnAttente": "{{n}} 笔转入待接收",
   "depuisCaisse": "来自 {{nom}}",
@@ -114,5 +115,19 @@
   "periodePdf": "从 {{debut}} 至 {{fin}}",
   "soldeFinalPdf": "最终余额",
   "depuisBanque": "来自 {{nom}}",
-  "aucuneBanqueCreee": "尚未创建银行账户——请在「银行」菜单中添加。"
+  "aucuneBanqueCreee": "尚未创建银行账户——请在「银行」菜单中添加。",
+  "inventaire": {
+    "nouveau": "+ 新建盘点",
+    "aide": "定期实物现金盘点——由财务负责人将理论（账面）余额与实际清点金额进行比较。",
+    "controlePar": "核对人：{{nom}} — {{date}}",
+    "imprimer": "打印",
+    "theorique": "理论值",
+    "compte": "实际清点",
+    "ecart": "差异",
+    "aucun": "该收银台尚无盘点记录。",
+    "soldeTheoriqueActuel": "当前理论余额：{{montant}}",
+    "soldeCompteLabel": "实际清点金额",
+    "notesOptionnelles": "备注（可选）",
+    "valider": "确认盘点"
+  }
 }

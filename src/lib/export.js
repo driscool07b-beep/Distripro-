@@ -583,3 +583,59 @@ export function genererBonCaisse({ entreprise, demande, caisse, demandePar, vali
 
   return doc
 }
+
+export function genererRapportInventaireCaisse({ entreprise, inventaire, caisse }) {
+  const doc = new jsPDF()
+  const y0 = ecrireEnTeteEntreprise(doc, entreprise)
+  const formatMontant = (n) => formatMontantDevise(n)
+
+  doc.setFontSize(11)
+  doc.setTextColor(60)
+  doc.text(`INVENTAIRE DE CAISSE${inventaire.numero ? '  N° ' + inventaire.numero : ''}`, 14, y0)
+
+  doc.setTextColor(0)
+  doc.setFontSize(11)
+  const yInfo = y0 + 14
+  doc.text(`Caisse : ${caisse?.nom || '—'}`, 14, yInfo)
+  doc.text(`Date du contrôle : ${formatDateHeure(inventaire.created_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 8)
+  doc.text(`Contrôlé par : ${inventaire.controleur?.nom || '—'}`, 14, yInfo + 16)
+
+  autoTable(doc, {
+    startY: yInfo + 28,
+    head: [['', 'Montant']],
+    body: [
+      ['Solde théorique (comptable)', formatMontant(inventaire.solde_theorique)],
+      ['Solde compté (physique)', formatMontant(inventaire.solde_compte)],
+      ['Écart', (Number(inventaire.ecart) > 0 ? '+' : '') + formatMontant(inventaire.ecart)],
+    ],
+    styles: { fontSize: 11, cellPadding: 4 },
+    columnStyles: { 1: { halign: 'right', fontStyle: 'bold' } },
+    margin: { left: 14, right: 14 },
+    didParseCell: (data) => {
+      if (data.row.index === 2 && Number(inventaire.ecart) !== 0) {
+        data.cell.styles.textColor = [190, 40, 30]
+      }
+    },
+  })
+
+  let y = doc.lastAutoTable.finalY + 12
+  if (inventaire.notes) {
+    doc.setFontSize(10)
+    doc.setTextColor(60)
+    const notes = doc.splitTextToSize(`Notes : ${inventaire.notes}`, 182)
+    doc.text(notes, 14, y)
+    y += notes.length * 5 + 10
+  }
+
+  doc.setFontSize(9)
+  doc.text('Signature du contrôleur', 14, y + 15)
+  doc.rect(14, y + 19, 80, 22)
+  doc.text('Signature du responsable de caisse', 110, y + 15)
+  doc.rect(110, y + 19, 80, 22)
+
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
+
+  return doc
+}

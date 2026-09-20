@@ -56,7 +56,8 @@
     "ventesCashBureau": "现金销售 — 办公室",
     "recouvrementBureau": "回收款 — 办公室",
     "dejaVerseAujourdhui": "今日已存",
-    "resteAVerser": "待存余额"
+    "resteAVerser": "待存余额",
+    "soldesBanquesTitre": "银行余额"
   },
   "commercial": {
     "sousTitre": "这是您的个人活动情况。",

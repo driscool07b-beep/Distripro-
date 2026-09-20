@@ -13,7 +13,8 @@
   "avertissementSoldeNegatif": "⚠️ Le solde deviendrait négatif si ces montants étaient accordés en l'état.",
   "onglets": {
     "demandes": "Demandes",
-    "grandLivre": "Grand livre"
+    "grandLivre": "Grand livre",
+    "inventaire": "Inventaire"
   },
   "transfertsEnAttente": "{{n}} transfert(s) entrant(s) à réceptionner",
   "depuisCaisse": "depuis {{nom}}",
@@ -114,5 +115,19 @@
   "periodePdf": "Du {{debut}} au {{fin}}",
   "soldeFinalPdf": "Solde final",
   "depuisBanque": "depuis {{nom}}",
-  "aucuneBanqueCreee": "Aucune banque créée — ajoutez-en une depuis le menu Banques."
+  "aucuneBanqueCreee": "Aucune banque créée — ajoutez-en une depuis le menu Banques.",
+  "inventaire": {
+    "nouveau": "+ Nouvel inventaire",
+    "aide": "Contrôle physique périodique de la caisse — compare le solde théorique (comptable) au montant réellement compté, par un responsable comptable.",
+    "controlePar": "Contrôlé par {{nom}} — {{date}}",
+    "imprimer": "Imprimer",
+    "theorique": "Théorique",
+    "compte": "Compté",
+    "ecart": "Écart",
+    "aucun": "Aucun inventaire enregistré pour cette caisse.",
+    "soldeTheoriqueActuel": "Solde théorique actuel : {{montant}}",
+    "soldeCompteLabel": "Montant réellement compté",
+    "notesOptionnelles": "Notes (optionnel)",
+    "valider": "Valider l'inventaire"
+  }
 }

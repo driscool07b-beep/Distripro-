@@ -56,7 +56,8 @@
     "ventesCashBureau": "المبيعات النقدية — المكتب",
     "recouvrementBureau": "التحصيل — المكتب",
     "dejaVerseAujourdhui": "تم إيداعه اليوم",
-    "resteAVerser": "المتبقي للإيداع"
+    "resteAVerser": "المتبقي للإيداع",
+    "soldesBanquesTitre": "أرصدة البنوك"
   },
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",

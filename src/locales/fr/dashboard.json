@@ -56,7 +56,8 @@
     "ventesCashBureau": "Ventes cash — bureau",
     "recouvrementBureau": "Recouvrement — bureau",
     "dejaVerseAujourdhui": "Déjà versé aujourd'hui",
-    "resteAVerser": "Reste à verser"
+    "resteAVerser": "Reste à verser",
+    "soldesBanquesTitre": "Soldes bancaires"
   },
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",

@@ -13,7 +13,8 @@
   "avertissementSoldeNegatif": "⚠️ The balance would go negative if these amounts were approved as they stand.",
   "onglets": {
     "demandes": "Requests",
-    "grandLivre": "Ledger"
+    "grandLivre": "Ledger",
+    "inventaire": "Inventory"
   },
   "transfertsEnAttente": "{{n}} incoming transfer(s) to receive",
   "depuisCaisse": "from {{nom}}",
@@ -114,5 +115,19 @@
   "periodePdf": "From {{debut}} to {{fin}}",
   "soldeFinalPdf": "Final balance",
   "depuisBanque": "from {{nom}}",
-  "aucuneBanqueCreee": "No bank created yet — add one from the Banks menu."
+  "aucuneBanqueCreee": "No bank created yet — add one from the Banks menu.",
+  "inventaire": {
+    "nouveau": "+ New inventory",
+    "aide": "Periodic physical cash count — compares the theoretical (book) balance to the amount actually counted, by an accounting manager.",
+    "controlePar": "Checked by {{nom}} — {{date}}",
+    "imprimer": "Print",
+    "theorique": "Theoretical",
+    "compte": "Counted",
+    "ecart": "Difference",
+    "aucun": "No inventory recorded for this cash register.",
+    "soldeTheoriqueActuel": "Current theoretical balance: {{montant}}",
+    "soldeCompteLabel": "Amount actually counted",
+    "notesOptionnelles": "Notes (optional)",
+    "valider": "Confirm inventory"
+  }
 }
