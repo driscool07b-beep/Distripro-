@@ -391,6 +391,7 @@ function DashboardEntreprise() {
       </div>
 
       <CarteVersementsEnCours />
+      <AlerteInventaires afficherStock afficherCaisse />
       <CartesSoldesCaisses />
       <CartesSoldesBanques />
       <CamembertRepartitionCA />
@@ -686,6 +687,7 @@ function DashboardComptable() {
           </div>
 
           <CarteVersementsEnCours />
+          <AlerteInventaires afficherCaisse />
           <CartesSoldesCaisses />
       <CartesSoldesBanques />
           <CamembertRepartitionCA />
@@ -848,6 +850,8 @@ function DashboardGestionnaireStock() {
         <p className="text-sm text-petrol-700 mt-1">{t('gestionnaireStock.sousTitre')}</p>
       </header>
 
+      <AlerteInventaires afficherStock />
+
       {chargement ? (
         <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
@@ -983,6 +987,65 @@ function CarteVersementsEnCours() {
         <span className={`font-mono font-semibold ${donnees.reste_a_verser > 0 ? 'text-amber-700' : ''}`}>
           {formatXOF(donnees.reste_a_verser)}
         </span>
+      </div>
+    </div>
+  )
+}
+
+function joursDeFrequence(frequence) {
+  if (frequence === 'hebdomadaire') return 7
+  if (frequence === 'mensuel') return 30
+  if (frequence === 'trimestriel') return 90
+  return null
+}
+
+function AlerteInventaires({ afficherStock, afficherCaisse }) {
+  const { t } = useTranslation('dashboard')
+  const { entreprise } = useAuth()
+  const [enRetard, setEnRetard] = useState([])
+
+  useEffect(() => {
+    charger()
+  }, [entreprise?.frequence_inventaire_stock, entreprise?.frequence_inventaire_caisse])
+
+  async function charger() {
+    const alertes = []
+    const maintenant = new Date()
+
+    if (afficherStock && entreprise?.frequence_inventaire_stock) {
+      const jours = joursDeFrequence(entreprise.frequence_inventaire_stock)
+      const { data } = await supabase.from('inventaires_stock').select('created_at').order('created_at', { ascending: false }).limit(1)
+      const dernier = data?.[0]?.created_at ? new Date(data[0].created_at) : null
+      if (!dernier || (maintenant - dernier) / 86400000 > jours) {
+        alertes.push({ type: 'stock', depuis: dernier })
+      }
+    }
+
+    if (afficherCaisse && entreprise?.frequence_inventaire_caisse) {
+      const jours = joursDeFrequence(entreprise.frequence_inventaire_caisse)
+      const { data } = await supabase.from('inventaires_caisse').select('created_at').order('created_at', { ascending: false }).limit(1)
+      const dernier = data?.[0]?.created_at ? new Date(data[0].created_at) : null
+      if (!dernier || (maintenant - dernier) / 86400000 > jours) {
+        alertes.push({ type: 'caisse', depuis: dernier })
+      }
+    }
+
+    setEnRetard(alertes)
+  }
+
+  if (enRetard.length === 0) return null
+
+  return (
+    <div className="card p-4 mb-6 border-amber-300 bg-amber-50">
+      <p className="text-sm font-semibold text-amber-800 mb-1">⚠️ {t('entreprise.inventairesEnRetardTitre')}</p>
+      <div className="space-y-1">
+        {enRetard.map((a) => (
+          <Link key={a.type} to={a.type === 'stock' ? '/stock' : '/journal-caisse'} className="block text-sm text-amber-700 underline">
+            {a.type === 'stock' ? t('entreprise.inventaireStockEnRetard') : t('entreprise.inventaireCaisseEnRetard')}
+            {' — '}
+            {a.depuis ? t('entreprise.dernierLe', { date: formatDateHeure(a.depuis, { dateStyle: 'medium' }) }) : t('entreprise.jamaisFait')}
+          </Link>
+        ))}
       </div>
     </div>
   )

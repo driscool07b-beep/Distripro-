@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise } from '../lib/export'
+import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise, genererRapportInventaireStock } from '../lib/export'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
@@ -23,6 +23,12 @@ export default function Stock() {
   const [modalHistorique, setModalHistorique] = useState(null)
   const [historiquePrix, setHistoriquePrix] = useState([])
   const [modalImportOuvert, setModalImportOuvert] = useState(false)
+  const [modalInventaire, setModalInventaire] = useState(false)
+  const [depotInventaireId, setDepotInventaireId] = useState('')
+  const [comptagesInventaire, setComptagesInventaire] = useState({})
+  const [notesInventaire, setNotesInventaire] = useState('')
+  const [envoiInventaire, setEnvoiInventaire] = useState(false)
+  const [erreurInventaire, setErreurInventaire] = useState('')
   const [lignesImport, setLignesImport] = useState([])
   const [erreurImport, setErreurImport] = useState('')
   const [importEnCours, setImportEnCours] = useState(false)
@@ -178,6 +184,43 @@ export default function Stock() {
     setResultatImport(null)
     setProgressionImport(0)
     setModalImportOuvert(true)
+  }
+
+  function ouvrirModalInventaire() {
+    setDepotInventaireId(depots[0]?.id || '')
+    setComptagesInventaire({})
+    setNotesInventaire('')
+    setErreurInventaire('')
+    setModalInventaire(true)
+  }
+
+  async function creerInventaireStock(e) {
+    e.preventDefault()
+    setErreurInventaire('')
+    if (!depotInventaireId) { setErreurInventaire(t('inventaire.erreurDepotRequis')); return }
+    const lignes = Object.entries(comptagesInventaire)
+      .filter(([, v]) => v !== '' && v !== undefined && v !== null)
+      .map(([produit_id, quantite_comptee]) => ({ produit_id, quantite_comptee: Number(quantite_comptee) }))
+    if (lignes.length === 0) { setErreurInventaire(t('inventaire.erreurAucuneLigne')); return }
+
+    setEnvoiInventaire(true)
+    const { data: inventaireId, error } = await supabase.rpc('creer_inventaire_stock', {
+      p_depot_id: depotInventaireId, p_lignes: lignes, p_notes: notesInventaire,
+    })
+    setEnvoiInventaire(false)
+    if (error) { setErreurInventaire(`${t('erreur')} : ${traduireErreur(error.message)}`); return }
+
+    const { data: inventaire } = await supabase
+      .from('inventaires_stock')
+      .select('id, numero, notes, created_at, controleur:profils!controle_par(nom), depot:depots(nom), lignes:inventaire_stock_lignes(quantite_theorique, quantite_comptee, ecart, produits(nom))')
+      .eq('id', inventaireId)
+      .single()
+
+    const doc = genererRapportInventaireStock({ entreprise, inventaire })
+    doc.save(`${inventaire?.numero || 'inventaire-stock'}.pdf`)
+
+    setModalInventaire(false)
+    chargerProduits()
   }
 
   function telechargerModeleImport() {
@@ -526,6 +569,9 @@ export default function Stock() {
             <>
               <button className="btn-secondary text-sm" onClick={ouvrirModalImport}>
                 📥 {t('importer')}
+              </button>
+              <button className="btn-secondary text-sm" onClick={ouvrirModalInventaire}>
+                📋 {t('inventaire.bouton')}
               </button>
               <button className="btn-primary" onClick={() => { setProduitEnEdition(null); setFormulaire(PRODUIT_VIDE); setModalProduit(true) }}>
                 {t('nouveauProduit')}
@@ -1090,6 +1136,60 @@ export default function Stock() {
                 )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {modalInventaire && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-5 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <h2 className="font-semibold text-lg mb-1">{t('inventaire.titre')}</h2>
+            <p className="text-xs text-petrol-500 mb-3">{t('inventaire.aide')}</p>
+            <form onSubmit={creerInventaireStock} className="space-y-3">
+              <div>
+                <label className="label">{t('inventaire.depot')}</label>
+                <select className="input-field" value={depotInventaireId} onChange={(e) => setDepotInventaireId(e.target.value)}>
+                  <option value="">{t('inventaire.selectionner')}</option>
+                  {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+                </select>
+              </div>
+
+              {depotInventaireId && (
+                <div className="border border-line rounded-lg divide-y divide-line max-h-80 overflow-y-auto">
+                  {produits.map((p) => {
+                    const theorique = (p.stocks || []).find((s) => s.depot_id === depotInventaireId)?.quantite || 0
+                    return (
+                      <div key={p.id} className="flex items-center justify-between gap-2 px-3 py-2">
+                        <div className="min-w-0">
+                          <p className="text-sm truncate">{p.nom}</p>
+                          <p className="text-xs text-petrol-400">{t('inventaire.theoriqueLabel')} : {theorique}</p>
+                        </div>
+                        <input
+                          type="number" min="0"
+                          className="w-24 border rounded px-2 py-1 text-sm shrink-0"
+                          placeholder={String(theorique)}
+                          value={comptagesInventaire[p.id] ?? ''}
+                          onChange={(e) => setComptagesInventaire((prev) => ({ ...prev, [p.id]: e.target.value }))}
+                        />
+                      </div>
+                    )
+                  })}
+                  {produits.length === 0 && <p className="text-xs text-petrol-400 text-center py-6">{t('inventaire.aucunProduit')}</p>}
+                </div>
+              )}
+
+              <div>
+                <label className="label">{t('inventaire.notesOptionnelles')}</label>
+                <input className="input-field" value={notesInventaire} onChange={(e) => setNotesInventaire(e.target.value)} />
+              </div>
+              {erreurInventaire && <p className="text-xs text-red-600">{erreurInventaire}</p>}
+              <div className="flex gap-2 pt-2">
+                <button type="button" onClick={() => setModalInventaire(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button type="submit" disabled={envoiInventaire} className="btn-primary flex-1">
+                  {envoiInventaire ? t('inventaire.enregistrement') : t('inventaire.valider')}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -143,5 +143,19 @@
     "prixUnitaire": "单价",
     "stock": "库存",
     "valeur": "价值"
+  },
+  "inventaire": {
+    "bouton": "盘点",
+    "titre": "库存盘点",
+    "aide": "对所选仓库中的每个产品进行实物清点。发现的差异将自动调整理论库存，并生成PDF报告。",
+    "depot": "仓库",
+    "selectionner": "— 选择 —",
+    "theoriqueLabel": "理论值",
+    "aucunProduit": "没有需要盘点的产品。",
+    "notesOptionnelles": "备注（可选）",
+    "enregistrement": "保存中…",
+    "valider": "确认盘点",
+    "erreurDepotRequis": "请选择仓库。",
+    "erreurAucuneLigne": "请至少输入一项清点数量后再确认。"
   }
 }

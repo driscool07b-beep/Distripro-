@@ -143,5 +143,19 @@
     "prixUnitaire": "Prix unitaire",
     "stock": "Stock",
     "valeur": "Valeur"
+  },
+  "inventaire": {
+    "bouton": "Inventaire",
+    "titre": "Inventaire de stock",
+    "aide": "Compte physiquement chaque produit du dépôt choisi. Les écarts trouvés ajustent automatiquement le stock théorique, et un rapport PDF est généré.",
+    "depot": "Dépôt",
+    "selectionner": "— Sélectionner —",
+    "theoriqueLabel": "Théorique",
+    "aucunProduit": "Aucun produit à inventorier.",
+    "notesOptionnelles": "Notes (optionnel)",
+    "enregistrement": "Enregistrement…",
+    "valider": "Valider l'inventaire",
+    "erreurDepotRequis": "Sélectionnez un dépôt.",
+    "erreurAucuneLigne": "Saisissez au moins une quantité comptée avant de valider."
   }
 }

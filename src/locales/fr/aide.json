@@ -68,6 +68,10 @@
         {
           "q": "Où voir l'historique des prix d'un produit ?",
           "r": "Stock → sur la ligne du produit → 'Historique' — montre chaque changement de prix, avec la date."
+        },
+        {
+          "q": "Comment faire l'inventaire physique du stock ?",
+          "r": "Stock → 'Inventaire' → choisis le dépôt → saisis la quantité réellement comptée pour chaque produit (laisse vide les produits non recomptés). Les écarts trouvés ajustent automatiquement le stock théorique, et un rapport PDF est généré et téléchargé."
         }
       ]
     },
@@ -257,6 +261,10 @@
         {
           "q": "Comment fonctionne l'alerte de commerciaux inactifs ?",
           "r": "Visible par l'admin et le manager — liste les commerciaux qui ne se sont pas connectés à l'app depuis plus de 24h, avec la durée exacte écoulée depuis leur dernier accès (en jours et heures)."
+        },
+        {
+          "q": "Que signifie l'alerte 'Inventaire en retard' ?",
+          "r": "Si un rappel périodique a été configuré (Paramètres → Rappels d'inventaire), cette alerte apparaît sur le Dashboard dès que le délai est dépassé depuis le dernier inventaire de stock ou de caisse — avec un lien direct pour en faire un nouveau."
         }
       ]
     },
@@ -321,6 +329,10 @@
         {
           "q": "Comment ajouter mes propres questions au rapport de visite ?",
           "r": "Paramètres → Informations supplémentaires à collecter — ajoute une question (texte libre, nombre, oui/non, ou choix dans une liste), elle apparaîtra automatiquement dans le formulaire de rapport de visite de tous les commerciaux."
+        },
+        {
+          "q": "Comment configurer des rappels périodiques d'inventaire ?",
+          "r": "Paramètres → Rappels d'inventaire (admin) — choisis une fréquence pour le stock et pour la caisse, indépendamment l'une de l'autre : chaque semaine, chaque mois, chaque trimestre, ou désactivé. Une alerte apparaît alors sur le Dashboard dès que le délai est dépassé."
         }
       ]
     }

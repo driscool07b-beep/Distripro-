@@ -130,5 +130,15 @@
     "sousTitre": "Replaces the background illustration shown on the login screen — shared across all companies for now (no per-company login page yet).",
     "envoi": "Uploading…",
     "confirmation": "Image updated. Reload the login page to see it."
+  },
+  "rappelsInventaire": {
+    "titre": "Inventory reminders",
+    "sousTitre": "Sets how often a reminder appears on the Dashboard to carry out a stock and/or cash inventory.",
+    "frequenceStock": "Stock inventory",
+    "frequenceCaisse": "Cash inventory",
+    "desactive": "Disabled",
+    "hebdomadaire": "Every week",
+    "mensuel": "Every month",
+    "trimestriel": "Every quarter"
   }
 }

@@ -57,7 +57,12 @@
     "recouvrementBureau": "التحصيل — المكتب",
     "dejaVerseAujourdhui": "تم إيداعه اليوم",
     "resteAVerser": "المتبقي للإيداع",
-    "soldesBanquesTitre": "أرصدة البنوك"
+    "soldesBanquesTitre": "أرصدة البنوك",
+    "inventairesEnRetardTitre": "جرد متأخر",
+    "inventaireStockEnRetard": "يجب إجراء جرد المخزون",
+    "inventaireCaisseEnRetard": "يجب إجراء جرد الصندوق",
+    "dernierLe": "آخر مرة في {{date}}",
+    "jamaisFait": "لم يتم أبدًا"
   },
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",

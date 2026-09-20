@@ -57,7 +57,12 @@
     "recouvrementBureau": "Collections — office",
     "dejaVerseAujourdhui": "Already deposited today",
     "resteAVerser": "Remaining to deposit",
-    "soldesBanquesTitre": "Bank balances"
+    "soldesBanquesTitre": "Bank balances",
+    "inventairesEnRetardTitre": "Overdue inventory",
+    "inventaireStockEnRetard": "Stock inventory due",
+    "inventaireCaisseEnRetard": "Cash inventory due",
+    "dernierLe": "last done on {{date}}",
+    "jamaisFait": "never done"
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",

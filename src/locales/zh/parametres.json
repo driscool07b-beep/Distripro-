@@ -130,5 +130,15 @@
     "sousTitre": "替换登录界面显示的背景插图——目前所有公司共用（暂无按公司区分的登录页面）。",
     "envoi": "上传中…",
     "confirmation": "图片已更新。请重新加载登录页面查看效果。"
+  },
+  "rappelsInventaire": {
+    "titre": "盘点提醒",
+    "sousTitre": "设置仪表盘上出现库存和/或现金盘点提醒的频率。",
+    "frequenceStock": "库存盘点",
+    "frequenceCaisse": "现金盘点",
+    "desactive": "已停用",
+    "hebdomadaire": "每周",
+    "mensuel": "每月",
+    "trimestriel": "每季度"
   }
 }

@@ -130,5 +130,15 @@
     "sousTitre": "Remplace l'illustration de fond affichée sur l'écran de connexion — commune à toutes les entreprises pour l'instant (pas encore de page dédiée par entreprise).",
     "envoi": "Envoi en cours…",
     "confirmation": "Image mise à jour. Rechargez la page de connexion pour la voir."
+  },
+  "rappelsInventaire": {
+    "titre": "Rappels d'inventaire",
+    "sousTitre": "Définit la fréquence à laquelle un rappel s'affiche sur le Dashboard pour faire l'inventaire du stock et/ou de la caisse.",
+    "frequenceStock": "Inventaire de stock",
+    "frequenceCaisse": "Inventaire de caisse",
+    "desactive": "Désactivé",
+    "hebdomadaire": "Chaque semaine",
+    "mensuel": "Chaque mois",
+    "trimestriel": "Chaque trimestre"
   }
 }

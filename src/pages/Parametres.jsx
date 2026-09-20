@@ -38,6 +38,10 @@ export default function Parametres() {
   const [enregistrementDevise, setEnregistrementDevise] = useState(false)
   const [seuilCaisse, setSeuilCaisse] = useState('')
   const [toujoursValider, setToujoursValider] = useState(true)
+  const [frequenceInventaireStock, setFrequenceInventaireStock] = useState('')
+  const [frequenceInventaireCaisse, setFrequenceInventaireCaisse] = useState('')
+  const [enregistrementRappels, setEnregistrementRappels] = useState(false)
+  const [confirmationRappels, setConfirmationRappels] = useState(false)
   const [rolesValidateurs, setRolesValidateurs] = useState(['admin', 'manager'])
   const [enregistrementCaisse, setEnregistrementCaisse] = useState(false)
   const [confirmationCaisse, setConfirmationCaisse] = useState(false)
@@ -67,6 +71,8 @@ export default function Parametres() {
       setToujoursValider(entreprise.caisse_seuil_validation == null)
       setSeuilCaisse(entreprise.caisse_seuil_validation != null ? String(entreprise.caisse_seuil_validation) : '')
       setRolesValidateurs(entreprise.caisse_roles_validateurs || ['admin', 'manager'])
+      setFrequenceInventaireStock(entreprise.frequence_inventaire_stock || '')
+      setFrequenceInventaireCaisse(entreprise.frequence_inventaire_caisse || '')
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -164,6 +170,20 @@ export default function Parametres() {
     if (!error) {
       setConfirmationCaisse(true)
       setTimeout(() => setConfirmationCaisse(false), 2500)
+      rechargerProfil?.()
+    }
+  }
+
+  async function enregistrerRappelsInventaire() {
+    setEnregistrementRappels(true)
+    const { error } = await supabase.rpc('modifier_parametrage_inventaires', {
+      p_frequence_stock: frequenceInventaireStock || null,
+      p_frequence_caisse: frequenceInventaireCaisse || null,
+    })
+    setEnregistrementRappels(false)
+    if (!error) {
+      setConfirmationRappels(true)
+      setTimeout(() => setConfirmationRappels(false), 2500)
       rechargerProfil?.()
     }
   }
@@ -731,6 +751,38 @@ export default function Parametres() {
             {enregistrementCaisse ? t('enregistrement') : t('enregistrer')}
           </button>
           {confirmationCaisse && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">{t('rappelsInventaire.titre')}</h2>
+          <p className="text-xs text-petrol-500 mb-3">{t('rappelsInventaire.sousTitre')}</p>
+
+          <div className="mb-3">
+            <label className="label">{t('rappelsInventaire.frequenceStock')}</label>
+            <select className="input-field max-w-xs" value={frequenceInventaireStock} onChange={(e) => setFrequenceInventaireStock(e.target.value)}>
+              <option value="">{t('rappelsInventaire.desactive')}</option>
+              <option value="hebdomadaire">{t('rappelsInventaire.hebdomadaire')}</option>
+              <option value="mensuel">{t('rappelsInventaire.mensuel')}</option>
+              <option value="trimestriel">{t('rappelsInventaire.trimestriel')}</option>
+            </select>
+          </div>
+
+          <div className="mb-3">
+            <label className="label">{t('rappelsInventaire.frequenceCaisse')}</label>
+            <select className="input-field max-w-xs" value={frequenceInventaireCaisse} onChange={(e) => setFrequenceInventaireCaisse(e.target.value)}>
+              <option value="">{t('rappelsInventaire.desactive')}</option>
+              <option value="hebdomadaire">{t('rappelsInventaire.hebdomadaire')}</option>
+              <option value="mensuel">{t('rappelsInventaire.mensuel')}</option>
+              <option value="trimestriel">{t('rappelsInventaire.trimestriel')}</option>
+            </select>
+          </div>
+
+          <button onClick={enregistrerRappelsInventaire} disabled={enregistrementRappels} className="btn-primary text-sm">
+            {enregistrementRappels ? t('enregistrement') : t('enregistrer')}
+          </button>
+          {confirmationRappels && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 

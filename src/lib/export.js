@@ -639,3 +639,64 @@ export function genererRapportInventaireCaisse({ entreprise, inventaire, caisse 
 
   return doc
 }
+
+export function genererRapportInventaireStock({ entreprise, inventaire }) {
+  const doc = new jsPDF()
+  const y0 = ecrireEnTeteEntreprise(doc, entreprise)
+
+  doc.setFontSize(11)
+  doc.setTextColor(60)
+  doc.text(`INVENTAIRE DE STOCK${inventaire.numero ? '  N° ' + inventaire.numero : ''}`, 14, y0)
+
+  doc.setTextColor(0)
+  doc.setFontSize(10)
+  const yInfo = y0 + 12
+  doc.text(`Dépôt : ${inventaire.depot?.nom || '—'}`, 14, yInfo)
+  doc.text(`Date : ${formatDateHeure(inventaire.created_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 7)
+  doc.text(`Contrôlé par : ${inventaire.controleur?.nom || '—'}`, 14, yInfo + 14)
+
+  const lignes = (inventaire.lignes || []).map((l) => [
+    l.produits?.nom || '—',
+    formatNombre(l.quantite_theorique),
+    formatNombre(l.quantite_comptee),
+    (Number(l.ecart) > 0 ? '+' : '') + formatNombre(l.ecart),
+  ])
+
+  autoTable(doc, {
+    startY: yInfo + 22,
+    head: [['Produit', 'Théorique', 'Compté', 'Écart']],
+    body: lignes,
+    styles: { fontSize: 9, cellPadding: 3 },
+    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' } },
+    margin: { left: 14, right: 14 },
+    didParseCell: (data) => {
+      if (data.section === 'body' && data.column.index === 3) {
+        const valeur = Number((inventaire.lignes || [])[data.row.index]?.ecart || 0)
+        if (valeur !== 0) data.cell.styles.textColor = [190, 40, 30]
+      }
+    },
+  })
+
+  let y = doc.lastAutoTable.finalY + 10
+  if (inventaire.notes) {
+    doc.setFontSize(9)
+    doc.setTextColor(60)
+    const notes = doc.splitTextToSize(`Notes : ${inventaire.notes}`, 182)
+    doc.text(notes, 14, y)
+    y += notes.length * 5 + 8
+  }
+
+  doc.setFontSize(9)
+  doc.setTextColor(0)
+  doc.text('Signature du contrôleur', 14, y + 15)
+  doc.rect(14, y + 19, 80, 22)
+  doc.text('Signature du responsable de dépôt', 110, y + 15)
+  doc.rect(110, y + 19, 80, 22)
+
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text('Les écarts non nuls ont été automatiquement ajustés dans le stock théorique.', 14, 280)
+  doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
+
+  return doc
+}

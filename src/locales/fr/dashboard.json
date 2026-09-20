@@ -57,7 +57,12 @@
     "recouvrementBureau": "Recouvrement — bureau",
     "dejaVerseAujourdhui": "Déjà versé aujourd'hui",
     "resteAVerser": "Reste à verser",
-    "soldesBanquesTitre": "Soldes bancaires"
+    "soldesBanquesTitre": "Soldes bancaires",
+    "inventairesEnRetardTitre": "Inventaire en retard",
+    "inventaireStockEnRetard": "Inventaire de stock à faire",
+    "inventaireCaisseEnRetard": "Inventaire de caisse à faire",
+    "dernierLe": "dernier fait le {{date}}",
+    "jamaisFait": "jamais fait"
   },
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",

@@ -143,5 +143,19 @@
     "prixUnitaire": "Unit price",
     "stock": "Stock",
     "valeur": "Value"
+  },
+  "inventaire": {
+    "bouton": "Inventory",
+    "titre": "Stock inventory",
+    "aide": "Physically count each product in the chosen warehouse. Any differences found automatically adjust the theoretical stock, and a PDF report is generated.",
+    "depot": "Warehouse",
+    "selectionner": "— Select —",
+    "theoriqueLabel": "Theoretical",
+    "aucunProduit": "No products to count.",
+    "notesOptionnelles": "Notes (optional)",
+    "enregistrement": "Saving…",
+    "valider": "Confirm inventory",
+    "erreurDepotRequis": "Select a warehouse.",
+    "erreurAucuneLigne": "Enter at least one counted quantity before confirming."
   }
 }

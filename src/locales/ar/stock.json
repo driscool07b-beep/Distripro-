@@ -143,5 +143,19 @@
     "prixUnitaire": "سعر الوحدة",
     "stock": "المخزون",
     "valeur": "القيمة"
+  },
+  "inventaire": {
+    "bouton": "الجرد",
+    "titre": "جرد المخزون",
+    "aide": "قم بعدّ كل منتج فعليًا في المستودع المختار. أي فروقات يتم رصدها تُعدّل تلقائيًا المخزون النظري، ويتم إنشاء تقرير PDF.",
+    "depot": "المستودع",
+    "selectionner": "— اختر —",
+    "theoriqueLabel": "نظري",
+    "aucunProduit": "لا توجد منتجات للجرد.",
+    "notesOptionnelles": "ملاحظات (اختياري)",
+    "enregistrement": "جارٍ الحفظ…",
+    "valider": "تأكيد الجرد",
+    "erreurDepotRequis": "اختر مستودعًا.",
+    "erreurAucuneLigne": "أدخل كمية معدودة واحدة على الأقل قبل التأكيد."
   }
 }

@@ -57,7 +57,12 @@
     "recouvrementBureau": "回收款 — 办公室",
     "dejaVerseAujourdhui": "今日已存",
     "resteAVerser": "待存余额",
-    "soldesBanquesTitre": "银行余额"
+    "soldesBanquesTitre": "银行余额",
+    "inventairesEnRetardTitre": "盘点已逾期",
+    "inventaireStockEnRetard": "需要进行库存盘点",
+    "inventaireCaisseEnRetard": "需要进行现金盘点",
+    "dernierLe": "上次盘点：{{date}}",
+    "jamaisFait": "从未盘点"
   },
   "commercial": {
     "sousTitre": "这是您的个人活动情况。",
