@@ -29,7 +29,8 @@
     "apparence": "Apparence",
     "journalCaisse": "Journal de caisse",
     "aide": "Aide",
-    "banques": "Banques"
+    "banques": "Banques",
+    "planComptable": "Plan comptable"
   },
   "actions": {
     "annuler": "Annuler",

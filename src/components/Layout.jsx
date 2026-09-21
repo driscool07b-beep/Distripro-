@@ -291,6 +291,22 @@ export default function Layout() {
               )}
             </NavLink>
           )}
+          {['admin', 'manager', 'comptable'].includes(profil?.role) && (
+            <NavLink
+              to="/plan-comptable"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <PlanComptableIcon className="w-4 h-4 shrink-0" />
+              {t('menu.planComptable')}
+            </NavLink>
+          )}
           {profil?.role === 'admin' && (
             <NavLink
               to="/utilisateurs"
@@ -430,6 +446,14 @@ function BanquesIcon(props) {
       <path d="M3 10l9-6 9 6" strokeLinecap="round" strokeLinejoin="round" />
       <rect x="4" y="10" width="16" height="9" rx="1" />
       <path d="M4 19h16M8 13v4M12 13v4M16 13v4" strokeLinecap="round" />
+    </svg>
+  )
+}
+function PlanComptableIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <rect x="4" y="3" width="16" height="18" rx="1.5" />
+      <path d="M8 8h8M8 12h8M8 16h5" strokeLinecap="round" />
     </svg>
   )
 }

@@ -29,7 +29,8 @@
     "apparence": "Appearance",
     "journalCaisse": "Cash journal",
     "aide": "Help",
-    "banques": "Banks"
+    "banques": "Banks",
+    "planComptable": "Chart of accounts"
   },
   "actions": {
     "annuler": "Cancel",

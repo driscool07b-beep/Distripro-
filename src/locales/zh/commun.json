@@ -29,7 +29,8 @@
     "apparence": "外观",
     "journalCaisse": "现金日记账",
     "aide": "帮助",
-    "banques": "银行"
+    "banques": "银行",
+    "planComptable": "会计科目表"
   },
   "actions": {
     "annuler": "取消",

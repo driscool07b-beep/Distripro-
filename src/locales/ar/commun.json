@@ -29,7 +29,8 @@
     "apparence": "المظهر",
     "journalCaisse": "دفتر الصندوق",
     "aide": "المساعدة",
-    "banques": "البنوك"
+    "banques": "البنوك",
+    "planComptable": "الدليل المحاسبي"
   },
   "actions": {
     "annuler": "إلغاء",

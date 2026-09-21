@@ -24,6 +24,7 @@ import Apparence from './pages/Apparence'
 import JournalCaisse from './pages/JournalCaisse'
 import Aide from './pages/Aide'
 import Banques from './pages/Banques'
+import PlanComptable from './pages/PlanComptable'
 import AnalyseIA from './pages/AnalyseIA'
 import StockCommercial from './pages/StockCommercial'
 import Versements from './pages/Versements'
@@ -77,6 +78,7 @@ export default function App() {
         <Route path="journal-caisse" element={<JournalCaisse />} />
         <Route path="aide" element={<Aide />} />
         <Route path="banques" element={<Banques />} />
+        <Route path="plan-comptable" element={<PlanComptable />} />
         <Route path="analyse-ia" element={<AnalyseIA />} />
         <Route path="stock-commercial" element={<StockCommercial />} />
         <Route path="versements" element={<Versements />} />

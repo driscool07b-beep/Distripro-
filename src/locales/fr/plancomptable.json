@@ -1,0 +1,33 @@
+{
+  "titre": "Plan comptable",
+  "sousTitre": "Utilisé pour exporter les écritures de trésorerie vers ton logiciel de comptabilité (Sage Saari, Ciel Compta...) — charge le plan SYSCOHADA de départ comme point de départ à valider avec ton comptable, ou importe directement ton propre plan.",
+  "accesRefuse": "Cette page est réservée à l'administration, aux managers et à la comptabilité.",
+  "chargement": "Chargement…",
+  "nouveauCompte": "+ Nouveau compte",
+  "chargerSyscohada": "Charger le plan SYSCOHADA de départ",
+  "confirmerSyscohada": "Charger un jeu de comptes SYSCOHADA courants comme point de départ ? Tu pourras les modifier ou en ajouter ensuite.",
+  "importerFichier": "Importer un fichier",
+  "telechargerModele": "Télécharger le modèle",
+  "rechercherPlaceholder": "Rechercher un numéro ou un libellé…",
+  "aucunCompte": "Aucun compte enregistré pour l'instant.",
+  "supprimer": "Supprimer",
+  "confirmerSuppression": "Supprimer ce compte du plan comptable ?",
+  "numeroCompte": "Numéro de compte",
+  "libelleCompte": "Libellé",
+  "annuler": "Annuler",
+  "enregistrer": "Enregistrer",
+  "enCours": "Enregistrement…",
+  "lignesImportees": "{{n}} compte(s) importé(s) ou mis à jour.",
+
+  "modele": {
+    "numeroCompte": "Numéro de compte",
+    "libelle": "Libellé"
+  },
+
+  "erreurs": {
+    "erreur": "Erreur",
+    "champsRequis": "Le numéro de compte et le libellé sont requis.",
+    "aucuneLigne": "Aucune ligne exploitable trouvée dans ce fichier — vérifiez qu'il suit le modèle.",
+    "fichierIllisible": "Impossible de lire ce fichier — vérifiez que c'est bien un fichier Excel (.xlsx)."
+  }
+}
