@@ -129,7 +129,11 @@
     "soldeTheoriqueActuel": "Current theoretical balance: {{montant}}",
     "soldeCompteLabel": "Amount actually counted",
     "notesOptionnelles": "Notes (optional)",
-    "valider": "Confirm inventory"
+    "valider": "Confirm inventory",
+    "billets": "Notes",
+    "pieces": "Coins",
+    "totalCompte": "Total counted",
+    "erreurAucuneCoupure": "Enter at least one denomination before confirming."
   },
   "justificatifBordereauLabel": "Deposit/withdrawal slip (photo or PDF)",
   "confirmerAvecJustificatif": "Confirm"

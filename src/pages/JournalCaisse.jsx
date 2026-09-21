@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
-import { formatXOF, formatDate, formatDateHeure } from '../lib/format'
+import { formatXOF, formatDate, formatDateHeure, denominationsDeviseCourante } from '../lib/format'
 import { genererBonCaisse, genererRapportInventaireCaisse, exporterExcel, exporterPDF } from '../lib/export'
 import { traduireErreur } from '../lib/erreurs'
 import i18n from '../lib/i18n'
@@ -73,6 +73,7 @@ export default function JournalCaisse() {
   const [chargementInventaires, setChargementInventaires] = useState(true)
   const [modalInventaire, setModalInventaire] = useState(false)
   const [soldeCompte, setSoldeCompte] = useState('')
+  const [comptageDenominations, setComptageDenominations] = useState({})
   const [notesInventaire, setNotesInventaire] = useState('')
   const [envoiInventaire, setEnvoiInventaire] = useState(false)
   const [erreurInventaire, setErreurInventaire] = useState('')
@@ -215,27 +216,37 @@ export default function JournalCaisse() {
     setChargementInventaires(true)
     const { data } = await supabase
       .from('inventaires_caisse')
-      .select('id, numero, solde_theorique, solde_compte, ecart, notes, created_at, controleur:profils!controle_par(nom)')
+      .select('id, numero, solde_theorique, solde_compte, ecart, notes, created_at, controleur:profils!controle_par(nom), denominations:inventaire_caisse_denominations(valeur, quantite)')
       .eq('caisse_id', caisseId)
       .order('created_at', { ascending: false })
     setInventaires(data || [])
     setChargementInventaires(false)
   }
 
+  const denominations = denominationsDeviseCourante()
+  const totalCompteDenominations = Object.entries(comptageDenominations).reduce(
+    (s, [valeur, qte]) => s + Number(valeur) * Number(qte || 0), 0
+  )
+
   async function creerInventaire(e) {
     e.preventDefault()
     setErreurInventaire('')
-    if (soldeCompte === '' || Number(soldeCompte) < 0) { setErreurInventaire(t('erreurs.montantInvalide')); return }
+    const lignesDenominations = Object.entries(comptageDenominations)
+      .filter(([, qte]) => Number(qte) > 0)
+      .map(([valeur, qte]) => ({ valeur: Number(valeur), quantite: Number(qte) }))
+    if (lignesDenominations.length === 0) { setErreurInventaire(t('inventaire.erreurAucuneCoupure')); return }
+
     setEnvoiInventaire(true)
     const { data: inventaireId, error } = await supabase.rpc('creer_inventaire_caisse', {
-      p_caisse_id: caisseId, p_solde_compte: Number(soldeCompte), p_notes: notesInventaire.trim() || null,
+      p_caisse_id: caisseId, p_solde_compte: totalCompteDenominations, p_notes: notesInventaire.trim() || null,
+      p_denominations: lignesDenominations,
     })
     setEnvoiInventaire(false)
     if (error) { setErreurInventaire(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
 
     const { data: inventaire } = await supabase
       .from('inventaires_caisse')
-      .select('id, numero, solde_theorique, solde_compte, ecart, notes, created_at, controleur:profils!controle_par(nom)')
+      .select('id, numero, solde_theorique, solde_compte, ecart, notes, created_at, controleur:profils!controle_par(nom), denominations:inventaire_caisse_denominations(valeur, quantite)')
       .eq('id', inventaireId)
       .single()
 
@@ -243,7 +254,7 @@ export default function JournalCaisse() {
     const doc = genererRapportInventaireCaisse({ entreprise, inventaire, caisse })
     doc.save(`${inventaire?.numero || 'inventaire-caisse'}.pdf`)
 
-    setSoldeCompte(''); setNotesInventaire('')
+    setComptageDenominations({}); setNotesInventaire('')
     setModalInventaire(false)
     chargerInventaires()
   }
@@ -862,7 +873,7 @@ export default function JournalCaisse() {
           {onglet === 'inventaire' && (
             <div>
               <div className="flex justify-end mb-3">
-                <button onClick={() => setModalInventaire(true)} className="btn-primary text-sm">{t('inventaire.nouveau')}</button>
+                <button onClick={() => { setComptageDenominations({}); setNotesInventaire(''); setErreurInventaire(''); setModalInventaire(true) }} className="btn-primary text-sm">{t('inventaire.nouveau')}</button>
               </div>
               <p className="text-xs text-petrol-500 mb-3">{t('inventaire.aide')}</p>
               {chargementInventaires ? (
@@ -1061,16 +1072,67 @@ export default function JournalCaisse() {
 
       {modalInventaire && (
         <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
-          <div className="card bg-white p-5 w-full max-w-sm">
+          <div className="card bg-white p-5 w-full max-w-sm max-h-[90vh] overflow-y-auto">
             <h2 className="font-semibold text-lg mb-3">{t('inventaire.nouveau')}</h2>
             <p className="text-sm text-petrol-600 mb-3">
               {t('inventaire.soldeTheoriqueActuel', { montant: formatXOF(solde) })}
             </p>
-            <form onSubmit={creerInventaire} className="space-y-3">
+            <form onSubmit={creerInventaire} className="space-y-4">
               <div>
-                <label className="label">{t('inventaire.soldeCompteLabel')}</label>
-                <input type="number" min="0" className="input-field" value={soldeCompte} onChange={(e) => setSoldeCompte(e.target.value)} autoFocus />
+                <p className="text-xs font-semibold text-petrol-600 mb-1.5">{t('inventaire.billets')}</p>
+                <div className="space-y-1.5">
+                  {denominations.billets.map((valeur) => (
+                    <div key={valeur} className="flex items-center gap-2">
+                      <span className="text-sm w-24 shrink-0">{formatXOF(valeur)}</span>
+                      <span className="text-petrol-400">×</span>
+                      <input
+                        type="number" min="0" inputMode="numeric"
+                        className="input-field text-sm py-1.5"
+                        value={comptageDenominations[valeur] ?? ''}
+                        onChange={(e) => setComptageDenominations((prev) => ({ ...prev, [valeur]: e.target.value }))}
+                        placeholder="0"
+                      />
+                      <span className="text-xs text-petrol-500 w-24 text-right shrink-0">
+                        {formatXOF(valeur * Number(comptageDenominations[valeur] || 0))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              <div>
+                <p className="text-xs font-semibold text-petrol-600 mb-1.5">{t('inventaire.pieces')}</p>
+                <div className="space-y-1.5">
+                  {denominations.pieces.map((valeur) => (
+                    <div key={valeur} className="flex items-center gap-2">
+                      <span className="text-sm w-24 shrink-0">{formatXOF(valeur)}</span>
+                      <span className="text-petrol-400">×</span>
+                      <input
+                        type="number" min="0" inputMode="numeric"
+                        className="input-field text-sm py-1.5"
+                        value={comptageDenominations[valeur] ?? ''}
+                        onChange={(e) => setComptageDenominations((prev) => ({ ...prev, [valeur]: e.target.value }))}
+                        placeholder="0"
+                      />
+                      <span className="text-xs text-petrol-500 w-24 text-right shrink-0">
+                        {formatXOF(valeur * Number(comptageDenominations[valeur] || 0))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center border-t border-line pt-3">
+                <span className="text-sm font-semibold">{t('inventaire.totalCompte')}</span>
+                <span className="font-mono text-lg font-bold">{formatXOF(totalCompteDenominations)}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-petrol-500">{t('inventaire.ecart')}</span>
+                <span className={`font-mono font-medium ${totalCompteDenominations - solde !== 0 ? 'text-red-600' : 'text-green-700'}`}>
+                  {totalCompteDenominations - solde > 0 ? '+' : ''}{formatXOF(totalCompteDenominations - solde)}
+                </span>
+              </div>
+
               <div>
                 <label className="label">{t('inventaire.notesOptionnelles')}</label>
                 <input className="input-field" value={notesInventaire} onChange={(e) => setNotesInventaire(e.target.value)} />

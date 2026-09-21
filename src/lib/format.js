@@ -83,3 +83,18 @@ export function formatDateHeure(date, options) {
   if (!date) return '—'
   return new Date(date).toLocaleString(localeActif(), options || { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
+
+// Coupures (billets/pièces) en circulation par devise — pour le
+// comptage physique détaillé d'un inventaire de caisse.
+export const DENOMINATIONS = {
+  XOF: { billets: [10000, 5000, 2000, 1000, 500], pieces: [500, 250, 200, 100, 50, 25, 10, 5] },
+  EUR: { billets: [500, 200, 100, 50, 20, 10, 5], pieces: [2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01] },
+  USD: { billets: [100, 50, 20, 10, 5, 1], pieces: [1, 0.25, 0.1, 0.05, 0.01] },
+  GBP: { billets: [50, 20, 10, 5], pieces: [2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01] },
+  GHS: { billets: [200, 100, 50, 20, 10, 5, 2, 1], pieces: [2, 1, 0.5, 0.2, 0.1] },
+  NGN: { billets: [1000, 500, 200, 100, 50, 20, 10, 5], pieces: [2, 1, 0.5] },
+}
+
+export function denominationsDeviseCourante() {
+  return DENOMINATIONS[deviseCourante()] || DENOMINATIONS.XOF
+}

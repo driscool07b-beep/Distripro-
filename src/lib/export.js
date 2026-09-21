@@ -600,8 +600,25 @@ export function genererRapportInventaireCaisse({ entreprise, inventaire, caisse 
   doc.text(`Date du contrôle : ${formatDateHeure(inventaire.created_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yInfo + 8)
   doc.text(`Contrôlé par : ${inventaire.controleur?.nom || '—'}`, 14, yInfo + 16)
 
+  let yApresDetail = yInfo + 26
+  const denominations = (inventaire.denominations || []).slice().sort((a, b) => b.valeur - a.valeur)
+  if (denominations.length > 0) {
+    doc.setFontSize(9)
+    doc.setTextColor(60)
+    doc.text('Détail du comptage physique', 14, yApresDetail)
+    autoTable(doc, {
+      startY: yApresDetail + 4,
+      head: [['Coupure', 'Quantité', 'Sous-total']],
+      body: denominations.map((d) => [formatMontant(d.valeur), String(d.quantite), formatMontant(d.valeur * d.quantite)]),
+      styles: { fontSize: 9, cellPadding: 2.5 },
+      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
+      margin: { left: 14, right: 14 },
+    })
+    yApresDetail = doc.lastAutoTable.finalY + 8
+  }
+
   autoTable(doc, {
-    startY: yInfo + 28,
+    startY: yApresDetail,
     head: [['', 'Montant']],
     body: [
       ['Solde théorique (comptable)', formatMontant(inventaire.solde_theorique)],

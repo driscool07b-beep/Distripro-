@@ -129,7 +129,11 @@
     "soldeTheoriqueActuel": "当前理论余额：{{montant}}",
     "soldeCompteLabel": "实际清点金额",
     "notesOptionnelles": "备注（可选）",
-    "valider": "确认盘点"
+    "valider": "确认盘点",
+    "billets": "纸币",
+    "pieces": "硬币",
+    "totalCompte": "清点总额",
+    "erreurAucuneCoupure": "请至少输入一种面额后再确认。"
   },
   "justificatifBordereauLabel": "存款/取款单据（照片或PDF）",
   "confirmerAvecJustificatif": "确认"

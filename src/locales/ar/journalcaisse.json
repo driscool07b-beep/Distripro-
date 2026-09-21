@@ -129,7 +129,11 @@
     "soldeTheoriqueActuel": "الرصيد النظري الحالي: {{montant}}",
     "soldeCompteLabel": "المبلغ المعدود فعليًا",
     "notesOptionnelles": "ملاحظات (اختياري)",
-    "valider": "تأكيد الجرد"
+    "valider": "تأكيد الجرد",
+    "billets": "أوراق نقدية",
+    "pieces": "قطع نقدية",
+    "totalCompte": "الإجمالي المعدود",
+    "erreurAucuneCoupure": "أدخل فئة واحدة على الأقل قبل التأكيد."
   },
   "justificatifBordereauLabel": "إيصال الإيداع/السحب (صورة أو PDF)",
   "confirmerAvecJustificatif": "تأكيد"

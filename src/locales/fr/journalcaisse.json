@@ -129,7 +129,11 @@
     "soldeTheoriqueActuel": "Solde théorique actuel : {{montant}}",
     "soldeCompteLabel": "Montant réellement compté",
     "notesOptionnelles": "Notes (optionnel)",
-    "valider": "Valider l'inventaire"
+    "valider": "Valider l'inventaire",
+    "billets": "Billets",
+    "pieces": "Pièces",
+    "totalCompte": "Total compté",
+    "erreurAucuneCoupure": "Saisis au moins une coupure avant de valider."
   },
   "justificatifBordereauLabel": "Bordereau de versement/retrait (photo ou PDF)",
   "confirmerAvecJustificatif": "Confirmer"
