@@ -62,7 +62,10 @@
     "inventaireStockEnRetard": "需要进行库存盘点",
     "inventaireCaisseEnRetard": "需要进行现金盘点",
     "dernierLe": "上次盘点：{{date}}",
-    "jamaisFait": "从未盘点"
+    "jamaisFait": "从未盘点",
+    "lotsAPeremptionTitre": "{{n}} 个批次需优先清库",
+    "lotsPerimes": "其中 {{n}} 个已过期",
+    "voirLesLots": "查看批次 →"
   },
   "commercial": {
     "sousTitre": "这是您的个人活动情况。",

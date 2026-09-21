@@ -392,6 +392,7 @@ function DashboardEntreprise() {
 
       <CarteVersementsEnCours />
       <AlerteInventaires afficherStock afficherCaisse />
+      <AlerteLotsAPeremption />
       <CartesSoldesCaisses />
       <CartesSoldesBanques />
       <CamembertRepartitionCA />
@@ -851,6 +852,7 @@ function DashboardGestionnaireStock() {
       </header>
 
       <AlerteInventaires afficherStock />
+      <AlerteLotsAPeremption />
 
       {chargement ? (
         <p className="text-sm text-petrol-500">{t('chargement')}</p>
@@ -1047,6 +1049,27 @@ function AlerteInventaires({ afficherStock, afficherCaisse }) {
           </Link>
         ))}
       </div>
+    </div>
+  )
+}
+
+function AlerteLotsAPeremption() {
+  const { t } = useTranslation('dashboard')
+  const [lots, setLots] = useState([])
+
+  useEffect(() => {
+    supabase.rpc('lots_a_destocker', { p_jours_alerte: 15 }).then(({ data }) => setLots(data || []))
+  }, [])
+
+  if (lots.length === 0) return null
+
+  const perimes = lots.filter((l) => l.jours_restants < 0).length
+
+  return (
+    <div className="card p-4 mb-6 border-amber-300 bg-amber-50">
+      <p className="text-sm font-semibold text-amber-800 mb-1">⚠️ {t('entreprise.lotsAPeremptionTitre', { n: lots.length })}</p>
+      {perimes > 0 && <p className="text-xs text-red-700 mb-1">{t('entreprise.lotsPerimes', { n: perimes })}</p>}
+      <Link to="/stock" className="text-sm text-amber-700 underline">{t('entreprise.voirLesLots')}</Link>
     </div>
   )
 }

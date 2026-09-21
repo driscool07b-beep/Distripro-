@@ -145,5 +145,10 @@
     "titre": "Transfers between cash registers/banks",
     "sousTitre": "Determines whether confirming receipt of a transfer (between two cash registers, or between a cash register and a bank) requires a supporting document (photo of the deposit/withdrawal slip).",
     "exigerJustificatif": "Require a supporting document to confirm a transfer"
+  },
+  "tracabilite": {
+    "titre": "Lot traceability",
+    "sousTitre": "Enables tracking product lot numbers (expiry, FIFO, delivery traceability in case of a production issue). Always works even when disabled — this setting only makes the lot number mandatory on every stock entry rather than optional.",
+    "rendreObligatoire": "Make the lot number mandatory on every stock entry"
   }
 }

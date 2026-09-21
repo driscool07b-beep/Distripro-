@@ -48,7 +48,9 @@
     "tauxTva": "Taux de TVA (%)",
     "tauxTvaPlaceholder": "Ex. 18",
     "erreurTauxTva": "Indiquez le taux de TVA.",
-    "erreurNomPrix": "Le nom et le prix unitaire sont requis."
+    "erreurNomPrix": "Le nom et le prix unitaire sont requis.",
+    "codeBarre": "Code-barres (optionnel)",
+    "codeBarrePlaceholder": "Scanner ou saisir le code"
   },
   "mouvement": {
     "titre": "Ajuster le stock",
@@ -63,7 +65,7 @@
     "raison": "Raison *",
     "selectionner": "Sélectionner…",
     "detail": "Détail",
-    "optionnel": "(optionnel)",
+    "optionnel": "optionnel",
     "detailPlaceholder": "Nom du fournisseur, numéro de bon, précision…",
     "justificatif": "Justificatif (photo ou PDF)",
     "obligatoire": "Obligatoire",
@@ -78,7 +80,11 @@
     "erreurMotifAutre": "Précisez le motif pour \"Autre\".",
     "erreurJustificatifObligatoire": "Un justificatif (photo ou PDF) est obligatoire pour tout ajustement de stock.",
     "erreurStockInsuffisant": "Stock insuffisant pour cette sortie.",
-    "erreurPlusieursDepots": "Plusieurs dépôts existent — cette fonctionnalité de sélection arrive bientôt, contactez un administrateur."
+    "erreurPlusieursDepots": "Plusieurs dépôts existent — cette fonctionnalité de sélection arrive bientôt, contactez un administrateur.",
+    "numeroLot": "Numéro de lot",
+    "numeroLotPlaceholder": "Tel qu'inscrit par le fabricant",
+    "datePeremption": "Date de péremption",
+    "erreurNumeroLotObligatoire": "Le numéro de lot est obligatoire pour votre entreprise."
   },
   "transfert": {
     "titre": "Transférer entre dépôts",
@@ -157,5 +163,24 @@
     "valider": "Valider l'inventaire",
     "erreurDepotRequis": "Sélectionnez un dépôt.",
     "erreurAucuneLigne": "Saisissez au moins une quantité comptée avant de valider."
-  }
+  },
+  "lots": {
+    "bouton": "Lots",
+    "titre": "Traçabilité des lots",
+    "rechercherPlaceholder": "Numéro de lot…",
+    "rechercher": "Rechercher",
+    "aucunLotTrouve": "Aucun lot trouvé avec ce numéro.",
+    "depot": "Dépôt",
+    "peremption": "Péremption",
+    "restant": "Restant",
+    "livreA": "Livré à {{n}} client(s)",
+    "aucuneLivraison": "Aucune livraison enregistrée pour ce lot pour le moment.",
+    "aSurveillerTitre": "Lots à écouler en priorité",
+    "aSurveillerAide": "Triés du plus urgent au moins urgent (péremption dans les 30 prochains jours) — à sortir avant tout autre lot (FIFO).",
+    "aucunLotASurveiller": "Aucun lot proche de la péremption pour le moment.",
+    "perime": "périmé depuis {{j}} jour(s)",
+    "expireDans": "expire dans {{j}} jour(s) ({{date}})"
+  },
+  "annuler": "Annuler",
+  "chargement": "Chargement…"
 }

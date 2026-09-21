@@ -62,7 +62,10 @@
     "inventaireStockEnRetard": "Stock inventory due",
     "inventaireCaisseEnRetard": "Cash inventory due",
     "dernierLe": "last done on {{date}}",
-    "jamaisFait": "never done"
+    "jamaisFait": "never done",
+    "lotsAPeremptionTitre": "{{n}} lot(s) to sell first",
+    "lotsPerimes": "{{n}} already expired",
+    "voirLesLots": "View lots →"
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",

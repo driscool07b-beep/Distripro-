@@ -62,7 +62,10 @@
     "inventaireStockEnRetard": "Inventaire de stock à faire",
     "inventaireCaisseEnRetard": "Inventaire de caisse à faire",
     "dernierLe": "dernier fait le {{date}}",
-    "jamaisFait": "jamais fait"
+    "jamaisFait": "jamais fait",
+    "lotsAPeremptionTitre": "{{n}} lot(s) à écouler en priorité",
+    "lotsPerimes": "dont {{n}} déjà périmé(s)",
+    "voirLesLots": "Voir les lots →"
   },
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",

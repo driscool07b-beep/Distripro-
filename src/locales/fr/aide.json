@@ -72,6 +72,14 @@
         {
           "q": "Comment faire l'inventaire physique du stock ?",
           "r": "Stock → 'Inventaire' → choisis le dépôt → saisis la quantité réellement comptée pour chaque produit (laisse vide les produits non recomptés). Les écarts trouvés ajustent automatiquement le stock théorique, et un rapport PDF est généré et téléchargé."
+        },
+        {
+          "q": "Comment ajouter un code-barres à un produit ?",
+          "r": "Lors de la création ou modification d'un produit, champ 'Code-barres' — scanne-le avec un lecteur physique (il tape les chiffres comme un clavier) ou saisis-le à la main."
+        },
+        {
+          "q": "Comment fonctionne la traçabilité par numéro de lot ?",
+          "r": "À chaque entrée de stock, indique le numéro de lot (tel qu'inscrit par le fabricant) et sa date de péremption. À la vente, le système consomme automatiquement le lot le plus proche de la péremption en premier (FIFO) — le commercial n'a rien à faire. Stock → 'Lots' permet de voir les lots à écouler en priorité, et de rechercher un numéro de lot pour retrouver instantanément tous les clients livrés à partir de ce lot — essentiel en cas de rappel produit."
         }
       ]
     },
@@ -269,6 +277,10 @@
         {
           "q": "Que signifie l'alerte 'Inventaire en retard' ?",
           "r": "Si un rappel périodique a été configuré (Paramètres → Rappels d'inventaire), cette alerte apparaît sur le Dashboard dès que le délai est dépassé depuis le dernier inventaire de stock ou de caisse — avec un lien direct pour en faire un nouveau."
+        },
+        {
+          "q": "Que signifie l'alerte 'Lots à écouler en priorité' ?",
+          "r": "Apparaît dès qu'un ou plusieurs lots approchent de leur date de péremption (dans les 15 prochains jours) ou sont déjà périmés — visible par admin, manager et gestionnaire de stock, avec lien direct vers la liste complète dans Stock."
         }
       ]
     },
@@ -341,6 +353,10 @@
         {
           "q": "Comment exiger une preuve pour confirmer un transfert ?",
           "r": "Paramètres → Transferts entre caisses/banques (admin) — active 'Exiger une pièce justificative pour confirmer un transfert' pour obliger à joindre une photo du bordereau de versement/retrait à chaque confirmation. Désactivé par défaut (une simple confirmation suffit)."
+        },
+        {
+          "q": "Comment rendre le numéro de lot obligatoire ?",
+          "r": "Paramètres → Traçabilité des lots (admin) — active 'Rendre le numéro de lot obligatoire à chaque entrée de stock'. Désactivé par défaut : la traçabilité fonctionne quand même si tu renseignes un lot, ce réglage impose juste de toujours le faire."
         }
       ]
     }

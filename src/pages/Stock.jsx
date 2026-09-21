@@ -8,7 +8,7 @@ import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
 
-const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '' }
+const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '', code_barre: '' }
 
 export default function Stock() {
   const { t } = useTranslation('stock')
@@ -24,6 +24,13 @@ export default function Stock() {
   const [historiquePrix, setHistoriquePrix] = useState([])
   const [modalImportOuvert, setModalImportOuvert] = useState(false)
   const [modalInventaire, setModalInventaire] = useState(false)
+  const [modalLots, setModalLots] = useState(false)
+  const [lotsASurveiller, setLotsASurveiller] = useState([])
+  const [chargementLots, setChargementLots] = useState(false)
+  const [rechercheLotNumero, setRechercheLotNumero] = useState('')
+  const [resultatTraceLot, setResultatTraceLot] = useState(null)
+  const [chargementTraceLot, setChargementTraceLot] = useState(false)
+  const [erreurTraceLot, setErreurTraceLot] = useState('')
   const [depotInventaireId, setDepotInventaireId] = useState('')
   const [comptagesInventaire, setComptagesInventaire] = useState({})
   const [notesInventaire, setNotesInventaire] = useState('')
@@ -45,7 +52,7 @@ export default function Stock() {
   const [fichierJustificatif, setFichierJustificatif] = useState(null)
   const [fichierJustificatifTransfert, setFichierJustificatifTransfert] = useState(null)
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
-  const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '' })
+  const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '', numero_lot: '', date_peremption: '' })
   const [transfert, setTransfert] = useState({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
@@ -126,6 +133,7 @@ export default function Stock() {
         p_seuil_alerte: Number(formulaire.seuil_alerte || 0),
         p_tva_applicable: formulaire.tva_applicable,
         p_taux_tva: formulaire.tva_applicable ? Number(formulaire.taux_tva) : null,
+        p_code_barre: formulaire.code_barre?.trim() || null,
       })
       error = resultat.error
     } else {
@@ -137,6 +145,7 @@ export default function Stock() {
         p_quantite_initiale: Number(formulaire.quantite_initiale || 0),
         p_tva_applicable: formulaire.tva_applicable,
         p_taux_tva: formulaire.tva_applicable ? Number(formulaire.taux_tva) : null,
+        p_code_barre: formulaire.code_barre?.trim() || null,
       })
       error = resultat.error
     }
@@ -163,6 +172,7 @@ export default function Stock() {
       quantite_initiale: '0',
       tva_applicable: produit.tva_applicable || false,
       taux_tva: produit.taux_tva != null ? String(produit.taux_tva) : '',
+      code_barre: produit.code_barre || '',
     })
     setErreur('')
     setModalProduit(true)
@@ -192,6 +202,48 @@ export default function Stock() {
     setNotesInventaire('')
     setErreurInventaire('')
     setModalInventaire(true)
+  }
+
+  async function ouvrirModalLots() {
+    setModalLots(true)
+    setChargementLots(true)
+    const { data } = await supabase.rpc('lots_a_destocker', { p_jours_alerte: 30 })
+    setLotsASurveiller(data || [])
+    setChargementLots(false)
+    setRechercheLotNumero('')
+    setResultatTraceLot(null)
+    setErreurTraceLot('')
+  }
+
+  async function rechercherTraceLot(e) {
+    e.preventDefault()
+    setErreurTraceLot('')
+    setResultatTraceLot(null)
+    if (!rechercheLotNumero.trim()) return
+    setChargementTraceLot(true)
+
+    const { data: lot } = await supabase
+      .from('lots')
+      .select('id, numero_lot, date_peremption, quantite_initiale, quantite_restante, produits(nom), depots(nom)')
+      .ilike('numero_lot', rechercheLotNumero.trim())
+      .maybeSingle()
+
+    if (!lot) {
+      setChargementTraceLot(false)
+      setErreurTraceLot(t('lots.aucunLotTrouve'))
+      return
+    }
+
+    const { data: livraisons } = await supabase
+      .from('ventes_lignes_lots')
+      .select('quantite, ventes_lignes(vente_id, ventes(numero_vente, created_at, clients(nom, ville)))')
+      .eq('lot_id', lot.id)
+
+    setChargementTraceLot(false)
+    setResultatTraceLot({
+      lot,
+      livraisons: (livraisons || []).filter((l) => l.ventes_lignes?.ventes),
+    })
   }
 
   async function creerInventaireStock(e) {
@@ -302,6 +354,8 @@ export default function Stock() {
       raison: '',
       motif: '',
       depot_id: depots.length === 1 ? depots[0].id : '',
+      numero_lot: '',
+      date_peremption: '',
     })
     setErreur('')
   }
@@ -340,6 +394,10 @@ export default function Stock() {
       setErreur(t('mouvement.erreurJustificatifObligatoire'))
       return
     }
+    if (mouvement.type === 'entree' && entreprise?.tracabilite_lots_obligatoire && !mouvement.numero_lot.trim()) {
+      setErreur(t('mouvement.erreurNumeroLotObligatoire'))
+      return
+    }
     const motifComplet = mouvement.raison + (mouvement.motif.trim() ? ' — ' + mouvement.motif.trim() : '')
     setEnregistrement(true)
     const { data: mouvementId, error } = await supabase.rpc('ajuster_stock', {
@@ -348,6 +406,8 @@ export default function Stock() {
       p_quantite: qte,
       p_motif: motifComplet,
       p_depot_id: mouvement.depot_id || null,
+      p_numero_lot: mouvement.type === 'entree' ? (mouvement.numero_lot.trim() || null) : null,
+      p_date_peremption: mouvement.type === 'entree' ? (mouvement.date_peremption || null) : null,
     })
     if (error) {
       setEnregistrement(false)
@@ -573,6 +633,9 @@ export default function Stock() {
               <button className="btn-secondary text-sm" onClick={ouvrirModalInventaire}>
                 📋 {t('inventaire.bouton')}
               </button>
+              <button className="btn-secondary text-sm" onClick={ouvrirModalLots}>
+                🏷️ {t('lots.bouton')}
+              </button>
               <button className="btn-primary" onClick={() => { setProduitEnEdition(null); setFormulaire(PRODUIT_VIDE); setModalProduit(true) }}>
                 {t('nouveauProduit')}
               </button>
@@ -717,6 +780,16 @@ export default function Stock() {
                   value={formulaire.categorie}
                   onChange={(e) => setFormulaire({ ...formulaire, categorie: e.target.value })}
                   placeholder={t('formProduit.categoriePlaceholder')}
+                />
+              </div>
+              <div>
+                <label className="label">{t('formProduit.codeBarre')}</label>
+                <input
+                  className="input-field"
+                  value={formulaire.code_barre}
+                  onChange={(e) => setFormulaire({ ...formulaire, code_barre: e.target.value })}
+                  placeholder={t('formProduit.codeBarrePlaceholder')}
+                  inputMode="numeric"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -866,6 +939,30 @@ export default function Stock() {
                     <option value="">{t('mouvement.selectionnerDepot')}</option>
                     {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
                   </select>
+                </div>
+              )}
+              {mouvement.type === 'entree' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="label">
+                      {t('mouvement.numeroLot')}{entreprise?.tracabilite_lots_obligatoire ? ' *' : ` (${t('mouvement.optionnel')})`}
+                    </label>
+                    <input
+                      className="input-field"
+                      value={mouvement.numero_lot}
+                      onChange={(e) => setMouvement({ ...mouvement, numero_lot: e.target.value })}
+                      placeholder={t('mouvement.numeroLotPlaceholder')}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">{t('mouvement.datePeremption')} ({t('mouvement.optionnel')})</label>
+                    <input
+                      type="date"
+                      className="input-field"
+                      value={mouvement.date_peremption}
+                      onChange={(e) => setMouvement({ ...mouvement, date_peremption: e.target.value })}
+                    />
+                  </div>
                 </div>
               )}
               <div>
@@ -1190,6 +1287,81 @@ export default function Stock() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {modalLots && (
+        <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">
+          <div className="card bg-white p-5 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="font-semibold text-lg">{t('lots.titre')}</h2>
+              <button onClick={() => setModalLots(false)} className="text-petrol-400 text-xl leading-none">×</button>
+            </div>
+
+            <form onSubmit={rechercherTraceLot} className="flex gap-2 my-3">
+              <input
+                className="input-field text-sm flex-1"
+                value={rechercheLotNumero}
+                onChange={(e) => setRechercheLotNumero(e.target.value)}
+                placeholder={t('lots.rechercherPlaceholder')}
+              />
+              <button type="submit" disabled={chargementTraceLot} className="btn-secondary text-sm shrink-0">
+                {chargementTraceLot ? '…' : t('lots.rechercher')}
+              </button>
+            </form>
+            {erreurTraceLot && <p className="text-xs text-red-600 mb-3">{erreurTraceLot}</p>}
+
+            {resultatTraceLot && (
+              <div className="card p-3 mb-4 border-blue-200 bg-blue-50">
+                <p className="font-semibold text-sm">
+                  {resultatTraceLot.lot.numero_lot} — {resultatTraceLot.lot.produits?.nom}
+                </p>
+                <p className="text-xs text-petrol-600 mb-2">
+                  {t('lots.depot')} : {resultatTraceLot.lot.depots?.nom || '—'}
+                  {resultatTraceLot.lot.date_peremption && ` — ${t('lots.peremption')} : ${formatDate(resultatTraceLot.lot.date_peremption)}`}
+                  {' — '}{t('lots.restant')} : {resultatTraceLot.lot.quantite_restante} / {resultatTraceLot.lot.quantite_initiale}
+                </p>
+                <p className="text-xs font-medium text-petrol-700 mb-1">{t('lots.livreA', { n: resultatTraceLot.livraisons.length })}</p>
+                <div className="space-y-1">
+                  {resultatTraceLot.livraisons.map((l, i) => (
+                    <div key={i} className="text-xs bg-white rounded border border-blue-100 px-2 py-1.5 flex justify-between">
+                      <span>{l.ventes_lignes.ventes.clients?.nom || '—'} {l.ventes_lignes.ventes.clients?.ville ? `(${l.ventes_lignes.ventes.clients.ville})` : ''} — {l.ventes_lignes.ventes.numero_vente}</span>
+                      <span className="shrink-0 ml-2">{l.quantite} — {formatDate(l.ventes_lignes.ventes.created_at)}</span>
+                    </div>
+                  ))}
+                  {resultatTraceLot.livraisons.length === 0 && <p className="text-xs text-petrol-400">{t('lots.aucuneLivraison')}</p>}
+                </div>
+              </div>
+            )}
+
+            <h3 className="font-semibold text-sm mb-2">{t('lots.aSurveillerTitre')}</h3>
+            <p className="text-xs text-petrol-500 mb-2">{t('lots.aSurveillerAide')}</p>
+            {chargementLots ? (
+              <p className="text-sm text-petrol-500">{t('chargement')}</p>
+            ) : (
+              <div className="space-y-1.5">
+                {lotsASurveiller.map((l) => (
+                  <div
+                    key={l.lot_id}
+                    className={`border rounded-lg p-2.5 flex items-center justify-between text-sm ${
+                      l.jours_restants < 0 ? 'border-red-300 bg-red-50' : l.jours_restants <= 7 ? 'border-amber-300 bg-amber-50' : 'border-line'
+                    }`}
+                  >
+                    <div>
+                      <p className="font-medium">{l.numero_lot} — {l.produit_nom}</p>
+                      <p className="text-xs text-petrol-500">
+                        {l.depot_nom} — {t('lots.restant')} : {l.quantite_restante} — {' '}
+                        {l.jours_restants < 0
+                          ? t('lots.perime', { j: Math.abs(l.jours_restants) })
+                          : t('lots.expireDans', { j: l.jours_restants, date: formatDate(l.date_peremption) })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {lotsASurveiller.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">{t('lots.aucunLotASurveiller')}</p>}
+              </div>
+            )}
           </div>
         </div>
       )}

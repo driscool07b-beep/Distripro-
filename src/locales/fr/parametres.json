@@ -145,5 +145,10 @@
     "titre": "Transferts entre caisses/banques",
     "sousTitre": "Détermine si la confirmation de réception d'un transfert (entre deux caisses, ou entre une caisse et une banque) doit être appuyée d'une pièce justificative (photo du bordereau de versement/retrait).",
     "exigerJustificatif": "Exiger une pièce justificative pour confirmer un transfert"
+  },
+  "tracabilite": {
+    "titre": "Traçabilité des lots",
+    "sousTitre": "Permet de suivre les numéros de lot des produits (péremption, FIFO, traçabilité des livraisons en cas de souci de production). Fonctionne toujours, même désactivé — ce réglage rend seulement le numéro de lot obligatoire à chaque entrée de stock plutôt qu'optionnel.",
+    "rendreObligatoire": "Rendre le numéro de lot obligatoire à chaque entrée de stock"
   }
 }

@@ -45,6 +45,9 @@ export default function Parametres() {
   const [justificatifTransfertRequis, setJustificatifTransfertRequis] = useState(false)
   const [enregistrementTransferts, setEnregistrementTransferts] = useState(false)
   const [confirmationTransferts, setConfirmationTransferts] = useState(false)
+  const [tracabiliteLotsObligatoire, setTracabiliteLotsObligatoire] = useState(false)
+  const [enregistrementTracabilite, setEnregistrementTracabilite] = useState(false)
+  const [confirmationTracabilite, setConfirmationTracabilite] = useState(false)
   const [rolesValidateurs, setRolesValidateurs] = useState(['admin', 'manager'])
   const [enregistrementCaisse, setEnregistrementCaisse] = useState(false)
   const [confirmationCaisse, setConfirmationCaisse] = useState(false)
@@ -77,6 +80,7 @@ export default function Parametres() {
       setFrequenceInventaireStock(entreprise.frequence_inventaire_stock || '')
       setFrequenceInventaireCaisse(entreprise.frequence_inventaire_caisse || '')
       setJustificatifTransfertRequis(entreprise.justificatif_transfert_requis ?? false)
+      setTracabiliteLotsObligatoire(entreprise.tracabilite_lots_obligatoire ?? false)
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -199,6 +203,17 @@ export default function Parametres() {
     if (!error) {
       setConfirmationTransferts(true)
       setTimeout(() => setConfirmationTransferts(false), 2500)
+      rechargerProfil?.()
+    }
+  }
+
+  async function enregistrerParametrageTracabilite() {
+    setEnregistrementTracabilite(true)
+    const { error } = await supabase.rpc('modifier_parametrage_tracabilite', { p_obligatoire: tracabiliteLotsObligatoire })
+    setEnregistrementTracabilite(false)
+    if (!error) {
+      setConfirmationTracabilite(true)
+      setTimeout(() => setConfirmationTracabilite(false), 2500)
       rechargerProfil?.()
     }
   }
@@ -813,6 +828,21 @@ export default function Parametres() {
             {enregistrementTransferts ? t('enregistrement') : t('enregistrer')}
           </button>
           {confirmationTransferts && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">{t('tracabilite.titre')}</h2>
+          <p className="text-xs text-petrol-500 mb-3">{t('tracabilite.sousTitre')}</p>
+          <label className="flex items-center gap-2 text-sm mb-3">
+            <input type="checkbox" checked={tracabiliteLotsObligatoire} onChange={(e) => setTracabiliteLotsObligatoire(e.target.checked)} />
+            {t('tracabilite.rendreObligatoire')}
+          </label>
+          <button onClick={enregistrerParametrageTracabilite} disabled={enregistrementTracabilite} className="btn-primary text-sm">
+            {enregistrementTracabilite ? t('enregistrement') : t('enregistrer')}
+          </button>
+          {confirmationTracabilite && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 
