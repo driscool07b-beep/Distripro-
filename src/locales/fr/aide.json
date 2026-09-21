@@ -383,6 +383,27 @@
           "r": "1) Plan comptable (menu) — crée ou importe tes comptes (ou charge le plan SYSCOHADA de départ). 2) Paramètres → Comptabilité — comptes par défaut, rattache un compte de trésorerie à chaque caisse et banque, et choisis les comptes de contrepartie (charges, clients, écarts, apports). 3) Depuis Journal de caisse ou Banques, onglet Grand livre, bouton 'Exporter pour comptabilité' — génère un fichier Excel avec les colonnes standards (Date, Journal, N° compte, Libellé, N° pièce, Débit, Crédit). Importable dans Sage Saari/Ciel via 'Format d'import paramétrable' (à configurer une seule fois dans ton logiciel comptable, en faisant correspondre les colonnes)."
         }
       ]
+    },
+    {
+      "titre": "Notes d'utilisation",
+      "items": [
+        {
+          "q": "Comment fonctionne la note d'utilisation des commerciaux ?",
+          "r": "Note mensuelle sur 100, calculée automatiquement à partir de 3 indicateurs objectifs : l'assiduité terrain (jours avec au moins une activité enregistrée), les rapports de visite complets (visites prévues suivies d'un rapport), et la discipline de versement (versements de caisse réguliers). Aucune IA n'intervient dans le calcul du chiffre — c'est une formule fixe, pour rester explicable en cas de désaccord."
+        },
+        {
+          "q": "Comment calculer les notes du mois ?",
+          "r": "Notes d'utilisation (menu, admin/manager) → choisis le mois → 'Calculer les notes du mois'. Recalculable à tout moment (écrase le calcul précédent du même mois). Export PDF disponible une fois calculé."
+        },
+        {
+          "q": "Comment régler le poids de chaque indicateur ?",
+          "r": "Paramètres → Note d'utilisation de l'app (admin) — répartis les 100 points entre assiduité, rapports de visite et versements selon tes priorités."
+        },
+        {
+          "q": "Un commercial voit-il sa propre note ?",
+          "r": "Oui — une carte 'Ma note d'utilisation ce mois-ci' apparaît sur son Dashboard dès qu'un calcul a été fait pour le mois en cours, avec le détail des 3 indicateurs."
+        }
+      ]
     }
   ]
 }

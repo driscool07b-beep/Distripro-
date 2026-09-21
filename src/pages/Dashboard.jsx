@@ -560,6 +560,8 @@ function DashboardCommercial() {
         <p className="text-sm text-petrol-700 mt-1">{t('commercial.sousTitre')}</p>
       </header>
 
+      <CarteMaNoteUtilisation />
+
       <div className="grid grid-cols-2 gap-4 mb-4">
         <CarteKpi label={t('commercial.mesVentesJour')} valeur={formatXOF(kpi.caJour)} accent to="/ventes" />
         <CarteKpi label={t('commercial.mesVentesMois')} valeur={formatXOF(kpi.caMois)} to="/ventes" />
@@ -999,6 +1001,41 @@ function joursDeFrequence(frequence) {
   if (frequence === 'mensuel') return 30
   if (frequence === 'trimestriel') return 90
   return null
+}
+
+function CarteMaNoteUtilisation() {
+  const { t } = useTranslation('dashboard')
+  const { profil } = useAuth()
+  const [note, setNote] = useState(null)
+
+  useEffect(() => {
+    if (!profil?.id) return
+    const d = new Date()
+    const moisCourant = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`
+    supabase
+      .from('notes_utilisation')
+      .select('score_total, score_assiduite, score_rapports, score_versements')
+      .eq('profil_id', profil.id)
+      .eq('mois', moisCourant)
+      .maybeSingle()
+      .then(({ data }) => setNote(data))
+  }, [profil?.id])
+
+  if (!note) return null
+
+  return (
+    <div className="card p-4 mb-4">
+      <div className="flex justify-between items-center">
+        <p className="text-sm font-semibold">{t('commercial.maNoteTitre')}</p>
+        <span className="font-mono font-bold text-lg">{note.score_total}<span className="text-xs text-petrol-400"> / 100</span></span>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-xs mt-2 text-petrol-500">
+        <span>{t('commercial.noteAssiduite')} : {note.score_assiduite}</span>
+        <span>{t('commercial.noteRapports')} : {note.score_rapports}</span>
+        <span>{t('commercial.noteVersements')} : {note.score_versements}</span>
+      </div>
+    </div>
+  )
 }
 
 function AlerteInventaires({ afficherStock, afficherCaisse }) {

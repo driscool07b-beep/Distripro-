@@ -76,7 +76,11 @@
     "mesCommandesEnCours": "Mes commandes en cours",
     "resteAVerserAujourdhui": "Reste à verser aujourd'hui",
     "monObjectifMois": "Mon objectif du mois",
-    "mesVentes7j": "Mes ventes des 7 derniers jours"
+    "mesVentes7j": "Mes ventes des 7 derniers jours",
+    "maNoteTitre": "Ma note d'utilisation ce mois-ci",
+    "noteAssiduite": "Assiduité",
+    "noteRapports": "Rapports",
+    "noteVersements": "Versements"
   },
   "comptable": {
     "sousTitre": "Voici la situation financière du jour.",

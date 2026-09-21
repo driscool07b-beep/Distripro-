@@ -30,7 +30,8 @@
     "journalCaisse": "现金日记账",
     "aide": "帮助",
     "banques": "银行",
-    "planComptable": "会计科目表"
+    "planComptable": "会计科目表",
+    "notesUtilisation": "使用评分"
   },
   "actions": {
     "annuler": "取消",

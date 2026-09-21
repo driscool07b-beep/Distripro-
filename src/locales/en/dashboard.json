@@ -76,7 +76,11 @@
     "mesCommandesEnCours": "My pending orders",
     "resteAVerserAujourdhui": "Left to deposit today",
     "monObjectifMois": "My monthly target",
-    "mesVentes7j": "My sales over the last 7 days"
+    "mesVentes7j": "My sales over the last 7 days",
+    "maNoteTitre": "My usage score this month",
+    "noteAssiduite": "Attendance",
+    "noteRapports": "Reports",
+    "noteVersements": "Deposits"
   },
   "comptable": {
     "sousTitre": "Here's today's financial situation.",

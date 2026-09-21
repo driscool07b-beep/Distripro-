@@ -30,7 +30,8 @@
     "journalCaisse": "Journal de caisse",
     "aide": "Aide",
     "banques": "Banques",
-    "planComptable": "Plan comptable"
+    "planComptable": "Plan comptable",
+    "notesUtilisation": "Notes d'utilisation"
   },
   "actions": {
     "annuler": "Annuler",

@@ -167,5 +167,14 @@
     "codeJournalBanque": "日记账代码 — 银行",
     "nonDefini": "— 未设置 —",
     "compteNonAffecte": "未分配科目"
+  },
+  "notation": {
+    "titre": "应用使用评分（业务员）",
+    "sousTitre": "设置每个指标在满分100的月度评分中的权重——三项数值之和必须为100。查看\"使用评分\"页面了解计算方式和各业务员详情。",
+    "assiduite": "实地出勤",
+    "rapports": "拜访报告",
+    "versements": "存款纪律",
+    "total": "当前总计：{{total}} / 100",
+    "erreurTotal": "总计必须恰好为100（当前为{{total}}）。"
   }
 }

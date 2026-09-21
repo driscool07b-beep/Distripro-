@@ -60,6 +60,12 @@ export default function Parametres() {
   const [codeJournalBanque, setCodeJournalBanque] = useState('BQ')
   const [enregistrementComptes, setEnregistrementComptes] = useState(false)
   const [confirmationComptes, setConfirmationComptes] = useState(false)
+  const [poidsAssiduite, setPoidsAssiduite] = useState(40)
+  const [poidsRapports, setPoidsRapports] = useState(35)
+  const [poidsVersements, setPoidsVersements] = useState(25)
+  const [enregistrementPonderation, setEnregistrementPonderation] = useState(false)
+  const [confirmationPonderation, setConfirmationPonderation] = useState(false)
+  const [erreurPonderation, setErreurPonderation] = useState('')
   const [rolesValidateurs, setRolesValidateurs] = useState(['admin', 'manager'])
   const [enregistrementCaisse, setEnregistrementCaisse] = useState(false)
   const [confirmationCaisse, setConfirmationCaisse] = useState(false)
@@ -100,6 +106,9 @@ export default function Parametres() {
       setCompteApportsId(entreprise.compte_apports_defaut_id || '')
       setCodeJournalCaisse(entreprise.code_journal_caisse || 'CA')
       setCodeJournalBanque(entreprise.code_journal_banque || 'BQ')
+      setPoidsAssiduite(entreprise.note_poids_assiduite ?? 40)
+      setPoidsRapports(entreprise.note_poids_rapports ?? 35)
+      setPoidsVersements(entreprise.note_poids_versements ?? 25)
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -276,6 +285,24 @@ export default function Parametres() {
   async function affecterCompteCaisse(caisseId, compteId) {
     await supabase.rpc('affecter_compte_caisse', { p_caisse_id: caisseId, p_compte_id: compteId || null })
     chargerCaisses()
+  }
+
+  async function enregistrerPonderation() {
+    setErreurPonderation('')
+    const total = Number(poidsAssiduite) + Number(poidsRapports) + Number(poidsVersements)
+    if (total !== 100) {
+      setErreurPonderation(t('notation.erreurTotal', { total }))
+      return
+    }
+    setEnregistrementPonderation(true)
+    const { error } = await supabase.rpc('modifier_ponderation_notation', {
+      p_poids_assiduite: Number(poidsAssiduite), p_poids_rapports: Number(poidsRapports), p_poids_versements: Number(poidsVersements),
+    })
+    setEnregistrementPonderation(false)
+    if (error) { setErreurPonderation(`${t('erreur')} : ${traduireErreur(error.message)}`); return }
+    setConfirmationPonderation(true)
+    setTimeout(() => setConfirmationPonderation(false), 2500)
+    rechargerProfil?.()
   }
 
   async function televerserFondConnexion(e) {
@@ -987,6 +1014,35 @@ export default function Parametres() {
             {enregistrementComptes ? t('enregistrement') : t('enregistrer')}
           </button>
           {confirmationComptes && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">{t('notation.titre')}</h2>
+          <p className="text-xs text-petrol-500 mb-3">{t('notation.sousTitre')}</p>
+          <div className="grid grid-cols-3 gap-3 mb-3">
+            <div>
+              <label className="label">{t('notation.assiduite')}</label>
+              <input type="number" min="0" max="100" className="input-field text-sm" value={poidsAssiduite} onChange={(e) => setPoidsAssiduite(e.target.value)} />
+            </div>
+            <div>
+              <label className="label">{t('notation.rapports')}</label>
+              <input type="number" min="0" max="100" className="input-field text-sm" value={poidsRapports} onChange={(e) => setPoidsRapports(e.target.value)} />
+            </div>
+            <div>
+              <label className="label">{t('notation.versements')}</label>
+              <input type="number" min="0" max="100" className="input-field text-sm" value={poidsVersements} onChange={(e) => setPoidsVersements(e.target.value)} />
+            </div>
+          </div>
+          <p className="text-xs text-petrol-400 mb-3">
+            {t('notation.total', { total: Number(poidsAssiduite) + Number(poidsRapports) + Number(poidsVersements) })}
+          </p>
+          {erreurPonderation && <p className="text-xs text-red-600 mb-2">{erreurPonderation}</p>}
+          <button onClick={enregistrerPonderation} disabled={enregistrementPonderation} className="btn-primary text-sm">
+            {enregistrementPonderation ? t('enregistrement') : t('enregistrer')}
+          </button>
+          {confirmationPonderation && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 

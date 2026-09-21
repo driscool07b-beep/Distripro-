@@ -167,5 +167,14 @@
     "codeJournalBanque": "Journal code — bank",
     "nonDefini": "— Not set —",
     "compteNonAffecte": "No account assigned"
+  },
+  "notation": {
+    "titre": "App usage score (sales reps)",
+    "sousTitre": "Sets the weight of each indicator in the monthly score out of 100 — the 3 values must total 100. See the Usage scores page for the calculation and per-rep detail.",
+    "assiduite": "Field attendance",
+    "rapports": "Visit reports",
+    "versements": "Deposit discipline",
+    "total": "Current total: {{total}} / 100",
+    "erreurTotal": "The total must be exactly 100 (currently {{total}})."
   }
 }

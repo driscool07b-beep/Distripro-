@@ -76,7 +76,11 @@
     "mesCommandesEnCours": "我的待处理订单",
     "resteAVerserAujourdhui": "今日待存余额",
     "monObjectifMois": "我本月的目标",
-    "mesVentes7j": "我过去7天的销售额"
+    "mesVentes7j": "我过去7天的销售额",
+    "maNoteTitre": "本月我的使用评分",
+    "noteAssiduite": "出勤",
+    "noteRapports": "报告",
+    "noteVersements": "存款"
   },
   "comptable": {
     "sousTitre": "这是今日的财务状况。",

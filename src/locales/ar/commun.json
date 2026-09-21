@@ -30,7 +30,8 @@
     "journalCaisse": "دفتر الصندوق",
     "aide": "المساعدة",
     "banques": "البنوك",
-    "planComptable": "الدليل المحاسبي"
+    "planComptable": "الدليل المحاسبي",
+    "notesUtilisation": "درجات الاستخدام"
   },
   "actions": {
     "annuler": "إلغاء",

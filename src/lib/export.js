@@ -717,3 +717,46 @@ export function genererRapportInventaireStock({ entreprise, inventaire }) {
 
   return doc
 }
+
+export function genererRapportNotesUtilisation({ entreprise, notes, mois }) {
+  const doc = new jsPDF()
+  const y0 = ecrireEnTeteEntreprise(doc, entreprise)
+
+  const libelleMois = new Date(mois).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+  doc.setFontSize(11)
+  doc.setTextColor(60)
+  doc.text(`NOTES D'UTILISATION DE L'APPLICATION — ${libelleMois.toUpperCase()}`, 14, y0)
+
+  const tri = [...notes].sort((a, b) => b.score_total - a.score_total)
+  const lignes = tri.map((n, i) => [
+    String(i + 1),
+    n.profils?.nom || '—',
+    `${n.score_total} / 100`,
+    `${n.score_assiduite} (${n.jours_actifs}/${n.jours_ouvres}j)`,
+    n.visites_prevues > 0 ? `${n.score_rapports} (${n.visites_avec_rapport}/${n.visites_prevues})` : `${n.score_rapports} (n/a)`,
+    n.jours_avec_vente_cash > 0 ? `${n.score_versements} (${n.jours_avec_versement}/${n.jours_avec_vente_cash})` : `${n.score_versements} (n/a)`,
+  ])
+
+  autoTable(doc, {
+    startY: y0 + 12,
+    head: [['#', 'Commercial', 'Note /100', 'Assiduité', 'Rapports', 'Versements']],
+    body: lignes,
+    styles: { fontSize: 9, cellPadding: 3 },
+    columnStyles: { 0: { halign: 'center' }, 2: { halign: 'center', fontStyle: 'bold' } },
+    margin: { left: 14, right: 14 },
+  })
+
+  const y = doc.lastAutoTable.finalY + 10
+  doc.setFontSize(8)
+  doc.setTextColor(130)
+  doc.text(
+    'Note calculée automatiquement à partir des données enregistrées dans DistribPro (assiduité terrain, rapports de',
+    14, y
+  )
+  doc.text(
+    'visite complets, discipline de versement) — à examiner par un responsable avant toute décision de prime.',
+    14, y + 5
+  )
+
+  return doc
+}

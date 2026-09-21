@@ -167,5 +167,14 @@
     "codeJournalBanque": "Code journal — banque",
     "nonDefini": "— Non défini —",
     "compteNonAffecte": "Aucun compte affecté"
+  },
+  "notation": {
+    "titre": "Note d'utilisation de l'app (commerciaux)",
+    "sousTitre": "Détermine le poids de chaque indicateur dans la note mensuelle sur 100 — les 3 valeurs doivent totaliser 100. Voir la page Notes d'utilisation pour le calcul et le détail par commercial.",
+    "assiduite": "Assiduité terrain",
+    "rapports": "Rapports de visite",
+    "versements": "Discipline de versement",
+    "total": "Total actuel : {{total}} / 100",
+    "erreurTotal": "Le total doit être exactement 100 (actuellement {{total}})."
   }
 }

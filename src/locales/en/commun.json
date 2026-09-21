@@ -30,7 +30,8 @@
     "journalCaisse": "Cash journal",
     "aide": "Help",
     "banques": "Banks",
-    "planComptable": "Chart of accounts"
+    "planComptable": "Chart of accounts",
+    "notesUtilisation": "Usage scores"
   },
   "actions": {
     "annuler": "Cancel",

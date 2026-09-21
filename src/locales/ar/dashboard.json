@@ -76,7 +76,11 @@
     "mesCommandesEnCours": "طلباتي الجارية",
     "resteAVerserAujourdhui": "المتبقي للإيداع اليوم",
     "monObjectifMois": "هدفي لهذا الشهر",
-    "mesVentes7j": "مبيعاتي في آخر 7 أيام"
+    "mesVentes7j": "مبيعاتي في آخر 7 أيام",
+    "maNoteTitre": "درجة استخدامي هذا الشهر",
+    "noteAssiduite": "الانتظام",
+    "noteRapports": "التقارير",
+    "noteVersements": "الإيداعات"
   },
   "comptable": {
     "sousTitre": "إليك الوضع المالي لليوم.",

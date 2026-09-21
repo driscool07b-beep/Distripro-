@@ -1,0 +1,16 @@
+{
+  "titre": "Notes d'utilisation",
+  "sousTitre": "Note mensuelle sur 100 basée sur l'assiduité terrain, les rapports de visite complets et la discipline de versement — calculée automatiquement à partir des données déjà enregistrées, sans IA, pour rester explicable en cas de contestation.",
+  "accesRefuse": "Cette page est réservée à l'administration et aux managers.",
+  "chargement": "Chargement…",
+  "mois": "Mois",
+  "calculerLeMois": "Calculer les notes du mois",
+  "calculEnCours": "Calcul en cours…",
+  "exporterPdf": "Exporter en PDF",
+  "erreur": "Erreur",
+  "aucuneNote": "Aucune note calculée pour ce mois — clique sur 'Calculer les notes du mois'.",
+  "assiduite": "Assiduité",
+  "rapports": "Rapports",
+  "versements": "Versements",
+  "nonApplicable": "n/a"
+}

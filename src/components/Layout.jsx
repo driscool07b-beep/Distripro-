@@ -307,6 +307,22 @@ export default function Layout() {
               {t('menu.planComptable')}
             </NavLink>
           )}
+          {['admin', 'manager'].includes(profil?.role) && (
+            <NavLink
+              to="/notes-utilisation"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <NotesUtilisationIcon className="w-4 h-4 shrink-0" />
+              {t('menu.notesUtilisation')}
+            </NavLink>
+          )}
           {profil?.role === 'admin' && (
             <NavLink
               to="/utilisateurs"
@@ -454,6 +470,13 @@ function PlanComptableIcon(props) {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <rect x="4" y="3" width="16" height="18" rx="1.5" />
       <path d="M8 8h8M8 12h8M8 16h5" strokeLinecap="round" />
+    </svg>
+  )
+}
+function NotesUtilisationIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M12 2l2.4 6.6L21 10l-5 4.3L17.4 21 12 17.3 6.6 21 8 14.3 3 10l6.6-1.4z" strokeLinejoin="round" />
     </svg>
   )
 }
