@@ -34,17 +34,24 @@ export default function Layout() {
   const { profil, entreprise, deconnexion } = useAuth()
   const [menuOuvert, setMenuOuvert] = useState(false)
   const [messagesNonLus, setMessagesNonLus] = useState(0)
+  const [badgeJournalCaisse, setBadgeJournalCaisse] = useState(0)
+  const [badgeBanques, setBadgeBanques] = useState(0)
   const location = useLocation()
+
+  const peutValiderCaisse = (entreprise?.caisse_roles_validateurs || ['admin', 'manager']).includes(profil?.role)
+  const peutGererCaisseBanque = ['admin', 'manager', 'comptable'].includes(profil?.role)
 
   useEffect(() => {
     if (!profil) return
     chargerBadgeMessagerie()
+    chargerBadgesCaisseBanque()
 
     const canal = supabase
-      .channel('badge-messagerie')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => {
-        chargerBadgeMessagerie()
-      })
+      .channel('badges-notifications')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => chargerBadgeMessagerie())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes_decaissement' }, () => chargerBadgesCaisseBanque())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'caisse_transferts' }, () => chargerBadgesCaisseBanque())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transferts_banque_caisse' }, () => chargerBadgesCaisseBanque())
       .subscribe()
 
     return () => {
@@ -53,13 +60,39 @@ export default function Layout() {
   }, [profil?.id])
 
   useEffect(() => {
-    if (profil) chargerBadgeMessagerie()
+    if (profil) {
+      chargerBadgeMessagerie()
+      chargerBadgesCaisseBanque()
+    }
   }, [location.pathname])
 
   async function chargerBadgeMessagerie() {
     const { data } = await supabase.rpc('mes_conversations')
     const total = (data || []).reduce((s, c) => s + Number(c.non_lus || 0), 0)
     setMessagesNonLus(total)
+  }
+
+  async function chargerBadgesCaisseBanque() {
+    if (!peutGererCaisseBanque) return
+
+    const requetes = [
+      supabase.from('demandes_decaissement').select('id', { count: 'exact', head: true }).eq('statut', 'validee'),
+      supabase.from('caisse_transferts').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente').not('caisse_destination_id', 'is', null),
+      supabase.from('transferts_banque_caisse').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente'),
+      supabase.from('caisse_transferts').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente').not('banque_destination_id', 'is', null),
+    ]
+    if (peutValiderCaisse) {
+      requetes.push(supabase.from('demandes_decaissement').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente'))
+    }
+
+    const resultats = await Promise.all(requetes)
+    const [aPayer, transfertsCaisseEntrants, transfertsBanqueVersCaisse, transfertsVersBanque] = resultats
+    const aValider = peutValiderCaisse ? resultats[4] : null
+
+    setBadgeJournalCaisse(
+      (aValider?.count || 0) + (aPayer.count || 0) + (transfertsCaisseEntrants.count || 0) + (transfertsBanqueVersCaisse.count || 0)
+    )
+    setBadgeBanques(transfertsVersBanque.count || 0)
   }
 
   if (profil?.doit_changer_mot_de_passe) {
@@ -229,7 +262,12 @@ export default function Layout() {
               }
             >
               <JournalCaisseIcon className="w-4 h-4 shrink-0" />
-              {t('menu.journalCaisse')}
+              <span className="flex-1">{t('menu.journalCaisse')}</span>
+              {badgeJournalCaisse > 0 && (
+                <span className="bg-red-600 text-white text-xs font-semibold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shrink-0">
+                  {badgeJournalCaisse > 99 ? '99+' : badgeJournalCaisse}
+                </span>
+              )}
             </NavLink>
           )}
           {['admin', 'manager', 'comptable'].includes(profil?.role) && (
@@ -245,7 +283,12 @@ export default function Layout() {
               }
             >
               <BanquesIcon className="w-4 h-4 shrink-0" />
-              {t('menu.banques')}
+              <span className="flex-1">{t('menu.banques')}</span>
+              {badgeBanques > 0 && (
+                <span className="bg-red-600 text-white text-xs font-semibold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shrink-0">
+                  {badgeBanques > 99 ? '99+' : badgeBanques}
+                </span>
+              )}
             </NavLink>
           )}
           {profil?.role === 'admin' && (

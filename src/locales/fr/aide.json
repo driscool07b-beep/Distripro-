@@ -218,6 +218,10 @@
         {
           "q": "Est-ce que je reçois une notification pour les décaissements ?",
           "r": "Oui — quand quelqu'un crée une demande de décaissement, les personnes autorisées à valider (selon le réglage dans Paramètres) reçoivent une notification push. Et quand une demande est validée ou refusée, c'est le demandeur d'origine qui est notifié. Nécessite d'avoir activé les notifications (Apparence → Notifications)."
+        },
+        {
+          "q": "Le menu affiche un badge rouge sur Journal de caisse ou Banques, ça correspond à quoi ?",
+          "r": "Même principe que le badge de la Messagerie — le nombre indique tout ce qui attend une action de ta part : décaissements à valider, décaissements validés à payer, et transferts entrants à confirmer (entre caisses, ou depuis/vers une banque). Visible depuis n'importe quelle page, se met à jour automatiquement."
         }
       ]
     },
