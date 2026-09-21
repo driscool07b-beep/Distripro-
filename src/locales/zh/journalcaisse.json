@@ -93,7 +93,8 @@
     "montantInvalide": "请输入有效金额。",
     "destinationRequise": "请指定目标。",
     "motifRequis": "原因为必填项。",
-    "justificatifRequis": "确认此转账需要提供凭证（单据）。"
+    "justificatifRequis": "确认此转账需要提供凭证（单据）。",
+    "aucuneEcriture": "该期间没有分录，或该收银台未分配科目。"
   },
   "pin": {
     "nouveauPinRequis": "🔑 需要新的审批码",
@@ -139,5 +140,6 @@
     "nonRegularise": "差异尚未调整（仅限特定角色操作）。"
   },
   "justificatifBordereauLabel": "存款/取款单据（照片或PDF）",
-  "confirmerAvecJustificatif": "确认"
+  "confirmerAvecJustificatif": "确认",
+  "exporterComptabilite": "导出用于会计"
 }

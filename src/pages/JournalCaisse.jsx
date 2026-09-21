@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import * as XLSX from 'xlsx'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
@@ -68,6 +69,8 @@ export default function JournalCaisse() {
   const [chargementGrandLivre, setChargementGrandLivre] = useState(true)
   const [dateDebut, setDateDebut] = useState('')
   const [dateFin, setDateFin] = useState('')
+  const [envoiExportCompta, setEnvoiExportCompta] = useState(false)
+  const [erreurExportCompta, setErreurExportCompta] = useState('')
 
   const [inventaires, setInventaires] = useState([])
   const [chargementInventaires, setChargementInventaires] = useState(true)
@@ -211,6 +214,28 @@ export default function JournalCaisse() {
     })
     setGrandLivre(data || [])
     setChargementGrandLivre(false)
+  }
+
+  async function exporterComptabiliteCaisse() {
+    setErreurExportCompta('')
+    setEnvoiExportCompta(true)
+    const { data, error } = await supabase.rpc('exporter_ecritures_caisse', {
+      p_caisse_id: caisseId, p_date_debut: dateDebut || null, p_date_fin: dateFin || null,
+    })
+    setEnvoiExportCompta(false)
+    if (error) { setErreurExportCompta(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    if (!data || data.length === 0) { setErreurExportCompta(t('erreurs.aucuneEcriture')); return }
+
+    const lignes = data.map((l) => ({
+      Date: l.date_piece, Journal: l.code_journal, 'N° compte': l.numero_compte, 'Libellé compte': l.libelle_compte,
+      'N° pièce': l.numero_piece, 'Libellé écriture': l.libelle_ecriture,
+      Débit: Number(l.debit) || 0, Crédit: Number(l.credit) || 0,
+    }))
+    const feuille = XLSX.utils.json_to_sheet(lignes)
+    const classeur = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(classeur, feuille, 'Ecritures')
+    const caisse = caisses.find((c) => c.id === caisseId)
+    XLSX.writeFile(classeur, `ecritures-${caisse?.nom || 'caisse'}-${dateDebut || 'debut'}-${dateFin || 'fin'}.xlsx`)
   }
 
   async function chargerInventaires() {
@@ -842,7 +867,11 @@ export default function JournalCaisse() {
                 <button onClick={exporterGrandLivreExcel} className="btn-secondary text-sm no-print">{t('excel')}</button>
                 <button onClick={exporterGrandLivrePDF} className="btn-secondary text-sm no-print">{t('pdf')}</button>
                 <button onClick={() => window.print()} className="btn-secondary text-sm no-print">{t('imprimer')}</button>
+                <button onClick={exporterComptabiliteCaisse} disabled={envoiExportCompta} className="btn-secondary text-sm no-print">
+                  {envoiExportCompta ? '…' : t('exporterComptabilite')}
+                </button>
               </div>
+              {erreurExportCompta && <p className="text-xs text-red-600 mb-3">{erreurExportCompta}</p>}
 
               {chargementGrandLivre ? (
                 <p className="text-sm text-petrol-500">{t('chargement')}</p>

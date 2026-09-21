@@ -93,7 +93,8 @@
     "montantInvalide": "Enter a valid amount.",
     "destinationRequise": "Specify a destination.",
     "motifRequis": "The reason is required.",
-    "justificatifRequis": "A supporting document (slip) is required to confirm this transfer."
+    "justificatifRequis": "A supporting document (slip) is required to confirm this transfer.",
+    "aucuneEcriture": "No entries for this period, or no account assigned to this cash register."
   },
   "pin": {
     "nouveauPinRequis": "🔑 New approval code required",
@@ -139,5 +140,6 @@
     "nonRegularise": "Discrepancy not regularized (restricted to certain roles)."
   },
   "justificatifBordereauLabel": "Deposit/withdrawal slip (photo or PDF)",
-  "confirmerAvecJustificatif": "Confirm"
+  "confirmerAvecJustificatif": "Confirm",
+  "exporterComptabilite": "Export for accounting"
 }

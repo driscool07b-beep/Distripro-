@@ -51,6 +51,15 @@ export default function Parametres() {
   const [rolesRegularisation, setRolesRegularisation] = useState(['admin', 'manager'])
   const [enregistrementRegularisation, setEnregistrementRegularisation] = useState(false)
   const [confirmationRegularisation, setConfirmationRegularisation] = useState(false)
+  const [planComptable, setPlanComptable] = useState([])
+  const [compteChargesId, setCompteChargesId] = useState('')
+  const [compteClientsId, setCompteClientsId] = useState('')
+  const [compteEcartsId, setCompteEcartsId] = useState('')
+  const [compteApportsId, setCompteApportsId] = useState('')
+  const [codeJournalCaisse, setCodeJournalCaisse] = useState('CA')
+  const [codeJournalBanque, setCodeJournalBanque] = useState('BQ')
+  const [enregistrementComptes, setEnregistrementComptes] = useState(false)
+  const [confirmationComptes, setConfirmationComptes] = useState(false)
   const [rolesValidateurs, setRolesValidateurs] = useState(['admin', 'manager'])
   const [enregistrementCaisse, setEnregistrementCaisse] = useState(false)
   const [confirmationCaisse, setConfirmationCaisse] = useState(false)
@@ -85,6 +94,12 @@ export default function Parametres() {
       setJustificatifTransfertRequis(entreprise.justificatif_transfert_requis ?? false)
       setTracabiliteLotsObligatoire(entreprise.tracabilite_lots_obligatoire ?? false)
       setRolesRegularisation(entreprise.roles_regularisation_caisse || ['admin', 'manager'])
+      setCompteChargesId(entreprise.compte_charges_decaissement_id || '')
+      setCompteClientsId(entreprise.compte_clients_defaut_id || '')
+      setCompteEcartsId(entreprise.compte_ecarts_caisse_id || '')
+      setCompteApportsId(entreprise.compte_apports_defaut_id || '')
+      setCodeJournalCaisse(entreprise.code_journal_caisse || 'CA')
+      setCodeJournalBanque(entreprise.code_journal_banque || 'BQ')
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -112,6 +127,9 @@ export default function Parametres() {
     if (['admin', 'manager'].includes(profil?.role)) {
       chargerCaisses()
       chargerEquipes()
+    }
+    if (['admin', 'manager', 'comptable'].includes(profil?.role)) {
+      supabase.from('plan_comptable').select('id, numero_compte, libelle').order('numero_compte').then(({ data }) => setPlanComptable(data || []))
     }
   }, [profil])
 
@@ -154,7 +172,7 @@ export default function Parametres() {
   }
 
   async function chargerCaisses() {
-    const { data } = await supabase.from('caisses').select('id, nom, actif').order('created_at')
+    const { data } = await supabase.from('caisses').select('id, nom, actif, compte_comptable_id').order('created_at')
     setCaisses(data || [])
   }
 
@@ -235,6 +253,29 @@ export default function Parametres() {
       setTimeout(() => setConfirmationRegularisation(false), 2500)
       rechargerProfil?.()
     }
+  }
+
+  async function enregistrerComptesParDefaut() {
+    setEnregistrementComptes(true)
+    const { error } = await supabase.rpc('modifier_comptes_par_defaut', {
+      p_compte_charges_id: compteChargesId || null,
+      p_compte_clients_id: compteClientsId || null,
+      p_compte_ecarts_id: compteEcartsId || null,
+      p_compte_apports_id: compteApportsId || null,
+      p_code_journal_caisse: codeJournalCaisse,
+      p_code_journal_banque: codeJournalBanque,
+    })
+    setEnregistrementComptes(false)
+    if (!error) {
+      setConfirmationComptes(true)
+      setTimeout(() => setConfirmationComptes(false), 2500)
+      rechargerProfil?.()
+    }
+  }
+
+  async function affecterCompteCaisse(caisseId, compteId) {
+    await supabase.rpc('affecter_compte_caisse', { p_caisse_id: caisseId, p_compte_id: compteId || null })
+    chargerCaisses()
   }
 
   async function televerserFondConnexion(e) {
@@ -574,11 +615,23 @@ export default function Parametres() {
           </p>
           <div className="space-y-1 mb-3">
             {caisses.map((c) => (
-              <div key={c.id} className="flex items-center justify-between text-sm border border-line rounded px-3 py-2">
-                <span className={c.actif ? '' : 'text-petrol-400 line-through'}>{c.nom}</span>
-                <button onClick={() => basculerCaisseActive(c)} className="text-xs text-petrol-600 underline">
-                  {c.actif ? t('caisses.desactiver') : t('caisses.reactiver')}
-                </button>
+              <div key={c.id} className="border border-line rounded px-3 py-2 text-sm">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className={c.actif ? '' : 'text-petrol-400 line-through'}>{c.nom}</span>
+                  <button onClick={() => basculerCaisseActive(c)} className="text-xs text-petrol-600 underline">
+                    {c.actif ? t('caisses.desactiver') : t('caisses.reactiver')}
+                  </button>
+                </div>
+                {planComptable.length > 0 && (
+                  <select
+                    className="input-field text-xs py-1"
+                    value={c.compte_comptable_id || ''}
+                    onChange={(e) => affecterCompteCaisse(c.id, e.target.value)}
+                  >
+                    <option value="">{t('comptabilite.compteNonAffecte')}</option>
+                    {planComptable.map((pc) => <option key={pc.id} value={pc.id}>{pc.numero_compte} — {pc.libelle}</option>)}
+                  </select>
+                )}
               </div>
             ))}
             {caisses.length === 0 && <p className="text-xs text-petrol-400">{t('caisses.aucuneCaisse')}</p>}
@@ -881,6 +934,59 @@ export default function Parametres() {
             {enregistrementRegularisation ? t('enregistrement') : t('enregistrer')}
           </button>
           {confirmationRegularisation && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">{t('comptabilite.titre')}</h2>
+          <p className="text-xs text-petrol-500 mb-3">{t('comptabilite.sousTitre')}</p>
+          {planComptable.length === 0 ? (
+            <p className="text-xs text-amber-700 mb-3">{t('comptabilite.aucunPlanComptable')}</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="label">{t('comptabilite.compteCharges')}</label>
+                <select className="input-field text-sm" value={compteChargesId} onChange={(e) => setCompteChargesId(e.target.value)}>
+                  <option value="">{t('comptabilite.nonDefini')}</option>
+                  {planComptable.map((c) => <option key={c.id} value={c.id}>{c.numero_compte} — {c.libelle}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="label">{t('comptabilite.compteClients')}</label>
+                <select className="input-field text-sm" value={compteClientsId} onChange={(e) => setCompteClientsId(e.target.value)}>
+                  <option value="">{t('comptabilite.nonDefini')}</option>
+                  {planComptable.map((c) => <option key={c.id} value={c.id}>{c.numero_compte} — {c.libelle}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="label">{t('comptabilite.compteEcarts')}</label>
+                <select className="input-field text-sm" value={compteEcartsId} onChange={(e) => setCompteEcartsId(e.target.value)}>
+                  <option value="">{t('comptabilite.nonDefini')}</option>
+                  {planComptable.map((c) => <option key={c.id} value={c.id}>{c.numero_compte} — {c.libelle}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="label">{t('comptabilite.compteApports')}</label>
+                <select className="input-field text-sm" value={compteApportsId} onChange={(e) => setCompteApportsId(e.target.value)}>
+                  <option value="">{t('comptabilite.nonDefini')}</option>
+                  {planComptable.map((c) => <option key={c.id} value={c.id}>{c.numero_compte} — {c.libelle}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="label">{t('comptabilite.codeJournalCaisse')}</label>
+                <input className="input-field text-sm" value={codeJournalCaisse} onChange={(e) => setCodeJournalCaisse(e.target.value)} maxLength={3} />
+              </div>
+              <div>
+                <label className="label">{t('comptabilite.codeJournalBanque')}</label>
+                <input className="input-field text-sm" value={codeJournalBanque} onChange={(e) => setCodeJournalBanque(e.target.value)} maxLength={3} />
+              </div>
+            </div>
+          )}
+          <button onClick={enregistrerComptesParDefaut} disabled={enregistrementComptes} className="btn-primary text-sm">
+            {enregistrementComptes ? t('enregistrement') : t('enregistrer')}
+          </button>
+          {confirmationComptes && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 

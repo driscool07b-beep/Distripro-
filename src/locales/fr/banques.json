@@ -77,7 +77,8 @@
     "aucuneLigneReleve": "Aucune ligne exploitable trouvée dans ce fichier — vérifiez qu'il suit le modèle.",
     "fichierIllisible": "Impossible de lire ce fichier — vérifiez que c'est bien un fichier Excel (.xlsx).",
     "justificatifRequis": "Une pièce justificative (bordereau) est requise pour confirmer ce transfert.",
-    "beneficiaireRequis": "Le bénéficiaire est requis."
+    "beneficiaireRequis": "Le bénéficiaire est requis.",
+    "aucuneEcriture": "Aucune écriture pour cette période, ou aucun compte comptable affecté à cette banque."
   },
   "transfertsEntrantsEnAttente": "{{n}} transfert(s) entrant(s) à confirmer",
   "justificatifBordereauLabel": "Bordereau de versement (photo ou PDF)",
@@ -95,5 +96,7 @@
   "mode": "Mode",
   "modeCheque": "Chèque",
   "modeVirement": "Virement",
-  "pieceJustificativeOptionnelle": "Pièce justificative (optionnel)"
+  "pieceJustificativeOptionnelle": "Pièce justificative (optionnel)",
+  "exporterComptabilite": "Exporter pour comptabilité",
+  "compteNonAffecte": "Aucun compte affecté"
 }

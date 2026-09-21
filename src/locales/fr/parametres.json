@@ -154,5 +154,18 @@
   "regularisation": {
     "titre": "Régularisation des écarts de caisse",
     "sousTitre": "Détermine qui peut régulariser un écart constaté lors d'un inventaire de caisse (génère l'écriture correctrice dans le journal de caisse)."
+  },
+  "comptabilite": {
+    "titre": "Comptabilité — comptes par défaut",
+    "sousTitre": "Utilisés pour générer la contrepartie de chaque écriture lors de l'export comptable. Nécessite d'avoir d'abord créé ou importé un Plan comptable.",
+    "aucunPlanComptable": "Aucun plan comptable créé — va d'abord dans Plan comptable (menu) pour en créer un.",
+    "compteCharges": "Compte de charges (décaissements)",
+    "compteClients": "Compte clients (versements/règlements)",
+    "compteEcarts": "Compte d'écarts de caisse (régularisations)",
+    "compteApports": "Compte d'apports (approvisionnements)",
+    "codeJournalCaisse": "Code journal — caisse",
+    "codeJournalBanque": "Code journal — banque",
+    "nonDefini": "— Non défini —",
+    "compteNonAffecte": "Aucun compte affecté"
   }
 }

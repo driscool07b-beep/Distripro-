@@ -154,5 +154,18 @@
   "regularisation": {
     "titre": "Cash discrepancy regularization",
     "sousTitre": "Determines who can regularize a discrepancy found during a cash inventory (generates the correcting entry in the cash journal)."
+  },
+  "comptabilite": {
+    "titre": "Accounting — default accounts",
+    "sousTitre": "Used to generate the counterpart of each entry during the accounting export. Requires a Chart of accounts to be created or imported first.",
+    "aucunPlanComptable": "No chart of accounts yet — go to Chart of accounts (menu) first to create one.",
+    "compteCharges": "Expense account (disbursements)",
+    "compteClients": "Clients account (deposits/payments)",
+    "compteEcarts": "Cash discrepancy account (regularizations)",
+    "compteApports": "Contributions account (cash top-ups)",
+    "codeJournalCaisse": "Journal code — cash",
+    "codeJournalBanque": "Journal code — bank",
+    "nonDefini": "— Not set —",
+    "compteNonAffecte": "No account assigned"
   }
 }

@@ -377,6 +377,10 @@
         {
           "q": "Qui peut régulariser un écart de caisse ?",
           "r": "Paramètres → Régularisation des écarts de caisse (admin) — coche les rôles autorisés parmi admin, manager, comptable. Par défaut : admin et manager uniquement."
+        },
+        {
+          "q": "Comment exporter mes écritures vers Sage Saari Compta ou Ciel Compta ?",
+          "r": "1) Plan comptable (menu) — crée ou importe tes comptes (ou charge le plan SYSCOHADA de départ). 2) Paramètres → Comptabilité — comptes par défaut, rattache un compte de trésorerie à chaque caisse et banque, et choisis les comptes de contrepartie (charges, clients, écarts, apports). 3) Depuis Journal de caisse ou Banques, onglet Grand livre, bouton 'Exporter pour comptabilité' — génère un fichier Excel avec les colonnes standards (Date, Journal, N° compte, Libellé, N° pièce, Débit, Crédit). Importable dans Sage Saari/Ciel via 'Format d'import paramétrable' (à configurer une seule fois dans ton logiciel comptable, en faisant correspondre les colonnes)."
         }
       ]
     }

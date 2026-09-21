@@ -13,6 +13,9 @@ export default function Banques() {
 
   const [onglet, setOnglet] = useState('banques')
   const [banques, setBanques] = useState([])
+  const [planComptable, setPlanComptable] = useState([])
+  const [envoiExportCompta, setEnvoiExportCompta] = useState(false)
+  const [erreurExportCompta, setErreurExportCompta] = useState('')
   const [soldes, setSoldes] = useState({})
   const [caisses, setCaisses] = useState([])
   const [chargement, setChargement] = useState(true)
@@ -72,12 +75,14 @@ export default function Banques() {
 
   async function charger() {
     setChargement(true)
-    const [{ data: banquesData }, { data: caissesData }] = await Promise.all([
-      supabase.from('banques').select('id, nom, numero_compte, intitule_compte, actif').order('nom'),
+    const [{ data: banquesData }, { data: caissesData }, { data: planComptableData }] = await Promise.all([
+      supabase.from('banques').select('id, nom, numero_compte, intitule_compte, actif, compte_comptable_id').order('nom'),
       supabase.from('caisses').select('id, nom').eq('actif', true).order('nom'),
+      supabase.from('plan_comptable').select('id, numero_compte, libelle').order('numero_compte'),
     ])
     setBanques(banquesData || [])
     setCaisses(caissesData || [])
+    setPlanComptable(planComptableData || [])
     const soldesMap = {}
     await Promise.all(
       (banquesData || []).map(async (b) => {
@@ -141,6 +146,11 @@ export default function Banques() {
     charger()
   }
 
+  async function affecterCompteBanque(banqueId, compteId) {
+    await supabase.rpc('affecter_compte_banque', { p_banque_id: banqueId, p_compte_id: compteId || null })
+    charger()
+  }
+
   async function chargerGrandLivre() {
     if (!banqueGrandLivreId) return
     setChargementGrandLivre(true)
@@ -151,6 +161,28 @@ export default function Banques() {
     setChargementGrandLivre(false)
   }
   useEffect(() => { if (onglet === 'grandLivre') chargerGrandLivre() }, [onglet, banqueGrandLivreId, dateDebut, dateFin])
+
+  async function exporterComptabiliteBanque() {
+    setErreurExportCompta('')
+    setEnvoiExportCompta(true)
+    const { data, error } = await supabase.rpc('exporter_ecritures_banque', {
+      p_banque_id: banqueGrandLivreId, p_date_debut: dateDebut || null, p_date_fin: dateFin || null,
+    })
+    setEnvoiExportCompta(false)
+    if (error) { setErreurExportCompta(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    if (!data || data.length === 0) { setErreurExportCompta(t('erreurs.aucuneEcriture')); return }
+
+    const lignes = data.map((l) => ({
+      Date: l.date_piece, Journal: l.code_journal, 'N° compte': l.numero_compte, 'Libellé compte': l.libelle_compte,
+      'N° pièce': l.numero_piece, 'Libellé écriture': l.libelle_ecriture,
+      Débit: Number(l.debit) || 0, Crédit: Number(l.credit) || 0,
+    }))
+    const feuille = XLSX.utils.json_to_sheet(lignes)
+    const classeur = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(classeur, feuille, 'Ecritures')
+    const banque = banques.find((b) => b.id === banqueGrandLivreId)
+    XLSX.writeFile(classeur, `ecritures-${banque?.nom || 'banque'}-${dateDebut || 'debut'}-${dateFin || 'fin'}.xlsx`)
+  }
 
   async function chargerTransfertsSortants() {
     if (!transfertBanqueId) return
@@ -407,6 +439,16 @@ export default function Banques() {
                       {b.actif ? t('desactiver') : t('reactiver')}
                     </button>
                   </div>
+                  {planComptable.length > 0 && (
+                    <select
+                      className="input-field text-xs py-1 mt-2"
+                      value={b.compte_comptable_id || ''}
+                      onChange={(e) => affecterCompteBanque(b.id, e.target.value)}
+                    >
+                      <option value="">{t('compteNonAffecte')}</option>
+                      {planComptable.map((pc) => <option key={pc.id} value={pc.id}>{pc.numero_compte} — {pc.libelle}</option>)}
+                    </select>
+                  )}
                 </div>
               ))}
               {banques.length === 0 && <p className="text-petrol-400 text-center py-12 text-sm">{t('aucuneBanque')}</p>}
@@ -430,7 +472,11 @@ export default function Banques() {
                   <label className="label">{t('au')}</label>
                   <input type="date" className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
                 </div>
+                <button onClick={exporterComptabiliteBanque} disabled={envoiExportCompta} className="btn-secondary text-sm">
+                  {envoiExportCompta ? '…' : t('exporterComptabilite')}
+                </button>
               </div>
+              {erreurExportCompta && <p className="text-xs text-red-600 mb-3">{erreurExportCompta}</p>}
               {chargementGrandLivre ? (
                 <p className="text-sm text-petrol-500">{t('chargement')}</p>
               ) : (

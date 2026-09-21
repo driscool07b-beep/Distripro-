@@ -154,5 +154,18 @@
   "regularisation": {
     "titre": "现金差异调整",
     "sousTitre": "设置谁可以调整现金盘点中发现的差异（在现金日记账中生成更正分录）。"
+  },
+  "comptabilite": {
+    "titre": "会计 — 默认科目",
+    "sousTitre": "用于在会计导出时生成每笔分录的对方科目。需要先创建或导入会计科目表。",
+    "aucunPlanComptable": "尚未创建会计科目表——请先前往\"会计科目表\"（菜单）创建。",
+    "compteCharges": "费用科目（支出）",
+    "compteClients": "客户科目（存款/付款）",
+    "compteEcarts": "现金差异科目（调整）",
+    "compteApports": "出资科目（现金补充）",
+    "codeJournalCaisse": "日记账代码 — 现金",
+    "codeJournalBanque": "日记账代码 — 银行",
+    "nonDefini": "— 未设置 —",
+    "compteNonAffecte": "未分配科目"
   }
 }

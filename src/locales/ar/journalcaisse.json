@@ -93,7 +93,8 @@
     "montantInvalide": "أدخل مبلغًا صحيحًا.",
     "destinationRequise": "حدد وجهة.",
     "motifRequis": "السبب مطلوب.",
-    "justificatifRequis": "مطلوب مستند داعم (إيصال) لتأكيد هذا التحويل."
+    "justificatifRequis": "مطلوب مستند داعم (إيصال) لتأكيد هذا التحويل.",
+    "aucuneEcriture": "لا توجد قيود لهذه الفترة، أو لا يوجد حساب مخصص لهذا الصندوق."
   },
   "pin": {
     "nouveauPinRequis": "🔑 مطلوب رمز موافقة جديد",
@@ -139,5 +140,6 @@
     "nonRegularise": "الفرق غير مسوّى (مقتصر على أدوار معينة)."
   },
   "justificatifBordereauLabel": "إيصال الإيداع/السحب (صورة أو PDF)",
-  "confirmerAvecJustificatif": "تأكيد"
+  "confirmerAvecJustificatif": "تأكيد",
+  "exporterComptabilite": "تصدير للمحاسبة"
 }

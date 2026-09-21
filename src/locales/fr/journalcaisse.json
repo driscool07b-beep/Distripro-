@@ -93,7 +93,8 @@
     "montantInvalide": "Indiquez un montant valide.",
     "destinationRequise": "Précisez une destination.",
     "motifRequis": "Le motif est requis.",
-    "justificatifRequis": "Une pièce justificative (bordereau) est requise pour confirmer ce transfert."
+    "justificatifRequis": "Une pièce justificative (bordereau) est requise pour confirmer ce transfert.",
+    "aucuneEcriture": "Aucune écriture pour cette période, ou aucun compte comptable affecté à cette caisse."
   },
   "pin": {
     "nouveauPinRequis": "🔑 Nouveau code de validation requis",
@@ -139,5 +140,6 @@
     "nonRegularise": "Écart non régularisé (réservé à certains rôles)."
   },
   "justificatifBordereauLabel": "Bordereau de versement/retrait (photo ou PDF)",
-  "confirmerAvecJustificatif": "Confirmer"
+  "confirmerAvecJustificatif": "Confirmer",
+  "exporterComptabilite": "Exporter pour comptabilité"
 }
