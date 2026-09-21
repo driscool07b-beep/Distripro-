@@ -327,7 +327,7 @@ export default function JournalCaisse() {
       }
     }
 
-    const { error } = await supabase.rpc('creer_demande_decaissement', {
+    const { data: demandeId, error } = await supabase.rpc('creer_demande_decaissement', {
       p_caisse_id: caisseId,
       p_libelle: libelle.trim(),
       p_montant: Number(montant),
@@ -338,6 +338,9 @@ export default function JournalCaisse() {
 
     setEnvoiDemande(false)
     if (error) { setErreurDemande(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    if (demandeId) {
+      supabase.functions.invoke('envoyer-notification-decaissement', { body: { demande_id: demandeId, evenement: 'creation' } }).catch(() => {})
+    }
     setLibelle(''); setMontant(''); setBeneficiaire(''); setFichier(null)
     setModalNouvelleDemande(false)
     charger()
@@ -380,6 +383,7 @@ export default function JournalCaisse() {
     const { error } = await supabase.rpc('valider_demande_decaissement', { p_demande_id: demandeId, p_montant_valide: montantValide })
     setEnvoiAction(null)
     if (error) { setErreurAction(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    supabase.functions.invoke('envoyer-notification-decaissement', { body: { demande_id: demandeId, evenement: 'validation' } }).catch(() => {})
     charger()
   }
 
@@ -390,6 +394,7 @@ export default function JournalCaisse() {
     })
     setEnvoiAction(null)
     if (error) { setErreurAction(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    supabase.functions.invoke('envoyer-notification-decaissement', { body: { demande_id: demandeId, evenement: 'validation' } }).catch(() => {})
     setRefusEnCours(null); setMotifRefus('')
     charger()
   }

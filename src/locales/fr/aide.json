@@ -214,6 +214,10 @@
         {
           "q": "Pourquoi un code me demande-t-il de me reconnecter avant de valider ?",
           "r": "Si un code de validation (PIN) a été configuré pour ton compte, la section de validation se verrouille après 1 minute d'inactivité, pour éviter qu'une session restée ouverte permette à quelqu'un d'autre de valider à ta place. En cas d'oubli, un admin peut régénérer ton code depuis Équipe."
+        },
+        {
+          "q": "Est-ce que je reçois une notification pour les décaissements ?",
+          "r": "Oui — quand quelqu'un crée une demande de décaissement, les personnes autorisées à valider (selon le réglage dans Paramètres) reçoivent une notification push. Et quand une demande est validée ou refusée, c'est le demandeur d'origine qui est notifié. Nécessite d'avoir activé les notifications (Apparence → Notifications)."
         }
       ]
     },

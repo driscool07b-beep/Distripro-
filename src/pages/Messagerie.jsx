@@ -55,7 +55,13 @@ export default function Messagerie() {
     return (
       <FilConversation
         conversationId={conversationOuverte}
-        onRetour={() => {
+        onRetour={async () => {
+          // On s'assure que le marquage "lu" est bien terminé côté
+          // serveur avant de rafraîchir la liste — sinon, en cas de
+          // retour rapide, la liste peut se recharger juste avant que
+          // la mise à jour soit enregistrée, et le badge "non lu"
+          // reste affiché à tort.
+          await supabase.rpc('marquer_conversation_lue', { p_conversation_id: conversationOuverte })
           setConversationOuverte(null)
           charger()
         }}
