@@ -133,7 +133,10 @@
     "billets": "Notes",
     "pieces": "Coins",
     "totalCompte": "Total counted",
-    "erreurAucuneCoupure": "Enter at least one denomination before confirming."
+    "erreurAucuneCoupure": "Enter at least one denomination before confirming.",
+    "regularisePar": "Regularized by {{nom}} — {{date}}",
+    "regulariser": "Regularize this discrepancy",
+    "nonRegularise": "Discrepancy not regularized (restricted to certain roles)."
   },
   "justificatifBordereauLabel": "Deposit/withdrawal slip (photo or PDF)",
   "confirmerAvecJustificatif": "Confirm"

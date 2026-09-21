@@ -150,5 +150,9 @@
     "titre": "Lot traceability",
     "sousTitre": "Enables tracking product lot numbers (expiry, FIFO, delivery traceability in case of a production issue). Always works even when disabled — this setting only makes the lot number mandatory on every stock entry rather than optional.",
     "rendreObligatoire": "Make the lot number mandatory on every stock entry"
+  },
+  "regularisation": {
+    "titre": "Cash discrepancy regularization",
+    "sousTitre": "Determines who can regularize a discrepancy found during a cash inventory (generates the correcting entry in the cash journal)."
   }
 }

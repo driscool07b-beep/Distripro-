@@ -150,5 +150,9 @@
     "titre": "Traçabilité des lots",
     "sousTitre": "Permet de suivre les numéros de lot des produits (péremption, FIFO, traçabilité des livraisons en cas de souci de production). Fonctionne toujours, même désactivé — ce réglage rend seulement le numéro de lot obligatoire à chaque entrée de stock plutôt qu'optionnel.",
     "rendreObligatoire": "Rendre le numéro de lot obligatoire à chaque entrée de stock"
+  },
+  "regularisation": {
+    "titre": "Régularisation des écarts de caisse",
+    "sousTitre": "Détermine qui peut régulariser un écart constaté lors d'un inventaire de caisse (génère l'écriture correctrice dans le journal de caisse)."
   }
 }

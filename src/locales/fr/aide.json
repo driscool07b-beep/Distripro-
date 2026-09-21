@@ -222,6 +222,10 @@
         {
           "q": "Le menu affiche un badge rouge sur Journal de caisse ou Banques, ça correspond à quoi ?",
           "r": "Même principe que le badge de la Messagerie — le nombre indique tout ce qui attend une action de ta part : décaissements à valider, décaissements validés à payer, et transferts entrants à confirmer (entre caisses, ou depuis/vers une banque). Visible depuis n'importe quelle page, se met à jour automatiquement."
+        },
+        {
+          "q": "Comment régulariser un écart trouvé lors d'un inventaire de caisse ?",
+          "r": "Bouton 'Régulariser cet écart' visible sur l'inventaire concerné — réservé aux rôles autorisés (réglable dans Paramètres → Régularisation des écarts de caisse, admin). Ça génère automatiquement l'écriture correctrice dans le Grand livre, portant le nom de la personne qui régularise. Une fois fait, impossible de le refaire pour le même inventaire."
         }
       ]
     },
@@ -369,6 +373,10 @@
         {
           "q": "Comment rendre le numéro de lot obligatoire ?",
           "r": "Paramètres → Traçabilité des lots (admin) — active 'Rendre le numéro de lot obligatoire à chaque entrée de stock'. Désactivé par défaut : la traçabilité fonctionne quand même si tu renseignes un lot, ce réglage impose juste de toujours le faire."
+        },
+        {
+          "q": "Qui peut régulariser un écart de caisse ?",
+          "r": "Paramètres → Régularisation des écarts de caisse (admin) — coche les rôles autorisés parmi admin, manager, comptable. Par défaut : admin et manager uniquement."
         }
       ]
     }

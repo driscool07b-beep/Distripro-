@@ -133,7 +133,10 @@
     "billets": "Billets",
     "pieces": "Pièces",
     "totalCompte": "Total compté",
-    "erreurAucuneCoupure": "Saisis au moins une coupure avant de valider."
+    "erreurAucuneCoupure": "Saisis au moins une coupure avant de valider.",
+    "regularisePar": "Régularisé par {{nom}} — {{date}}",
+    "regulariser": "Régulariser cet écart",
+    "nonRegularise": "Écart non régularisé (réservé à certains rôles)."
   },
   "justificatifBordereauLabel": "Bordereau de versement/retrait (photo ou PDF)",
   "confirmerAvecJustificatif": "Confirmer"

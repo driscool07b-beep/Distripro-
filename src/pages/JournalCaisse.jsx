@@ -83,6 +83,7 @@ export default function JournalCaisse() {
 
   const peutCreer = ['admin', 'manager', 'comptable'].includes(profil?.role)
   const peutValider = (entreprise?.caisse_roles_validateurs || ['admin', 'manager']).includes(profil?.role)
+  const peutRegulariser = (entreprise?.roles_regularisation_caisse || ['admin', 'manager']).includes(profil?.role)
 
   const [pinConfigure, setPinConfigure] = useState(false)
   const [pinDoitChanger, setPinDoitChanger] = useState(false)
@@ -216,7 +217,7 @@ export default function JournalCaisse() {
     setChargementInventaires(true)
     const { data } = await supabase
       .from('inventaires_caisse')
-      .select('id, numero, solde_theorique, solde_compte, ecart, notes, created_at, controleur:profils!controle_par(nom), denominations:inventaire_caisse_denominations(valeur, quantite)')
+      .select('id, numero, solde_theorique, solde_compte, ecart, notes, created_at, regularise_par, regularise_at, controleur:profils!controle_par(nom), regularisateur:profils!regularise_par(nom), denominations:inventaire_caisse_denominations(valeur, quantite)')
       .eq('caisse_id', caisseId)
       .order('created_at', { ascending: false })
     setInventaires(data || [])
@@ -263,6 +264,15 @@ export default function JournalCaisse() {
     const caisse = caisses.find((c) => c.id === caisseId)
     const doc = genererRapportInventaireCaisse({ entreprise, inventaire, caisse })
     doc.save(`${inventaire.numero || 'inventaire-caisse'}.pdf`)
+  }
+
+  async function regulariserInventaire(inventaireId) {
+    setEnvoiAction(inventaireId)
+    setErreurAction('')
+    const { error } = await supabase.rpc('regulariser_inventaire_caisse', { p_inventaire_id: inventaireId })
+    setEnvoiAction(null)
+    if (error) { setErreurAction(`${t('erreurs.erreur')} : ${traduireErreur(error.message)}`); return }
+    charger(); chargerInventaires(); chargerGrandLivre()
   }
 
   const colonnesGrandLivre = [
@@ -908,11 +918,29 @@ export default function JournalCaisse() {
                         </div>
                       </div>
                       {inv.notes && <p className="text-xs text-petrol-500 mt-2">{inv.notes}</p>}
+                      {Number(inv.ecart) !== 0 && (
+                        inv.regularise_at ? (
+                          <p className="text-xs text-green-700 mt-2">
+                            {t('inventaire.regularisePar', { nom: inv.regularisateur?.nom || '—', date: formatDate(inv.regularise_at) })}
+                          </p>
+                        ) : peutRegulariser ? (
+                          <button
+                            onClick={() => regulariserInventaire(inv.id)}
+                            disabled={envoiAction === inv.id}
+                            className="text-xs text-amber-700 underline mt-2"
+                          >
+                            {envoiAction === inv.id ? '…' : t('inventaire.regulariser')}
+                          </button>
+                        ) : (
+                          <p className="text-xs text-petrol-400 mt-2">{t('inventaire.nonRegularise')}</p>
+                        )
+                      )}
                     </div>
                   ))}
                   {inventaires.length === 0 && <p className="text-petrol-400 text-center py-12 text-sm">{t('inventaire.aucun')}</p>}
                 </div>
               )}
+              {erreurAction && <p className="text-xs text-red-600 mt-3">{erreurAction}</p>}
             </div>
           )}
         </>

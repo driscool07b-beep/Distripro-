@@ -133,7 +133,10 @@
     "billets": "أوراق نقدية",
     "pieces": "قطع نقدية",
     "totalCompte": "الإجمالي المعدود",
-    "erreurAucuneCoupure": "أدخل فئة واحدة على الأقل قبل التأكيد."
+    "erreurAucuneCoupure": "أدخل فئة واحدة على الأقل قبل التأكيد.",
+    "regularisePar": "تمت التسوية من قبل {{nom}} — {{date}}",
+    "regulariser": "تسوية هذا الفرق",
+    "nonRegularise": "الفرق غير مسوّى (مقتصر على أدوار معينة)."
   },
   "justificatifBordereauLabel": "إيصال الإيداع/السحب (صورة أو PDF)",
   "confirmerAvecJustificatif": "تأكيد"

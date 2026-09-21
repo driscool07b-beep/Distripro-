@@ -133,7 +133,10 @@
     "billets": "纸币",
     "pieces": "硬币",
     "totalCompte": "清点总额",
-    "erreurAucuneCoupure": "请至少输入一种面额后再确认。"
+    "erreurAucuneCoupure": "请至少输入一种面额后再确认。",
+    "regularisePar": "调整人：{{nom}} — {{date}}",
+    "regulariser": "调整此差异",
+    "nonRegularise": "差异尚未调整（仅限特定角色操作）。"
   },
   "justificatifBordereauLabel": "存款/取款单据（照片或PDF）",
   "confirmerAvecJustificatif": "确认"

@@ -48,6 +48,9 @@ export default function Parametres() {
   const [tracabiliteLotsObligatoire, setTracabiliteLotsObligatoire] = useState(false)
   const [enregistrementTracabilite, setEnregistrementTracabilite] = useState(false)
   const [confirmationTracabilite, setConfirmationTracabilite] = useState(false)
+  const [rolesRegularisation, setRolesRegularisation] = useState(['admin', 'manager'])
+  const [enregistrementRegularisation, setEnregistrementRegularisation] = useState(false)
+  const [confirmationRegularisation, setConfirmationRegularisation] = useState(false)
   const [rolesValidateurs, setRolesValidateurs] = useState(['admin', 'manager'])
   const [enregistrementCaisse, setEnregistrementCaisse] = useState(false)
   const [confirmationCaisse, setConfirmationCaisse] = useState(false)
@@ -81,6 +84,7 @@ export default function Parametres() {
       setFrequenceInventaireCaisse(entreprise.frequence_inventaire_caisse || '')
       setJustificatifTransfertRequis(entreprise.justificatif_transfert_requis ?? false)
       setTracabiliteLotsObligatoire(entreprise.tracabilite_lots_obligatoire ?? false)
+      setRolesRegularisation(entreprise.roles_regularisation_caisse || ['admin', 'manager'])
     }
   }, [entreprise])
   const [enregistrement, setEnregistrement] = useState(false)
@@ -214,6 +218,21 @@ export default function Parametres() {
     if (!error) {
       setConfirmationTracabilite(true)
       setTimeout(() => setConfirmationTracabilite(false), 2500)
+      rechargerProfil?.()
+    }
+  }
+
+  function toggleRoleRegularisation(role) {
+    setRolesRegularisation((prev) => (prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]))
+  }
+
+  async function enregistrerParametrageRegularisation() {
+    setEnregistrementRegularisation(true)
+    const { error } = await supabase.rpc('modifier_parametrage_regularisation', { p_roles: rolesRegularisation })
+    setEnregistrementRegularisation(false)
+    if (!error) {
+      setConfirmationRegularisation(true)
+      setTimeout(() => setConfirmationRegularisation(false), 2500)
       rechargerProfil?.()
     }
   }
@@ -843,6 +862,25 @@ export default function Parametres() {
             {enregistrementTracabilite ? t('enregistrement') : t('enregistrer')}
           </button>
           {confirmationTracabilite && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
+        </div>
+      )}
+
+      {profil?.role === 'admin' && (
+        <div className="card p-4">
+          <h2 className="font-semibold mb-1">{t('regularisation.titre')}</h2>
+          <p className="text-xs text-petrol-500 mb-3">{t('regularisation.sousTitre')}</p>
+          <div className="flex flex-wrap gap-3 mb-3">
+            {['admin', 'manager', 'comptable'].map((role) => (
+              <label key={role} className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={rolesRegularisation.includes(role)} onChange={() => toggleRoleRegularisation(role)} />
+                {t(`roles.${role}`, { ns: 'utilisateurs' })}
+              </label>
+            ))}
+          </div>
+          <button onClick={enregistrerParametrageRegularisation} disabled={enregistrementRegularisation} className="btn-primary text-sm">
+            {enregistrementRegularisation ? t('enregistrement') : t('enregistrer')}
+          </button>
+          {confirmationRegularisation && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
 
