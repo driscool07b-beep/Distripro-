@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
 import BandeauHorsLigne from './BandeauHorsLigne'
@@ -32,6 +33,34 @@ export default function Layout() {
   const { t } = useTranslation()
   const { profil, entreprise, deconnexion } = useAuth()
   const [menuOuvert, setMenuOuvert] = useState(false)
+  const [messagesNonLus, setMessagesNonLus] = useState(0)
+  const location = useLocation()
+
+  useEffect(() => {
+    if (!profil) return
+    chargerBadgeMessagerie()
+
+    const canal = supabase
+      .channel('badge-messagerie')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => {
+        chargerBadgeMessagerie()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(canal)
+    }
+  }, [profil?.id])
+
+  useEffect(() => {
+    if (profil) chargerBadgeMessagerie()
+  }, [location.pathname])
+
+  async function chargerBadgeMessagerie() {
+    const { data } = await supabase.rpc('mes_conversations')
+    const total = (data || []).reduce((s, c) => s + Number(c.non_lus || 0), 0)
+    setMessagesNonLus(total)
+  }
 
   if (profil?.doit_changer_mot_de_passe) {
     return <ChangementMotDePasseObligatoire />
@@ -82,7 +111,12 @@ export default function Layout() {
                 }
               >
                 <item.icon className="w-4 h-4 shrink-0" />
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {item.to === '/messagerie' && messagesNonLus > 0 && (
+                  <span className="bg-red-600 text-white text-xs font-semibold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shrink-0">
+                    {messagesNonLus > 99 ? '99+' : messagesNonLus}
+                  </span>
+                )}
               </NavLink>
             )
           })}

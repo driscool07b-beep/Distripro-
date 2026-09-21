@@ -319,6 +319,10 @@
         {
           "q": "Comment recevoir une notification même app fermée ?",
           "r": "Apparence → Notifications → active le bouton, puis autorise les notifications dans ton navigateur quand il te le demande."
+        },
+        {
+          "q": "Comment savoir si j'ai des messages non lus sans ouvrir la Messagerie ?",
+          "r": "Un badge rouge avec le nombre de messages non lus apparaît directement sur 'Messagerie' dans le menu, visible depuis n'importe quelle page de l'app — il se met à jour automatiquement dès qu'un nouveau message arrive, et disparaît une fois les messages lus."
         }
       ]
     },
