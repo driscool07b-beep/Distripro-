@@ -20,6 +20,7 @@ export default function Utilisateurs() {
   const { profil, entreprise } = useAuth()
   const LIBELLES_ROLE = libellesRole(t)
   const [membres, setMembres] = useState([])
+  const [anciensVisibles, setAnciensVisibles] = useState(false)
   const [invitationsEnAttente, setInvitationsEnAttente] = useState([])
   const [journal, setJournal] = useState([])
   const [depots, setDepots] = useState([])
@@ -227,6 +228,7 @@ export default function Utilisateurs() {
   }
 
   async function basculerActif(membre) {
+    if (membre.actif && !window.confirm(t('confirmerDesactivation', { nom: membre.nom_complet || membre.nom }))) return
     await supabase.rpc('modifier_membre_equipe', {
       p_profil_id: membre.id,
       p_nom_complet: membre.nom_complet || membre.nom,
@@ -270,6 +272,58 @@ export default function Utilisateurs() {
       </div>
     )
   }
+
+  const renderMembre = (m) => (
+              <div key={m.id} className={`border rounded-lg p-3 flex justify-between items-center ${m.actif ? 'border-line' : 'border-red-200 bg-red-50/40'}`}>
+                <div>
+                  <p className="text-sm font-medium">
+                    {m.nom_complet || m.nom}
+                    {!m.actif && <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">{t('desactive')}</span>}
+                    {m.role === 'commercial' && m.acces_etendu && (
+                      <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">{t('accesElargi')}</span>
+                    )}
+                    {m.lecture_seule && (
+                      <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">{t('lectureSeule')}</span>
+                    )}
+                    {m.responsable_tournees && (
+                      <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">{t('responsableTournees')}</span>
+                    )}
+                    {m.role === 'gestionnaire_stock' && depots.length > 1 && (
+                      <span className="ml-2 text-xs bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded">
+                        {(depotsParMembre[m.id] || []).length === 0
+                          ? t('aucunDepotAttribue')
+                          : (depotsParMembre[m.id] || []).map((d) => d.nom).join(', ')}
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-petrol-500">
+                    {LIBELLES_ROLE[m.role] || m.role}
+                    {m.zone ? ` — ${m.zone}` : ''}
+                    {m.telephone ? ` — ${m.telephone}` : ''}
+                  </p>
+                </div>
+                <div className="flex gap-3 shrink-0 flex-wrap justify-end">
+                  <button onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
+                    {t('modifier')}
+                  </button>
+                  {m.id !== profil.id && (
+                    <button onClick={() => basculerActif(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
+                      {m.actif ? t('desactiver') : t('reactiver')}
+                    </button>
+                  )}
+                  {m.id !== profil.id && (
+                    <button onClick={() => reinitialiserMotDePasse(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
+                      {t('reinitialiserMdp')}
+                    </button>
+                  )}
+                  {m.id !== profil.id && (
+                    <button onClick={() => regenererPin(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
+                      {t('regenererPin')}
+                    </button>
+                  )}
+                </div>
+              </div>
+  )
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
@@ -322,59 +376,23 @@ export default function Utilisateurs() {
 
           <p className="text-sm font-medium mb-2">{t('membresEquipe')}</p>
           <div className="space-y-2">
-            {membres.map((m) => (
-              <div key={m.id} className={`border rounded-lg p-3 flex justify-between items-center ${m.actif ? 'border-line' : 'border-red-200 bg-red-50/40'}`}>
-                <div>
-                  <p className="text-sm font-medium">
-                    {m.nom_complet || m.nom}
-                    {!m.actif && <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">{t('desactive')}</span>}
-                    {m.role === 'commercial' && m.acces_etendu && (
-                      <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">{t('accesElargi')}</span>
-                    )}
-                    {m.lecture_seule && (
-                      <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">{t('lectureSeule')}</span>
-                    )}
-                    {m.responsable_tournees && (
-                      <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">{t('responsableTournees')}</span>
-                    )}
-                    {m.role === 'gestionnaire_stock' && depots.length > 1 && (
-                      <span className="ml-2 text-xs bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded">
-                        {(depotsParMembre[m.id] || []).length === 0
-                          ? t('aucunDepotAttribue')
-                          : (depotsParMembre[m.id] || []).map((d) => d.nom).join(', ')}
-                      </span>
-                    )}
-                  </p>
-                  <p className="text-xs text-petrol-500">
-                    {LIBELLES_ROLE[m.role] || m.role}
-                    {m.zone ? ` — ${m.zone}` : ''}
-                    {m.telephone ? ` — ${m.telephone}` : ''}
-                  </p>
-                </div>
-                <div className="flex gap-3 shrink-0 flex-wrap justify-end">
-                  <button onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
-                    {t('modifier')}
-                  </button>
-                  {m.id !== profil.id && (
-                    <button onClick={() => basculerActif(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
-                      {m.actif ? t('desactiver') : t('reactiver')}
-                    </button>
-                  )}
-                  {m.id !== profil.id && (
-                    <button onClick={() => reinitialiserMotDePasse(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
-                      {t('reinitialiserMdp')}
-                    </button>
-                  )}
-                  {m.id !== profil.id && (
-                    <button onClick={() => regenererPin(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
-                      {t('regenererPin')}
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-            {membres.length === 0 && <p className="text-xs text-petrol-400">{t('aucunMembre')}</p>}
+            {membres.filter((m) => m.actif !== false).map(renderMembre)}
+            {membres.filter((m) => m.actif !== false).length === 0 && <p className="text-xs text-petrol-400">{t('aucunMembre')}</p>}
           </div>
+
+          {membres.some((m) => m.actif === false) && (
+            <div className="mt-4">
+              <button onClick={() => setAnciensVisibles((v) => !v)} className="text-sm text-petrol-600 underline">
+                {anciensVisibles ? '▾' : '▸'} {t('anciensMembres', { n: membres.filter((m) => m.actif === false).length })}
+              </button>
+              {anciensVisibles && (
+                <div className="space-y-2 mt-2">
+                  <p className="text-xs text-petrol-500">{t('anciensMembresAide')}</p>
+                  {membres.filter((m) => m.actif === false).map(renderMembre)}
+                </div>
+              )}
+            </div>
+          )}
 
           {valeurGeneree && (
             <div className="fixed inset-0 bg-petrol-950/40 flex items-center justify-center p-4 z-50">

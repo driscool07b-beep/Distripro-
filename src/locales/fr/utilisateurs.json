@@ -59,5 +59,8 @@
   "mdpTemporaireTitre": "Mot de passe temporaire — {{nom}}",
   "pinTemporaireTitre": "Code de validation temporaire — {{nom}}",
   "noterMaintenant": "À noter et communiquer maintenant — il ne sera plus jamais affiché.",
-  "fermer": "Fermer"
+  "fermer": "Fermer",
+  "anciensMembres": "Anciens membres ({{n}})",
+  "anciensMembresAide": "Comptes désactivés : ils ne peuvent plus se connecter et ne comptent plus dans votre abonnement. Leur historique (ventes, visites, versements) est conservé.",
+  "confirmerDesactivation": "Désactiver le compte de {{nom}} ?\n\nCette personne ne pourra plus se connecter et sera déplacée dans « Anciens membres ». Son historique est conservé et vous pourrez la réactiver à tout moment."
 }
