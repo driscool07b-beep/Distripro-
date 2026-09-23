@@ -100,5 +100,16 @@
     "confirmer": "Confirmer le remboursement",
     "erreurMontantValide": "Indiquez un montant valide.",
     "erreurMontantDepasse": "Le montant dépasse le crédit disponible."
+  },
+  "portefeuille": {
+    "tousLesCommerciaux": "Tous les portefeuilles",
+    "nonAttribues": "Clients non attribués",
+    "nonAttribue": "Non attribué",
+    "selection": "{{n}} sélectionné(s)",
+    "attribuerA": "Attribuer à…",
+    "retirerPortefeuille": "— Retirer du portefeuille —",
+    "appliquer": "Appliquer",
+    "commercialAttitre": "Commercial attitré (portefeuille)",
+    "attribuerImport": "Attribuer les clients importés à"
   }
 }

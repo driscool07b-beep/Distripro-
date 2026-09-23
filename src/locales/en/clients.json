@@ -100,5 +100,16 @@
     "confirmer": "Confirm refund",
     "erreurMontantValide": "Enter a valid amount.",
     "erreurMontantDepasse": "The amount exceeds the available credit."
+  },
+  "portefeuille": {
+    "tousLesCommerciaux": "All portfolios",
+    "nonAttribues": "Unassigned customers",
+    "nonAttribue": "Unassigned",
+    "selection": "{{n}} selected",
+    "attribuerA": "Assign to…",
+    "retirerPortefeuille": "— Remove from portfolio —",
+    "appliquer": "Apply",
+    "commercialAttitre": "Assigned sales rep (portfolio)",
+    "attribuerImport": "Assign imported customers to"
   }
 }

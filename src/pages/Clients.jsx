@@ -29,6 +29,7 @@ const CLIENT_VIDE = {
   notes: '',
   latitude: '',
   longitude: '',
+  commercial_id: '',
 }
 
 export default function Clients() {
@@ -71,6 +72,38 @@ export default function Clients() {
   const [photoUrl, setPhotoUrl] = useState(null)
   const [photoEnvoi, setPhotoEnvoi] = useState(false)
   const [photoErreur, setPhotoErreur] = useState('')
+  // Portefeuille client : à quel commercial chaque client est attribué.
+  const [commerciaux, setCommerciaux] = useState([])
+  const [filtreCommercial, setFiltreCommercial] = useState('') // '' = tous, 'aucun' = non attribués, sinon id
+  const [selection, setSelection] = useState([]) // ids cochés pour attribution groupée
+  const [cibleAttribution, setCibleAttribution] = useState('')
+  const [attributionEnCours, setAttributionEnCours] = useState(false)
+  const [commercialImport, setCommercialImport] = useState('')
+  const gerePortefeuilles = ['admin', 'manager'].includes(profil?.role) || profil?.responsable_tournees
+
+  useEffect(() => {
+    if (!gerePortefeuilles) return
+    supabase.from('profils').select('id, nom, role, actif').order('nom').then(({ data }) => setCommerciaux(data || []))
+  }, [gerePortefeuilles])
+
+  const nomCommercial = (id) => commerciaux.find((m) => m.id === id)?.nom || ''
+  const commerciauxActifs = commerciaux.filter((m) => m.role === 'commercial' && m.actif !== false)
+
+  async function attribuerSelection() {
+    if (selection.length === 0) return
+    setAttributionEnCours(true)
+    const { error } = await supabase
+      .from('clients')
+      .update({ commercial_id: cibleAttribution === 'aucun' ? null : cibleAttribution })
+      .in('id', selection)
+    setAttributionEnCours(false)
+    if (error) {
+      alert(traduireErreur(error.message))
+      return
+    }
+    setSelection([])
+    chargerClients()
+  }
 
   function capturerPositionActuelle() {
     if (!navigator.geolocation) {
@@ -120,6 +153,7 @@ export default function Clients() {
       notes: client.notes || '',
       latitude: client.latitude != null ? String(client.latitude) : '',
       longitude: client.longitude != null ? String(client.longitude) : '',
+      commercial_id: client.commercial_id || '',
     })
     setErreur('')
     setCaptureGps('idle')
@@ -287,7 +321,7 @@ export default function Clients() {
 
     const donnees = lignesImport.map((l) => ({
       entreprise_id: profil.entreprise_id,
-      commercial_id: profil.id,
+      commercial_id: gerePortefeuilles ? (commercialImport || null) : profil.id,
       nom: l.nom,
       telephone: l.telephone || null,
       email: l.email || null,
@@ -339,7 +373,7 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, groupes_clients(nom)')
+      .select('id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, commercial_id, groupes_clients(nom)')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
@@ -422,6 +456,7 @@ export default function Clients() {
       latitude: formulaire.latitude ? Number(formulaire.latitude) : null,
       longitude: formulaire.longitude ? Number(formulaire.longitude) : null,
       groupe_id: groupeIdFinal,
+      ...(gerePortefeuilles ? { commercial_id: formulaire.commercial_id || null } : {}),
     }
 
     const { error } = clientEnEdition
@@ -450,7 +485,8 @@ export default function Clients() {
   }
 
   const clientsFiltres = clients.filter((c) =>
-    c.nom.toLowerCase().includes(recherche.toLowerCase())
+    c.nom.toLowerCase().includes(recherche.toLowerCase()) &&
+    (!filtreCommercial || (filtreCommercial === 'aucun' ? !c.commercial_id : c.commercial_id === filtreCommercial))
   )
 
   if (!accesAutorise('clients', profil?.role)) {
@@ -486,10 +522,44 @@ export default function Clients() {
         className="input-field max-w-sm mb-4"
       />
 
+      {gerePortefeuilles && (
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <select className="input-field max-w-xs" value={filtreCommercial} onChange={(e) => { setFiltreCommercial(e.target.value); setSelection([]) }}>
+            <option value="">{t('portefeuille.tousLesCommerciaux')}</option>
+            <option value="aucun">{t('portefeuille.nonAttribues')}</option>
+            {commerciaux.filter((m) => clients.some((c) => c.commercial_id === m.id) || (m.role === 'commercial' && m.actif !== false)).map((m) => (
+              <option key={m.id} value={m.id}>{m.nom}</option>
+            ))}
+          </select>
+          {selection.length > 0 && (
+            <>
+              <span className="text-sm text-petrol-700">{t('portefeuille.selection', { n: selection.length })}</span>
+              <select className="input-field max-w-xs" value={cibleAttribution} onChange={(e) => setCibleAttribution(e.target.value)}>
+                <option value="">{t('portefeuille.attribuerA')}</option>
+                {commerciauxActifs.map((m) => <option key={m.id} value={m.id}>{m.nom}</option>)}
+                <option value="aucun">{t('portefeuille.retirerPortefeuille')}</option>
+              </select>
+              <button className="btn-primary" disabled={!cibleAttribution || attributionEnCours} onClick={attribuerSelection}>
+                {t('portefeuille.appliquer')}
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
       <div className="card overflow-x-auto">
         <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
+              {gerePortefeuilles && (
+                <th className="px-4 py-3 w-8">
+                  <input
+                    type="checkbox"
+                    checked={clientsFiltres.length > 0 && clientsFiltres.every((c) => selection.includes(c.id))}
+                    onChange={(e) => setSelection(e.target.checked ? clientsFiltres.map((c) => c.id) : [])}
+                  />
+                </th>
+              )}
               <th className="px-4 py-3 font-medium">{t('table.nom')}</th>
               <th className="px-4 py-3 font-medium">{t('table.telephone')}</th>
               <th className="px-4 py-3 font-medium">{t('table.ville')}</th>
@@ -500,14 +570,28 @@ export default function Clients() {
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
+              <tr><td colSpan={gerePortefeuilles ? 7 : 6} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
             ) : clientsFiltres.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.aucunClient')}</td></tr>
+              <tr><td colSpan={gerePortefeuilles ? 7 : 6} className="px-4 py-8 text-center text-petrol-500">{t('table.aucunClient')}</td></tr>
             ) : (
               clientsFiltres.map((c) => (
                 <tr key={c.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
+                  {gerePortefeuilles && (
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selection.includes(c.id)}
+                        onChange={() => setSelection((prev) => prev.includes(c.id) ? prev.filter((x) => x !== c.id) : [...prev, c.id])}
+                      />
+                    </td>
+                  )}
                   <td className="px-4 py-3 font-medium">
                     {c.nom}
+                    {gerePortefeuilles && (
+                      <span className="block text-xs font-normal text-petrol-500">
+                        👤 {c.commercial_id ? nomCommercial(c.commercial_id) || '—' : t('portefeuille.nonAttribue')}
+                      </span>
+                    )}
                     {Number(c.solde_credit) > 0 && (
                       <button
                         type="button"
@@ -683,6 +767,21 @@ export default function Clients() {
                   </select>
                 </div>
               </div>
+              {gerePortefeuilles && (
+                <div>
+                  <label className="label">{t('portefeuille.commercialAttitre')}</label>
+                  <select
+                    className="input-field"
+                    value={formulaire.commercial_id}
+                    onChange={(e) => setFormulaire({ ...formulaire, commercial_id: e.target.value })}
+                  >
+                    <option value="">{t('portefeuille.nonAttribue')}</option>
+                    {commerciaux
+                      .filter((m) => (m.role === 'commercial' && m.actif !== false) || m.id === formulaire.commercial_id)
+                      .map((m) => <option key={m.id} value={m.id}>{m.nom}</option>)}
+                  </select>
+                </div>
+              )}
               <div>
                 <label className="label">{t('form.groupe')}</label>
                 <div className="flex gap-2">
@@ -878,6 +977,15 @@ export default function Clients() {
             <div className="mb-4">
               <label className="label">{t('import.fichierExcel')}</label>
               <input type="file" accept=".xlsx,.xls" onChange={lireFichierImport} className="text-sm" />
+              {gerePortefeuilles && (
+                <div className="mt-3">
+                  <label className="label">{t('portefeuille.attribuerImport')}</label>
+                  <select className="input-field" value={commercialImport} onChange={(e) => setCommercialImport(e.target.value)}>
+                    <option value="">{t('portefeuille.nonAttribue')}</option>
+                    {commerciauxActifs.map((m) => <option key={m.id} value={m.id}>{m.nom}</option>)}
+                  </select>
+                </div>
+              )}
             </div>
 
             {erreurImport && <p className="text-sm text-red-600 mb-3">{erreurImport}</p>}

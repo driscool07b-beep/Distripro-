@@ -100,5 +100,16 @@
     "confirmer": "确认退款",
     "erreurMontantValide": "请输入有效金额。",
     "erreurMontantDepasse": "金额超过了可用余额。"
+  },
+  "portefeuille": {
+    "tousLesCommerciaux": "全部客户组合",
+    "nonAttribues": "未分配客户",
+    "nonAttribue": "未分配",
+    "selection": "已选 {{n}} 个",
+    "attribuerA": "分配给…",
+    "retirerPortefeuille": "— 从组合中移除 —",
+    "appliquer": "应用",
+    "commercialAttitre": "负责业务员（客户组合）",
+    "attribuerImport": "将导入的客户分配给"
   }
 }

@@ -42,7 +42,9 @@ export default function Tournees() {
     commercial_id: '',
   });
   const [membres, setMembres] = useState([]); // profils de l'entreprise (noms + commerciaux sélectionnables)
-  const [propositionIA, setPropositionIA] = useState(null); // { synthese, raisons: { client_id: raison } }
+  const [planIA, setPlanIA] = useState(null); // { synthese, jours: [{ date, clients: [{client_id, nom, raison}] }], dates_ignorees, visites_non_planifiees }
+  const [paramsIA, setParamsIA] = useState({ duree_jours: 1, visites_par_jour: 8, inclure_dimanche: false, consignes: '' });
+  const [creationPlanEnCours, setCreationPlanEnCours] = useState(false);
   const [chargementIA, setChargementIA] = useState(false);
   const [erreurIA, setErreurIA] = useState('');
   const [validationEnCours, setValidationEnCours] = useState(false);
@@ -67,12 +69,16 @@ export default function Tournees() {
 
   const proposerAvecIA = async () => {
     setErreurIA('');
+    setPlanIA(null);
     setChargementIA(true);
     const { data, error } = await supabase.functions.invoke('planifier-tournee-ia', {
       body: {
         commercial_id: formData.commercial_id || profil?.id,
-        date_tournee: formData.date_tournee,
-        nb_clients: 8,
+        date_debut: formData.date_tournee,
+        duree_jours: Number(paramsIA.duree_jours),
+        visites_par_jour: Number(paramsIA.visites_par_jour),
+        inclure_dimanche: paramsIA.inclure_dimanche,
+        consignes: paramsIA.consignes,
         langue: i18n.language,
       },
     });
@@ -85,10 +91,39 @@ export default function Tournees() {
       setErreurIA(message || error?.message || t('ia.erreur'));
       return;
     }
-    const raisons = {};
-    (data.clients || []).forEach((c) => { raisons[c.client_id] = c.raison; });
-    setPropositionIA({ synthese: data.synthese, raisons });
-    setFormData((prev) => ({ ...prev, clients_selectionnes: (data.clients || []).map((c) => c.client_id) }));
+    setPlanIA(data);
+  };
+
+  const retirerDuPlan = (date, clientId) => {
+    setPlanIA((prev) => ({
+      ...prev,
+      jours: prev.jours
+        .map((j) => (j.date === date ? { ...j, clients: j.clients.filter((c) => c.client_id !== clientId) } : j))
+        .filter((j) => j.clients.length > 0),
+    }));
+  };
+
+  const creerToutesLesTournees = async () => {
+    if (!planIA || planIA.jours.length === 0) return;
+    setCreationPlanEnCours(true);
+    const echecs = [];
+    for (const j of planIA.jours) {
+      const raisons = {};
+      j.clients.forEach((c) => { if (c.raison) raisons[c.client_id] = c.raison; });
+      const { error } = await supabase.rpc('creer_tournee_optimisee', {
+        p_commercial_id: formData.commercial_id || profil?.id,
+        p_date_tournee: j.date,
+        p_client_ids: j.clients.map((c) => c.client_id),
+        p_raisons: raisons,
+        p_proposee_par_ia: true,
+      });
+      if (error) echecs.push(`${formatDate(j.date)} : ${traduireErreur(error.message)}`);
+    }
+    setCreationPlanEnCours(false);
+    if (echecs.length > 0) alert(t('ia.echecsCreation', { liste: echecs.join('\n') }));
+    setPlanIA(null);
+    setShowForm(false);
+    chargerTournees();
   };
 
   const validerTournee = async (approuver) => {
@@ -154,8 +189,9 @@ export default function Tournees() {
   const chargerClients = async () => {
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, latitude, longitude')
-      .eq('entreprise_id', entrepriseId);
+      .select('id, nom, latitude, longitude, commercial_id')
+      .eq('entreprise_id', entrepriseId)
+      .order('nom');
 
     if (!error) setClients(data || []);
   };
@@ -206,18 +242,10 @@ export default function Tournees() {
       return;
     }
 
-    const raisons = {};
-    if (propositionIA) {
-      formData.clients_selectionnes.forEach((id) => {
-        if (propositionIA.raisons[id]) raisons[id] = propositionIA.raisons[id];
-      });
-    }
     const { data, error } = await supabase.rpc('creer_tournee_optimisee', {
       p_commercial_id: formData.commercial_id || profil?.id,
       p_date_tournee: formData.date_tournee,
       p_client_ids: formData.clients_selectionnes,
-      p_raisons: Object.keys(raisons).length > 0 ? raisons : null,
-      p_proposee_par_ia: Object.keys(raisons).length > 0,
     });
 
     if (error) {
@@ -227,7 +255,7 @@ export default function Tournees() {
     }
 
     setShowForm(false);
-    setPropositionIA(null);
+    setPlanIA(null);
     setFormData({
       date_tournee: new Date().toISOString().split('T')[0],
       clients_selectionnes: [],
@@ -485,9 +513,9 @@ export default function Tournees() {
   const autoriseProgrammer = estResponsableTournees || profil?.role === 'commercial'
   const iaAutorisee = profil?.ia_active !== false
   const commerciauxSelectionnables = membres.filter((m) => m.role === 'commercial' && m.actif !== false)
-  const clientsTries = propositionIA
-    ? [...clients].sort((a, b) => (propositionIA.raisons[b.id] ? 1 : 0) - (propositionIA.raisons[a.id] ? 1 : 0))
-    : clients
+  // Portefeuille du commercial sélectionné (clients qui lui sont attribués).
+  const commercialCible = formData.commercial_id || profil?.id
+  const portefeuille = clients.filter((c) => c.commercial_id === commercialCible)
 
   if (!accesAutorise('tournees', profil?.role)) {
     return (
@@ -651,23 +679,12 @@ export default function Tournees() {
 
       {showForm && autoriseProgrammer && (
         <form onSubmit={creerTournee} className="border rounded-lg p-4 mb-4 bg-gray-50 space-y-3">
-          <div>
-            <label className="block text-sm font-medium mb-1">{t('dateTournee')}</label>
-            <input
-              type="date" lang={i18n.language}
-              value={formData.date_tournee}
-              onChange={(e) => setFormData({ ...formData, date_tournee: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
-          </div>
-
           {estResponsableTournees && (
             <div>
               <label className="block text-sm font-medium mb-1">{t('commercial')}</label>
               <select
-                value={formData.commercial_id || profil?.id}
-                onChange={(e) => { setFormData({ ...formData, commercial_id: e.target.value, clients_selectionnes: [] }); setPropositionIA(null); }}
+                value={commercialCible}
+                onChange={(e) => { setFormData({ ...formData, commercial_id: e.target.value, clients_selectionnes: [] }); setPlanIA(null); }}
                 className="w-full border rounded px-3 py-2 text-sm"
               >
                 {!commerciauxSelectionnables.some((m) => m.id === profil?.id) && (
@@ -675,60 +692,138 @@ export default function Tournees() {
                 )}
                 {commerciauxSelectionnables.map((m) => <option key={m.id} value={m.id}>{m.nom}</option>)}
               </select>
+              <p className="text-xs text-gray-500 mt-1">{t('portefeuilleCompteur', { n: portefeuille.length })}</p>
             </div>
           )}
 
+          <div>
+            <label className="block text-sm font-medium mb-1">{t('dateDebut')}</label>
+            <input
+              type="date" lang={i18n.language}
+              value={formData.date_tournee}
+              onChange={(e) => { setFormData({ ...formData, date_tournee: e.target.value }); setPlanIA(null); }}
+              className="w-full border rounded px-3 py-2"
+              required
+            />
+          </div>
+
           {iaAutorisee && (
-            <div className="border border-purple-200 bg-purple-50 rounded-lg p-3">
-              <button type="button" onClick={proposerAvecIA} disabled={chargementIA}
+            <div className="border border-purple-200 bg-purple-50 rounded-lg p-3 space-y-2">
+              <p className="text-sm font-semibold text-purple-900">{t('ia.titre')}</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-medium mb-1">{t('ia.periode')}</label>
+                  <select
+                    value={paramsIA.duree_jours}
+                    onChange={(e) => { setParamsIA({ ...paramsIA, duree_jours: e.target.value }); setPlanIA(null); }}
+                    className="w-full border rounded px-2 py-1.5 text-sm bg-white"
+                  >
+                    <option value={1}>{t('ia.periodes.jour')}</option>
+                    <option value={7}>{t('ia.periodes.semaine')}</option>
+                    <option value={14}>{t('ia.periodes.deuxSemaines')}</option>
+                    <option value={21}>{t('ia.periodes.troisSemaines')}</option>
+                    <option value={30}>{t('ia.periodes.mois')}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">{t('ia.visitesParJour')}</label>
+                  <input
+                    type="number" min={1} max={30}
+                    value={paramsIA.visites_par_jour}
+                    onChange={(e) => { setParamsIA({ ...paramsIA, visites_par_jour: e.target.value }); setPlanIA(null); }}
+                    className="w-full border rounded px-2 py-1.5 text-sm bg-white"
+                  />
+                </div>
+              </div>
+              {Number(paramsIA.duree_jours) > 1 && (
+                <label className="flex items-center gap-2 text-xs">
+                  <input type="checkbox" checked={paramsIA.inclure_dimanche}
+                    onChange={(e) => { setParamsIA({ ...paramsIA, inclure_dimanche: e.target.checked }); setPlanIA(null); }} />
+                  {t('ia.inclureDimanche')}
+                </label>
+              )}
+              <textarea
+                rows={2}
+                value={paramsIA.consignes}
+                onChange={(e) => setParamsIA({ ...paramsIA, consignes: e.target.value })}
+                placeholder={t('ia.consignesPlaceholder')}
+                className="w-full border rounded px-2 py-1.5 text-sm bg-white"
+              />
+              <button type="button" onClick={proposerAvecIA} disabled={chargementIA || portefeuille.length === 0}
                 className="w-full bg-purple-600 text-white py-2 rounded-lg text-sm font-medium disabled:opacity-60">
                 {chargementIA ? t('ia.enCours') : t('ia.proposer')}
               </button>
-              <p className="text-xs text-purple-700 mt-2">{t('ia.aide')}</p>
-              {propositionIA?.synthese && <p className="text-sm text-purple-900 mt-2">💡 {propositionIA.synthese}</p>}
-              {erreurIA && <p className="text-xs text-red-600 mt-2">{erreurIA}</p>}
+              {portefeuille.length === 0 && <p className="text-xs text-amber-700">{t('portefeuilleVide')}</p>}
+              {erreurIA && <p className="text-xs text-red-600">{erreurIA}</p>}
+
+              {planIA && (
+                <div className="space-y-2 pt-2">
+                  {planIA.synthese && <p className="text-sm text-purple-900">💡 {planIA.synthese}</p>}
+                  {planIA.dates_ignorees?.length > 0 && (
+                    <p className="text-xs text-amber-700">{t('ia.datesIgnorees', { dates: planIA.dates_ignorees.map((d) => formatDate(d)).join(', ') })}</p>
+                  )}
+                  {planIA.visites_non_planifiees > 0 && (
+                    <p className="text-xs text-amber-700">{t('ia.nonPlanifiees', { n: planIA.visites_non_planifiees })}</p>
+                  )}
+                  <div className="max-h-96 overflow-y-auto space-y-2">
+                    {planIA.jours.map((j) => (
+                      <div key={j.date} className="bg-white border rounded p-2">
+                        <p className="text-sm font-semibold mb-1">{formatDate(j.date)} — {t('ia.nbVisites', { n: j.clients.length })}</p>
+                        {j.clients.map((c) => (
+                          <div key={c.client_id} className="flex items-start justify-between gap-2 py-1 border-t first:border-t-0">
+                            <div className="text-sm">
+                              {c.nom}
+                              {c.raison && <span className="block text-xs text-purple-700">✨ {c.raison}</span>}
+                            </div>
+                            <button type="button" onClick={() => retirerDuPlan(j.date, c.client_id)}
+                              className="text-xs text-red-600 shrink-0" title={t('ia.retirer')}>✕</button>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                  {planIA.jours.length > 0 && (
+                    <button type="button" onClick={creerToutesLesTournees} disabled={creationPlanEnCours}
+                      className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium disabled:opacity-60">
+                      {creationPlanEnCours ? t('ia.creationEnCours') : t('ia.creerTournees', { n: planIA.jours.length })}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
           {!estResponsableTournees && entreprise?.validation_tournee_commercial && (
             <p className="text-xs text-amber-700">{t('validation.avertissementCommercial')}</p>
           )}
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t('clientsAVisiter', { n: formData.clients_selectionnes.length })}
-            </label>
-            <div className="max-h-72 overflow-y-auto border rounded divide-y">
-              {clientsTries.map((client) => (
-                <label
-                  key={client.id}
-                  className="flex items-start gap-2 p-2 text-sm cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    className="mt-1"
-                    checked={formData.clients_selectionnes.includes(client.id)}
-                    onChange={() => toggleClientSelection(client.id)}
-                  />
-                  <span>
-                    {client.nom}
-                    {propositionIA?.raisons[client.id] && (
-                      <span className="block text-xs text-purple-700">✨ {propositionIA.raisons[client.id]}</span>
-                    )}
-                  </span>
+          {!planIA && (
+            <>
+              <p className="text-sm font-semibold pt-1">{t('manuel.titre')}</p>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {t('clientsAVisiter', { n: formData.clients_selectionnes.length })}
                 </label>
-              ))}
-              {clients.length === 0 && (
-                <p className="p-2 text-gray-400 text-sm">{t('aucunClientDisponible')}</p>
-              )}
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium"
-          >
-            {t('creerTourneeOptimisee')}
-          </button>
+                <div className="max-h-72 overflow-y-auto border rounded divide-y bg-white">
+                  {portefeuille.map((client) => (
+                    <label key={client.id} className="flex items-center gap-2 p-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.clients_selectionnes.includes(client.id)}
+                        onChange={() => toggleClientSelection(client.id)}
+                      />
+                      {client.nom}
+                    </label>
+                  ))}
+                  {portefeuille.length === 0 && (
+                    <p className="p-2 text-gray-400 text-sm">{t('portefeuilleVide')}</p>
+                  )}
+                </div>
+              </div>
+              <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium">
+                {t('creerTourneeOptimisee')}
+              </button>
+            </>
+          )}
         </form>
       )}
 

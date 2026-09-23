@@ -68,10 +68,29 @@
   "commercial": "业务员",
   "moiMeme": "我自己",
   "ia": {
-    "proposer": "✨ AI 推荐",
-    "enCours": "AI 正在准备路线…",
+    "proposer": "✨ 生成排程",
+    "enCours": "AI 正在生成排程…（最多 1 分钟）",
     "aide": "AI 会挑选要拜访的客户（库存偏低、应收账款、久未拜访、距离相近）。创建路线前您可以勾选或取消。",
-    "erreur": "AI 推荐失败。"
+    "erreur": "AI 推荐失败。",
+    "titre": "✨ AI 排程",
+    "periode": "周期",
+    "periodes": {
+      "jour": "1 天",
+      "semaine": "1 周",
+      "deuxSemaines": "2 周",
+      "troisSemaines": "3 周",
+      "mois": "1 个月"
+    },
+    "visitesParJour": "每日拜访目标",
+    "inclureDimanche": "包括周日",
+    "consignesPlaceholder": "给 AI 的指示（可选）—— 例如：优先催收应收账款…",
+    "datesIgnorees": "已跳过的日期（已有路线）：{{dates}}",
+    "nonPlanifiees": "{{n}} 次期望拜访未能安排（已达每日目标）。",
+    "nbVisites": "{{n}} 次拜访",
+    "retirer": "移除",
+    "creationEnCours": "正在创建路线…",
+    "creerTournees": "创建 {{n}} 条路线",
+    "echecsCreation": "部分路线未能创建：\n{{liste}}"
   },
   "validation": {
     "badge": "待审批",
@@ -81,5 +100,11 @@
     "refuser": "✗ 拒绝",
     "confirmerRefus": "拒绝此路线？路线将被删除，业务员可为该日期重新提交。",
     "avertissementCommercial": "您的路线须经负责人批准后才能开始拜访。"
+  },
+  "dateDebut": "日期（周期开始）",
+  "portefeuilleCompteur": "其客户组合中有 {{n}} 个客户",
+  "portefeuilleVide": "该客户组合为空。请在“客户”页面为该业务员分配客户。",
+  "manuel": {
+    "titre": "或手动选择（单日）"
   }
 }

@@ -100,5 +100,16 @@
     "confirmer": "تأكيد الاسترداد",
     "erreurMontantValide": "أدخل مبلغًا صحيحًا.",
     "erreurMontantDepasse": "المبلغ يتجاوز الرصيد المتاح."
+  },
+  "portefeuille": {
+    "tousLesCommerciaux": "كل المحافظ",
+    "nonAttribues": "عملاء غير مسندين",
+    "nonAttribue": "غير مسند",
+    "selection": "{{n}} محدد",
+    "attribuerA": "إسناد إلى…",
+    "retirerPortefeuille": "— إزالة من المحفظة —",
+    "appliquer": "تطبيق",
+    "commercialAttitre": "المندوب المسؤول (المحفظة)",
+    "attribuerImport": "إسناد العملاء المستوردين إلى"
   }
 }

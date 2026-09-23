@@ -68,10 +68,29 @@
   "commercial": "Commercial",
   "moiMeme": "moi-même",
   "ia": {
-    "proposer": "✨ Proposer avec l'IA",
-    "enCours": "L'IA prépare la tournée…",
+    "proposer": "✨ Proposer le planning",
+    "enCours": "L'IA prépare le planning… (jusqu'à 1 minute)",
     "aide": "L'IA choisit les clients à visiter (stocks bas, créances, clients non visités, proximité). Vous pouvez ensuite cocher ou décocher avant de créer la tournée.",
-    "erreur": "La proposition IA a échoué."
+    "erreur": "La proposition IA a échoué.",
+    "titre": "✨ Planification par l'IA",
+    "periode": "Période",
+    "periodes": {
+      "jour": "1 jour",
+      "semaine": "1 semaine",
+      "deuxSemaines": "2 semaines",
+      "troisSemaines": "3 semaines",
+      "mois": "1 mois"
+    },
+    "visitesParJour": "Objectif de visites / jour",
+    "inclureDimanche": "Inclure les dimanches",
+    "consignesPlaceholder": "Consignes pour l'IA (facultatif) — ex. : priorité aux créances, visiter Yopougon en début de semaine…",
+    "datesIgnorees": "Dates ignorées (tournée déjà programmée) : {{dates}}",
+    "nonPlanifiees": "{{n}} visite(s) souhaitée(s) n'ont pas pu être placées (objectif par jour atteint).",
+    "nbVisites": "{{n}} visite(s)",
+    "retirer": "Retirer",
+    "creationEnCours": "Création des tournées…",
+    "creerTournees": "Créer les {{n}} tournée(s)",
+    "echecsCreation": "Certaines tournées n'ont pas pu être créées :\n{{liste}}"
   },
   "validation": {
     "badge": "À valider",
@@ -81,5 +100,11 @@
     "refuser": "✗ Refuser",
     "confirmerRefus": "Refuser cette tournée ? Elle sera supprimée et le commercial pourra en proposer une autre pour cette date.",
     "avertissementCommercial": "Votre tournée devra être validée par un responsable avant de pouvoir commencer les visites."
+  },
+  "dateDebut": "Date (début de la période)",
+  "portefeuilleCompteur": "{{n}} client(s) dans son portefeuille",
+  "portefeuilleVide": "Aucun client dans ce portefeuille. Attribuez des clients à ce commercial dans la page Clients.",
+  "manuel": {
+    "titre": "Ou choisir manuellement (une journée)"
   }
 }

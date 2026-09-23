@@ -68,10 +68,29 @@
   "commercial": "Sales rep",
   "moiMeme": "myself",
   "ia": {
-    "proposer": "✨ Suggest with AI",
-    "enCours": "AI is preparing the route…",
+    "proposer": "✨ Suggest the schedule",
+    "enCours": "AI is preparing the schedule… (up to 1 minute)",
     "aide": "AI picks the customers to visit (low stock, receivables, customers not visited, proximity). You can then check or uncheck before creating the route.",
-    "erreur": "The AI suggestion failed."
+    "erreur": "The AI suggestion failed.",
+    "titre": "✨ AI planning",
+    "periode": "Period",
+    "periodes": {
+      "jour": "1 day",
+      "semaine": "1 week",
+      "deuxSemaines": "2 weeks",
+      "troisSemaines": "3 weeks",
+      "mois": "1 month"
+    },
+    "visitesParJour": "Target visits / day",
+    "inclureDimanche": "Include Sundays",
+    "consignesPlaceholder": "Instructions for the AI (optional) — e.g. prioritise receivables, visit Yopougon early in the week…",
+    "datesIgnorees": "Dates skipped (route already scheduled): {{dates}}",
+    "nonPlanifiees": "{{n}} desired visit(s) could not be placed (daily target reached).",
+    "nbVisites": "{{n}} visit(s)",
+    "retirer": "Remove",
+    "creationEnCours": "Creating routes…",
+    "creerTournees": "Create the {{n}} route(s)",
+    "echecsCreation": "Some routes could not be created:\n{{liste}}"
   },
   "validation": {
     "badge": "To approve",
@@ -81,5 +100,11 @@
     "refuser": "✗ Reject",
     "confirmerRefus": "Reject this route? It will be deleted and the sales rep can propose another one for this date.",
     "avertissementCommercial": "Your route must be approved by a supervisor before you can start visits."
+  },
+  "dateDebut": "Date (start of period)",
+  "portefeuilleCompteur": "{{n}} customer(s) in their portfolio",
+  "portefeuilleVide": "No customers in this portfolio. Assign customers to this sales rep on the Customers page.",
+  "manuel": {
+    "titre": "Or pick manually (one day)"
   }
 }
