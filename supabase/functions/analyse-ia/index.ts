@@ -37,9 +37,13 @@ Deno.serve(async (req) => {
 
     const { data: profil } = await supabase
       .from('profils')
-      .select('id, nom, role, entreprise_id')
+      .select('id, nom, role, entreprise_id, ia_active')
       .eq('id', userData.user.id)
       .single()
+
+    if (profil?.ia_active === false) {
+      return reponseErreur('Les fonctions IA sont désactivées pour votre compte.', 403)
+    }
 
     if (!profil || !['admin', 'manager'].includes(profil.role)) {
       return reponseErreur('Accès réservé aux responsables commerciaux et à la direction.', 403)
