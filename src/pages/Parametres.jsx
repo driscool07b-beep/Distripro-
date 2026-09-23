@@ -181,7 +181,7 @@ export default function Parametres() {
   }
 
   async function chargerCaisses() {
-    const { data } = await supabase.from('caisses').select('id, nom, actif, compte_comptable_id').order('created_at')
+    const { data } = await supabase.from('caisses').select('id, nom, actif, compte_comptable_id, responsable_id').order('created_at')
     setCaisses(data || [])
   }
 
@@ -284,6 +284,11 @@ export default function Parametres() {
 
   async function affecterCompteCaisse(caisseId, compteId) {
     await supabase.rpc('affecter_compte_caisse', { p_caisse_id: caisseId, p_compte_id: compteId || null })
+    chargerCaisses()
+  }
+
+  async function affecterResponsableCaisse(caisseId, responsableId) {
+    await supabase.rpc('affecter_responsable_caisse', { p_caisse_id: caisseId, p_responsable_id: responsableId || null })
     chargerCaisses()
   }
 
@@ -659,6 +664,14 @@ export default function Parametres() {
                     {planComptable.map((pc) => <option key={pc.id} value={pc.id}>{pc.numero_compte} — {pc.libelle}</option>)}
                   </select>
                 )}
+                <select
+                  className="input-field text-xs py-1 mt-1.5"
+                  value={c.responsable_id || ''}
+                  onChange={(e) => affecterResponsableCaisse(c.id, e.target.value)}
+                >
+                  <option value="">{t('caisses.aucunResponsable')}</option>
+                  {commerciauxEtManagers.map((m) => <option key={m.id} value={m.id}>{m.nom}</option>)}
+                </select>
               </div>
             ))}
             {caisses.length === 0 && <p className="text-xs text-petrol-400">{t('caisses.aucuneCaisse')}</p>}

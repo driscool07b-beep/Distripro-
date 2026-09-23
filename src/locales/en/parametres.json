@@ -22,7 +22,8 @@
     "reactiver": "Re-enable",
     "aucuneCaisse": "No cash register created.",
     "placeholder": "E.g. Register 1",
-    "ajouter": "+ Add"
+    "ajouter": "+ Add",
+    "aucunResponsable": "No cash register holder"
   },
   "remises": {
     "titre": "Discount policy",

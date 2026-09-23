@@ -87,6 +87,7 @@ export default function JournalCaisse() {
   const peutCreer = ['admin', 'manager', 'comptable'].includes(profil?.role)
   const peutValider = (entreprise?.caisse_roles_validateurs || ['admin', 'manager']).includes(profil?.role)
   const peutRegulariser = (entreprise?.roles_regularisation_caisse || ['admin', 'manager']).includes(profil?.role)
+  const caisseResponsableId = caisses.find((c) => c.id === caisseId)?.responsable_id || null
 
   const [pinConfigure, setPinConfigure] = useState(false)
   const [pinDoitChanger, setPinDoitChanger] = useState(false)
@@ -167,7 +168,7 @@ export default function JournalCaisse() {
   }, [caisseId])
 
   async function chargerCaisses() {
-    const { data } = await supabase.from('caisses').select('id, nom, actif').eq('actif', true).order('nom')
+    const { data } = await supabase.from('caisses').select('id, nom, actif, responsable_id').eq('actif', true).order('nom')
     setCaisses(data || [])
     if (data && data.length > 0) setCaisseId(data[0].id)
     else setChargement(false)
@@ -838,9 +839,13 @@ export default function JournalCaisse() {
                             <p className="text-xs text-petrol-500">{t('valideParLe', { nom: d.validateur?.nom || t('autoValide'), date: formatDate(d.valide_at) })}</p>
                             <span className="font-mono text-sm">{formatXOF(d.montant_valide)}</span>
                           </div>
-                          <button onClick={() => payer(d)} disabled={envoiAction === d.id} className="bg-petrol-800 text-white text-sm rounded-lg px-4 py-2 shrink-0">
-                            {envoiAction === d.id ? '…' : t('payerMontant')}
-                          </button>
+                          {caisseResponsableId && caisseResponsableId !== profil?.id ? (
+                            <p className="text-xs text-petrol-500 italic shrink-0 max-w-[140px] text-right">{t('reserveAuResponsable')}</p>
+                          ) : (
+                            <button onClick={() => payer(d)} disabled={envoiAction === d.id} className="bg-petrol-800 text-white text-sm rounded-lg px-4 py-2 shrink-0">
+                              {envoiAction === d.id ? '…' : t('payerMontant')}
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -851,18 +856,24 @@ export default function JournalCaisse() {
                   <h2 className="font-semibold text-sm mb-2">{t('sections.historique')}</h2>
                   <div className="space-y-1.5">
                     {demandesHistorique.map((d) => (
-                      <div key={d.id} className="border border-line rounded-lg p-2.5 flex items-center justify-between text-sm">
-                        <div>
-                          <p className={d.statut !== 'payee' ? 'text-petrol-400 line-through' : ''}>{d.numero} — {d.libelle}</p>
-                          <p className="text-xs text-petrol-500">
-                            {d.statut === 'payee' && t('payeParLe', { nom: d.payeur?.nom || '—', date: formatDate(d.payee_at) })}
-                            {d.statut === 'refusee' && t('refuseeMotif', { motif: d.motif_refus || t('sansMotif') })}
-                            {d.statut === 'annulee' && t('annuleeParDemandeur')}
-                          </p>
+                      <div key={d.id} className="border border-line rounded-lg p-2.5 text-sm">
+                        <div className="flex items-center justify-between">
+                          <p className={d.statut !== 'payee' ? 'text-petrol-400 line-through' : 'font-medium'}>{d.numero} — {d.libelle}</p>
+                          <span className={`font-mono ${d.statut !== 'payee' ? 'text-petrol-400' : ''}`}>
+                            {formatXOF(d.statut === 'payee' ? d.montant_valide : d.montant_demande)}
+                          </span>
                         </div>
-                        <span className={`font-mono ${d.statut !== 'payee' ? 'text-petrol-400' : ''}`}>
-                          {formatXOF(d.statut === 'payee' ? d.montant_valide : d.montant_demande)}
-                        </span>
+                        <div className="text-xs text-petrol-500 mt-1 space-y-0.5">
+                          <p>{t('etapeDemandee', { nom: d.demandeur?.nom || '—', date: formatDateHeure(d.created_at, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) })}</p>
+                          {d.valide_at && (
+                            <p>{t('etapeValidee', { nom: d.validateur?.nom || '—', date: formatDateHeure(d.valide_at, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) })}</p>
+                          )}
+                          {d.statut === 'payee' && (
+                            <p className="text-petrol-700 font-medium">{t('etapePayee', { nom: d.payeur?.nom || '—', date: formatDateHeure(d.payee_at, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) })}</p>
+                          )}
+                          {d.statut === 'refusee' && <p>{t('refuseeMotif', { motif: d.motif_refus || t('sansMotif') })}</p>}
+                          {d.statut === 'annulee' && <p>{t('annuleeParDemandeur')}</p>}
+                        </div>
                       </div>
                     ))}
                     {demandesHistorique.length === 0 && demandesEnAttente.length === 0 && demandesAPayer.length === 0 && (

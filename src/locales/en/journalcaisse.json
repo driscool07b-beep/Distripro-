@@ -142,5 +142,9 @@
   "justificatifBordereauLabel": "Deposit/withdrawal slip (photo or PDF)",
   "confirmerAvecJustificatif": "Confirm",
   "exporterComptabilite": "Export for accounting",
-  "propreDemandeNonValidable": "This is your own request — it must be validated by someone else ({{roles}}), not you."
+  "propreDemandeNonValidable": "This is your own request — it must be validated by someone else ({{roles}}), not you.",
+  "etapeDemandee": "Requested by {{nom}} — {{date}}",
+  "etapeValidee": "Approved by {{nom}} — {{date}}",
+  "etapePayee": "Paid by {{nom}} — {{date}}",
+  "reserveAuResponsable": "Payment reserved for this cash register's holder."
 }

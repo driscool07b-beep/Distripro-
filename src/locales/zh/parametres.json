@@ -22,7 +22,8 @@
     "reactiver": "重新启用",
     "aucuneCaisse": "尚未创建收银台。",
     "placeholder": "例如：收银台1",
-    "ajouter": "+ 添加"
+    "ajouter": "+ 添加",
+    "aucunResponsable": "未指定收银负责人"
   },
   "remises": {
     "titre": "折扣政策",

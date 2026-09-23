@@ -142,5 +142,9 @@
   "justificatifBordereauLabel": "إيصال الإيداع/السحب (صورة أو PDF)",
   "confirmerAvecJustificatif": "تأكيد",
   "exporterComptabilite": "تصدير للمحاسبة",
-  "propreDemandeNonValidable": "هذا الطلب هو طلبك — يجب أن يوافق عليه شخص آخر ({{roles}})، وليس أنت."
+  "propreDemandeNonValidable": "هذا الطلب هو طلبك — يجب أن يوافق عليه شخص آخر ({{roles}})، وليس أنت.",
+  "etapeDemandee": "طلبها {{nom}} — {{date}}",
+  "etapeValidee": "وافق عليها {{nom}} — {{date}}",
+  "etapePayee": "دفعها {{nom}} — {{date}}",
+  "reserveAuResponsable": "الدفع مخصص لمسؤول هذا الصندوق فقط."
 }

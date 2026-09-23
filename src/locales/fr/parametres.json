@@ -22,7 +22,8 @@
     "reactiver": "Réactiver",
     "aucuneCaisse": "Aucune caisse créée.",
     "placeholder": "Ex. Caisse 1",
-    "ajouter": "+ Ajouter"
+    "ajouter": "+ Ajouter",
+    "aucunResponsable": "Aucun responsable de caisse"
   },
   "remises": {
     "titre": "Politique de remises",

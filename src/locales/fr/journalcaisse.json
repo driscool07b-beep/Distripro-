@@ -142,5 +142,9 @@
   "justificatifBordereauLabel": "Bordereau de versement/retrait (photo ou PDF)",
   "confirmerAvecJustificatif": "Confirmer",
   "exporterComptabilite": "Exporter pour comptabilité",
-  "propreDemandeNonValidable": "Cette demande est la vôtre — elle doit être validée par une autre personne ({{roles}}), pas vous-même."
+  "propreDemandeNonValidable": "Cette demande est la vôtre — elle doit être validée par une autre personne ({{roles}}), pas vous-même.",
+  "etapeDemandee": "Demandée par {{nom}} — {{date}}",
+  "etapeValidee": "Validée par {{nom}} — {{date}}",
+  "etapePayee": "Payée par {{nom}} — {{date}}",
+  "reserveAuResponsable": "Paiement réservé au responsable de cette caisse."
 }

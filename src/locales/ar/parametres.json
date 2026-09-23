@@ -22,7 +22,8 @@
     "reactiver": "إعادة تفعيل",
     "aucuneCaisse": "لا يوجد صندوق تم إنشاؤه.",
     "placeholder": "مثال: الصندوق 1",
-    "ajouter": "+ إضافة"
+    "ajouter": "+ إضافة",
+    "aucunResponsable": "لا يوجد مسؤول عن الصندوق"
   },
   "remises": {
     "titre": "سياسة الخصومات",

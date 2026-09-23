@@ -142,5 +142,9 @@
   "justificatifBordereauLabel": "存款/取款单据（照片或PDF）",
   "confirmerAvecJustificatif": "确认",
   "exporterComptabilite": "导出用于会计",
-  "propreDemandeNonValidable": "这是您自己提交的申请——必须由其他人（{{roles}}）审批，而非您本人。"
+  "propreDemandeNonValidable": "这是您自己提交的申请——必须由其他人（{{roles}}）审批，而非您本人。",
+  "etapeDemandee": "申请人：{{nom}} — {{date}}",
+  "etapeValidee": "批准人：{{nom}} — {{date}}",
+  "etapePayee": "支付人：{{nom}} — {{date}}",
+  "reserveAuResponsable": "付款仅限该收银台负责人操作。"
 }
