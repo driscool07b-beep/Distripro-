@@ -141,5 +141,6 @@
   },
   "justificatifBordereauLabel": "存款/取款单据（照片或PDF）",
   "confirmerAvecJustificatif": "确认",
-  "exporterComptabilite": "导出用于会计"
+  "exporterComptabilite": "导出用于会计",
+  "propreDemandeNonValidable": "这是您自己提交的申请——必须由其他人（{{roles}}）审批，而非您本人。"
 }

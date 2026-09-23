@@ -732,7 +732,7 @@ export default function JournalCaisse() {
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <p className="font-medium text-sm">{d.numero} — {d.libelle}</p>
-                              <p className="text-xs text-petrol-500">{t('demandePar', { nom: d.demandeur?.nom || '—', date: formatDate(d.created_at) })}</p>
+                              <p className="text-xs text-petrol-700 font-medium">{t('demandePar', { nom: d.demandeur?.nom || '—', date: formatDate(d.created_at) })}</p>
                               {d.beneficiaire && <p className="text-xs text-petrol-500">{t('beneficiaireLabel', { nom: d.beneficiaire })}</p>}
                             </div>
                             <span className="font-mono text-sm shrink-0 ml-2">{formatXOF(d.montant_demande)}</span>
@@ -749,7 +749,15 @@ export default function JournalCaisse() {
                             </div>
                           )}
 
-                          {refusEnCours === d.id ? (
+                          {d.demande_par === profil?.id ? (
+                            <p className="text-xs text-petrol-500 italic mt-2">
+                              {t('propreDemandeNonValidable', {
+                                roles: (entreprise?.caisse_roles_validateurs || ['admin', 'manager'])
+                                  .map((r) => t(`roles.${r}`, { ns: 'utilisateurs' }))
+                                  .join(', '),
+                              })}
+                            </p>
+                          ) : refusEnCours === d.id ? (
                             <div className="mt-2 space-y-2">
                               <input className="input-field text-sm" placeholder={t('motifRefusPlaceholder')} value={motifRefus} onChange={(e) => setMotifRefus(e.target.value)} />
                               <div className="flex gap-2">

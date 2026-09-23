@@ -141,5 +141,6 @@
   },
   "justificatifBordereauLabel": "إيصال الإيداع/السحب (صورة أو PDF)",
   "confirmerAvecJustificatif": "تأكيد",
-  "exporterComptabilite": "تصدير للمحاسبة"
+  "exporterComptabilite": "تصدير للمحاسبة",
+  "propreDemandeNonValidable": "هذا الطلب هو طلبك — يجب أن يوافق عليه شخص آخر ({{roles}})، وليس أنت."
 }
