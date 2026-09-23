@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as XLSX from 'xlsx'
 import { supabase } from '../lib/supabase'
+import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { formatXOF, formatDate, formatDateHeure, denominationsDeviseCourante } from '../lib/format'
@@ -34,6 +35,7 @@ export default function JournalCaisse() {
   const [solde, setSolde] = useState(0)
   const [demandes, setDemandes] = useState([])
   const [transfertsEntrants, setTransfertsEntrants] = useState([])
+  const [enAttenteParCaisse, setEnAttenteParCaisse] = useState({})
   const [confirmationTransfertId, setConfirmationTransfertId] = useState(null)
   const [fichierConfirmationTransfert, setFichierConfirmationTransfert] = useState(null)
   const [chargement, setChargement] = useState(true)
@@ -185,8 +187,13 @@ export default function JournalCaisse() {
   async function chargerCaisses() {
     const { data } = await supabase.from('caisses').select('id, nom, actif, responsable_id').eq('actif', true).order('nom')
     setCaisses(data || [])
-    if (data && data.length > 0) setCaisseId(data[0].id)
-    else setChargement(false)
+    if (data && data.length > 0) {
+      // On ouvre d'office la première caisse qui a quelque chose en attente,
+      // pour que la notification du menu mène directement à l'élément.
+      const { parCaisse } = await compterEnAttenteParCaisse(peutValider)
+      setEnAttenteParCaisse(parCaisse)
+      setCaisseId((data.find((c) => parCaisse[c.id] > 0) || data[0]).id)
+    } else setChargement(false)
     supabase.from('banques').select('id, nom').eq('actif', true).order('nom').then(({ data }) => setBanquesDisponibles(data || []))
   }
 
@@ -214,6 +221,7 @@ export default function JournalCaisse() {
     ])
     setSolde(soldeData || 0)
     setDemandes(demandesData || [])
+    compterEnAttenteParCaisse(peutValider).then(({ parCaisse }) => setEnAttenteParCaisse(parCaisse))
     setTransfertsEntrants([
       ...(transfertsCaisseData || []).map((tr) => ({ ...tr, origine: 'caisse', nomOrigine: tr.caisse_source?.nom })),
       ...(transfertsBanqueData || []).map((tr) => ({ ...tr, origine: 'banque', nomOrigine: tr.banque_source?.nom })),
@@ -591,7 +599,7 @@ export default function JournalCaisse() {
       <div className="mb-4">
         <label className="label">{t('caisse')}</label>
         <select className="input-field max-w-xs" value={caisseId} onChange={(e) => setCaisseId(e.target.value)}>
-          {caisses.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
+          {caisses.map((c) => <option key={c.id} value={c.id}>{c.nom}{enAttenteParCaisse[c.id] > 0 ? ` (${enAttenteParCaisse[c.id]} 🔴)` : ''}</option>)}
         </select>
         {caisses.length === 0 && <p className="text-xs text-petrol-400 mt-1">{t('aucuneCaisse')}</p>}
       </div>

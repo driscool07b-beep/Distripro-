@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
 import BandeauHorsLigne from './BandeauHorsLigne'
@@ -75,23 +76,11 @@ export default function Layout() {
   async function chargerBadgesCaisseBanque() {
     if (!peutGererCaisseBanque) return
 
-    const requetes = [
-      supabase.from('demandes_decaissement').select('id', { count: 'exact', head: true }).eq('statut', 'validee'),
-      supabase.from('caisse_transferts').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente').not('caisse_destination_id', 'is', null),
-      supabase.from('transferts_banque_caisse').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente'),
+    const [{ total }, transfertsVersBanque] = await Promise.all([
+      compterEnAttenteParCaisse(peutValiderCaisse),
       supabase.from('caisse_transferts').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente').not('banque_destination_id', 'is', null),
-    ]
-    if (peutValiderCaisse) {
-      requetes.push(supabase.from('demandes_decaissement').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente'))
-    }
-
-    const resultats = await Promise.all(requetes)
-    const [aPayer, transfertsCaisseEntrants, transfertsBanqueVersCaisse, transfertsVersBanque] = resultats
-    const aValider = peutValiderCaisse ? resultats[4] : null
-
-    setBadgeJournalCaisse(
-      (aValider?.count || 0) + (aPayer.count || 0) + (transfertsCaisseEntrants.count || 0) + (transfertsBanqueVersCaisse.count || 0)
-    )
+    ])
+    setBadgeJournalCaisse(total)
     setBadgeBanques(transfertsVersBanque.count || 0)
   }
 
