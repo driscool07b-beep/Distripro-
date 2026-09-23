@@ -39,7 +39,13 @@ export default function Tournees() {
   const [formData, setFormData] = useState({
     date_tournee: new Date().toISOString().split('T')[0],
     clients_selectionnes: [],
+    commercial_id: '',
   });
+  const [membres, setMembres] = useState([]); // profils de l'entreprise (noms + commerciaux sélectionnables)
+  const [propositionIA, setPropositionIA] = useState(null); // { synthese, raisons: { client_id: raison } }
+  const [chargementIA, setChargementIA] = useState(false);
+  const [erreurIA, setErreurIA] = useState('');
+  const [validationEnCours, setValidationEnCours] = useState(false);
 
   useEffect(() => {
     if (entrepriseId) {
@@ -48,8 +54,56 @@ export default function Tournees() {
       chargerCatalogueProduits();
       chargerChampsPerso();
       chargerConcurrents();
+      chargerMembres();
     }
   }, [entrepriseId]);
+
+  const chargerMembres = async () => {
+    const { data } = await supabase.from('profils').select('id, nom, role, actif').order('nom');
+    setMembres(data || []);
+  };
+
+  const nomMembre = (id) => membres.find((m) => m.id === id)?.nom || '';
+
+  const proposerAvecIA = async () => {
+    setErreurIA('');
+    setChargementIA(true);
+    const { data, error } = await supabase.functions.invoke('planifier-tournee-ia', {
+      body: {
+        commercial_id: formData.commercial_id || profil?.id,
+        date_tournee: formData.date_tournee,
+        nb_clients: 8,
+        langue: i18n.language,
+      },
+    });
+    setChargementIA(false);
+    if (error || data?.erreur) {
+      let message = data?.erreur;
+      if (!message && error?.context?.json) {
+        try { message = (await error.context.json()).erreur; } catch { /* ignore */ }
+      }
+      setErreurIA(message || error?.message || t('ia.erreur'));
+      return;
+    }
+    const raisons = {};
+    (data.clients || []).forEach((c) => { raisons[c.client_id] = c.raison; });
+    setPropositionIA({ synthese: data.synthese, raisons });
+    setFormData((prev) => ({ ...prev, clients_selectionnes: (data.clients || []).map((c) => c.client_id) }));
+  };
+
+  const validerTournee = async (approuver) => {
+    if (!approuver && !window.confirm(t('validation.confirmerRefus'))) return;
+    setValidationEnCours(true);
+    const { error } = await supabase.rpc('valider_tournee', { p_tournee_id: selectedTournee.id, p_approuver: approuver });
+    setValidationEnCours(false);
+    if (error) {
+      alert(traduireErreur(error.message));
+      return;
+    }
+    if (approuver) setSelectedTournee({ ...selectedTournee, en_attente_validation: false });
+    else setSelectedTournee(null);
+    chargerTournees();
+  };
 
   const chargerCatalogueProduits = async () => {
     const { data, error } = await supabase
@@ -152,10 +206,18 @@ export default function Tournees() {
       return;
     }
 
+    const raisons = {};
+    if (propositionIA) {
+      formData.clients_selectionnes.forEach((id) => {
+        if (propositionIA.raisons[id]) raisons[id] = propositionIA.raisons[id];
+      });
+    }
     const { data, error } = await supabase.rpc('creer_tournee_optimisee', {
-      p_commercial_id: profil?.id,
+      p_commercial_id: formData.commercial_id || profil?.id,
       p_date_tournee: formData.date_tournee,
       p_client_ids: formData.clients_selectionnes,
+      p_raisons: Object.keys(raisons).length > 0 ? raisons : null,
+      p_proposee_par_ia: Object.keys(raisons).length > 0,
     });
 
     if (error) {
@@ -165,9 +227,11 @@ export default function Tournees() {
     }
 
     setShowForm(false);
+    setPropositionIA(null);
     setFormData({
       date_tournee: new Date().toISOString().split('T')[0],
       clients_selectionnes: [],
+      commercial_id: '',
     });
     chargerTournees();
   };
@@ -416,7 +480,14 @@ export default function Tournees() {
     });
   };
 
-  const autoriseProgrammer = ['admin', 'manager'].includes(profil?.role) || profil?.responsable_tournees
+  const estResponsableTournees = ['admin', 'manager'].includes(profil?.role) || profil?.responsable_tournees
+  // Un commercial peut programmer sa propre tournée (validation optionnelle par un responsable).
+  const autoriseProgrammer = estResponsableTournees || profil?.role === 'commercial'
+  const iaAutorisee = profil?.ia_active !== false
+  const commerciauxSelectionnables = membres.filter((m) => m.role === 'commercial' && m.actif !== false)
+  const clientsTries = propositionIA
+    ? [...clients].sort((a, b) => (propositionIA.raisons[b.id] ? 1 : 0) - (propositionIA.raisons[a.id] ? 1 : 0))
+    : clients
 
   if (!accesAutorise('tournees', profil?.role)) {
     return (
@@ -445,7 +516,24 @@ export default function Tournees() {
         </h1>
         <p className="text-sm text-gray-500 mb-4">
           {t('detail.compteurVisites', { n: visites.length })}
+          {nomMembre(selectedTournee.commercial_id) ? ` — ${nomMembre(selectedTournee.commercial_id)}` : ''}
         </p>
+
+        {selectedTournee.en_attente_validation && (
+          <div className="border border-amber-300 bg-amber-50 rounded-lg p-3 mb-4">
+            <p className="text-sm font-medium text-amber-800">{t('validation.enAttente')}</p>
+            {estResponsableTournees && selectedTournee.commercial_id !== profil?.id ? (
+              <div className="flex gap-2 mt-2">
+                <button onClick={() => validerTournee(true)} disabled={validationEnCours}
+                  className="bg-green-600 text-white px-3 py-1.5 rounded text-sm disabled:opacity-50">{t('validation.approuver')}</button>
+                <button onClick={() => validerTournee(false)} disabled={validationEnCours}
+                  className="bg-white border border-red-300 text-red-700 px-3 py-1.5 rounded text-sm disabled:opacity-50">{t('validation.refuser')}</button>
+              </div>
+            ) : (
+              <p className="text-xs text-amber-700 mt-1">{t('validation.enAttenteTexte')}</p>
+            )}
+          </div>
+        )}
 
         {(() => {
           const prochaine = visites.find((l) => l.statut !== 'visite');
@@ -480,6 +568,7 @@ export default function Tournees() {
                 <p className="text-xs text-gray-500">
                   {t('detail.statutLabel')} : {ligne.statut === 'visite' ? t('detail.visitee') : t('detail.aVisiter')}
                 </p>
+                {ligne.raison_ia && <p className="text-xs text-purple-700 mt-0.5">✨ {ligne.raison_ia}</p>}
               </div>
               {ligne.statut !== 'visite' && (
                 <div className="flex gap-2">
@@ -493,11 +582,13 @@ export default function Tournees() {
                   </button>
                   <button
                     onClick={() => marquerVisitee(ligne)}
-                    className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm"
+                    disabled={selectedTournee.en_attente_validation}
+                    title={selectedTournee.en_attente_validation ? t('validation.enAttente') : undefined}
+                    className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {t('detail.marquerVisitee')}
                   </button>
-                  {autoriseProgrammer && (
+                  {estResponsableTournees && (
                     <button
                       onClick={() => retirerClient(ligne.id)}
                       className="border border-red-500 text-red-600 px-3 py-1.5 rounded text-sm"
@@ -514,7 +605,7 @@ export default function Tournees() {
           )}
         </div>
 
-        {autoriseProgrammer && (
+        {estResponsableTournees && (
           <div className="border rounded-lg p-4 mt-4 bg-gray-50">
             <p className="text-sm font-medium mb-2">{t('detail.ajouterClientTournee')}</p>
             <div className="flex gap-2">
@@ -571,22 +662,59 @@ export default function Tournees() {
             />
           </div>
 
+          {estResponsableTournees && (
+            <div>
+              <label className="block text-sm font-medium mb-1">{t('commercial')}</label>
+              <select
+                value={formData.commercial_id || profil?.id}
+                onChange={(e) => { setFormData({ ...formData, commercial_id: e.target.value, clients_selectionnes: [] }); setPropositionIA(null); }}
+                className="w-full border rounded px-3 py-2 text-sm"
+              >
+                {!commerciauxSelectionnables.some((m) => m.id === profil?.id) && (
+                  <option value={profil?.id}>{profil?.nom} ({t('moiMeme')})</option>
+                )}
+                {commerciauxSelectionnables.map((m) => <option key={m.id} value={m.id}>{m.nom}</option>)}
+              </select>
+            </div>
+          )}
+
+          {iaAutorisee && (
+            <div className="border border-purple-200 bg-purple-50 rounded-lg p-3">
+              <button type="button" onClick={proposerAvecIA} disabled={chargementIA}
+                className="w-full bg-purple-600 text-white py-2 rounded-lg text-sm font-medium disabled:opacity-60">
+                {chargementIA ? t('ia.enCours') : t('ia.proposer')}
+              </button>
+              <p className="text-xs text-purple-700 mt-2">{t('ia.aide')}</p>
+              {propositionIA?.synthese && <p className="text-sm text-purple-900 mt-2">💡 {propositionIA.synthese}</p>}
+              {erreurIA && <p className="text-xs text-red-600 mt-2">{erreurIA}</p>}
+            </div>
+          )}
+          {!estResponsableTournees && entreprise?.validation_tournee_commercial && (
+            <p className="text-xs text-amber-700">{t('validation.avertissementCommercial')}</p>
+          )}
+
           <div>
             <label className="block text-sm font-medium mb-1">
               {t('clientsAVisiter', { n: formData.clients_selectionnes.length })}
             </label>
-            <div className="max-h-48 overflow-y-auto border rounded divide-y">
-              {clients.map((client) => (
+            <div className="max-h-72 overflow-y-auto border rounded divide-y">
+              {clientsTries.map((client) => (
                 <label
                   key={client.id}
-                  className="flex items-center gap-2 p-2 text-sm cursor-pointer"
+                  className="flex items-start gap-2 p-2 text-sm cursor-pointer"
                 >
                   <input
                     type="checkbox"
+                    className="mt-1"
                     checked={formData.clients_selectionnes.includes(client.id)}
                     onChange={() => toggleClientSelection(client.id)}
                   />
-                  {client.nom}
+                  <span>
+                    {client.nom}
+                    {propositionIA?.raisons[client.id] && (
+                      <span className="block text-xs text-purple-700">✨ {propositionIA.raisons[client.id]}</span>
+                    )}
+                  </span>
                 </label>
               ))}
               {clients.length === 0 && (
@@ -614,6 +742,9 @@ export default function Tournees() {
             <div>
               <p className="font-medium">
                 {formatDate(tournee.date_tournee)}
+                {nomMembre(tournee.commercial_id) ? ` — ${nomMembre(tournee.commercial_id)}` : ''}
+                {tournee.proposee_par_ia && <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">✨ IA</span>}
+                {tournee.en_attente_validation && <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">{t('validation.badge')}</span>}
               </p>
               <p className="text-xs text-gray-500">{t('detail.statutLabel')} : {tournee.statut || t('statutPlanifiee')}</p>
             </div>

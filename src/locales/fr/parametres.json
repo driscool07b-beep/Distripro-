@@ -177,5 +177,10 @@
     "versements": "Discipline de versement",
     "total": "Total actuel : {{total}} / 100",
     "erreurTotal": "Le total doit être exactement 100 (actuellement {{total}})."
+  },
+  "tourneesValidation": {
+    "titre": "Validation des tournées programmées par un commercial",
+    "active": "Activé : une tournée qu'un commercial programme lui-même doit être approuvée par un responsable avant les visites.",
+    "desactive": "Désactivé : un commercial peut programmer et effectuer sa propre tournée directement."
   }
 }

@@ -177,5 +177,10 @@
     "versements": "存款纪律",
     "total": "当前总计：{{total}} / 100",
     "erreurTotal": "总计必须恰好为100（当前为{{total}}）。"
+  },
+  "tourneesValidation": {
+    "titre": "业务员自排路线的审批",
+    "active": "开启：业务员为自己安排的路线须经负责人批准后才能拜访。",
+    "desactive": "关闭：业务员可直接安排并执行自己的路线。"
   }
 }

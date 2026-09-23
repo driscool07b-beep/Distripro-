@@ -11,7 +11,6 @@
   "statutPlanifiee": "planifiée",
   "aucuneTournee": "Aucune tournée créée pour le moment",
   "ajouter": "+ Ajouter",
-
   "detail": {
     "retour": "← Retour aux tournées",
     "titreTourneeDu": "Tournée du {{date}}",
@@ -30,7 +29,6 @@
     "ajouterClientTournee": "Ajouter un client à cette tournée",
     "selectionnerClient": "— Sélectionner un client —"
   },
-
   "rapport": {
     "titre": "Rapport de visite",
     "visiteValidee": "{{nom}} — visite validée ✅",
@@ -53,7 +51,6 @@
     "envoi": "Envoi…",
     "enregistrerRapport": "Enregistrer le rapport"
   },
-
   "erreurs": {
     "selectionnerClient": "Sélectionnez au moins un client",
     "creation": "Erreur lors de la création : {{message}}",
@@ -67,5 +64,22 @@
     "rapportErreurLignes": "Rapport enregistré, mais erreur sur les lignes produits : {{message}}",
     "rapportErreurChamps": "Rapport enregistré, mais erreur sur les champs personnalisés : {{message}}",
     "rapportErreurConcurrents": "Rapport enregistré, mais erreur sur les produits concurrents : {{message}}"
+  },
+  "commercial": "Commercial",
+  "moiMeme": "moi-même",
+  "ia": {
+    "proposer": "✨ Proposer avec l'IA",
+    "enCours": "L'IA prépare la tournée…",
+    "aide": "L'IA choisit les clients à visiter (stocks bas, créances, clients non visités, proximité). Vous pouvez ensuite cocher ou décocher avant de créer la tournée.",
+    "erreur": "La proposition IA a échoué."
+  },
+  "validation": {
+    "badge": "À valider",
+    "enAttente": "Tournée en attente de validation par un responsable",
+    "enAttenteTexte": "Les visites pourront être validées une fois la tournée approuvée.",
+    "approuver": "✓ Approuver",
+    "refuser": "✗ Refuser",
+    "confirmerRefus": "Refuser cette tournée ? Elle sera supprimée et le commercial pourra en proposer une autre pour cette date.",
+    "avertissementCommercial": "Votre tournée devra être validée par un responsable avant de pouvoir commencer les visites."
   }
 }

@@ -62,5 +62,8 @@
   "fermer": "Close",
   "anciensMembres": "Former members ({{n}})",
   "anciensMembresAide": "Deactivated accounts: they can no longer sign in and no longer count toward your subscription. Their history (sales, visits, deposits) is kept.",
-  "confirmerDesactivation": "Deactivate {{nom}}'s account?\n\nThis person will no longer be able to sign in and will be moved to \"Former members\". Their history is kept and you can reactivate them at any time."
+  "confirmerDesactivation": "Deactivate {{nom}}'s account?\n\nThis person will no longer be able to sign in and will be moved to \"Former members\". Their history is kept and you can reactivate them at any time.",
+  "iaDesactivee": "AI disabled",
+  "activerIA": "Enable AI",
+  "desactiverIA": "Disable AI"
 }

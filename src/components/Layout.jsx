@@ -174,7 +174,7 @@ export default function Layout() {
               {t('menu.objectifs')}
             </NavLink>
           )}
-          {['admin', 'manager'].includes(profil?.role) && (
+          {['admin', 'manager'].includes(profil?.role) && profil?.ia_active !== false && (
             <NavLink
               to="/analyse-ia"
               onClick={() => setMenuOuvert(false)}

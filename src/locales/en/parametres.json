@@ -177,5 +177,10 @@
     "versements": "Deposit discipline",
     "total": "Current total: {{total}} / 100",
     "erreurTotal": "The total must be exactly 100 (currently {{total}})."
+  },
+  "tourneesValidation": {
+    "titre": "Approval of routes scheduled by a sales rep",
+    "active": "On: a route a sales rep schedules for themselves must be approved by a supervisor before visits.",
+    "desactive": "Off: a sales rep can schedule and carry out their own route directly."
   }
 }

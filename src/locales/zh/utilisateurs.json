@@ -62,5 +62,8 @@
   "fermer": "关闭",
   "anciensMembres": "前成员（{{n}}）",
   "anciensMembresAide": "已停用的账户：无法再登录，也不再计入您的订阅。其历史记录（销售、拜访、缴款）将被保留。",
-  "confirmerDesactivation": "停用 {{nom}} 的账户？\n\n此人将无法再登录，并被移至“前成员”。其历史记录将被保留，您可以随时重新启用。"
+  "confirmerDesactivation": "停用 {{nom}} 的账户？\n\n此人将无法再登录，并被移至“前成员”。其历史记录将被保留，您可以随时重新启用。",
+  "iaDesactivee": "AI 已停用",
+  "activerIA": "启用 AI",
+  "desactiverIA": "停用 AI"
 }

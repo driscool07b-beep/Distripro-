@@ -59,7 +59,7 @@ export default function Utilisateurs() {
   async function charger() {
     setChargement(true)
     const [{ data: m }, { data: inv }, { data: j }, { data: d }, { data: gd }] = await Promise.all([
-      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu, lecture_seule, responsable_tournees').order('nom'),
+      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu, lecture_seule, responsable_tournees, ia_active').order('nom'),
       supabase.from('invitations').select('id, email, nom_complet, role, zone, statut, created_at').eq('statut', 'en_attente').order('created_at', { ascending: false }),
       supabase
         .from('journal_administration')
@@ -243,6 +243,15 @@ export default function Utilisateurs() {
     charger()
   }
 
+  async function basculerIA(membre) {
+    const { error } = await supabase.rpc('definir_acces_ia', { p_profil_id: membre.id, p_actif: membre.ia_active === false })
+    if (error) {
+      alert(`${t('erreur')} : ${traduireErreur(error.message)}`)
+      return
+    }
+    charger()
+  }
+
   async function reinitialiserMotDePasse(membre) {
     if (!window.confirm(t('confirmerReinitialisationMdp', { nom: membre.nom_complet || membre.nom }))) return
     const { data, error } = await supabase.functions.invoke('reinitialiser-mot-de-passe', {
@@ -285,6 +294,9 @@ export default function Utilisateurs() {
                     {m.lecture_seule && (
                       <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">{t('lectureSeule')}</span>
                     )}
+                    {m.ia_active === false && (
+                      <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded">{t('iaDesactivee')}</span>
+                    )}
                     {m.responsable_tournees && (
                       <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">{t('responsableTournees')}</span>
                     )}
@@ -311,6 +323,9 @@ export default function Utilisateurs() {
                       {m.actif ? t('desactiver') : t('reactiver')}
                     </button>
                   )}
+                  <button onClick={() => basculerIA(m)} className="text-xs text-purple-700 underline whitespace-nowrap">
+                    {m.ia_active === false ? t('activerIA') : t('desactiverIA')}
+                  </button>
                   {m.id !== profil.id && (
                     <button onClick={() => reinitialiserMotDePasse(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
                       {t('reinitialiserMdp')}

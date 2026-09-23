@@ -458,6 +458,24 @@ export default function Parametres() {
     )
   }
 
+  async function basculerValidationTournee() {
+    setErreur('')
+    setConfirmation(false)
+    setEnregistrement(true)
+    const { error } = await supabase
+      .from('entreprises')
+      .update({ validation_tournee_commercial: !entreprise.validation_tournee_commercial })
+      .eq('id', entreprise.id)
+    setEnregistrement(false)
+    if (error) {
+      setErreur(`${t('erreur')} : ${traduireErreur(error.message)}`)
+      return
+    }
+    await rechargerProfil()
+    setConfirmation(true)
+    setTimeout(() => setConfirmation(false), 2500)
+  }
+
   async function basculerPhotoObligatoire() {
     setErreur('')
     setConfirmation(false)
@@ -1169,6 +1187,29 @@ export default function Parametres() {
             <span
               className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${
                 entreprise?.photo_rapport_obligatoire ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-line">
+          <div>
+            <p className="font-medium text-sm">{t('tourneesValidation.titre')}</p>
+            <p className="text-xs text-petrol-500">
+              {entreprise?.validation_tournee_commercial ? t('tourneesValidation.active') : t('tourneesValidation.desactive')}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={basculerValidationTournee}
+            disabled={enregistrement}
+            className={`shrink-0 w-12 h-7 rounded-full transition-colors relative disabled:opacity-50 ${
+              entreprise?.validation_tournee_commercial ? 'bg-amber-500' : 'bg-line'
+            }`}
+          >
+            <span
+              className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${
+                entreprise?.validation_tournee_commercial ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
           </button>

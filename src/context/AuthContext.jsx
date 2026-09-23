@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
   async function chargerProfilInterne(userId) {
     let { data: profilData, error: profilError } = await supabase
       .from('profils')
-      .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, langue, theme, taille_police, doit_changer_mot_de_passe')
+      .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, ia_active, langue, theme, taille_police, doit_changer_mot_de_passe')
       .eq('id', userId)
       .single()
 
@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
       if (finalise) {
         const retry = await supabase
           .from('profils')
-          .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, langue, theme, taille_police, doit_changer_mot_de_passe')
+          .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, ia_active, langue, theme, taille_police, doit_changer_mot_de_passe')
           .eq('id', userId)
           .single()
         profilData = retry.data
@@ -86,7 +86,7 @@ export function AuthProvider({ children }) {
 
     const { data: entrepriseData, error: entrepriseError } = await supabase
       .from('entreprises')
-      .select('id, nom, plan, statut, photo_rapport_obligatoire, adresse, telephone, email, ncc, rccm, seuil_remise_pourcentage, justificatif_stock_obligatoire, assujetti_tva, devise, caisse_seuil_validation, caisse_roles_validateurs, frequence_inventaire_stock, frequence_inventaire_caisse, justificatif_transfert_requis, tracabilite_lots_obligatoire, roles_regularisation_caisse, compte_charges_decaissement_id, compte_clients_defaut_id, compte_ecarts_caisse_id, compte_apports_defaut_id, code_journal_caisse, code_journal_banque, note_poids_assiduite, note_poids_rapports, note_poids_versements')
+      .select('id, nom, plan, statut, photo_rapport_obligatoire, adresse, telephone, email, ncc, rccm, seuil_remise_pourcentage, justificatif_stock_obligatoire, assujetti_tva, devise, caisse_seuil_validation, caisse_roles_validateurs, frequence_inventaire_stock, frequence_inventaire_caisse, justificatif_transfert_requis, tracabilite_lots_obligatoire, roles_regularisation_caisse, compte_charges_decaissement_id, compte_clients_defaut_id, compte_ecarts_caisse_id, compte_apports_defaut_id, code_journal_caisse, code_journal_banque, note_poids_assiduite, note_poids_rapports, note_poids_versements, validation_tournee_commercial')
       .eq('id', profilData.entreprise_id)
       .single()
 

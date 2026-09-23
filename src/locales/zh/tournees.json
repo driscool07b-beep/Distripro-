@@ -11,7 +11,6 @@
   "statutPlanifiee": "已计划",
   "aucuneTournee": "尚未创建任何路线",
   "ajouter": "+ 添加",
-
   "detail": {
     "retour": "← 返回路线列表",
     "titreTourneeDu": "{{date}} 的路线",
@@ -30,7 +29,6 @@
     "ajouterClientTournee": "向此路线添加客户",
     "selectionnerClient": "— 选择客户 —"
   },
-
   "rapport": {
     "titre": "拜访报告",
     "visiteValidee": "{{nom}} — 拜访已确认 ✅",
@@ -53,7 +51,6 @@
     "envoi": "发送中…",
     "enregistrerRapport": "保存报告"
   },
-
   "erreurs": {
     "selectionnerClient": "请至少选择一位客户",
     "creation": "创建时出错：{{message}}",
@@ -67,5 +64,22 @@
     "rapportErreurLignes": "报告已保存，但产品明细出错：{{message}}",
     "rapportErreurChamps": "报告已保存，但自定义字段出错：{{message}}",
     "rapportErreurConcurrents": "报告已保存，但竞品信息出错：{{message}}"
+  },
+  "commercial": "业务员",
+  "moiMeme": "我自己",
+  "ia": {
+    "proposer": "✨ AI 推荐",
+    "enCours": "AI 正在准备路线…",
+    "aide": "AI 会挑选要拜访的客户（库存偏低、应收账款、久未拜访、距离相近）。创建路线前您可以勾选或取消。",
+    "erreur": "AI 推荐失败。"
+  },
+  "validation": {
+    "badge": "待审批",
+    "enAttente": "路线等待负责人审批",
+    "enAttenteTexte": "路线获批后才能确认拜访。",
+    "approuver": "✓ 批准",
+    "refuser": "✗ 拒绝",
+    "confirmerRefus": "拒绝此路线？路线将被删除，业务员可为该日期重新提交。",
+    "avertissementCommercial": "您的路线须经负责人批准后才能开始拜访。"
   }
 }

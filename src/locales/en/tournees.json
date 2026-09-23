@@ -11,7 +11,6 @@
   "statutPlanifiee": "planned",
   "aucuneTournee": "No route created yet",
   "ajouter": "+ Add",
-
   "detail": {
     "retour": "← Back to routes",
     "titreTourneeDu": "Route of {{date}}",
@@ -30,7 +29,6 @@
     "ajouterClientTournee": "Add a client to this route",
     "selectionnerClient": "— Select a client —"
   },
-
   "rapport": {
     "titre": "Visit report",
     "visiteValidee": "{{nom}} — visit confirmed ✅",
@@ -53,7 +51,6 @@
     "envoi": "Sending…",
     "enregistrerRapport": "Save report"
   },
-
   "erreurs": {
     "selectionnerClient": "Select at least one client",
     "creation": "Error during creation: {{message}}",
@@ -67,5 +64,22 @@
     "rapportErreurLignes": "Report saved, but an error occurred on the product lines: {{message}}",
     "rapportErreurChamps": "Report saved, but an error occurred on the custom fields: {{message}}",
     "rapportErreurConcurrents": "Report saved, but an error occurred on the competitor products: {{message}}"
+  },
+  "commercial": "Sales rep",
+  "moiMeme": "myself",
+  "ia": {
+    "proposer": "✨ Suggest with AI",
+    "enCours": "AI is preparing the route…",
+    "aide": "AI picks the customers to visit (low stock, receivables, customers not visited, proximity). You can then check or uncheck before creating the route.",
+    "erreur": "The AI suggestion failed."
+  },
+  "validation": {
+    "badge": "To approve",
+    "enAttente": "Route awaiting approval by a supervisor",
+    "enAttenteTexte": "Visits can be validated once the route is approved.",
+    "approuver": "✓ Approve",
+    "refuser": "✗ Reject",
+    "confirmerRefus": "Reject this route? It will be deleted and the sales rep can propose another one for this date.",
+    "avertissementCommercial": "Your route must be approved by a supervisor before you can start visits."
   }
 }
