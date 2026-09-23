@@ -6,10 +6,26 @@ import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { formatXOF, formatDate, formatDateHeure } from '../lib/format'
 import { traduireErreur } from '../lib/erreurs'
+import { useColonnesRedimensionnables } from '../lib/useColonnesRedimensionnables'
+
+const COLONNES_GRAND_LIVRE_BANQUE = [
+  { cle: 'date', titre: 'grandLivre.date', largeur: 100 },
+  { cle: 'numero', titre: 'grandLivre.numero', largeur: 130 },
+  { cle: 'libelle', titre: 'grandLivre.libelle', largeur: 220 },
+  { cle: 'reference', titre: 'grandLivre.reference', largeur: 140 },
+  { cle: 'debit', titre: 'grandLivre.debit', largeur: 130, alignDroite: true },
+  { cle: 'credit', titre: 'grandLivre.credit', largeur: 130, alignDroite: true },
+  { cle: 'solde', titre: 'grandLivre.solde', largeur: 130, alignDroite: true },
+]
 
 export default function Banques() {
   const { t } = useTranslation('banques')
   const { profil, entreprise } = useAuth()
+  const {
+    largeurs: largeursGrandLivreBanque,
+    PoigneeRedim: PoigneeGrandLivreBanque,
+    largeurTotale: largeurTotaleGrandLivreBanque,
+  } = useColonnesRedimensionnables('grandLivreBanque', COLONNES_GRAND_LIVRE_BANQUE)
 
   const [onglet, setOnglet] = useState('banques')
   const [banques, setBanques] = useState([])
@@ -481,28 +497,32 @@ export default function Banques() {
                 <p className="text-sm text-petrol-500">{t('chargement')}</p>
               ) : (
                 <div className="card overflow-x-auto">
-                  <table className="w-full text-xs min-w-[640px]">
+                  <table className="text-xs" style={{ tableLayout: 'fixed', width: largeurTotaleGrandLivreBanque }}>
+                    <colgroup>
+                      {COLONNES_GRAND_LIVRE_BANQUE.map((c) => (
+                        <col key={c.cle} style={{ width: largeursGrandLivreBanque[c.cle] }} />
+                      ))}
+                    </colgroup>
                     <thead>
                       <tr className="border-b border-line bg-canvas text-left text-petrol-600">
-                        <th className="px-3 py-2 font-medium">{t('grandLivre.date')}</th>
-                        <th className="px-3 py-2 font-medium">{t('grandLivre.numero')}</th>
-                        <th className="px-3 py-2 font-medium">{t('grandLivre.libelle')}</th>
-                        <th className="px-3 py-2 font-medium">{t('grandLivre.reference')}</th>
-                        <th className="px-3 py-2 font-medium text-right">{t('grandLivre.debit')}</th>
-                        <th className="px-3 py-2 font-medium text-right">{t('grandLivre.credit')}</th>
-                        <th className="px-3 py-2 font-medium text-right">{t('grandLivre.solde')}</th>
+                        {COLONNES_GRAND_LIVRE_BANQUE.map((c) => (
+                          <th key={c.cle} className={`relative px-3 py-2 font-medium ${c.alignDroite ? 'text-right' : ''}`}>
+                            {t(c.titre)}
+                            <PoigneeGrandLivreBanque cle={c.cle} />
+                          </th>
+                        ))}
                       </tr>
                     </thead>
                     <tbody>
                       {grandLivre.map((ligne, i) => (
                         <tr key={i} className="border-b border-line last:border-0">
-                          <td className="px-3 py-2 whitespace-nowrap">{formatDateHeure(ligne.date_mouvement, { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
-                          <td className="px-3 py-2 whitespace-nowrap">{ligne.numero}</td>
-                          <td className="px-3 py-2">{ligne.libelle}</td>
-                          <td className="px-3 py-2 whitespace-nowrap text-petrol-500">{ligne.reference || '—'}</td>
-                          <td className="px-3 py-2 text-right font-mono">{Number(ligne.debit) > 0 ? formatXOF(ligne.debit) : '—'}</td>
-                          <td className="px-3 py-2 text-right font-mono text-green-700">{Number(ligne.credit) > 0 ? formatXOF(ligne.credit) : '—'}</td>
-                          <td className="px-3 py-2 text-right font-mono font-medium">{formatXOF(ligne.solde)}</td>
+                          <td className="px-3 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{formatDateHeure(ligne.date_mouvement, { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
+                          <td className="px-3 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{ligne.numero}</td>
+                          <td className="px-3 py-2 overflow-hidden text-ellipsis">{ligne.libelle}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-petrol-500 overflow-hidden text-ellipsis">{ligne.reference || '—'}</td>
+                          <td className="px-3 py-2 text-right font-mono whitespace-nowrap">{Number(ligne.debit) > 0 ? formatXOF(ligne.debit) : '—'}</td>
+                          <td className="px-3 py-2 text-right font-mono text-green-700 whitespace-nowrap">{Number(ligne.credit) > 0 ? formatXOF(ligne.credit) : '—'}</td>
+                          <td className="px-3 py-2 text-right font-mono font-medium whitespace-nowrap">{formatXOF(ligne.solde)}</td>
                         </tr>
                       ))}
                       {grandLivre.length === 0 && (

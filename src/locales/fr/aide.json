@@ -226,6 +226,14 @@
         {
           "q": "Comment régulariser un écart trouvé lors d'un inventaire de caisse ?",
           "r": "Bouton 'Régulariser cet écart' visible sur l'inventaire concerné — réservé aux rôles autorisés (réglable dans Paramètres → Régularisation des écarts de caisse, admin). Ça génère automatiquement l'écriture correctrice dans le Grand livre, portant le nom de la personne qui régularise. Une fois fait, impossible de le refaire pour le même inventaire."
+        },
+        {
+          "q": "Comment restreindre qui peut réellement payer un décaissement ?",
+          "r": "Paramètres → affecte un responsable à chaque caisse (liste déroulante sous le nom de la caisse). Une fois affecté, seule cette personne peut payer un décaissement validé sur cette caisse — les autres admin/manager/comptable voient un message à la place du bouton. Optionnel : sans responsable affecté, le comportement habituel (tout rôle autorisé peut payer) continue de s'appliquer."
+        },
+        {
+          "q": "Comment retracer les étapes d'un décaissement (qui a demandé, validé, payé) ?",
+          "r": "Journal de caisse → onglet Demandes → section Historique — chaque décaissement affiche désormais les 3 étapes avec date et heure précises : demandée par X, validée par Y, payée par Z."
         }
       ]
     },
