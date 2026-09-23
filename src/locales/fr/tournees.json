@@ -106,5 +106,11 @@
   "portefeuilleVide": "Aucun client dans ce portefeuille. Attribuez des clients à ce commercial dans la page Clients.",
   "manuel": {
     "titre": "Ou choisir manuellement (une journée)"
+  },
+  "liste": {
+    "tousLesCommerciaux": "Tous les commerciaux",
+    "archives": "Archives — tournées passées ({{n}})",
+    "afficherPlus": "Afficher plus",
+    "passee": "passée"
   }
 }

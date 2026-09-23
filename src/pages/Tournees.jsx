@@ -48,6 +48,9 @@ export default function Tournees() {
   const [chargementIA, setChargementIA] = useState(false);
   const [erreurIA, setErreurIA] = useState('');
   const [validationEnCours, setValidationEnCours] = useState(false);
+  const [archivesVisibles, setArchivesVisibles] = useState(false);
+  const [nbArchivesAffichees, setNbArchivesAffichees] = useState(20);
+  const [filtreCommercialListe, setFiltreCommercialListe] = useState('');
 
   useEffect(() => {
     if (entrepriseId) {
@@ -663,6 +666,37 @@ export default function Tournees() {
     );
   }
 
+  // Tournées passées : rangées dans « Archives » pour libérer la page.
+  const maintenantLocal = new Date()
+  const aujourdhui = `${maintenantLocal.getFullYear()}-${String(maintenantLocal.getMonth() + 1).padStart(2, '0')}-${String(maintenantLocal.getDate()).padStart(2, '0')}`
+  const tourneesFiltrees = tournees.filter((tr) => !filtreCommercialListe || tr.commercial_id === filtreCommercialListe)
+  const tourneesAVenir = tourneesFiltrees
+    .filter((tr) => tr.date_tournee >= aujourdhui)
+    .sort((x, y) => x.date_tournee.localeCompare(y.date_tournee))
+  const tourneesArchivees = tourneesFiltrees
+    .filter((tr) => tr.date_tournee < aujourdhui)
+    .sort((x, y) => y.date_tournee.localeCompare(x.date_tournee))
+
+  const renderTournee = (tournee) => (
+    <button
+      key={tournee.id}
+      onClick={() => ouvrirTournee(tournee)}
+      className="w-full text-left border rounded-lg p-3 hover:bg-gray-50 flex justify-between items-center"
+    >
+      <div>
+        <p className="font-medium">
+          {formatDate(tournee.date_tournee)}
+          {nomMembre(tournee.commercial_id) ? ` — ${nomMembre(tournee.commercial_id)}` : ''}
+          {tournee.proposee_par_ia && <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">✨ IA</span>}
+          {tournee.en_attente_validation && <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">{t('validation.badge')}</span>}
+          {tournee.date_tournee < aujourdhui && tournee.statut !== 'terminee' && <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{t('liste.passee')}</span>}
+        </p>
+        <p className="text-xs text-gray-500">{t('detail.statutLabel')} : {tournee.statut || t('statutPlanifiee')}</p>
+      </div>
+      <span className="text-gray-400">→</span>
+    </button>
+  )
+
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-4">
@@ -827,29 +861,43 @@ export default function Tournees() {
         </form>
       )}
 
+      {estResponsableTournees && membres.some((m) => tournees.some((tr) => tr.commercial_id === m.id)) && (
+        <select
+          value={filtreCommercialListe}
+          onChange={(e) => setFiltreCommercialListe(e.target.value)}
+          className="w-full border rounded px-3 py-2 text-sm mb-3"
+        >
+          <option value="">{t('liste.tousLesCommerciaux')}</option>
+          {membres.filter((m) => tournees.some((tr) => tr.commercial_id === m.id)).map((m) => (
+            <option key={m.id} value={m.id}>{m.nom}</option>
+          ))}
+        </select>
+      )}
+
       <div className="space-y-2">
-        {tournees.map((tournee) => (
-          <button
-            key={tournee.id}
-            onClick={() => ouvrirTournee(tournee)}
-            className="w-full text-left border rounded-lg p-3 hover:bg-gray-50 flex justify-between items-center"
-          >
-            <div>
-              <p className="font-medium">
-                {formatDate(tournee.date_tournee)}
-                {nomMembre(tournee.commercial_id) ? ` — ${nomMembre(tournee.commercial_id)}` : ''}
-                {tournee.proposee_par_ia && <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">✨ IA</span>}
-                {tournee.en_attente_validation && <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">{t('validation.badge')}</span>}
-              </p>
-              <p className="text-xs text-gray-500">{t('detail.statutLabel')} : {tournee.statut || t('statutPlanifiee')}</p>
-            </div>
-            <span className="text-gray-400">→</span>
-          </button>
-        ))}
-        {tournees.length === 0 && (
+        {tourneesAVenir.map(renderTournee)}
+        {tourneesAVenir.length === 0 && (
           <p className="text-gray-400 text-center py-8">{t('aucuneTournee')}</p>
         )}
       </div>
+
+      {tourneesArchivees.length > 0 && (
+        <div className="mt-6">
+          <button onClick={() => setArchivesVisibles((v) => !v)} className="text-sm text-gray-600 underline">
+            {archivesVisibles ? '▾' : '▸'} {t('liste.archives', { n: tourneesArchivees.length })}
+          </button>
+          {archivesVisibles && (
+            <div className="space-y-2 mt-2 opacity-80">
+              {tourneesArchivees.slice(0, nbArchivesAffichees).map(renderTournee)}
+              {tourneesArchivees.length > nbArchivesAffichees && (
+                <button onClick={() => setNbArchivesAffichees((n) => n + 20)} className="w-full text-sm text-blue-600 py-2">
+                  {t('liste.afficherPlus')}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {rapportLigne && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">

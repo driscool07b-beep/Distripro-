@@ -106,5 +106,11 @@
   "portefeuilleVide": "该客户组合为空。请在“客户”页面为该业务员分配客户。",
   "manuel": {
     "titre": "或手动选择（单日）"
+  },
+  "liste": {
+    "tousLesCommerciaux": "全部业务员",
+    "archives": "归档 —— 过往路线（{{n}}）",
+    "afficherPlus": "显示更多",
+    "passee": "已过期"
   }
 }

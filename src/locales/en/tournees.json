@@ -106,5 +106,11 @@
   "portefeuilleVide": "No customers in this portfolio. Assign customers to this sales rep on the Customers page.",
   "manuel": {
     "titre": "Or pick manually (one day)"
+  },
+  "liste": {
+    "tousLesCommerciaux": "All sales reps",
+    "archives": "Archive — past routes ({{n}})",
+    "afficherPlus": "Show more",
+    "passee": "past"
   }
 }
