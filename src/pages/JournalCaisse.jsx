@@ -717,6 +717,18 @@ export default function JournalCaisse() {
                     <div className="space-y-2">
                       {demandesEnAttente.map((d) => (
                         <div key={d.id} className="border border-amber-200 bg-amber-50 rounded-lg p-3">
+                          {editionEnCours === d.id ? (
+                            <div className="space-y-2">
+                              <input className="input-field text-sm" value={editLibelle} onChange={(e) => setEditLibelle(e.target.value)} placeholder={t('libelle')} />
+                              <input type="number" min="0" className="input-field text-sm" value={editMontant} onChange={(e) => setEditMontant(e.target.value)} placeholder={t('montant')} />
+                              <input className="input-field text-sm" value={editBeneficiaire} onChange={(e) => setEditBeneficiaire(e.target.value)} placeholder={t('beneficiaire')} />
+                              <div className="flex gap-2">
+                                <button onClick={() => setEditionEnCours(null)} className="btn-secondary text-xs flex-1">{t('annuler')}</button>
+                                <button onClick={() => enregistrerEdition(d.id)} disabled={envoiAction === d.id} className="btn-primary text-xs flex-1">{t('enregistrer')}</button>
+                              </div>
+                            </div>
+                          ) : (
+                          <>
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <p className="font-medium text-sm">{d.numero} — {d.libelle}</p>
@@ -731,9 +743,10 @@ export default function JournalCaisse() {
                             </button>
                           )}
                           {d.demande_par === profil?.id && (
-                            <button onClick={() => annulerDemande(d.id)} disabled={envoiAction === d.id} className="text-xs text-red-600 underline mb-2 block">
-                              {t('annulerMaDemande')}
-                            </button>
+                            <div className="flex gap-3 mb-2">
+                              <button onClick={() => ouvrirEdition(d)} className="text-xs text-petrol-600 underline block">{t('corriger')}</button>
+                              <button onClick={() => annulerDemande(d.id)} disabled={envoiAction === d.id} className="text-xs text-red-600 underline block">{t('annulerMaDemande')}</button>
+                            </div>
                           )}
 
                           {refusEnCours === d.id ? (
@@ -759,6 +772,8 @@ export default function JournalCaisse() {
                                 {envoiAction === d.id ? '…' : t('valider')}
                               </button>
                             </div>
+                          )}
+                          </>
                           )}
                         </div>
                       ))}
