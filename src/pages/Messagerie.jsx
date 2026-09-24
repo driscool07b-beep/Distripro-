@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import Avatar from '../components/Avatar'
 import { useAuth } from '../context/AuthContext'
 import { formatDateHeure } from '../lib/format'
 
@@ -29,7 +30,7 @@ export default function Messagerie() {
   async function chargerCollegues() {
     const { data } = await supabase
       .from('profils')
-      .select('id, nom')
+      .select('id, nom, photo_path')
       .neq('id', profil?.id)
       .order('nom')
     setCollegues(data || [])
@@ -93,6 +94,12 @@ export default function Messagerie() {
               onClick={() => setConversationOuverte(c.conversation_id)}
               className="w-full text-left border border-line rounded-lg p-3 flex items-center justify-between hover:bg-canvas/60"
             >
+              <div className="flex items-center gap-3 min-w-0">
+              {c.type === 'groupe' ? (
+                <span className="shrink-0 w-10 h-10 rounded-full bg-petrol-800 text-white inline-flex items-center justify-center font-semibold">#</span>
+              ) : (
+                <Avatar nom={c.autre_membre_nom} chemin={c.autre_membre_photo} taille={40} />
+              )}
               <div className="min-w-0">
                 <p className="font-medium text-sm flex items-center gap-2">
                   {c.type === 'groupe' ? '# ' : ''}
@@ -108,6 +115,7 @@ export default function Messagerie() {
                     ? t('piecesJointe')
                     : t('aucunMessage')}
                 </p>
+              </div>
               </div>
               {c.dernier_message_at && (
                 <span className="text-xs text-petrol-400 shrink-0 ml-2">
@@ -131,8 +139,9 @@ export default function Messagerie() {
                 <button
                   key={col.id}
                   onClick={() => ouvrirConversationDirecte(col.id)}
-                  className="w-full text-left px-3 py-2 rounded hover:bg-canvas text-sm"
+                  className="w-full text-left px-3 py-2 rounded hover:bg-canvas text-sm flex items-center gap-2.5"
                 >
+                  <Avatar nom={col.nom} chemin={col.photo_path} taille={30} />
                   {col.nom}
                 </button>
               ))}
@@ -190,6 +199,7 @@ function ModalNouveauCanal({ collegues, onAnnuler, onCreer }) {
           {collegues.map((col) => (
             <label key={col.id} className="flex items-center gap-2 text-sm px-1 py-1">
               <input type="checkbox" checked={selection.includes(col.id)} onChange={() => toggleMembre(col.id)} />
+              <Avatar nom={col.nom} chemin={col.photo_path} taille={24} />
               {col.nom}
             </label>
           ))}
@@ -249,7 +259,7 @@ function FilConversation({ conversationId, onRetour }) {
 
     const { data } = await supabase
       .from('messages')
-      .select('id, contenu, piece_jointe_path, piece_jointe_nom, piece_jointe_type, expediteur_id, created_at, profils(nom)')
+      .select('id, contenu, piece_jointe_path, piece_jointe_nom, piece_jointe_type, expediteur_id, created_at, profils(nom, photo_path)')
       .eq('conversation_id', conversationId)
       .order('created_at')
     setMessages(data || [])
@@ -324,12 +334,17 @@ function FilConversation({ conversationId, onRetour }) {
           <p className="text-sm text-petrol-500 text-center">{t('chargement')}</p>
         ) : (
           <>
-            {messages.map((m) => {
+            {messages.map((m, index) => {
               const estMoi = m.expediteur_id === profil?.id
+              // Photo affichée une seule fois par suite de messages du même auteur.
+              const debutSerie = index === 0 || messages[index - 1].expediteur_id !== m.expediteur_id
               return (
-                <div key={m.id} className={`flex ${estMoi ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${estMoi ? 'bg-petrol-800 text-white' : 'bg-canvas border border-line'}`}>
-                    {!estMoi && <p className="text-xs font-medium text-petrol-500 mb-0.5">{m.profils?.nom}</p>}
+                <div key={m.id} className={`flex items-end gap-2 ${estMoi ? 'justify-end' : 'justify-start'} ${debutSerie ? 'pt-1.5' : ''}`}>
+                  {!estMoi && (debutSerie
+                    ? <Avatar nom={m.profils?.nom} chemin={m.profils?.photo_path} taille={30} className="self-start" />
+                    : <span className="w-[30px] shrink-0" />)}
+                  <div className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${estMoi ? 'bg-petrol-800 text-white rounded-br-md' : 'bg-white border border-line rounded-bl-md'}`}>
+                    {!estMoi && debutSerie && <p className="text-xs font-medium text-petrol-500 mb-0.5">{m.profils?.nom}</p>}
                     {m.contenu && <p className="whitespace-pre-wrap break-words">{m.contenu}</p>}
                     {m.piece_jointe_path && (
                       m.piece_jointe_type?.startsWith('image/') && urlsPieces[m.id] ? (

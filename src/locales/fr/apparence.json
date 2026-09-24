@@ -35,5 +35,14 @@
     "titre": "Bulles d'aide sur les boutons",
     "actives": "Activées : survolez un bouton (ou appuyez longuement dessus sur téléphone) pour savoir à quoi il sert.",
     "desactivees": "Désactivées sur cet appareil."
+  },
+  "photo": {
+    "titre": "Photo de profil",
+    "aide": "Visible par vos collègues dans la messagerie et la page Équipe. Elle est recadrée en carré automatiquement.",
+    "choisir": "Choisir une photo",
+    "changer": "Changer la photo",
+    "envoi": "Envoi…",
+    "retirer": "Retirer la photo",
+    "erreur": "La photo n'a pas pu être enregistrée"
   }
 }

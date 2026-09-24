@@ -35,5 +35,14 @@
     "titre": "Help bubbles on buttons",
     "actives": "On: hover over a button (or long-press it on a phone) to see what it does.",
     "desactivees": "Off on this device."
+  },
+  "photo": {
+    "titre": "Profile photo",
+    "aide": "Visible to your colleagues in messaging and on the Team page. It is cropped to a square automatically.",
+    "choisir": "Choose a photo",
+    "changer": "Change photo",
+    "envoi": "Uploading…",
+    "retirer": "Remove photo",
+    "erreur": "The photo could not be saved"
   }
 }

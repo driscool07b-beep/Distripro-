@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import Avatar from '../components/Avatar'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
@@ -59,7 +60,7 @@ export default function Utilisateurs() {
   async function charger() {
     setChargement(true)
     const [{ data: m }, { data: inv }, { data: j }, { data: d }, { data: gd }] = await Promise.all([
-      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu, lecture_seule, responsable_tournees, ia_active').order('nom'),
+      supabase.from('profils').select('id, nom, nom_complet, role, zone, actif, telephone, acces_etendu, lecture_seule, responsable_tournees, ia_active, photo_path').order('nom'),
       supabase.from('invitations').select('id, email, nom_complet, role, zone, statut, created_at').eq('statut', 'en_attente').order('created_at', { ascending: false }),
       supabase
         .from('journal_administration')
@@ -284,6 +285,8 @@ export default function Utilisateurs() {
 
   const renderMembre = (m) => (
               <div key={m.id} className={`border rounded-lg p-3 flex justify-between items-center ${m.actif ? 'border-line' : 'border-red-200 bg-red-50/40'}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                <Avatar nom={m.nom_complet || m.nom} chemin={m.photo_path} taille={40} />
                 <div>
                   <p className="text-sm font-medium">
                     {m.nom_complet || m.nom}
@@ -313,6 +316,7 @@ export default function Utilisateurs() {
                     {m.zone ? ` — ${m.zone}` : ''}
                     {m.telephone ? ` — ${m.telephone}` : ''}
                   </p>
+                </div>
                 </div>
                 <div className="flex gap-3 shrink-0 flex-wrap justify-end">
                   <button data-aide="utilisateurs.modifier" onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import Avatar, { preparerPhotoProfil } from '../components/Avatar'
 import { infobullesActives, definirInfobulles } from '../components/InfobullesAide'
 import { useAuth } from '../context/AuthContext'
 import { appliquerApparence, TAILLES_POLICE } from '../lib/apparence'
@@ -20,6 +21,31 @@ export default function Apparence() {
   const [theme, setTheme] = useState(profil?.theme || 'petrol')
   const [taillePolice, setTaillePolice] = useState(profil?.taille_police || 'normal')
   const [bullesActives, setBullesActives] = useState(infobullesActives())
+  const [envoiPhoto, setEnvoiPhoto] = useState(false)
+  const [erreurPhoto, setErreurPhoto] = useState('')
+
+  async function changerPhoto(fichier) {
+    if (!fichier) return
+    setErreurPhoto('')
+    setEnvoiPhoto(true)
+    try {
+      const photo = await preparerPhotoProfil(fichier)
+      const chemin = `${profil.entreprise_id}/${profil.id}/${Date.now()}.jpg`
+      const { error } = await supabase.storage.from('photos-profil').upload(chemin, photo, { upsert: false, contentType: 'image/jpeg' })
+      if (error) throw error
+      const { error: erreurRpc } = await supabase.rpc('definir_photo_profil', { p_chemin: chemin })
+      if (erreurRpc) throw erreurRpc
+      await rechargerProfil()
+    } catch (e) {
+      setErreurPhoto(`${t('photo.erreur')} (${e.message})`)
+    }
+    setEnvoiPhoto(false)
+  }
+
+  async function retirerPhoto() {
+    await supabase.rpc('definir_photo_profil', { p_chemin: null })
+    await rechargerProfil()
+  }
   const [enregistrement, setEnregistrement] = useState(false)
   const [confirmation, setConfirmation] = useState(false)
   const [abonnePush, setAbonnePush] = useState(null)
@@ -126,6 +152,26 @@ export default function Apparence() {
               <span className="text-xs text-petrol-500 mt-1 block">{t(`taillePolice.${valeur}`)}</span>
             </button>
           ))}
+        </div>
+      </div>
+
+      <div className="card p-4 mb-4">
+        <h2 className="font-semibold mb-3">{t('photo.titre')}</h2>
+        <div className="flex items-center gap-4">
+          <Avatar nom={profil?.nom} chemin={profil?.photo_path} taille={72} />
+          <div className="space-y-2">
+            <p className="text-xs text-petrol-500">{t('photo.aide')}</p>
+            <div className="flex flex-wrap gap-2">
+              <label className={`btn-secondary text-xs px-3 py-1.5 cursor-pointer ${envoiPhoto ? 'opacity-50 pointer-events-none' : ''}`}>
+                📷 {envoiPhoto ? t('photo.envoi') : profil?.photo_path ? t('photo.changer') : t('photo.choisir')}
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => { changerPhoto(e.target.files?.[0]); e.target.value = '' }} />
+              </label>
+              {profil?.photo_path && !envoiPhoto && (
+                <button type="button" onClick={retirerPhoto} className="text-xs text-red-600 underline">{t('photo.retirer')}</button>
+              )}
+            </div>
+            {erreurPhoto && <p className="text-xs text-red-600">{erreurPhoto}</p>}
+          </div>
         </div>
       </div>
 

@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
   async function chargerProfilInterne(userId) {
     let { data: profilData, error: profilError } = await supabase
       .from('profils')
-      .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, ia_active, langue, theme, taille_police, doit_changer_mot_de_passe')
+      .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, ia_active, photo_path, langue, theme, taille_police, doit_changer_mot_de_passe')
       .eq('id', userId)
       .single()
 
@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
       if (finalise) {
         const retry = await supabase
           .from('profils')
-          .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, ia_active, langue, theme, taille_police, doit_changer_mot_de_passe')
+          .select('id, nom, role, entreprise_id, actif, acces_etendu, lecture_seule, responsable_tournees, ia_active, photo_path, langue, theme, taille_police, doit_changer_mot_de_passe')
           .eq('id', userId)
           .single()
         profilData = retry.data

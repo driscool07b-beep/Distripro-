@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import Avatar from './Avatar'
 import InfobullesAide from './InfobullesAide'
 import TableauxResponsifs from './TableauxResponsifs'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
@@ -377,10 +378,13 @@ export default function Layout() {
         </nav>
 
         <div className="px-3 py-4 border-t border-white/10">
-          <div className="px-3 py-2 mb-2">
-            <div className="text-sm font-medium truncate">{profil?.nom}</div>
-            <div className="text-xs text-white/50 capitalize">{profil?.role?.replace('_', ' ')}</div>
-          </div>
+          <NavLink to="/apparence" onClick={() => setMenuOuvert(false)} className="px-3 py-2 mb-2 flex items-center gap-2.5 rounded-lg hover:bg-white/5">
+            <Avatar nom={profil?.nom} chemin={profil?.photo_path} taille={34} className="!ring-white/20" />
+            <div className="min-w-0">
+              <div className="text-sm font-medium truncate">{profil?.nom}</div>
+              <div className="text-xs text-white/50 capitalize">{profil?.role?.replace('_', ' ')}</div>
+            </div>
+          </NavLink>
           <div className="px-3 pb-2">
             <SelecteurLangue className="!bg-white/10 !border-white/10 !text-white text-xs py-1.5" />
           </div>
