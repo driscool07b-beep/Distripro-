@@ -411,7 +411,7 @@ export default function Banques() {
   }
 
   return (
-    <div className={`p-4 mx-auto ${onglet === 'grandLivre' ? 'max-w-7xl' : 'max-w-3xl'}`}>
+    <div className={`p-4 sm:p-6 lg:p-8 mx-auto ${onglet === 'grandLivre' ? 'max-w-7xl' : 'max-w-4xl'}`}>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {onglet === 'banques' && (

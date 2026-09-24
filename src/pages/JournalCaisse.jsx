@@ -583,7 +583,7 @@ export default function JournalCaisse() {
   }
 
   return (
-    <div className={`p-4 mx-auto ${onglet === 'grandLivre' ? 'max-w-7xl' : 'max-w-3xl'}`}>
+    <div className={`p-4 sm:p-6 lg:p-8 mx-auto ${onglet === 'grandLivre' ? 'max-w-7xl' : 'max-w-4xl'}`}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {peutCreer && (

@@ -522,7 +522,7 @@ export default function Tournees() {
 
   if (!accesAutorise('tournees', profil?.role)) {
     return (
-      <div className="p-4 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     );
@@ -538,7 +538,7 @@ export default function Tournees() {
     const aujourdhuiDetail = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
     const tourneeCloturee = selectedTournee.date_tournee < aujourdhuiDetail
     return (
-      <div className="p-4 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <button data-aide="tournees.detail.retour"
           onClick={() => setSelectedTournee(null)}
           className="mb-4 text-blue-600 flex items-center gap-1"
@@ -711,7 +711,7 @@ export default function Tournees() {
   )
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {autoriseProgrammer && (

@@ -128,7 +128,7 @@ export default function LocaliserStock() {
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-4">
         {t('sousTitre')}

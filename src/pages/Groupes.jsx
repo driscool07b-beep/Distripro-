@@ -93,7 +93,7 @@ export default function Groupes() {
 
   if (!accesAutorise('groupes', profil?.role)) {
     return (
-      <div className="p-4 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
@@ -102,7 +102,7 @@ export default function Groupes() {
   if (chargement) return <div className="p-4 text-center text-petrol-500">{t('chargement')}</div>
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-4">
         {t('sousTitre')}

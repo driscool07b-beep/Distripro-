@@ -284,7 +284,7 @@ function DashboardEntreprise() {
   }
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
         <p className="text-sm text-petrol-700 mt-1">{t('entreprise.sousTitre')}</p>
@@ -586,7 +586,7 @@ function DashboardCommercial() {
   const pctObjectif = objectif && objectif.cible > 0 ? Math.min(100, Math.round((objectif.realise / objectif.cible) * 100)) : null
 
   return (
-    <div className="p-4 sm:p-8 max-w-4xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
         <p className="text-sm text-petrol-700 mt-1">{t('commercial.sousTitre')}</p>
@@ -694,7 +694,7 @@ function DashboardComptable() {
   const totalAttendu = kpi.ventesCashJour + kpi.recouvrementJour
 
   return (
-    <div className="p-4 sm:p-8 max-w-4xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
         <p className="text-sm text-petrol-700 mt-1">{t('comptable.sousTitre')}</p>
@@ -792,7 +792,7 @@ function DashboardAgentRecouvrement() {
   }
 
   return (
-    <div className="p-4 sm:p-8 max-w-4xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
         <p className="text-sm text-petrol-700 mt-1">{t('agentRecouvrement.sousTitre')}</p>
@@ -879,7 +879,7 @@ function DashboardGestionnaireStock() {
   }
 
   return (
-    <div className="p-4 sm:p-8 max-w-4xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
         <p className="text-sm text-petrol-700 mt-1">{t('gestionnaireStock.sousTitre')}</p>

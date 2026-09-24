@@ -343,6 +343,32 @@
   }
 }
 
+/* ---------- Tableaux sur ordinateur : lecture confortable ---------- */
+@media screen and (min-width: 641px) {
+  main table.tableau-responsif thead th {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+    white-space: nowrap;
+  }
+  main table.tableau-responsif tbody td {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+    vertical-align: middle;
+  }
+  main table.tableau-responsif tbody tr:hover {
+    background: rgb(var(--amber-400) / 0.08) !important;
+  }
+}
+@media screen and (min-width: 1024px) {
+  main table.tableau-responsif.text-sm {
+    font-size: 0.9375rem;
+  }
+}
+
 @keyframes infobulle-apparition {
   from { opacity: 0; }
   to { opacity: 1; }

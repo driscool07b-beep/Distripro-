@@ -276,7 +276,7 @@ export default function Utilisateurs() {
 
   if (profil?.role !== 'admin') {
     return (
-      <div className="p-4 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
         <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
@@ -341,7 +341,7 @@ export default function Utilisateurs() {
   )
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         <button data-aide="utilisateurs.inviterCollaborateur" onClick={() => ouvrirModal(null)} className="btn-primary text-sm">

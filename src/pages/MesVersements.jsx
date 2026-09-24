@@ -60,7 +60,7 @@ export default function MesVersements() {
   const resteAVerser = Math.max(0, totalDuAujourdhui - detailJour.deposeAujourdhui)
 
   return (
-    <div className="p-4 sm:p-8 max-w-2xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">{t('titre')}</h1>
         <p className="text-sm text-petrol-700 mt-1">{t('sousTitre')}</p>

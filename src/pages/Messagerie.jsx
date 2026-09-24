@@ -70,7 +70,7 @@ export default function Messagerie() {
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex gap-2">
@@ -313,7 +313,7 @@ function FilConversation({ conversationId, onRetour }) {
   const titre = enTete?.type === 'groupe' ? `# ${enTete.nom}` : enTete?.autre_membre_nom || t('conversation')
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-2xl mx-auto">
+    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto">
       <div className="flex items-center gap-3 p-3 border-b border-line shrink-0">
         <button onClick={onRetour} className="text-petrol-500">←</button>
         <h1 className="font-semibold">{titre}</h1>

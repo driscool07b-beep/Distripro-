@@ -15,7 +15,7 @@ export default function StockCommercial() {
 
   if (!gestionComplete && !lectureSeuleCommercial) {
     return (
-      <div className="p-4 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         <p className="text-petrol-500">
           {t('accesRefuse')}
         </p>
@@ -25,7 +25,7 @@ export default function StockCommercial() {
 
   if (lectureSeuleCommercial) {
     return (
-      <div className="p-4 max-w-3xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         <h1 className="text-xl font-bold mb-4">{t('monStockEnMain')}</h1>
         <StockEnMain />
       </div>
@@ -33,7 +33,7 @@ export default function StockCommercial() {
   }
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <h1 className="text-xl font-bold mb-4">{t('stockDesCommerciaux')}</h1>
       <div className="flex gap-2 mb-4 flex-wrap">
         {[

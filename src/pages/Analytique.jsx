@@ -20,7 +20,7 @@ export default function Analytique() {
 
   if (!['admin', 'manager'].includes(profil?.role)) {
     return (
-      <div className="p-4 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         <p className="text-petrol-500">
           {t('accesRefuse')}
         </p>
@@ -29,7 +29,7 @@ export default function Analytique() {
   }
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-4">{entreprise?.nom}</p>
 

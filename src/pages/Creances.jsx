@@ -348,7 +348,7 @@ export default function Creances() {
 
   if (!accesAutorise('creances', profil?.role)) {
     return (
-      <div className="p-4 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         <p className="text-petrol-500">{t('accesRefuse')}</p>
       </div>
     )
@@ -359,7 +359,7 @@ export default function Creances() {
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex flex-wrap gap-2">
