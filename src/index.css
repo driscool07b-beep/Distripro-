@@ -168,11 +168,11 @@
 
   /* Lignes cliquables des listes (commandes, tournées, dépôts…) : fond blanc,
      ombre douce, légère élévation au survol. */
-  main :is(a, button).border.rounded-lg:not(.btn-primary):not(.btn-secondary) {
+  main :is(a, button).border.rounded-lg:not(.btn-primary):not(.btn-secondary):not([class^='bg-']):not([class*=' bg-']):not(.text-white) {
     @apply bg-white rounded-2xl transition-all duration-150;
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 12px rgb(var(--petrol-900) / 0.04);
   }
-  main :is(a, button).border.rounded-lg:not(.btn-primary):not(.btn-secondary):hover {
+  main :is(a, button).border.rounded-lg:not(.btn-primary):not(.btn-secondary):not([class^='bg-']):not([class*=' bg-']):not(.text-white):hover {
     transform: translateY(-1px);
     border-color: rgb(var(--amber-400));
     box-shadow: 0 6px 18px rgb(var(--petrol-900) / 0.1);

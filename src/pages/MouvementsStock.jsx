@@ -226,13 +226,9 @@ export default function MouvementsStock() {
                         </button>
                       )}
                     </>
-                  ) : peutJoindre && formulaire?.mouvementId !== m.id ? (
-                    <button data-aide="mouvementsstock.joindreJustificatif" onClick={() => ouvrirFormulaire(m.id, false)} className="text-xs text-petrol-500 underline">
-                      {t('joindreJustificatif')}
-                    </button>
-                  ) : !m.reference_doc && !peutJoindre ? (
-                    <span className="text-xs text-petrol-400">{t('sansJustificatif')}</span>
-                  ) : null}
+                  ) : (
+                    <span className="text-xs text-petrol-400 italic">{t('sansJustificatif')}</span>
+                  )}
                 </div>
 
                 {formulaire?.mouvementId === m.id && formulaireEnvoi(m)}
