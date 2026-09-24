@@ -182,5 +182,18 @@
     "titre": "Validation des tournées programmées par un commercial",
     "active": "Activé : une tournée qu'un commercial programme lui-même doit être approuvée par un responsable avant les visites.",
     "desactive": "Désactivé : un commercial peut programmer et effectuer sa propre tournée directement."
+  },
+  "consommationIA": {
+    "titre": "Utilisation de l'IA — ce mois",
+    "sousTitre": "Nombre d'utilisations des fonctions IA par votre équipe depuis le 1er du mois.",
+    "aucune": "Aucune utilisation de l'IA ce mois-ci.",
+    "parFonction": "Par fonction",
+    "parPersonne": "Par personne",
+    "total": "Total",
+    "fonctions": {
+      "analyse_ia": "Analyse IA",
+      "planification_tournees": "Planification des tournées",
+      "assistant": "Assistant IA"
+    }
   }
 }

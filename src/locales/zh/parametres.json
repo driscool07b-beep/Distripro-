@@ -182,5 +182,18 @@
     "titre": "业务员自排路线的审批",
     "active": "开启：业务员为自己安排的路线须经负责人批准后才能拜访。",
     "desactive": "关闭：业务员可直接安排并执行自己的路线。"
+  },
+  "consommationIA": {
+    "titre": "AI 使用情况 —— 本月",
+    "sousTitre": "自本月 1 日起团队使用 AI 功能的次数。",
+    "aucune": "本月尚未使用 AI。",
+    "parFonction": "按功能",
+    "parPersonne": "按人员",
+    "total": "合计",
+    "fonctions": {
+      "analyse_ia": "AI 分析",
+      "planification_tournees": "路线规划",
+      "assistant": "AI 助手"
+    }
   }
 }

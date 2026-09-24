@@ -1356,6 +1356,67 @@ export default function Parametres() {
           </button>
         </form>
       </div>
+      {profil?.role === 'admin' && <SectionConsommationIA />}
+    </div>
+  )
+}
+
+// Consommation de l'IA par l'entreprise ce mois-ci (nombre d'utilisations,
+// par fonction et par personne). Les coûts restent côté plateforme.
+function SectionConsommationIA() {
+  const { t } = useTranslation('parametres')
+  const [lignes, setLignes] = useState(null)
+
+  useEffect(() => {
+    const debut = new Date()
+    debut.setDate(1)
+    debut.setHours(0, 0, 0, 0)
+    supabase
+      .from('consommation_ia')
+      .select('fonction, profil_id, profils(nom)')
+      .gte('created_at', debut.toISOString())
+      .then(({ data }) => setLignes(data || []))
+  }, [])
+
+  if (lignes === null) return null
+
+  const parFonction = {}
+  const parPersonne = {}
+  lignes.forEach((l) => {
+    parFonction[l.fonction] = (parFonction[l.fonction] || 0) + 1
+    const nom = l.profils?.nom || '—'
+    parPersonne[nom] = (parPersonne[nom] || 0) + 1
+  })
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">{t('consommationIA.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('consommationIA.sousTitre')}</p>
+      {lignes.length === 0 ? (
+        <p className="text-sm text-petrol-400">{t('consommationIA.aucune')}</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          <div>
+            <p className="text-xs font-medium text-petrol-600 mb-1">{t('consommationIA.parFonction')}</p>
+            {Object.entries(parFonction).map(([f, n]) => (
+              <div key={f} className="flex justify-between py-0.5">
+                <span>{t(`consommationIA.fonctions.${f}`, f)}</span><span className="font-mono">{n}</span>
+              </div>
+            ))}
+            <div className="flex justify-between py-0.5 border-t border-line mt-1 font-semibold">
+              <span>{t('consommationIA.total')}</span><span className="font-mono">{lignes.length}</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-medium text-petrol-600 mb-1">{t('consommationIA.parPersonne')}</p>
+            {Object.entries(parPersonne).sort((a, b) => b[1] - a[1]).map(([nom, n]) => (
+              <div key={nom} className="flex justify-between py-0.5">
+                <span>{nom}</span><span className="font-mono">{n}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

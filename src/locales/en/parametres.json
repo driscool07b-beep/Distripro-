@@ -182,5 +182,18 @@
     "titre": "Approval of routes scheduled by a sales rep",
     "active": "On: a route a sales rep schedules for themselves must be approved by a supervisor before visits.",
     "desactive": "Off: a sales rep can schedule and carry out their own route directly."
+  },
+  "consommationIA": {
+    "titre": "AI usage — this month",
+    "sousTitre": "Number of times your team used AI features since the 1st of the month.",
+    "aucune": "No AI usage this month.",
+    "parFonction": "By feature",
+    "parPersonne": "By person",
+    "total": "Total",
+    "fonctions": {
+      "analyse_ia": "AI analysis",
+      "planification_tournees": "Route planning",
+      "assistant": "AI assistant"
+    }
   }
 }
