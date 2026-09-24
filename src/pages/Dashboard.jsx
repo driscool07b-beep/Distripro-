@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts'
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { formatXOF, formatDateHeure } from '../lib/format'
@@ -171,16 +171,25 @@ function DashboardEntreprise() {
       .gte('created_at', debut.toISOString())
       .order('created_at')
 
+    const cleDe = (d) =>
+      periode === '12m'
+        ? d.toLocaleDateString(i18n.language, { month: 'short', year: '2-digit' })
+        : d.toLocaleDateString(i18n.language, { day: '2-digit', month: '2-digit' })
+    // Toutes les dates de la période, y compris les jours sans vente (à 0),
+    // pour que la courbe reflète la réalité au lieu de relier deux points isolés.
     const parCle = {}
+    if (periode === '12m') {
+      for (let i = 11; i >= 0; i--) parCle[cleDe(new Date(maintenant.getFullYear(), maintenant.getMonth() - i, 1))] = 0
+    } else {
+      const nbJours = periode === '7j' ? 7 : 30
+      for (let i = nbJours - 1; i >= 0; i--) parCle[cleDe(new Date(Date.now() - i * 86400000))] = 0
+    }
     ;(data || []).forEach((v) => {
-      const d = new Date(v.created_at)
-      const cle =
-        periode === '12m'
-          ? d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' })
-          : d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
-      parCle[cle] = (parCle[cle] || 0) + Number(v.total || 0)
+      const cle = cleDe(new Date(v.created_at))
+      if (cle in parCle) parCle[cle] += Number(v.total || 0)
     })
-    setVentesGraphe(Object.entries(parCle).map(([jour, total]) => ({ jour, total })))
+    const serie = Object.entries(parCle).map(([jour, total]) => ({ jour, total }))
+    setVentesGraphe(serie.some((x) => x.total > 0) ? serie : [])
     setChargementGraphe(false)
   }
 
@@ -231,7 +240,7 @@ function DashboardEntreprise() {
         supabase.from('ventes').select('total, created_at').neq('statut', 'annulee').gte('created_at', debutMois.toISOString()),
         supabase.from('clients').select('id', { count: 'exact', head: true }).eq('segment', 'actif'),
         supabase.from('clients').select('id', { count: 'exact', head: true }),
-        supabase.from('stocks').select('quantite, produits(nom, seuil_alerte, prix_vente)'),
+        supabase.from('stocks').select('quantite, depots(nom), produits(nom, seuil_alerte, prix_vente)'),
         supabase
           .from('ventes')
           .select('total, montant_regle, date_echeance')
@@ -335,7 +344,7 @@ function DashboardEntreprise() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="card p-6 lg:col-span-2">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-            <h2 className="font-semibold">{t('entreprise.ventesPeriodeTitre')}</h2>
+            <TitreSection icone="tendance" theme="ventes" className="">{t('entreprise.ventesPeriodeTitre')}</TitreSection>
             <div className="flex gap-1">
               {['7j', '30j', '12m'].map((p) => (
                 <button
@@ -358,33 +367,51 @@ function DashboardEntreprise() {
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={ventesGraphe}>
-                <CartesianGrid stroke="#e2e4df" vertical={false} />
-                <XAxis dataKey="jour" tick={{ fontSize: 12, fill: '#255a67' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 12, fill: '#255a67' }} axisLine={false} tickLine={false} />
-                <Tooltip formatter={(v) => formatXOF(v)} />
-                <Line type="monotone" dataKey="total" stroke="#d69428" strokeWidth={2.5} dot={{ r: 3 }} />
-              </LineChart>
+              <AreaChart data={ventesGraphe} margin={{ left: -8, right: 8 }}>
+                <defs>
+                  <linearGradient id="degradeVentes" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#d69428" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#d69428" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="#e2e4df" vertical={false} strokeDasharray="4 4" />
+                <XAxis dataKey="jour" tick={{ fontSize: 11, fill: '#255a67' }} axisLine={false} tickLine={false} minTickGap={12} />
+                <YAxis tick={{ fontSize: 11, fill: '#255a67' }} axisLine={false} tickLine={false} tickFormatter={formatCompact} width={44} />
+                <Tooltip formatter={(v) => formatXOF(v)} contentStyle={STYLE_INFOBULLE} />
+                <Area type="monotone" dataKey="total" stroke="#d69428" strokeWidth={2.5} fill="url(#degradeVentes)"
+                  dot={periodeGraphe === '7j' ? { r: 3, fill: '#fff', strokeWidth: 2 } : false} activeDot={{ r: 5 }} />
+              </AreaChart>
             </ResponsiveContainer>
           )}
         </div>
 
         <div className="card p-6">
-          <h2 className="font-semibold mb-4">{t('entreprise.produitsEnAlerte')}</h2>
+          <TitreSection icone="alerte" theme="alertes" className="mb-4">{t('entreprise.produitsEnAlerte')}</TitreSection>
           {alertes.length === 0 ? (
             <p className="text-sm text-petrol-500">{t('entreprise.aucunProduitSeuil')}</p>
           ) : (
             <ul className="space-y-3">
-              {alertes.map((a, i) => (
-                <Link
-                  key={i}
-                  to="/stock?filtre=alertes"
-                  className="flex items-center justify-between text-sm hover:underline"
-                >
-                  <span className="truncate">{a.produits?.nom}</span>
-                  <span className="font-mono text-amber-600 shrink-0 ml-2">{a.quantite} {t('restants')}</span>
-                </Link>
-              ))}
+              {alertes.map((a, i) => {
+                const seuil = Number(a.produits?.seuil_alerte || 0)
+                const niveau = seuil > 0 ? Math.max(0, Math.min(100, (Number(a.quantite) / seuil) * 100)) : 0
+                const rupture = Number(a.quantite) <= 0
+                return (
+                  <Link key={i} to="/stock?filtre=alertes" className="block group">
+                    <div className="flex items-center justify-between gap-2 text-sm">
+                      <span className="min-w-0">
+                        <span className="block truncate group-hover:underline">{a.produits?.nom}</span>
+                        {a.depots?.nom && <span className="block text-xs text-petrol-400 truncate">{a.depots.nom}</span>}
+                      </span>
+                      <span className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${rupture ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>
+                        {rupture ? t('rupture') : `${a.quantite} ${t('restants')}`}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 h-1 rounded-full bg-canvas overflow-hidden">
+                      <div className={`h-full rounded-full ${rupture ? 'bg-rose-500' : 'bg-amber-400'}`} style={{ width: `${rupture ? 100 : niveau}%` }} />
+                    </div>
+                  </Link>
+                )
+              })}
             </ul>
           )}
         </div>
@@ -398,7 +425,7 @@ function DashboardEntreprise() {
       <CamembertRepartitionCA />
 
       <div className="card p-6 mb-6">
-        <h2 className="font-semibold mb-1">{t('entreprise.objectifsTitre')}</h2>
+        <TitreSection icone="cible" theme="ventes" className="mb-1">{t('entreprise.objectifsTitre')}</TitreSection>
         <p className="text-xs text-petrol-500 mb-4">{t('entreprise.objectifsSousTitre')}</p>
         {chargementObjectifs ? (
           <p className="text-sm text-petrol-500">{t('chargement')}</p>
@@ -425,22 +452,22 @@ function DashboardEntreprise() {
       </div>
 
       <div className="card p-6">
-        <h2 className="font-semibold mb-4">{t('entreprise.comparaisonAnnuelleTitre')}</h2>
+        <TitreSection icone="calendrier" theme="clients" className="mb-4">{t('entreprise.comparaisonAnnuelleTitre')}</TitreSection>
         {chargementComparaison ? (
           <div className="h-64 flex items-center justify-center text-sm text-petrol-500">{t('chargement')}</div>
         ) : (
           <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={comparaisonAnnuelle}>
-              <CartesianGrid stroke="#e2e4df" vertical={false} />
-              <XAxis dataKey="mois" tick={{ fontSize: 12, fill: '#255a67' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 12, fill: '#255a67' }} axisLine={false} tickLine={false} />
-              <Tooltip formatter={(v) => formatXOF(v)} />
+            <LineChart data={comparaisonAnnuelle} margin={{ left: -8, right: 8 }}>
+              <CartesianGrid stroke="#e2e4df" vertical={false} strokeDasharray="4 4" />
+              <XAxis dataKey="mois" tick={{ fontSize: 11, fill: '#255a67' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#255a67' }} axisLine={false} tickLine={false} tickFormatter={formatCompact} width={44} />
+              <Tooltip formatter={(v) => formatXOF(v)} contentStyle={STYLE_INFOBULLE} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               {[0, 1, 2].map((i) => {
                 const annee = new Date().getFullYear() - 2 + i
                 const couleurs = ['#94a3b8', '#255a67', '#d69428']
                 return (
-                  <Line key={annee} type="monotone" dataKey={annee} name={String(annee)} stroke={couleurs[i]} strokeWidth={2} dot={{ r: 2 }} />
+                  <Line key={annee} type="monotone" dataKey={annee} name={String(annee)} stroke={couleurs[i]} strokeWidth={i === 2 ? 3 : 2} dot={false} activeDot={{ r: 4 }} />
                 )
               })}
             </LineChart>
@@ -456,14 +483,19 @@ function BlocObjectif({ titre, cible, realise, nb, t }) {
   return (
     <div>
       <p className="text-xs font-medium text-petrol-600 mb-1">{titre} <span className="text-petrol-400">({t('entreprise.nbObjectifs', { n: nb })})</span></p>
-      <div className="flex justify-between text-sm mb-1">
-        <span className="font-mono">{formatXOF(realise)} / {formatXOF(cible)}</span>
-        {pct !== null && <span className="font-semibold">{pct}%</span>}
+      <div className="flex items-end justify-between gap-2 mb-1.5">
+        <div>
+          <span className="font-mono text-lg font-semibold">{formatXOF(realise)}</span>
+          <span className="block text-xs text-petrol-500">{t('entreprise.surCible', { cible: formatXOF(cible) })}</span>
+        </div>
+        {pct !== null && (
+          <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${pct >= 100 ? 'bg-emerald-100 text-emerald-700' : pct >= 60 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'}`}>{pct}%</span>
+        )}
       </div>
-      <div className="w-full bg-canvas rounded-full h-2 overflow-hidden">
+      <div className="w-full bg-canvas rounded-full h-2.5 overflow-hidden">
         <div
-          className={`h-full rounded-full ${pct >= 100 ? 'bg-green-600' : pct >= 60 ? 'bg-amber-500' : 'bg-red-500'}`}
-          style={{ width: `${pct || 0}%` }}
+          className={`h-full rounded-full bg-gradient-to-r ${pct >= 100 ? 'from-emerald-400 to-emerald-600' : pct >= 60 ? 'from-amber-300 to-amber-500' : 'from-rose-400 to-rose-600'}`}
+          style={{ width: `${Math.max(pct || 0, 2)}%` }}
         />
       </div>
     </div>
@@ -582,7 +614,7 @@ function DashboardCommercial() {
 
       {objectif && (
         <div className="card p-5 mb-6">
-          <h2 className="font-semibold mb-2 text-sm">{t('commercial.monObjectifMois')}</h2>
+          <TitreSection icone="cible" theme="ventes" className="mb-2 text-sm">{t('commercial.monObjectifMois')}</TitreSection>
           <div className="flex justify-between text-xs text-petrol-600 mb-1">
             <span>{formatXOF(objectif.realise)} / {formatXOF(objectif.cible)}</span>
             <span className="font-medium">{pctObjectif}%</span>
@@ -597,7 +629,7 @@ function DashboardCommercial() {
       )}
 
       <div className="card p-6">
-        <h2 className="font-semibold mb-4">{t('commercial.mesVentes7j')}</h2>
+        <TitreSection icone="tendance" theme="ventes" className="mb-4">{t('commercial.mesVentes7j')}</TitreSection>
         {chargement ? (
           <div className="h-56 flex items-center justify-center text-sm text-petrol-500">{t('chargement')}</div>
         ) : ventes7j.length === 0 ? (
@@ -785,7 +817,7 @@ function DashboardAgentRecouvrement() {
           </div>
 
           <div className="card p-5">
-            <h2 className="font-semibold mb-3 text-sm">{t('agentRecouvrement.creancesUrgentes')}</h2>
+            <TitreSection icone="horloge" theme="echues" className="mb-3 text-sm">{t('agentRecouvrement.creancesUrgentes')}</TitreSection>
             {prioritaires.length === 0 ? (
               <p className="text-sm text-petrol-500">{t('agentRecouvrement.aucuneCreanceEchue')}</p>
             ) : (
@@ -872,7 +904,7 @@ function DashboardGestionnaireStock() {
           </div>
 
           <div className="card p-6">
-            <h2 className="font-semibold mb-4">{t('gestionnaireStock.produitsEnAlerte')}</h2>
+            <TitreSection icone="alerte" theme="alertes" className="mb-4">{t('gestionnaireStock.produitsEnAlerte')}</TitreSection>
             {alertes.length === 0 ? (
               <p className="text-sm text-petrol-500">{t('gestionnaireStock.aucunProduitSeuil')}</p>
             ) : (
@@ -933,6 +965,11 @@ const TRACES_ICONES = {
   bon: <><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4V2.5h6V4" /><path d="M8.5 10h7M8.5 14h7M8.5 18h4" /></>,
   camion: <><path d="M2 6h11v10H2z" /><path d="M13 9h4l4 4v3h-8" /><circle cx="6" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></>,
   portefeuille: <><rect x="3" y="6" width="18" height="14" rx="2" /><path d="M3 10h18" /><path d="M16 15h2" /><path d="M6 6l9-3 1 3" /></>,
+  cible: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /></>,
+  calendrier: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /><path d="M7.5 14h2M11 14h2M14.5 14h2M7.5 17.5h2M11 17.5h2" /></>,
+  caisse: <><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M6 11V6h9l3 5" /><path d="M8 15h8" /><circle cx="12" cy="18" r=".6" fill="currentColor" /></>,
+  banque: <><path d="M3 10l9-6 9 6" /><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8" /><path d="M3 21h18" /></>,
+  camembert: <><path d="M12 3a9 9 0 109 9h-9V3z" /><path d="M15 3.5A9 9 0 0120.5 9H15V3.5z" /></>,
   pieces: <><ellipse cx="12" cy="7" rx="7" ry="3" /><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7" /><path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5" /></>,
 }
 
@@ -944,6 +981,26 @@ function IconeKpi({ nom, className = '', strokeWidth = 1.8 }) {
     </svg>
   )
 }
+
+// Titre de section avec son illustration (mêmes couleurs que les cartes KPI).
+function TitreSection({ icone, theme, className = '', children }) {
+  const th = THEMES_KPI[theme] || THEMES_KPI.defaut
+  return (
+    <h2 className={`font-semibold flex items-center gap-2.5 ${className}`}>
+      <span className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${th.fond} ${th.texte}`}>
+        <IconeKpi nom={icone} className="w-[18px] h-[18px]" />
+      </span>
+      <span>{children}</span>
+    </h2>
+  )
+}
+
+// Montants abrégés pour les axes des graphiques : 24 k, 1,5 M…
+function formatCompact(v) {
+  return new Intl.NumberFormat(i18n.language, { notation: 'compact', maximumFractionDigits: 1 }).format(Number(v) || 0)
+}
+
+const STYLE_INFOBULLE = { borderRadius: 10, border: '1px solid #e2e4df', boxShadow: '0 4px 14px rgba(0,0,0,.08)', fontSize: 12 }
 
 function CarteKpi({ label, valeur, accent, alerte, to }) {
   const theme = themeKpi(to)
@@ -1035,7 +1092,7 @@ function CarteVersementsEnCours() {
   return (
     <div className="card p-4 mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="font-semibold">{t('entreprise.versementsEnCoursTitre')}</h2>
+        <TitreSection icone="portefeuille" theme="versements" className="">{t('entreprise.versementsEnCoursTitre')}</TitreSection>
         <span className="flex items-center gap-1.5 text-xs text-green-700">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
           {t('entreprise.enDirect')}
@@ -1204,7 +1261,7 @@ function CartesSoldesCaisses() {
 
   return (
     <div className="card p-4 mb-6">
-      <h2 className="font-semibold mb-3">{t('entreprise.soldesCaissesTitre')}</h2>
+      <TitreSection icone="caisse" theme="commandes" className="mb-3">{t('entreprise.soldesCaissesTitre')}</TitreSection>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {caisses.map((c) => (
           <Link
@@ -1212,7 +1269,10 @@ function CartesSoldesCaisses() {
             to="/journal-caisse"
             className="flex justify-between items-center border border-line rounded-lg px-3 py-2 hover:bg-canvas transition-colors"
           >
-            <span className="text-sm">{c.nom}</span>
+            <span className="flex items-center gap-2 text-sm">
+              <span className="w-7 h-7 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center"><IconeKpi nom="caisse" className="w-4 h-4" /></span>
+              {c.nom}
+            </span>
             <span className={`font-mono font-semibold ${c.solde < 0 ? 'text-red-600' : ''}`}>{formatXOF(c.solde)}</span>
           </Link>
         ))}
@@ -1247,7 +1307,7 @@ function CartesSoldesBanques() {
 
   return (
     <div className="card p-4 mb-6">
-      <h2 className="font-semibold mb-3">{t('entreprise.soldesBanquesTitre')}</h2>
+      <TitreSection icone="banque" theme="stock" className="mb-3">{t('entreprise.soldesBanquesTitre')}</TitreSection>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {banques.map((b) => (
           <Link
@@ -1255,7 +1315,10 @@ function CartesSoldesBanques() {
             to="/banques"
             className="flex justify-between items-center border border-line rounded-lg px-3 py-2 hover:bg-canvas transition-colors"
           >
-            <span className="text-sm">{b.nom}</span>
+            <span className="flex items-center gap-2 text-sm">
+              <span className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center"><IconeKpi nom="banque" className="w-4 h-4" /></span>
+              {b.nom}
+            </span>
             <span className={`font-mono font-semibold ${b.solde < 0 ? 'text-red-600' : ''}`}>{formatXOF(b.solde)}</span>
           </Link>
         ))}
@@ -1272,6 +1335,7 @@ function CamembertRepartitionCA() {
   const [periode, setPeriode] = useState('mois')
   const [dateDebutPerso, setDateDebutPerso] = useState('')
   const [dateFinPerso, setDateFinPerso] = useState('')
+  const [erreurRepartition, setErreurRepartition] = useState('')
   const [donnees, setDonnees] = useState([])
   const [chargement, setChargement] = useState(true)
 
@@ -1309,7 +1373,8 @@ function CamembertRepartitionCA() {
     const [debutDate, finDate] = calculerBornes()
     const debut = debutDate.toISOString().split('T')[0]
     const fin = finDate.toISOString().split('T')[0]
-    const { data } = await supabase.rpc('repartition_ca', { p_type: type, p_debut: debut, p_fin: fin })
+    const { data, error } = await supabase.rpc('repartition_ca', { p_type: type, p_debut: debut, p_fin: fin })
+    setErreurRepartition(error ? error.message : '')
     setDonnees((data || []).filter((d) => Number(d.montant) > 0).slice(0, 8))
     setChargement(false)
   }
@@ -1317,7 +1382,7 @@ function CamembertRepartitionCA() {
   return (
     <div className="card p-4 mb-6">
       <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <h2 className="font-semibold">{t('entreprise.repartitionCaTitre')}</h2>
+        <TitreSection icone="camembert" theme="creances" className="">{t('entreprise.repartitionCaTitre')}</TitreSection>
         <div className="flex gap-1.5">
           {['produit', 'zone', 'groupe'].map((tp) => (
             <button
@@ -1358,25 +1423,41 @@ function CamembertRepartitionCA() {
 
       {chargement ? (
         <p className="text-sm text-petrol-500">{t('chargement')}</p>
+      ) : erreurRepartition ? (
+        <p className="text-sm text-red-600 text-center py-8">{t('entreprise.erreurRepartition')} ({erreurRepartition})</p>
       ) : donnees.length === 0 ? (
         <p className="text-sm text-petrol-400 text-center py-8">{t('entreprise.aucuneVentePeriode')}</p>
       ) : (
-        <ResponsiveContainer width="100%" height={280}>
-          <PieChart>
-            <Pie
-              data={donnees}
-              dataKey="montant"
-              nameKey="label"
-              cx="50%"
-              cy="50%"
-              outerRadius={90}
-              label={({ label, percent }) => `${label} (${(percent * 100).toFixed(0)}%)`}
-            >
-              {donnees.map((_, i) => <Cell key={i} fill={COULEURS_CAMEMBERT[i % COULEURS_CAMEMBERT.length]} />)}
-            </Pie>
-            <Tooltip formatter={(v) => formatXOF(v)} />
-          </PieChart>
-        </ResponsiveContainer>
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative w-full sm:w-1/2" style={{ height: 220 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={donnees} dataKey="montant" nameKey="label" cx="50%" cy="50%"
+                  innerRadius={60} outerRadius={95} paddingAngle={2} stroke="none">
+                  {donnees.map((_, i) => <Cell key={i} fill={COULEURS_CAMEMBERT[i % COULEURS_CAMEMBERT.length]} />)}
+                </Pie>
+                <Tooltip formatter={(v) => formatXOF(v)} contentStyle={STYLE_INFOBULLE} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-xs text-petrol-500">{t('entreprise.total')}</span>
+              <span className="font-mono text-sm font-semibold">{formatCompact(donnees.reduce((s, d) => s + Number(d.montant), 0))}</span>
+            </div>
+          </div>
+          <ul className="w-full sm:w-1/2 space-y-2">
+            {(() => {
+              const total = donnees.reduce((s, d) => s + Number(d.montant), 0) || 1
+              return donnees.map((d, i) => (
+                <li key={i} className="flex items-center gap-2 text-sm">
+                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ background: COULEURS_CAMEMBERT[i % COULEURS_CAMEMBERT.length] }} />
+                  <span className="truncate flex-1">{d.label}</span>
+                  <span className="text-xs text-petrol-500 shrink-0">{Math.round((Number(d.montant) / total) * 100)}%</span>
+                  <span className="font-mono text-xs shrink-0">{formatCompact(Number(d.montant))}</span>
+                </li>
+              ))
+            })()}
+          </ul>
+        </div>
       )}
     </div>
   )

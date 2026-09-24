@@ -65,7 +65,10 @@
     "jamaisFait": "لم يتم أبدًا",
     "lotsAPeremptionTitre": "{{n}} دفعة (دفعات) يجب تصريفها أولاً",
     "lotsPerimes": "منها {{n}} منتهي(ة) الصلاحية بالفعل",
-    "voirLesLots": "عرض الدفعات ←"
+    "voirLesLots": "عرض الدفعات ←",
+    "surCible": "من {{cible}}",
+    "total": "المجموع",
+    "erreurRepartition": "تعذّر تحميل التوزيع"
   },
   "commercial": {
     "sousTitre": "إليك نشاطك الشخصي.",
@@ -108,5 +111,6 @@
     "alertesStock": "تنبيهات المخزون",
     "produitsEnAlerte": "منتجات في حالة تنبيه",
     "aucunProduitSeuil": "لا يوجد منتج دون حد التنبيه."
-  }
+  },
+  "rupture": "نفاد"
 }

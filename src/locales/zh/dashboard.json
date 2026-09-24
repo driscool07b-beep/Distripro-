@@ -65,7 +65,10 @@
     "jamaisFait": "从未盘点",
     "lotsAPeremptionTitre": "{{n}} 个批次需优先清库",
     "lotsPerimes": "其中 {{n}} 个已过期",
-    "voirLesLots": "查看批次 →"
+    "voirLesLots": "查看批次 →",
+    "surCible": "/ {{cible}}",
+    "total": "合计",
+    "erreurRepartition": "无法加载分布数据"
   },
   "commercial": {
     "sousTitre": "这是您的个人活动情况。",
@@ -108,5 +111,6 @@
     "alertesStock": "库存警报",
     "produitsEnAlerte": "警报产品",
     "aucunProduitSeuil": "没有产品低于警报阈值。"
-  }
+  },
+  "rupture": "缺货"
 }

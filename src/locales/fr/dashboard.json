@@ -65,7 +65,10 @@
     "jamaisFait": "jamais fait",
     "lotsAPeremptionTitre": "{{n}} lot(s) à écouler en priorité",
     "lotsPerimes": "dont {{n}} déjà périmé(s)",
-    "voirLesLots": "Voir les lots →"
+    "voirLesLots": "Voir les lots →",
+    "surCible": "sur {{cible}}",
+    "total": "Total",
+    "erreurRepartition": "Impossible de charger la répartition"
   },
   "commercial": {
     "sousTitre": "Voici votre activité personnelle.",
@@ -108,5 +111,6 @@
     "alertesStock": "Alertes stock",
     "produitsEnAlerte": "Produits en alerte",
     "aucunProduitSeuil": "Aucun produit sous le seuil d'alerte."
-  }
+  },
+  "rupture": "Rupture"
 }

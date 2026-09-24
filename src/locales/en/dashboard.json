@@ -65,7 +65,10 @@
     "jamaisFait": "never done",
     "lotsAPeremptionTitre": "{{n}} lot(s) to sell first",
     "lotsPerimes": "{{n}} already expired",
-    "voirLesLots": "View lots →"
+    "voirLesLots": "View lots →",
+    "surCible": "of {{cible}}",
+    "total": "Total",
+    "erreurRepartition": "Could not load the breakdown"
   },
   "commercial": {
     "sousTitre": "Here's your personal activity.",
@@ -108,5 +111,6 @@
     "alertesStock": "Stock alerts",
     "produitsEnAlerte": "Products in alert",
     "aucunProduitSeuil": "No product below the alert threshold."
-  }
+  },
+  "rupture": "Out of stock"
 }
