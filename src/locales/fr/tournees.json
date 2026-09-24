@@ -112,5 +112,10 @@
     "archives": "Archives — tournées passées ({{n}})",
     "afficherPlus": "Afficher plus",
     "passee": "passée"
+  },
+  "cloture": {
+    "titre": "Tournée clôturée — consultation uniquement",
+    "bilan": "Bilan : {{visitees}} visite(s) effectuée(s) sur {{total}} prévue(s). Une tournée passée ne peut plus être modifiée.",
+    "nonVisitee": "❌ Non visitée"
   }
 }

@@ -533,6 +533,10 @@ export default function Tournees() {
   }
 
   if (selectedTournee) {
+    // Une tournée dont la date est passée est clôturée : consultation seule.
+    const d = new Date()
+    const aujourdhuiDetail = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    const tourneeCloturee = selectedTournee.date_tournee < aujourdhuiDetail
     return (
       <div className="p-4 max-w-2xl mx-auto">
         <button data-aide="tournees.detail.retour"
@@ -553,7 +557,7 @@ export default function Tournees() {
         {selectedTournee.en_attente_validation && (
           <div className="border border-amber-300 bg-amber-50 rounded-lg p-3 mb-4">
             <p className="text-sm font-medium text-amber-800">{t('validation.enAttente')}</p>
-            {estResponsableTournees && selectedTournee.commercial_id !== profil?.id ? (
+            {estResponsableTournees && selectedTournee.commercial_id !== profil?.id && !tourneeCloturee ? (
               <div className="flex gap-2 mt-2">
                 <button data-aide="tournees.validation.approuver" onClick={() => validerTournee(true)} disabled={validationEnCours}
                   className="bg-green-600 text-white px-3 py-1.5 rounded text-sm disabled:opacity-50">{t('validation.approuver')}</button>
@@ -566,7 +570,16 @@ export default function Tournees() {
           </div>
         )}
 
-        {(() => {
+        {tourneeCloturee && (
+          <div className="border border-line bg-canvas rounded-lg p-3 mb-4">
+            <p className="text-sm font-medium">🔒 {t('cloture.titre')}</p>
+            <p className="text-xs text-petrol-500 mt-0.5">
+              {t('cloture.bilan', { visitees: visites.filter((l) => l.statut === 'visite').length, total: visites.length })}
+            </p>
+          </div>
+        )}
+
+        {!tourneeCloturee && (() => {
           const prochaine = visites.find((l) => l.statut !== 'visite');
           return prochaine && prochaine.clients?.latitude != null ? (
             <div className="border border-blue-200 bg-blue-50 rounded-lg p-3 mb-4 flex items-center justify-between">
@@ -597,11 +610,11 @@ export default function Tournees() {
                   {index + 1}. {ligne.clients?.nom || 'Client'}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {t('detail.statutLabel')} : {ligne.statut === 'visite' ? t('detail.visitee') : t('detail.aVisiter')}
+                  {t('detail.statutLabel')} : {ligne.statut === 'visite' ? t('detail.visitee') : tourneeCloturee ? t('cloture.nonVisitee') : t('detail.aVisiter')}
                 </p>
                 {ligne.raison_ia && <p className="text-xs text-purple-700 mt-0.5">✨ {ligne.raison_ia}</p>}
               </div>
-              {ligne.statut !== 'visite' && (
+              {ligne.statut !== 'visite' && !tourneeCloturee && (
                 <div className="flex gap-2">
                   <button data-aide="tournees.detail.itineraire"
                     onClick={() => ouvrirItineraire(ligne)}
@@ -636,7 +649,7 @@ export default function Tournees() {
           )}
         </div>
 
-        {estResponsableTournees && (
+        {estResponsableTournees && !tourneeCloturee && (
           <div className="border rounded-lg p-4 mt-4 bg-gray-50">
             <p className="text-sm font-medium mb-2">{t('detail.ajouterClientTournee')}</p>
             <div className="flex gap-2">

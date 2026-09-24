@@ -112,5 +112,10 @@
     "archives": "归档 —— 过往路线（{{n}}）",
     "afficherPlus": "显示更多",
     "passee": "已过期"
+  },
+  "cloture": {
+    "titre": "路线已关闭 —— 仅供查看",
+    "bilan": "结果：计划 {{total}} 次拜访，完成 {{visitees}} 次。过去的路线不能再修改。",
+    "nonVisitee": "❌ 未拜访"
   }
 }

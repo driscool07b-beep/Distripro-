@@ -112,5 +112,10 @@
     "archives": "Archive — past routes ({{n}})",
     "afficherPlus": "Show more",
     "passee": "past"
+  },
+  "cloture": {
+    "titre": "Route closed — view only",
+    "bilan": "Result: {{visitees}} of {{total}} planned visit(s) completed. A past route can no longer be changed.",
+    "nonVisitee": "❌ Not visited"
   }
 }
