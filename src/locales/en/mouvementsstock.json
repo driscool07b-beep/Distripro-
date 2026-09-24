@@ -9,9 +9,28 @@
   "chargement": "Loading…",
   "entree": "In",
   "sortie": "Out",
-  "voirJustificatif": "📎 View supporting document",
-  "envoi": "Sending…",
-  "joindre": "Attach",
+  "voirJustificatif": "View supporting document",
+  "envoi": "Uploading…",
+  "joindre": "Upload",
   "joindreJustificatif": "+ Attach a supporting document",
-  "aucunMouvement": "No movements."
+  "aucunMouvement": "No movements.",
+  "remplacer": "Replace",
+  "annuler": "Cancel",
+  "remplacementInfo": "The previous file will not be deleted: it stays available in the history, with the reason for replacing it.",
+  "motifPlaceholder": "Reason for replacing (required) — e.g. wrong slip attached",
+  "motifObligatoire": "Enter the reason for replacing.",
+  "seraCompressee": "will be reduced before upload",
+  "erreurEnvoi": "Upload failed",
+  "erreurOuverture": "Could not open the file",
+  "deposePar": "uploaded by {{nom}} on {{date}}",
+  "historique": "History ({{n}})",
+  "historiqueTitre": "Replaced files (kept for audit)",
+  "remplaceLe": "replaced by {{nom}} on {{date}} —",
+  "fichier": "File",
+  "sansJustificatif": "No supporting document",
+  "filtreJustificatif": {
+    "tous": "With or without document",
+    "avec": "With document",
+    "sans": "Without document"
+  }
 }

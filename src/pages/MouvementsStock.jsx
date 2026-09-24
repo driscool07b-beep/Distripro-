@@ -2,10 +2,15 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { traduireErreur } from '../lib/erreurs'
+import { envoyerJustificatifMouvement, ouvrirJustificatif } from '../lib/justificatifs'
 
 function libellesType(t) {
   return { entree: t('entree'), sortie: t('sortie') }
 }
+
+const formatDateHeure = (d) =>
+  new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 
 export default function MouvementsStock() {
   const { t } = useTranslation('mouvementsstock')
@@ -16,19 +21,25 @@ export default function MouvementsStock() {
   const [depots, setDepots] = useState([])
   const [filtreDepot, setFiltreDepot] = useState('')
   const [filtreType, setFiltreType] = useState('')
-
-  const [fichierEnCours, setFichierEnCours] = useState(null)
-  const [mouvementCiblé, setMouvementCiblé] = useState(null)
+  const [filtreJustificatif, setFiltreJustificatif] = useState('') // '' | 'avec' | 'sans'
+  const [versions, setVersions] = useState({}) // mouvement_id -> justificatifs (du plus récent au plus ancien)
+  const [historiqueOuvert, setHistoriqueOuvert] = useState(null)
+  // Envoi en cours : { mouvementId, remplacement: bool }
+  const [formulaire, setFormulaire] = useState(null)
+  const [fichier, setFichier] = useState(null)
+  const [motif, setMotif] = useState('')
   const [envoi, setEnvoi] = useState(false)
+  const [erreur, setErreur] = useState('')
 
-  const autorise = ['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)
+  const autorise = ['admin', 'manager', 'gestionnaire_stock', 'comptable'].includes(profil?.role)
+  const peutJoindre = ['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)
 
   useEffect(() => {
     if (autorise) {
       charger()
       supabase.from('depots').select('id, nom').order('nom').then(({ data }) => setDepots(data || []))
     }
-  }, [autorise, filtreDepot, filtreType])
+  }, [autorise, filtreDepot, filtreType, filtreJustificatif])
 
   async function charger() {
     setChargement(true)
@@ -40,30 +51,61 @@ export default function MouvementsStock() {
 
     if (filtreDepot) requete = requete.eq('depot_id', filtreDepot)
     if (filtreType) requete = requete.eq('type_mouvement', filtreType)
+    if (filtreJustificatif === 'avec') requete = requete.not('reference_doc', 'is', null)
+    if (filtreJustificatif === 'sans') requete = requete.is('reference_doc', null)
 
     const { data } = await requete
     setMouvements(data || [])
     setChargement(false)
-  }
 
-  async function voirJustificatif(chemin) {
-    const { data } = await supabase.storage.from('justificatifs-stock').createSignedUrl(chemin, 60)
-    if (data?.signedUrl) window.open(data.signedUrl, '_blank')
-  }
-
-  async function joindreApresCoup(mouvementId, fichier) {
-    if (!fichier) return
-    setEnvoi(true)
-    const extension = fichier.name.split('.').pop()
-    const chemin = `${entreprise.id}/mouvements-stock/${mouvementId}.${extension}`
-    const { error } = await supabase.storage.from('justificatifs-stock').upload(chemin, fichier, { upsert: true })
-    if (!error) {
-      await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: mouvementId, p_chemin: chemin })
-      charger()
+    const ids = (data || []).filter((m) => m.reference_doc).map((m) => m.id)
+    if (ids.length > 0) {
+      const { data: lignes } = await supabase
+        .from('justificatifs_mouvements')
+        .select('id, mouvement_id, chemin, nom_fichier, taille_octets, created_at, remplace_le, motif_remplacement, ajoute:profils!ajoute_par(nom), remplacant:profils!remplace_par(nom)')
+        .in('mouvement_id', ids)
+        .order('created_at', { ascending: false })
+      const parMouvement = {}
+      ;(lignes || []).forEach((l) => { (parMouvement[l.mouvement_id] ||= []).push(l) })
+      setVersions(parMouvement)
+    } else {
+      setVersions({})
     }
+  }
+
+  async function voir(chemin) {
+    const { error } = await ouvrirJustificatif(chemin)
+    if (error) alert(`${t('erreurOuverture')} (${traduireErreur(error)})`)
+  }
+
+  function ouvrirFormulaire(mouvementId, remplacement) {
+    setFormulaire({ mouvementId, remplacement })
+    setFichier(null)
+    setMotif('')
+    setErreur('')
+  }
+
+  async function envoyer() {
+    if (!fichier || !formulaire) return
+    if (formulaire.remplacement && !motif.trim()) {
+      setErreur(t('motifObligatoire'))
+      return
+    }
+    setEnvoi(true)
+    setErreur('')
+    const { error } = await envoyerJustificatifMouvement({
+      entrepriseId: entreprise.id,
+      mouvementId: formulaire.mouvementId,
+      fichier,
+      motifRemplacement: formulaire.remplacement ? motif.trim() : null,
+    })
     setEnvoi(false)
-    setMouvementCiblé(null)
-    setFichierEnCours(null)
+    if (error) {
+      setErreur(`${t('erreurEnvoi')} (${traduireErreur(error)})`)
+      return
+    }
+    setFormulaire(null)
+    charger()
   }
 
   if (!autorise) {
@@ -73,6 +115,43 @@ export default function MouvementsStock() {
       </div>
     )
   }
+
+  const formulaireEnvoi = (m) => (
+    <div className="mt-2 border border-line rounded-xl p-3 bg-canvas space-y-2">
+      {formulaire.remplacement && (
+        <>
+          <p className="text-xs text-amber-700">{t('remplacementInfo')}</p>
+          <input
+            className="input-field"
+            value={motif}
+            onChange={(e) => setMotif(e.target.value)}
+            placeholder={t('motifPlaceholder')}
+          />
+        </>
+      )}
+      <input
+        type="file"
+        accept="image/*,application/pdf"
+        onChange={(e) => setFichier(e.target.files?.[0] || null)}
+        className="text-xs w-full"
+      />
+      {fichier && (
+        <p className="text-xs text-petrol-500">
+          {fichier.name} — {(fichier.size / 1024 / 1024).toFixed(1)} Mo
+          {fichier.type.startsWith('image/') && fichier.size > 350 * 1024 && ` · ${t('seraCompressee')}`}
+        </p>
+      )}
+      {erreur && <p className="text-xs text-red-600">{erreur}</p>}
+      <div className="flex gap-2">
+        <button data-aide="mouvementsstock.envoyer" className="btn-primary text-xs px-3 py-1.5" disabled={!fichier || envoi} onClick={envoyer}>
+          {envoi ? t('envoi') : formulaire.remplacement ? t('remplacer') : t('joindre')}
+        </button>
+        <button className="btn-secondary text-xs px-3 py-1.5" disabled={envoi} onClick={() => setFormulaire(null)}>
+          {t('annuler')}
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
@@ -89,59 +168,86 @@ export default function MouvementsStock() {
           <option value="entree">{t('entreesSeulement')}</option>
           <option value="sortie">{t('sortiesSeulement')}</option>
         </select>
+        <select className="input-field w-auto" value={filtreJustificatif} onChange={(e) => setFiltreJustificatif(e.target.value)}>
+          <option value="">{t('filtreJustificatif.tous')}</option>
+          <option value="avec">{t('filtreJustificatif.avec')}</option>
+          <option value="sans">{t('filtreJustificatif.sans')}</option>
+        </select>
       </div>
 
       {chargement ? (
         <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <div className="space-y-2">
-          {mouvements.map((m) => (
-            <div key={m.id} className="border border-line rounded-lg p-3">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium">
-                    {m.produits?.nom}
-                    <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${m.type_mouvement === 'entree' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-                      {LIBELLES_TYPE[m.type_mouvement]} — {m.quantite}
-                    </span>
-                  </p>
-                  <p className="text-xs text-petrol-500 mt-0.5">
-                    {m.depots?.nom} — {m.profils?.nom || '—'} —{' '}
-                    {new Date(m.created_at).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                  {m.motif && <p className="text-xs text-petrol-600 mt-1">{m.motif}</p>}
-                </div>
-              </div>
+          {mouvements.map((m) => {
+            const liste = versions[m.id] || []
+            const remplaces = liste.filter((v) => v.remplace_le)
+            const actuel = liste.find((v) => !v.remplace_le)
+            return (
+              <div key={m.id} className="card p-3">
+                <p className="text-sm font-medium">
+                  {m.produits?.nom}
+                  <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${m.type_mouvement === 'entree' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                    {LIBELLES_TYPE[m.type_mouvement]} — {m.quantite}
+                  </span>
+                </p>
+                <p className="text-xs text-petrol-500 mt-0.5">
+                  {m.depots?.nom} — {m.profils?.nom || '—'} — {formatDateHeure(m.created_at)}
+                </p>
+                {m.motif && <p className="text-xs text-petrol-600 mt-1">{m.motif}</p>}
 
-              <div className="mt-2 flex items-center gap-3">
-                {m.reference_doc ? (
-                  <button data-aide="mouvementsstock.voirJustificatif" onClick={() => voirJustificatif(m.reference_doc)} className="text-xs text-blue-600 underline">
-                    {t('voirJustificatif')}
-                  </button>
-                ) : mouvementCiblé === m.id ? (
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="file"
-                      accept="image/*,application/pdf"
-                      onChange={(e) => setFichierEnCours(e.target.files?.[0] || null)}
-                      className="text-xs"
-                    />
-                    <button
-                      disabled={!fichierEnCours || envoi}
-                      onClick={() => joindreApresCoup(m.id, fichierEnCours)}
-                      className="text-xs text-petrol-700 underline"
-                    >
-                      {envoi ? t('envoi') : t('joindre')}
+                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+                  {m.reference_doc ? (
+                    <>
+                      <button data-aide="mouvementsstock.voirJustificatif" onClick={() => voir(m.reference_doc)} className="text-xs text-petrol-700 font-medium underline">
+                        📎 {t('voirJustificatif')}
+                      </button>
+                      {actuel && (
+                        <span className="text-xs text-petrol-400">
+                          {t('deposePar', { nom: actuel.ajoute?.nom || '—', date: formatDateHeure(actuel.created_at) })}
+                        </span>
+                      )}
+                      {peutJoindre && formulaire?.mouvementId !== m.id && (
+                        <button data-aide="mouvementsstock.remplacer" onClick={() => ouvrirFormulaire(m.id, true)} className="text-xs text-amber-700 underline">
+                          {t('remplacer')}
+                        </button>
+                      )}
+                      {remplaces.length > 0 && (
+                        <button onClick={() => setHistoriqueOuvert(historiqueOuvert === m.id ? null : m.id)} className="text-xs text-petrol-500 underline">
+                          🕘 {t('historique', { n: remplaces.length })}
+                        </button>
+                      )}
+                    </>
+                  ) : peutJoindre && formulaire?.mouvementId !== m.id ? (
+                    <button data-aide="mouvementsstock.joindreJustificatif" onClick={() => ouvrirFormulaire(m.id, false)} className="text-xs text-petrol-500 underline">
+                      {t('joindreJustificatif')}
                     </button>
+                  ) : !m.reference_doc && !peutJoindre ? (
+                    <span className="text-xs text-petrol-400">{t('sansJustificatif')}</span>
+                  ) : null}
+                </div>
+
+                {formulaire?.mouvementId === m.id && formulaireEnvoi(m)}
+
+                {historiqueOuvert === m.id && (
+                  <div className="mt-2 border-t border-line pt-2 space-y-1.5">
+                    <p className="text-xs font-semibold text-petrol-600">{t('historiqueTitre')}</p>
+                    {remplaces.map((v) => (
+                      <div key={v.id} className="text-xs text-petrol-600 bg-canvas rounded-lg p-2">
+                        <button onClick={() => voir(v.chemin)} className="underline text-petrol-700">
+                          {v.nom_fichier || t('fichier')}
+                        </button>
+                        {' — '}{t('deposePar', { nom: v.ajoute?.nom || '—', date: formatDateHeure(v.created_at) })}
+                        <span className="block text-amber-700">
+                          {t('remplaceLe', { nom: v.remplacant?.nom || '—', date: formatDateHeure(v.remplace_le) })} « {v.motif_remplacement} »
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ) : (
-                  <button data-aide="mouvementsstock.joindreJustificatif" onClick={() => setMouvementCiblé(m.id)} className="text-xs text-petrol-500 underline">
-                    {t('joindreJustificatif')}
-                  </button>
                 )}
               </div>
-            </div>
-          ))}
+            )
+          })}
           {mouvements.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">{t('aucunMouvement')}</p>}
         </div>
       )}

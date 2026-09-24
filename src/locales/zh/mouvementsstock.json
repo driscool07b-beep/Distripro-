@@ -9,9 +9,28 @@
   "chargement": "加载中…",
   "entree": "入库",
   "sortie": "出库",
-  "voirJustificatif": "📎 查看凭证",
-  "envoi": "发送中…",
-  "joindre": "附加",
+  "voirJustificatif": "查看凭证",
+  "envoi": "上传中…",
+  "joindre": "上传",
   "joindreJustificatif": "+ 附加凭证",
-  "aucunMouvement": "没有变动记录。"
+  "aucunMouvement": "没有变动记录。",
+  "remplacer": "替换",
+  "annuler": "取消",
+  "remplacementInfo": "原文件不会被删除：它将保留在历史记录中，并附有替换原因。",
+  "motifPlaceholder": "替换原因（必填）",
+  "motifObligatoire": "请填写替换原因。",
+  "seraCompressee": "上传前将被压缩",
+  "erreurEnvoi": "上传失败",
+  "erreurOuverture": "无法打开文件",
+  "deposePar": "由 {{nom}} 于 {{date}} 上传",
+  "historique": "历史（{{n}}）",
+  "historiqueTitre": "已替换的文件（保留供审计）",
+  "remplaceLe": "由 {{nom}} 于 {{date}} 替换 ——",
+  "fichier": "文件",
+  "sansJustificatif": "无凭证",
+  "filtreJustificatif": {
+    "tous": "有无凭证均可",
+    "avec": "有凭证",
+    "sans": "无凭证"
+  }
 }

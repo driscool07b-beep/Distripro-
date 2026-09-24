@@ -108,7 +108,10 @@
     "nouvelleConversation": "Démarre une discussion privée avec un collègue."
   },
   "mouvementsstock": {
-    "joindreJustificatif": "Joint une photo ou un document (bon de sortie, facture…) à ce mouvement."
+    "joindreJustificatif": "Joint une photo ou un document (bon de sortie, facture…) à ce mouvement.",
+    "voirJustificatif": "Ouvre le fichier joint à ce mouvement.",
+    "remplacer": "Remplace un fichier joint par erreur. L'ancien reste conservé pour l'audit, avec le motif.",
+    "envoyer": "Envoie le fichier. Les photos sont réduites automatiquement pour aller plus vite."
   },
   "objectifs": {
     "nouvelObjectif": "Fixe un objectif de ventes (montant ou quantité) sur une période.",

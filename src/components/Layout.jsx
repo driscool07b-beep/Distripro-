@@ -22,7 +22,7 @@ function navItems(t) {
     { to: '/carte-clients', label: t('menu.carteClients'), icon: CarteIcon, roles: ROLES_PAGES.carteClients },
     { to: '/stock', label: t('menu.produitsStock'), icon: StockIcon, roles: ['admin', 'manager', 'gestionnaire_stock', 'commercial'] },
     { to: '/depots', label: t('menu.magasinsStockage'), icon: DepotsIcon, roles: ['admin', 'manager'] },
-    { to: '/mouvements-stock', label: t('menu.journalStock'), icon: JournalIcon, roles: ['admin', 'manager', 'gestionnaire_stock'] },
+    { to: '/mouvements-stock', label: t('menu.journalStock'), icon: JournalIcon, roles: ['admin', 'manager', 'gestionnaire_stock', 'comptable'] },
     { to: '/ventes', label: t('menu.ventes'), icon: VentesIcon, roles: ROLES_PAGES.ventes },
     { to: '/commandes', label: t('menu.commandes'), icon: CommandesIcon, roles: ROLES_PAGES.commandes },
     { to: '/tournees', label: t('menu.tournees'), icon: VentesIcon, roles: ROLES_PAGES.tournees },

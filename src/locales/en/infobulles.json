@@ -108,7 +108,10 @@
     "nouvelleConversation": "Starts a private chat with a colleague."
   },
   "mouvementsstock": {
-    "joindreJustificatif": "Attaches a photo or document (exit slip, invoice…) to this movement."
+    "joindreJustificatif": "Attaches a photo or document (exit slip, invoice…) to this movement.",
+    "voirJustificatif": "Opens the file attached to this movement.",
+    "remplacer": "Replaces a file attached by mistake. The old one is kept for audit, with the reason.",
+    "envoyer": "Uploads the file. Photos are reduced automatically to go faster."
   },
   "objectifs": {
     "nouvelObjectif": "Sets a sales target (amount or quantity) over a period.",

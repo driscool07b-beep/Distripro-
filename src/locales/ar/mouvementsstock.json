@@ -9,9 +9,28 @@
   "chargement": "جارٍ التحميل…",
   "entree": "وارد",
   "sortie": "صادر",
-  "voirJustificatif": "📎 عرض المستند الداعم",
+  "voirJustificatif": "عرض المستند",
   "envoi": "جارٍ الإرسال…",
-  "joindre": "إرفاق",
+  "joindre": "إرسال",
   "joindreJustificatif": "+ إرفاق مستند داعم",
-  "aucunMouvement": "لا توجد حركات."
+  "aucunMouvement": "لا توجد حركات.",
+  "remplacer": "استبدال",
+  "annuler": "إلغاء",
+  "remplacementInfo": "لن يُحذف الملف السابق: يبقى متاحًا في السجل مع سبب الاستبدال.",
+  "motifPlaceholder": "سبب الاستبدال (إلزامي)",
+  "motifObligatoire": "أدخل سبب الاستبدال.",
+  "seraCompressee": "سيتم تصغيرها قبل الإرسال",
+  "erreurEnvoi": "فشل الإرسال",
+  "erreurOuverture": "تعذّر فتح الملف",
+  "deposePar": "أودعه {{nom}} في {{date}}",
+  "historique": "السجل ({{n}})",
+  "historiqueTitre": "الملفات المستبدلة (محفوظة للتدقيق)",
+  "remplaceLe": "استبدله {{nom}} في {{date}} —",
+  "fichier": "ملف",
+  "sansJustificatif": "بدون مستند",
+  "filtreJustificatif": {
+    "tous": "مع أو بدون مستند",
+    "avec": "مع مستند",
+    "sans": "بدون مستند"
+  }
 }

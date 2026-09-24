@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { envoyerJustificatifMouvement } from '../lib/justificatifs'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise, genererRapportInventaireStock } from '../lib/export'
 import * as XLSX from 'xlsx'
@@ -422,16 +423,11 @@ export default function Stock() {
     }
 
     if (fichierJustificatif) {
-      const extension = fichierJustificatif.name.split('.').pop()
-      const chemin = `${entreprise.id}/mouvements-stock/${mouvementId}.${extension}`
-      const { error: erreurUpload } = await supabase.storage.from('justificatifs-stock').upload(chemin, fichierJustificatif, { upsert: true })
-      if (!erreurUpload) {
-        await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: mouvementId, p_chemin: chemin })
-      } else {
-        // Le mouvement est déjà enregistré (et donc tracé dans le journal comme
-        // sans justificatif, visible pour un administrateur) — on informe sans
-        // bloquer, puisque le stock a déjà été mis à jour.
-        console.error('Erreur upload justificatif:', erreurUpload)
+      const { error: erreurUpload } = await envoyerJustificatifMouvement({ entrepriseId: entreprise.id, mouvementId: mouvementId, fichier: fichierJustificatif })
+      if (erreurUpload) {
+        // Le mouvement est déjà enregistré : on prévient sans bloquer ; le
+        // justificatif pourra être joint depuis le Journal de stock.
+        alert(`${t('erreurJustificatif')} (${traduireErreur(erreurUpload)})`)
       }
     }
 
@@ -486,15 +482,11 @@ export default function Stock() {
     }
 
     if (fichierJustificatifTransfert && resultat?.mouvement_sortie_id) {
-      const extension = fichierJustificatifTransfert.name.split('.').pop()
-      const chemin = `${entreprise.id}/mouvements-stock/${resultat.mouvement_sortie_id}.${extension}`
-      const { error: erreurUpload } = await supabase.storage
-        .from('justificatifs-stock')
-        .upload(chemin, fichierJustificatifTransfert, { upsert: true })
-      if (!erreurUpload) {
-        await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: resultat.mouvement_sortie_id, p_chemin: chemin })
-      } else {
-        console.error('Erreur upload justificatif transfert:', erreurUpload)
+      const { error: erreurUpload } = await envoyerJustificatifMouvement({ entrepriseId: entreprise.id, mouvementId: resultat.mouvement_sortie_id, fichier: fichierJustificatifTransfert })
+      if (erreurUpload) {
+        // Le mouvement est déjà enregistré : on prévient sans bloquer ; le
+        // justificatif pourra être joint depuis le Journal de stock.
+        alert(`${t('erreurJustificatif')} (${traduireErreur(erreurUpload)})`)
       }
     }
 
@@ -550,15 +542,11 @@ export default function Stock() {
     }
 
     if (fichierJustificatifReception && mouvementEntreeId) {
-      const extension = fichierJustificatifReception.name.split('.').pop()
-      const chemin = `${entreprise.id}/mouvements-stock/${mouvementEntreeId}.${extension}`
-      const { error: erreurUpload } = await supabase.storage
-        .from('justificatifs-stock')
-        .upload(chemin, fichierJustificatifReception, { upsert: true })
-      if (!erreurUpload) {
-        await supabase.rpc('attacher_justificatif_mouvement', { p_mouvement_id: mouvementEntreeId, p_chemin: chemin })
-      } else {
-        console.error('Erreur upload justificatif réception:', erreurUpload)
+      const { error: erreurUpload } = await envoyerJustificatifMouvement({ entrepriseId: entreprise.id, mouvementId: mouvementEntreeId, fichier: fichierJustificatifReception })
+      if (erreurUpload) {
+        // Le mouvement est déjà enregistré : on prévient sans bloquer ; le
+        // justificatif pourra être joint depuis le Journal de stock.
+        alert(`${t('erreurJustificatif')} (${traduireErreur(erreurUpload)})`)
       }
     }
 

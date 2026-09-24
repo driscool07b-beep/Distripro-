@@ -182,5 +182,6 @@
     "expireDans": "expire dans {{j}} jour(s) ({{date}})"
   },
   "annuler": "Annuler",
-  "chargement": "Chargement…"
+  "chargement": "Chargement…",
+  "erreurJustificatif": "Le mouvement est enregistré, mais le justificatif n'a pas pu être envoyé. Vous pourrez le joindre depuis le Journal de stock."
 }

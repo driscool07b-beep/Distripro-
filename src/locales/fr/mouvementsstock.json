@@ -9,9 +9,28 @@
   "chargement": "Chargement…",
   "entree": "Entrée",
   "sortie": "Sortie",
-  "voirJustificatif": "📎 Voir le justificatif",
+  "voirJustificatif": "Voir le justificatif",
   "envoi": "Envoi…",
-  "joindre": "Joindre",
+  "joindre": "Envoyer",
   "joindreJustificatif": "+ Joindre un justificatif",
-  "aucunMouvement": "Aucun mouvement."
+  "aucunMouvement": "Aucun mouvement.",
+  "remplacer": "Remplacer",
+  "annuler": "Annuler",
+  "remplacementInfo": "L'ancien fichier ne sera pas supprimé : il reste consultable dans l'historique, avec le motif du remplacement.",
+  "motifPlaceholder": "Motif du remplacement (obligatoire) — ex. : mauvais bon joint",
+  "motifObligatoire": "Indiquez le motif du remplacement.",
+  "seraCompressee": "sera réduite avant l'envoi",
+  "erreurEnvoi": "L'envoi a échoué",
+  "erreurOuverture": "Impossible d'ouvrir le fichier",
+  "deposePar": "déposé par {{nom}} le {{date}}",
+  "historique": "Historique ({{n}})",
+  "historiqueTitre": "Fichiers remplacés (conservés pour audit)",
+  "remplaceLe": "remplacé par {{nom}} le {{date}} —",
+  "fichier": "Fichier",
+  "sansJustificatif": "Sans justificatif",
+  "filtreJustificatif": {
+    "tous": "Avec ou sans justificatif",
+    "avec": "Avec justificatif",
+    "sans": "Sans justificatif"
+  }
 }
