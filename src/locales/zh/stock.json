@@ -158,5 +158,6 @@
     "erreurDepotRequis": "请选择仓库。",
     "erreurAucuneLigne": "请至少输入一项清点数量后再确认。"
   },
-  "erreurJustificatif": "库存变动已保存，但凭证上传失败。您可在库存日志中重新附加。"
+  "erreurJustificatif": "库存变动已保存，但凭证上传失败。您可在库存日志中重新附加。",
+  "erreurJustificatifEnvoi": "凭证上传失败：库存未作更改"
 }

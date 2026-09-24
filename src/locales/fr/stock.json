@@ -183,5 +183,6 @@
   },
   "annuler": "Annuler",
   "chargement": "Chargement…",
-  "erreurJustificatif": "Le mouvement est enregistré, mais le justificatif n'a pas pu être envoyé. Vous pourrez le joindre depuis le Journal de stock."
+  "erreurJustificatif": "Le mouvement est enregistré, mais le justificatif n'a pas pu être envoyé. Vous pourrez le joindre depuis le Journal de stock.",
+  "erreurJustificatifEnvoi": "Le justificatif n'a pas pu être envoyé : le stock n'a PAS été modifié"
 }

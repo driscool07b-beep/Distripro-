@@ -68,6 +68,29 @@ export async function envoyerJustificatifMouvement({ entrepriseId, mouvementId, 
   }
 }
 
+// Envoie seulement le fichier (avant l'enregistrement du mouvement) et
+// renvoie ses informations, à transmettre au serveur qui vérifie le fichier
+// et crée le mouvement dans la même transaction. Renvoie { fichierInfo } ou { error }.
+export async function envoyerFichierJustificatif({ entrepriseId, fichier, onEtape }) {
+  try {
+    onEtape?.('preparation')
+    const fichierFinal = await avecDelai(compresserImage(fichier), 20000, 'préparation du fichier trop longue')
+    const extension = (fichierFinal.name.split('.').pop() || 'bin').toLowerCase()
+    const identifiant = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+    const chemin = `${entrepriseId}/mouvements-stock/ajustements/${identifiant}.${extension}`
+    onEtape?.('envoi')
+    const { error } = await avecDelai(
+      supabase.storage.from('justificatifs-stock').upload(chemin, fichierFinal, { upsert: false, contentType: fichierFinal.type || undefined }),
+      60000,
+      'envoi du fichier : pas de réponse du serveur après 60 s (connexion lente ou coupée)'
+    )
+    if (error) return { error: `envoi du fichier : ${error.message}` }
+    return { fichierInfo: { chemin, nom: fichier.name, taille: fichierFinal.size, type: fichierFinal.type || null } }
+  } catch (e) {
+    return { error: e?.message || String(e) }
+  }
+}
+
 // Ouvre un justificatif. La fenêtre est ouverte AVANT l'appel réseau : sinon
 // les navigateurs (surtout sur téléphone) bloquent l'ouverture comme pop-up.
 export async function ouvrirJustificatif(chemin) {

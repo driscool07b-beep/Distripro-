@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
-import { envoyerJustificatifMouvement } from '../lib/justificatifs'
+import { envoyerJustificatifMouvement, envoyerFichierJustificatif } from '../lib/justificatifs'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise, genererRapportInventaireStock } from '../lib/export'
 import * as XLSX from 'xlsx'
@@ -401,7 +401,19 @@ export default function Stock() {
     }
     const motifComplet = mouvement.raison + (mouvement.motif.trim() ? ' — ' + mouvement.motif.trim() : '')
     setEnregistrement(true)
-    const { data: mouvementId, error } = await supabase.rpc('ajuster_stock', {
+    // Anti-fraude : le fichier est envoyé AVANT le mouvement ; le serveur vérifie
+    // qu'il existe bien et enregistre mouvement + justificatif ensemble.
+    let fichierInfo = null
+    if (fichierJustificatif) {
+      const resultatEnvoi = await envoyerFichierJustificatif({ entrepriseId: entreprise.id, fichier: fichierJustificatif })
+      if (resultatEnvoi.error) {
+        setEnregistrement(false)
+        setErreur(`${t('erreurJustificatifEnvoi')} — ${resultatEnvoi.error}`)
+        return
+      }
+      fichierInfo = resultatEnvoi.fichierInfo
+    }
+    const { error } = await supabase.rpc('ajuster_stock_manuel', {
       p_produit_id: modalMouvement.id,
       p_type: mouvement.type,
       p_quantite: qte,
@@ -409,6 +421,10 @@ export default function Stock() {
       p_depot_id: mouvement.depot_id || null,
       p_numero_lot: mouvement.type === 'entree' ? (mouvement.numero_lot.trim() || null) : null,
       p_date_peremption: mouvement.type === 'entree' ? (mouvement.date_peremption || null) : null,
+      p_justificatif_chemin: fichierInfo?.chemin || null,
+      p_justificatif_nom: fichierInfo?.nom || null,
+      p_justificatif_taille: fichierInfo?.taille || null,
+      p_justificatif_type: fichierInfo?.type || null,
     })
     if (error) {
       setEnregistrement(false)
@@ -420,15 +436,6 @@ export default function Stock() {
           : `${t('erreur')} : ${traduireErreur(error.message)}`
       )
       return
-    }
-
-    if (fichierJustificatif) {
-      const { error: erreurUpload } = await envoyerJustificatifMouvement({ entrepriseId: entreprise.id, mouvementId: mouvementId, fichier: fichierJustificatif })
-      if (erreurUpload) {
-        // Le mouvement est déjà enregistré : on prévient sans bloquer ; le
-        // justificatif pourra être joint depuis le Journal de stock.
-        alert(`${t('erreurJustificatif')} (${traduireErreur(erreurUpload)})`)
-      }
     }
 
     setEnregistrement(false)
