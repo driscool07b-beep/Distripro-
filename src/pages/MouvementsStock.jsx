@@ -29,6 +29,7 @@ export default function MouvementsStock() {
   const [fichier, setFichier] = useState(null)
   const [motif, setMotif] = useState('')
   const [envoi, setEnvoi] = useState(false)
+  const [etape, setEtape] = useState('')
   const [erreur, setErreur] = useState('')
 
   const autorise = ['admin', 'manager', 'gestionnaire_stock', 'comptable'].includes(profil?.role)
@@ -93,15 +94,22 @@ export default function MouvementsStock() {
     }
     setEnvoi(true)
     setErreur('')
-    const { error } = await envoyerJustificatifMouvement({
-      entrepriseId: entreprise.id,
-      mouvementId: formulaire.mouvementId,
-      fichier,
-      motifRemplacement: formulaire.remplacement ? motif.trim() : null,
-    })
-    setEnvoi(false)
+    let resultat
+    try {
+      resultat = await envoyerJustificatifMouvement({
+        entrepriseId: entreprise.id,
+        mouvementId: formulaire.mouvementId,
+        fichier,
+        motifRemplacement: formulaire.remplacement ? motif.trim() : null,
+        onEtape: setEtape,
+      })
+    } finally {
+      setEnvoi(false)
+      setEtape('')
+    }
+    const { error } = resultat || {}
     if (error) {
-      setErreur(`${t('erreurEnvoi')} (${traduireErreur(error)})`)
+      setErreur(`${t('erreurEnvoi')} — ${error}`)
       return
     }
     setFormulaire(null)
@@ -144,7 +152,7 @@ export default function MouvementsStock() {
       {erreur && <p className="text-xs text-red-600">{erreur}</p>}
       <div className="flex gap-2">
         <button data-aide="mouvementsstock.envoyer" className="btn-primary text-xs px-3 py-1.5" disabled={!fichier || envoi} onClick={envoyer}>
-          {envoi ? t('envoi') : formulaire.remplacement ? t('remplacer') : t('joindre')}
+          {envoi ? (etape ? t(`etapes.${etape}`) : t('envoi')) : formulaire.remplacement ? t('remplacer') : t('joindre')}
         </button>
         <button className="btn-secondary text-xs px-3 py-1.5" disabled={envoi} onClick={() => setFormulaire(null)}>
           {t('annuler')}

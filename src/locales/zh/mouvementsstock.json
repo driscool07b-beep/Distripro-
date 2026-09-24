@@ -32,5 +32,10 @@
     "tous": "有无凭证均可",
     "avec": "有凭证",
     "sans": "无凭证"
+  },
+  "etapes": {
+    "preparation": "准备中…",
+    "envoi": "正在上传文件…",
+    "enregistrement": "正在保存…"
   }
 }

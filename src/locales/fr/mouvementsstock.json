@@ -32,5 +32,10 @@
     "tous": "Avec ou sans justificatif",
     "avec": "Avec justificatif",
     "sans": "Sans justificatif"
+  },
+  "etapes": {
+    "preparation": "Préparation…",
+    "envoi": "Envoi du fichier…",
+    "enregistrement": "Enregistrement…"
   }
 }

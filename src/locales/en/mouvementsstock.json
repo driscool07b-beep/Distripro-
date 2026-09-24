@@ -32,5 +32,10 @@
     "tous": "With or without document",
     "avec": "With document",
     "sans": "Without document"
+  },
+  "etapes": {
+    "preparation": "Preparing…",
+    "envoi": "Uploading file…",
+    "enregistrement": "Saving…"
   }
 }

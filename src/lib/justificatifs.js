@@ -25,23 +25,47 @@ export async function compresserImage(fichier, { largeurMax = 1600, qualite = 0.
 // historique. Chaque envoi a un chemin unique : un fichier déjà déposé n'est
 // jamais écrasé (traçabilité). motifRemplacement est requis si le mouvement
 // a déjà un justificatif. Renvoie { error } (message lisible) ou {}.
-export async function envoyerJustificatifMouvement({ entrepriseId, mouvementId, fichier, motifRemplacement = null }) {
-  const fichierFinal = await compresserImage(fichier)
-  const extension = (fichierFinal.name.split('.').pop() || 'bin').toLowerCase()
-  const chemin = `${entrepriseId}/mouvements-stock/${mouvementId}/${Date.now()}.${extension}`
-  const { error: erreurEnvoi } = await supabase.storage
-    .from('justificatifs-stock')
-    .upload(chemin, fichierFinal, { upsert: false, contentType: fichierFinal.type || undefined })
-  if (erreurEnvoi) return { error: erreurEnvoi.message }
-  const { error } = await supabase.rpc('attacher_justificatif_mouvement', {
-    p_mouvement_id: mouvementId,
-    p_chemin: chemin,
-    p_nom_fichier: fichier.name,
-    p_taille_octets: fichierFinal.size,
-    p_type_mime: fichierFinal.type || null,
-    p_motif_remplacement: motifRemplacement,
-  })
-  return error ? { error: error.message } : {}
+// Limite de temps par étape : un envoi ne doit jamais rester bloqué sans message.
+function avecDelai(promesse, ms, message) {
+  let minuterie
+  return Promise.race([
+    promesse,
+    new Promise((_, rejet) => { minuterie = setTimeout(() => rejet(new Error(message)), ms) }),
+  ]).finally(() => clearTimeout(minuterie))
+}
+
+export async function envoyerJustificatifMouvement({ entrepriseId, mouvementId, fichier, motifRemplacement = null, onEtape }) {
+  try {
+    onEtape?.('preparation')
+    const fichierFinal = await avecDelai(compresserImage(fichier), 20000, 'préparation du fichier trop longue')
+    const extension = (fichierFinal.name.split('.').pop() || 'bin').toLowerCase()
+    const chemin = `${entrepriseId}/mouvements-stock/${mouvementId}/${Date.now()}.${extension}`
+
+    onEtape?.('envoi')
+    const { error: erreurEnvoi } = await avecDelai(
+      supabase.storage.from('justificatifs-stock').upload(chemin, fichierFinal, { upsert: false, contentType: fichierFinal.type || undefined }),
+      60000,
+      'envoi du fichier : pas de réponse du serveur après 60 s (connexion lente ou coupée)'
+    )
+    if (erreurEnvoi) return { error: `envoi du fichier : ${erreurEnvoi.message}` }
+
+    onEtape?.('enregistrement')
+    const { error } = await avecDelai(
+      supabase.rpc('attacher_justificatif_mouvement', {
+        p_mouvement_id: mouvementId,
+        p_chemin: chemin,
+        p_nom_fichier: fichier.name,
+        p_taille_octets: fichierFinal.size,
+        p_type_mime: fichierFinal.type || null,
+        p_motif_remplacement: motifRemplacement,
+      }),
+      30000,
+      'enregistrement : pas de réponse du serveur après 30 s'
+    )
+    return error ? { error: `enregistrement : ${error.message}` } : {}
+  } catch (e) {
+    return { error: e?.message || String(e) }
+  }
 }
 
 // Ouvre un justificatif. La fenêtre est ouverte AVANT l'appel réseau : sinon
