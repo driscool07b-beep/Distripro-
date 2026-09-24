@@ -583,7 +583,7 @@ export default function JournalCaisse() {
   }
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
+    <div className={`p-4 mx-auto ${onglet === 'grandLivre' ? 'max-w-7xl' : 'max-w-3xl'}`}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {peutCreer && (
@@ -934,7 +934,7 @@ export default function JournalCaisse() {
                 <p className="text-sm text-petrol-500">{t('chargement')}</p>
               ) : (
                 <div className="card overflow-x-auto">
-                  <table className="text-xs" style={{ tableLayout: 'fixed', width: largeurTotaleGrandLivreCaisse }}>
+                  <table className="text-xs" style={{ tableLayout: 'fixed', width: `max(${largeurTotaleGrandLivreCaisse}px, 100%)` }}>
                     <colgroup>
                       {COLONNES_GRAND_LIVRE_CAISSE.map((c) => (
                         <col key={c.cle} style={{ width: largeursGrandLivreCaisse[c.cle] }} />

@@ -411,7 +411,7 @@ export default function Banques() {
   }
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
+    <div className={`p-4 mx-auto ${onglet === 'grandLivre' ? 'max-w-7xl' : 'max-w-3xl'}`}>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {onglet === 'banques' && (
@@ -497,7 +497,7 @@ export default function Banques() {
                 <p className="text-sm text-petrol-500">{t('chargement')}</p>
               ) : (
                 <div className="card overflow-x-auto">
-                  <table className="text-xs" style={{ tableLayout: 'fixed', width: largeurTotaleGrandLivreBanque }}>
+                  <table className="text-xs" style={{ tableLayout: 'fixed', width: `max(${largeurTotaleGrandLivreBanque}px, 100%)` }}>
                     <colgroup>
                       {COLONNES_GRAND_LIVRE_BANQUE.map((c) => (
                         <col key={c.cle} style={{ width: largeursGrandLivreBanque[c.cle] }} />

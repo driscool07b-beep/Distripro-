@@ -95,7 +95,7 @@ export default function GrandLivre() {
   const soldeFinal = mouvements.length > 0 ? mouvements[mouvements.length - 1].solde : 0
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 max-w-6xl mx-auto">
       <div className="no-print flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {client && (

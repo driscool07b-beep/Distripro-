@@ -77,7 +77,7 @@ export default function AnalyseIA() {
   }
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
+    <div className="p-4 max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         <button onClick={genererAnalyse} disabled={generation} className="btn-primary text-sm">
@@ -97,7 +97,7 @@ export default function AnalyseIA() {
         </div>
       )}
 
-      <div className="grid md:grid-cols-[200px_1fr] gap-4">
+      <div className="grid md:grid-cols-[220px_1fr] gap-4">
         <div>
           <p className="text-xs font-medium text-petrol-600 mb-2">{t('historique')}</p>
           {chargementHistorique ? (
@@ -122,7 +122,7 @@ export default function AnalyseIA() {
           )}
         </div>
 
-        <div className="card p-5">
+        <div className="card p-5 md:p-8 min-h-[70vh]">
           {analyseAffichee ? (
             <>
               <div className="flex flex-wrap gap-2 mb-3">
@@ -137,7 +137,7 @@ export default function AnalyseIA() {
                 {t('genereeLe', { date: new Date(analyseAffichee.created_at).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) })}
                 {analyseAffichee.profils?.nom ? ` ${t('par', { nom: analyseAffichee.profils.nom })}` : ''}
               </p>
-              <div className="text-sm leading-relaxed space-y-2">
+              <div className="text-[15px] leading-relaxed space-y-2.5">
                 {analyserTexte(analyseAffichee.contenu).map((b, i) =>
                   b.type === 'titre' ? (
                     <h3 key={i} className="font-semibold text-petrol-900 text-base pt-3 first:pt-0">{b.texte}</h3>
