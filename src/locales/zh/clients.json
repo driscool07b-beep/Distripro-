@@ -111,5 +111,6 @@
     "appliquer": "应用",
     "commercialAttitre": "负责业务员（客户组合）",
     "attribuerImport": "将导入的客户分配给"
-  }
+  },
+  "affiches": "显示 {{n}} / {{total}}"
 }

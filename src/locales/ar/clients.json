@@ -111,5 +111,6 @@
     "appliquer": "تطبيق",
     "commercialAttitre": "المندوب المسؤول (المحفظة)",
     "attribuerImport": "إسناد العملاء المستوردين إلى"
-  }
+  },
+  "affiches": "{{n}} معروض من أصل {{total}}"
 }

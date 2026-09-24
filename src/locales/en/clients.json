@@ -111,5 +111,6 @@
     "appliquer": "Apply",
     "commercialAttitre": "Assigned sales rep (portfolio)",
     "attribuerImport": "Assign imported customers to"
-  }
+  },
+  "affiches": "{{n}} shown of {{total}}"
 }

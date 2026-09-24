@@ -111,5 +111,6 @@
     "appliquer": "Appliquer",
     "commercialAttitre": "Commercial attitré (portefeuille)",
     "attribuerImport": "Attribuer les clients importés à"
-  }
+  },
+  "affiches": "{{n}} affiché(s) sur {{total}}"
 }

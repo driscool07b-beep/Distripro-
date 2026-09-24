@@ -498,7 +498,7 @@ export default function Clients() {
   }
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-semibold">{t('titre')}</h1>
@@ -514,24 +514,29 @@ export default function Clients() {
         </div>
       </header>
 
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
       <input
         type="text"
         placeholder={t('rechercherClient')}
         value={recherche}
         onChange={(e) => setRecherche(e.target.value)}
-        className="input-field max-w-sm mb-4"
+        className="input-field sm:max-w-sm"
       />
-
-      {gerePortefeuilles && (
-        <div className="flex flex-wrap items-center gap-2 mb-4">
-          <select className="input-field max-w-xs" value={filtreCommercial} onChange={(e) => { setFiltreCommercial(e.target.value); setSelection([]) }}>
+        {gerePortefeuilles && (
+          <select className="input-field sm:max-w-xs" value={filtreCommercial} onChange={(e) => { setFiltreCommercial(e.target.value); setSelection([]) }}>
             <option value="">{t('portefeuille.tousLesCommerciaux')}</option>
             <option value="aucun">{t('portefeuille.nonAttribues')}</option>
             {commerciaux.filter((m) => clients.some((c) => c.commercial_id === m.id) || (m.role === 'commercial' && m.actif !== false)).map((m) => (
               <option key={m.id} value={m.id}>{m.nom}</option>
             ))}
           </select>
-          {selection.length > 0 && (
+        )}
+        <span className="text-xs text-petrol-500 sm:ms-auto">{t('affiches', { n: clientsFiltres.length, total: clients.length })}</span>
+      </div>
+
+      {gerePortefeuilles && selection.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200">
+          {(
             <>
               <span className="text-sm text-petrol-700">{t('portefeuille.selection', { n: selection.length })}</span>
               <select className="input-field max-w-xs" value={cibleAttribution} onChange={(e) => setCibleAttribution(e.target.value)}>
@@ -548,7 +553,7 @@ export default function Clients() {
       )}
 
       <div className="card overflow-x-auto">
-        <table className="w-full text-sm min-w-[640px]">
+        <table className="w-full text-[15px] min-w-[760px]">
           <thead>
             <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
               {gerePortefeuilles && (
@@ -560,12 +565,12 @@ export default function Clients() {
                   />
                 </th>
               )}
-              <th className="px-4 py-3 font-medium">{t('table.nom')}</th>
-              <th className="px-4 py-3 font-medium">{t('table.telephone')}</th>
-              <th className="px-4 py-3 font-medium">{t('table.ville')}</th>
-              <th className="px-4 py-3 font-medium">{t('table.type')}</th>
-              <th className="px-4 py-3 font-medium">{t('table.segment')}</th>
-              <th className="px-4 py-3 font-medium">{t('table.actions')}</th>
+              <th className="px-4 py-3.5 font-semibold text-xs uppercase tracking-wide">{t('table.nom')}</th>
+              <th className="px-4 py-3.5 font-semibold text-xs uppercase tracking-wide">{t('table.telephone')}</th>
+              <th className="px-4 py-3.5 font-semibold text-xs uppercase tracking-wide">{t('table.ville')}</th>
+              <th className="px-4 py-3.5 font-semibold text-xs uppercase tracking-wide">{t('table.type')}</th>
+              <th className="px-4 py-3.5 font-semibold text-xs uppercase tracking-wide">{t('table.segment')}</th>
+              <th className="px-4 py-3.5 font-semibold text-xs uppercase tracking-wide">{t('table.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -585,8 +590,13 @@ export default function Clients() {
                       />
                     </td>
                   )}
-                  <td className="px-4 py-3 font-medium">
-                    {c.nom}
+                  <td className="px-4 py-3.5 font-medium">
+                    <div className="flex items-center gap-3">
+                    <span className="hidden sm:flex shrink-0 w-9 h-9 rounded-full bg-petrol-100 text-petrol-700 items-center justify-center text-sm font-semibold uppercase">
+                      {(c.nom || '?').trim().charAt(0)}
+                    </span>
+                    <div className="min-w-0">
+                    <span className="block text-petrol-900">{c.nom}</span>
                     {gerePortefeuilles && (
                       <span className="block text-xs font-normal text-petrol-500">
                         👤 {c.commercial_id ? nomCommercial(c.commercial_id) || '—' : t('portefeuille.nonAttribue')}
@@ -596,27 +606,31 @@ export default function Clients() {
                       <button data-aide="clients.table.creditTitle"
                         type="button"
                         onClick={() => ouvrirModalRemboursement(c)}
-                        className="ml-2 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded hover:bg-green-200"
+                        className="mt-1 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded hover:bg-green-200"
                         title={t('table.creditTitle')}
                       >
                         {t('table.credit', { montant: formatXOF(c.solde_credit) })}
                       </button>
                     )}
+                    </div>
+                    </div>
                   </td>
-                  <td className="px-4 py-3 font-mono text-petrol-700">{c.telephone || '—'}</td>
-                  <td className="px-4 py-3 text-petrol-700">{c.ville || '—'}</td>
-                  <td className="px-4 py-3 text-petrol-700 capitalize">{c.type_client || '—'}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5 font-mono text-petrol-700 whitespace-nowrap">
+                    {c.telephone ? <a href={`tel:${c.telephone.replace(/\s/g, '')}`} className="hover:text-amber-700">{c.telephone}</a> : '—'}
+                  </td>
+                  <td className="px-4 py-3.5 text-petrol-700">{c.ville || '—'}</td>
+                  <td className="px-4 py-3.5 text-petrol-700 capitalize">{c.type_client || '—'}</td>
+                  <td className="px-4 py-3.5">
                     <span className={`text-xs px-2 py-1 rounded-full border capitalize ${COULEURS_SEGMENT[c.segment] || 'bg-petrol-50 text-petrol-500 border-line'}`}>
                       {c.segment || '—'}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-3 text-xs">
+                  <td className="px-4 py-3.5">
+                    <div className="flex flex-wrap gap-1.5 text-xs">
                       <button data-aide="clients.table.modifier"
                         type="button"
                         onClick={() => ouvrirEditionClient(c)}
-                        className="text-petrol-700 underline"
+                        className="px-2.5 py-1 rounded-lg border border-line bg-white text-petrol-700 hover:border-amber-400 whitespace-nowrap"
                       >
                         {t('table.modifier')}
                       </button>
@@ -626,14 +640,14 @@ export default function Clients() {
                         disabled={c.latitude == null || c.longitude == null}
                         className={
                           c.latitude == null || c.longitude == null
-                            ? 'text-petrol-500 cursor-not-allowed'
-                            : 'text-blue-600 underline'
+                            ? 'px-2.5 py-1 rounded-lg border border-line text-petrol-300 cursor-not-allowed whitespace-nowrap'
+                            : 'px-2.5 py-1 rounded-lg border border-line bg-white text-petrol-700 hover:border-amber-400 whitespace-nowrap'
                         }
                         title={c.latitude == null ? t('table.itinerairePasPosition') : t('table.itineraireOuvrir')}
                       >
                         {t('table.itineraire')}
                       </button>
-                      <Link to={`/grand-livre?client=${c.id}`} className="text-petrol-700 underline">
+                      <Link to={`/grand-livre?client=${c.id}`} className="px-2.5 py-1 rounded-lg border border-line bg-white text-petrol-700 hover:border-amber-400 whitespace-nowrap">
                         {t('table.grandLivre')}
                       </Link>
                     </div>
