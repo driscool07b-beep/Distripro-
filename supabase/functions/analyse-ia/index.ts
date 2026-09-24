@@ -234,6 +234,7 @@ Sois concis par section (3-6 lignes maximum chacune). Si une donnée manque pour
     }
 
     const resultatClaude = await reponseClaude.json()
+    await enregistrerConsommation(supabase, { entrepriseId: entrepriseId, profilId: profil.id, fonction: 'analyse_ia', modele: 'claude-sonnet-5', usage: resultatClaude.usage })
     const texteAnalyse = resultatClaude.content?.[0]?.text || 'Analyse indisponible.'
 
     await supabase.from('analyses_ia').insert({
@@ -255,4 +256,23 @@ function reponseErreur(message: string, statut: number) {
     status: statut,
     headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
   })
+}
+
+// Enregistre la consommation réelle d'un appel IA (tokens renvoyés par Anthropic)
+// et son coût au tarif en vigueur. Ne bloque jamais la réponse en cas d'échec.
+async function enregistrerConsommation(supabase: any, p: {
+  entrepriseId: string; profilId: string; fonction: string; modele: string; usage: any
+}) {
+  try {
+    const entree = Number(p.usage?.input_tokens || 0) + Number(p.usage?.cache_creation_input_tokens || 0) + Number(p.usage?.cache_read_input_tokens || 0)
+    const sortie = Number(p.usage?.output_tokens || 0)
+    const { data: tarif } = await supabase.from('tarifs_ia').select('*').eq('modele', p.modele).maybeSingle()
+    const cout = tarif
+      ? (entree * Number(tarif.prix_entree_usd_par_million) + sortie * Number(tarif.prix_sortie_usd_par_million)) / 1_000_000
+      : 0
+    await supabase.from('consommation_ia').insert({
+      entreprise_id: p.entrepriseId, profil_id: p.profilId, fonction: p.fonction,
+      modele: p.modele, tokens_entree: entree, tokens_sortie: sortie, cout_usd: cout,
+    })
+  } catch (_) { /* la mesure ne doit jamais faire échouer l'appel */ }
 }
