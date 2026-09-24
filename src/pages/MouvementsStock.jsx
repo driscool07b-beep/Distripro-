@@ -34,6 +34,8 @@ export default function MouvementsStock() {
 
   const autorise = ['admin', 'manager', 'gestionnaire_stock', 'comptable'].includes(profil?.role)
   const peutJoindre = ['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)
+  // Rattacher après coup un justificatif manquant : réservé à la direction, et signalé « joint après coup ».
+  const peutRegulariser = ['admin', 'manager'].includes(profil?.role)
 
   useEffect(() => {
     if (autorise) {
@@ -213,6 +215,9 @@ export default function MouvementsStock() {
                       {actuel && (
                         <span className="text-xs text-petrol-400">
                           {t('deposePar', { nom: actuel.ajoute?.nom || '—', date: formatDateHeure(actuel.created_at) })}
+                          {new Date(actuel.created_at) - new Date(m.created_at) > 10 * 60 * 1000 && (
+                            <span className="ms-1 text-amber-700">· {t('apresCoup')}</span>
+                          )}
                         </span>
                       )}
                       {peutJoindre && formulaire?.mouvementId !== m.id && (
@@ -227,7 +232,14 @@ export default function MouvementsStock() {
                       )}
                     </>
                   ) : (
-                    <span className="text-xs text-petrol-400 italic">{t('sansJustificatif')}</span>
+                    <>
+                      <span className="text-xs text-petrol-400 italic">{t('sansJustificatif')}</span>
+                      {peutRegulariser && !String(m.motif || '').startsWith('Vente') && formulaire?.mouvementId !== m.id && (
+                        <button data-aide="mouvementsstock.regulariser" onClick={() => ouvrirFormulaire(m.id, false)} className="text-xs text-amber-700 underline">
+                          {t('regulariser')}
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
 

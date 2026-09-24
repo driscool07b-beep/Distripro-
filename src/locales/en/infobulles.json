@@ -111,7 +111,8 @@
     "joindreJustificatif": "Attaches a photo or document (exit slip, invoice…) to this movement.",
     "voirJustificatif": "Opens the file attached to this movement.",
     "remplacer": "Replaces a file attached by mistake. The old one is kept for audit, with the reason.",
-    "envoyer": "Uploads the file. Photos are reduced automatically to go faster."
+    "envoyer": "Uploads the file. Photos are reduced automatically to go faster.",
+    "regulariser": "Attaches the missing document to a movement. It stays marked as 'attached afterwards' for audit."
   },
   "objectifs": {
     "nouvelObjectif": "Sets a sales target (amount or quantity) over a period.",

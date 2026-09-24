@@ -37,5 +37,7 @@
     "preparation": "准备中…",
     "envoi": "正在上传文件…",
     "enregistrement": "正在保存…"
-  }
+  },
+  "regulariser": "补正（附加凭证）",
+  "apresCoup": "事后附加"
 }

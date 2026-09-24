@@ -111,7 +111,8 @@
     "joindreJustificatif": "Joint une photo ou un document (bon de sortie, facture…) à ce mouvement.",
     "voirJustificatif": "Ouvre le fichier joint à ce mouvement.",
     "remplacer": "Remplace un fichier joint par erreur. L'ancien reste conservé pour l'audit, avec le motif.",
-    "envoyer": "Envoie le fichier. Les photos sont réduites automatiquement pour aller plus vite."
+    "envoyer": "Envoie le fichier. Les photos sont réduites automatiquement pour aller plus vite.",
+    "regulariser": "Rattache le justificatif manquant d'un mouvement. L'ajout reste visible comme « joint après coup » pour l'audit."
   },
   "objectifs": {
     "nouvelObjectif": "Fixe un objectif de ventes (montant ou quantité) sur une période.",
