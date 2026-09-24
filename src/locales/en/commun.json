@@ -159,5 +159,10 @@
     "erreurConfirmation": "The passwords don't match.",
     "enCours": "Saving…",
     "valider": "Confirm"
+  },
+  "miseAJour": {
+    "titre": "New version available",
+    "texte": "Save what you are typing, then update.",
+    "bouton": "Update"
   }
 }

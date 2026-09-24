@@ -159,5 +159,10 @@
     "erreurConfirmation": "Les mots de passe ne correspondent pas.",
     "enCours": "Enregistrement…",
     "valider": "Valider"
+  },
+  "miseAJour": {
+    "titre": "Nouvelle version disponible",
+    "texte": "Enregistrez votre saisie en cours, puis mettez à jour.",
+    "bouton": "Mettre à jour"
   }
 }

@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import Avatar from './Avatar'
 import InfobullesAide from './InfobullesAide'
 import TableauxResponsifs from './TableauxResponsifs'
+import MiseAJour from './MiseAJour'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
@@ -412,6 +413,7 @@ export default function Layout() {
         </div>
         <InfobullesAide />
         <TableauxResponsifs />
+        <MiseAJour />
         <main className="flex-1 min-w-0 overflow-x-hidden">
           <BandeauHorsLigne />
           <Outlet />

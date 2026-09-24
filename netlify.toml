@@ -9,3 +9,21 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Le service worker et la page d'accueil ne doivent jamais être gardés en
+# cache par le navigateur : sinon l'application installée peut rester des
+# heures sur une ancienne version après une mise en ligne.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache"

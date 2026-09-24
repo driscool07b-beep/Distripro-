@@ -159,5 +159,10 @@
     "erreurConfirmation": "两次输入的密码不一致。",
     "enCours": "保存中…",
     "valider": "确认"
+  },
+  "miseAJour": {
+    "titre": "有新版本可用",
+    "texte": "请先保存正在输入的内容，然后更新。",
+    "bouton": "更新"
   }
 }
