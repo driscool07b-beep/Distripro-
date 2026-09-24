@@ -112,14 +112,23 @@ export function AuthProvider({ children }) {
       setLoading(false)
     })
 
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    // IMPORTANT : ne jamais attendre (await) une requête Supabase à l'intérieur
+    // de ce rappel. La bibliothèque y détient un verrou de session : une
+    // requête lancée ici attend ce verrou, qui attend la fin du rappel →
+    // blocage. Toutes les requêtes suivantes (envoi de fichier, ajustement de
+    // stock…) restaient alors figées sur « Enregistrement… », surtout après le
+    // renouvellement automatique de la session (environ toutes les heures).
+    // On se contente donc de noter la session, et on recharge le profil juste
+    // après, hors du rappel — et seulement quand c'est utile.
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
-      if (session?.user) {
-        await chargerProfil(session.user.id)
-      } else {
+      if (!session?.user) {
         setProfil(null)
         setEntreprise(null)
+        return
       }
+      if (event === 'TOKEN_REFRESHED') return
+      setTimeout(() => { chargerProfil(session.user.id) }, 0)
     })
 
     return () => listener.subscription.unsubscribe()
