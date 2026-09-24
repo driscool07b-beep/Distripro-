@@ -59,3 +59,6 @@ begin
   end if;
 end;
 $$;
+
+-- Recharge le cache de l'API pour que la fonction soit visible immédiatement.
+notify pgrst, 'reload schema';
