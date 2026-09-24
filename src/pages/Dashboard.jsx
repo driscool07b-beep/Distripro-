@@ -896,24 +896,91 @@ function DashboardGestionnaireStock() {
   )
 }
 
+// Illustration de chaque carte, choisie d'après la page vers laquelle elle mène.
+const THEMES_KPI = {
+  ventes:       { fond: 'bg-emerald-100', texte: 'text-emerald-600', trait: '#059669', icone: 'tendance' },
+  clients:      { fond: 'bg-sky-100',     texte: 'text-sky-600',     trait: '#0284c7', icone: 'clients' },
+  stock:        { fond: 'bg-indigo-100',  texte: 'text-indigo-600',  trait: '#4f46e5', icone: 'cartons' },
+  alertes:      { fond: 'bg-amber-100',   texte: 'text-amber-600',   trait: '#d97706', icone: 'alerte' },
+  creances:     { fond: 'bg-orange-100',  texte: 'text-orange-600',  trait: '#ea580c', icone: 'main' },
+  echues:       { fond: 'bg-rose-100',    texte: 'text-rose-600',    trait: '#e11d48', icone: 'horloge' },
+  commandes:    { fond: 'bg-teal-100',    texte: 'text-teal-600',    trait: '#0d9488', icone: 'bon' },
+  stockMain:    { fond: 'bg-violet-100',  texte: 'text-violet-600',  trait: '#7c3aed', icone: 'camion' },
+  versements:   { fond: 'bg-lime-100',    texte: 'text-lime-700',    trait: '#4d7c0f', icone: 'portefeuille' },
+  defaut:       { fond: 'bg-petrol-50',   texte: 'text-petrol-600',  trait: '#0f4c5c', icone: 'pieces' },
+}
+
+function themeKpi(to = '') {
+  if (to.includes('filtre=alertes')) return THEMES_KPI.alertes
+  if (to.includes('filtre=echues')) return THEMES_KPI.echues
+  if (to.startsWith('/stock-commercial')) return THEMES_KPI.stockMain
+  if (to.startsWith('/ventes')) return THEMES_KPI.ventes
+  if (to.startsWith('/clients')) return THEMES_KPI.clients
+  if (to.startsWith('/stock')) return THEMES_KPI.stock
+  if (to.startsWith('/creances')) return THEMES_KPI.creances
+  if (to.startsWith('/commandes')) return THEMES_KPI.commandes
+  if (to.startsWith('/versements')) return THEMES_KPI.versements
+  return THEMES_KPI.defaut
+}
+
+const TRACES_ICONES = {
+  tendance: <><path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" /></>,
+  clients: <><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5" /><circle cx="17" cy="9" r="2.5" /><path d="M17.5 14.5c2 .3 3.5 1.8 4 4.5" /></>,
+  cartons: <><path d="M3 8l9-4 9 4-9 4-9-4z" /><path d="M3 8v8l9 4 9-4V8" /><path d="M12 12v8" /></>,
+  alerte: <><path d="M12 3l9.5 17h-19L12 3z" /><path d="M12 10v4" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></>,
+  main: <><path d="M3 15h3l4 2h5a2 2 0 000-4h-3" /><path d="M6 15v5H3v-5" /><path d="M10 17l7-3.5a1.8 1.8 0 012.4 2.4L13 20H8" /><circle cx="16" cy="6" r="3" /></>,
+  horloge: <><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2.5 2.5" /><path d="M9 2h6" /></>,
+  bon: <><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4V2.5h6V4" /><path d="M8.5 10h7M8.5 14h7M8.5 18h4" /></>,
+  camion: <><path d="M2 6h11v10H2z" /><path d="M13 9h4l4 4v3h-8" /><circle cx="6" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></>,
+  portefeuille: <><rect x="3" y="6" width="18" height="14" rx="2" /><path d="M3 10h18" /><path d="M16 15h2" /><path d="M6 6l9-3 1 3" /></>,
+  pieces: <><ellipse cx="12" cy="7" rx="7" ry="3" /><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7" /><path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5" /></>,
+}
+
+function IconeKpi({ nom, className = '', strokeWidth = 1.8 }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth}
+      strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      {TRACES_ICONES[nom] || TRACES_ICONES.pieces}
+    </svg>
+  )
+}
+
 function CarteKpi({ label, valeur, accent, alerte, to }) {
+  const theme = themeKpi(to)
+  // Montants : le chiffre en grand, la devise (« F CFA », « GNF »…) en petit,
+  // pour que la valeur tienne sur une ligne même sur un petit téléphone.
+  const texte = String(valeur ?? '')
+  const decoupe = texte.match(/^(.*\d)\s+(\D+)$/)
+  const nombre = decoupe ? decoupe[1] : texte
+  const unite = decoupe ? decoupe[2] : ''
   const contenu = (
     <div
-      className={`card p-5 transition-shadow ${alerte ? 'border-amber-400 bg-amber-50/40' : ''} ${
+      className={`card p-4 sm:p-5 relative overflow-hidden transition-shadow h-full ${alerte ? 'border-amber-400 bg-amber-50/40' : ''} ${
         to ? 'hover:shadow-md cursor-pointer' : ''
       }`}
     >
-      <div className="text-xs text-petrol-600 mb-1.5">{label}</div>
-      <div
-        className={`font-mono text-xl font-medium ${
-          accent ? 'text-petrol-900' : alerte ? 'text-amber-600' : 'text-petrol-900'
-        }`}
-      >
-        {valeur}
+      {/* Illustration en filigrane */}
+      <IconeKpi nom={theme.icone} strokeWidth={1.2}
+        className={`absolute -right-3 -bottom-3 w-20 h-20 ${theme.texte} opacity-[0.08] pointer-events-none`} />
+      <div className="flex items-center gap-2.5 mb-3 relative">
+        <span className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center ${theme.fond} ${theme.texte}`}>
+          <IconeKpi nom={theme.icone} className="w-5 h-5" />
+        </span>
+        <span className="text-xs text-petrol-600 leading-tight">{label}</span>
+      </div>
+      <div className="relative">
+        <span
+          className={`font-mono text-lg sm:text-xl font-semibold whitespace-nowrap ${
+            accent ? 'text-petrol-900' : alerte ? 'text-amber-600' : 'text-petrol-900'
+          }`}
+        >
+          {nombre}
+        </span>
+        {unite && <span className="ml-1 text-xs text-petrol-500 whitespace-nowrap">{unite}</span>}
       </div>
     </div>
   )
-  return to ? <Link to={to}>{contenu}</Link> : contenu
+  return to ? <Link to={to} className="block h-full">{contenu}</Link> : contenu
 }
 
 function formaterDureeEcoulee(dateIso, t) {
