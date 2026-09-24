@@ -23,7 +23,7 @@ export default function MiseAJour() {
         <p className="text-sm font-semibold">{t('miseAJour.titre')}</p>
         <p className="text-xs text-white/70">{t('miseAJour.texte')}</p>
       </div>
-      <button onClick={() => window.location.reload()} className="shrink-0 bg-amber-500 hover:bg-amber-400 text-petrol-950 font-semibold text-sm px-3 py-2 rounded-xl">
+      <button onClick={() => (window.__distribproMettreAJour ? window.__distribproMettreAJour() : window.location.reload())} className="shrink-0 bg-amber-500 hover:bg-amber-400 text-petrol-950 font-semibold text-sm px-3 py-2 rounded-xl">
         {t('miseAJour.bouton')}
       </button>
     </div>

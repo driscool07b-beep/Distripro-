@@ -17,6 +17,35 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Filet de sécurité : si l'application ne s'est pas affichée au bout de
+      // 12 s (fichiers d'une ancienne version introuvables…), on vide le cache
+      // de l'application et on recharge — une seule fois.
+      setTimeout(function () {
+        var racine = document.getElementById('root')
+        if (racine && racine.children.length > 0) return
+        if (sessionStorage.getItem('distribpro-reparation')) return
+        sessionStorage.setItem('distribpro-reparation', '1')
+        var taches = []
+        if ('serviceWorker' in navigator) {
+          taches.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
+            return Promise.all(regs.map(function (r) { return r.unregister() }))
+          }))
+        }
+        if (window.caches) {
+          taches.push(caches.keys().then(function (cles) {
+            return Promise.all(cles.map(function (c) { return caches.delete(c) }))
+          }))
+        }
+        Promise.all(taches).finally(function () { location.reload() })
+      }, 12000)
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          var racine = document.getElementById('root')
+          if (racine && racine.children.length > 0) sessionStorage.removeItem('distribpro-reparation')
+        }, 3000)
+      })
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

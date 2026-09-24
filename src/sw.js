@@ -1,12 +1,20 @@
-import { precacheAndRoute } from 'workbox-precaching'
+import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching'
 
 // Pré-cache des fichiers de l'app (JS/CSS/HTML/icônes) pour qu'elle
 // s'ouvre hors-ligne — jamais les appels réseau vers Supabase, qui
 // passent toujours par la file d'attente de synchronisation (voir
 // src/lib/offline.js), pas par un cache HTTP générique.
 precacheAndRoute(self.__WB_MANIFEST)
+cleanupOutdatedCaches()
 
-self.addEventListener('install', () => self.skipWaiting())
+// Une nouvelle version NE prend PAS la main d'elle-même : sinon, si elle
+// s'active pendant qu'une page de l'ancienne version se charge, cette page
+// réclame des fichiers qui n'existent plus → page blanche. Elle attend que
+// l'utilisateur clique sur « Mettre à jour » (message SKIP_WAITING), ou que
+// toutes les fenêtres de l'app soient fermées.
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting()
+})
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()))
 
 // Réception d'une notification push envoyée par l'Edge Function

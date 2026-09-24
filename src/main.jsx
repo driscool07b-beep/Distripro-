@@ -7,30 +7,23 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import './lib/i18n'
 import './index.css'
 
-// Vérifie régulièrement s'il existe une nouvelle version (toutes les 10 min
-// et à chaque retour sur l'application) : une fenêtre installée laissée
-// ouverte toute la journée ne resterait sinon jamais à jour.
-registerSW({
+// Mises à jour : on vérifie régulièrement (toutes les 10 min et à chaque
+// retour sur l'app) ; quand une version est prête, un bandeau propose
+// « Mettre à jour » — c'est ce clic qui l'active puis recharge la page.
+const mettreAJour = registerSW({
   immediate: true,
+  onNeedRefresh() {
+    window.__distribproMajDisponible = true
+    window.dispatchEvent(new Event('distribpro-maj-disponible'))
+  },
   onRegisteredSW(_url, registration) {
     if (!registration) return
     const verifier = () => registration.update().catch(() => {})
     setInterval(verifier, 10 * 60 * 1000)
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') verifier() })
-    window.addEventListener('focus', verifier)
   },
 })
-
-// Le nouveau service worker prend la main dès son installation : on
-// l'annonce (bandeau « Mettre à jour ») sans recharger de force.
-if ('serviceWorker' in navigator) {
-  const avaitDejaUnControleur = !!navigator.serviceWorker.controller
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!avaitDejaUnControleur) return
-    window.__distribproMajDisponible = true
-    window.dispatchEvent(new Event('distribpro-maj-disponible'))
-  })
-}
+window.__distribproMettreAJour = () => mettreAJour(true)
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
