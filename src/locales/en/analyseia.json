@@ -10,5 +10,12 @@
   "aucuneAnalyse": "No analysis generated.",
   "genereeLe": "Generated on {{date}}",
   "par": "by {{nom}}",
-  "aucuneAnalysePourLeMoment": "No analysis yet. Click \"Generate new analysis\" to get started."
+  "aucuneAnalysePourLeMoment": "No analysis yet. Click \"Generate new analysis\" to get started.",
+  "export": {
+    "titreDocument": "AI business analysis",
+    "pdf": "Download as PDF",
+    "word": "Download as Word",
+    "enCours": "Preparing…",
+    "erreur": "Download failed"
+  }
 }

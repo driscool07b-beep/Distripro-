@@ -10,5 +10,12 @@
   "aucuneAnalyse": "لم يتم إنشاء أي تحليل.",
   "genereeLe": "تم الإنشاء في {{date}}",
   "par": "بواسطة {{nom}}",
-  "aucuneAnalysePourLeMoment": "لا يوجد تحليل حاليًا. انقر على \"إنشاء تحليل جديد\" للبدء."
+  "aucuneAnalysePourLeMoment": "لا يوجد تحليل حاليًا. انقر على \"إنشاء تحليل جديد\" للبدء.",
+  "export": {
+    "titreDocument": "تحليل النشاط بالذكاء الاصطناعي",
+    "pdf": "تنزيل PDF",
+    "word": "تنزيل Word",
+    "enCours": "جارٍ التحضير…",
+    "erreur": "فشل التنزيل"
+  }
 }

@@ -10,5 +10,12 @@
   "aucuneAnalyse": "Aucune analyse générée.",
   "genereeLe": "Générée le {{date}}",
   "par": "par {{nom}}",
-  "aucuneAnalysePourLeMoment": "Aucune analyse pour le moment. Cliquez sur \"Générer une nouvelle analyse\" pour commencer."
+  "aucuneAnalysePourLeMoment": "Aucune analyse pour le moment. Cliquez sur \"Générer une nouvelle analyse\" pour commencer.",
+  "export": {
+    "titreDocument": "Analyse IA de l'activité",
+    "pdf": "Télécharger en PDF",
+    "word": "Télécharger en Word",
+    "enCours": "Préparation…",
+    "erreur": "Le téléchargement a échoué"
+  }
 }

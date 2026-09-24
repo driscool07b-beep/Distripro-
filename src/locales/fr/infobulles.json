@@ -136,5 +136,11 @@
   },
   "notesutilisation": {
     "exporterPdf": "Exporte les notes d'utilisation en PDF."
+  },
+  "analyseia": {
+    "export": {
+      "pdf": "Télécharge cette analyse en PDF, avec l'en-tête de l'entreprise, prête à imprimer ou à partager.",
+      "word": "Télécharge cette analyse en document Word modifiable (.docx)."
+    }
   }
 }

@@ -10,5 +10,12 @@
   "aucuneAnalyse": "尚未生成任何分析。",
   "genereeLe": "生成于 {{date}}",
   "par": "由 {{nom}}",
-  "aucuneAnalysePourLeMoment": "目前没有分析。点击“生成新分析”开始。"
+  "aucuneAnalysePourLeMoment": "目前没有分析。点击“生成新分析”开始。",
+  "export": {
+    "titreDocument": "AI 业务分析",
+    "pdf": "下载 PDF",
+    "word": "下载 Word",
+    "enCours": "准备中…",
+    "erreur": "下载失败"
+  }
 }

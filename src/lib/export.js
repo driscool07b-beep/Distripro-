@@ -33,7 +33,7 @@ export function symboleDevise() {
  * haut d'un document PDF. Retourne la position Y à partir de laquelle
  * continuer à écrire (la hauteur de l'en-tête varie selon les infos remplies).
  */
-function ecrireEnTeteEntreprise(doc, entreprise) {
+export function ecrireEnTeteEntreprise(doc, entreprise) {
   doc.setFontSize(16)
   doc.setTextColor(0)
   doc.text(entreprise?.nom || '', 14, 18)

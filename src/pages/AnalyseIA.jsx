@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { analyserTexte, exporterAnalysePDF, exporterAnalyseWord } from '../lib/exportAnalyse'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
@@ -12,6 +13,26 @@ export default function AnalyseIA() {
   const [analyseAffichee, setAnalyseAffichee] = useState(null)
   const [generation, setGeneration] = useState(false)
   const [erreur, setErreur] = useState('')
+  const [exportEnCours, setExportEnCours] = useState('')
+
+  async function telecharger(format) {
+    if (!analyseAffichee) return
+    const params = {
+      entreprise,
+      analyse: analyseAffichee,
+      titre: t('export.titreDocument'),
+      sousTitre: t('genereeLe', { date: new Date(analyseAffichee.created_at).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) })
+        + (analyseAffichee.profils?.nom ? ` ${t('par', { nom: analyseAffichee.profils.nom })}` : ''),
+    }
+    setExportEnCours(format)
+    try {
+      if (format === 'pdf') exporterAnalysePDF(params)
+      else await exporterAnalyseWord(params)
+    } catch (e) {
+      alert(`${t('export.erreur')} (${e.message})`)
+    }
+    setExportEnCours('')
+  }
 
   const autorise = ['admin', 'manager'].includes(profil?.role)
 
@@ -104,11 +125,29 @@ export default function AnalyseIA() {
         <div className="card p-5">
           {analyseAffichee ? (
             <>
+              <div className="flex flex-wrap gap-2 mb-3">
+                <button data-aide="analyseia.export.pdf" onClick={() => telecharger('pdf')} disabled={!!exportEnCours} className="btn-secondary text-xs px-3 py-1.5">
+                  📄 {exportEnCours === 'pdf' ? t('export.enCours') : t('export.pdf')}
+                </button>
+                <button data-aide="analyseia.export.word" onClick={() => telecharger('word')} disabled={!!exportEnCours} className="btn-secondary text-xs px-3 py-1.5">
+                  📝 {exportEnCours === 'word' ? t('export.enCours') : t('export.word')}
+                </button>
+              </div>
               <p className="text-xs text-petrol-500 mb-3">
                 {t('genereeLe', { date: new Date(analyseAffichee.created_at).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) })}
                 {analyseAffichee.profils?.nom ? ` ${t('par', { nom: analyseAffichee.profils.nom })}` : ''}
               </p>
-              <div className="text-sm whitespace-pre-wrap leading-relaxed">{analyseAffichee.contenu}</div>
+              <div className="text-sm leading-relaxed space-y-2">
+                {analyserTexte(analyseAffichee.contenu).map((b, i) =>
+                  b.type === 'titre' ? (
+                    <h3 key={i} className="font-semibold text-petrol-900 text-base pt-3 first:pt-0">{b.texte}</h3>
+                  ) : (
+                    <p key={i} className={b.type === 'puce' ? 'ps-5 relative before:content-["•"] before:absolute before:start-1.5 before:text-amber-600' : ''}>
+                      {b.segments.map((sg, j) => (sg.gras ? <strong key={j}>{sg.texte}</strong> : <span key={j}>{sg.texte}</span>))}
+                    </p>
+                  )
+                )}
+              </div>
             </>
           ) : (
             <p className="text-sm text-petrol-400 text-center py-12">
