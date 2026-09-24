@@ -109,6 +109,7 @@ export default function Layout() {
         <div className="px-6 py-6 border-b border-white/10 flex items-center justify-between">
           <div>
             <div className="font-display font-bold text-lg tracking-tight">DistribPro</div>
+            <div className="text-[10px] text-white/40 font-mono">v {__VERSION_APP__}</div>
             <div className="text-xs text-white/50 mt-0.5 truncate">{entreprise?.nom || '—'}</div>
           </div>
           <button
@@ -409,7 +410,7 @@ export default function Layout() {
               <path d="M3 6h18M3 12h18M3 18h18" />
             </svg>
           </button>
-          <span className="font-display font-semibold">DistribPro</span>
+          <span className="font-display font-semibold">DistribPro <span className="text-[10px] font-mono font-normal text-petrol-400">v {__VERSION_APP__}</span></span>
         </div>
         <InfobullesAide />
         <TableauxResponsifs />

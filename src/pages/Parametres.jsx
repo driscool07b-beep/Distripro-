@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import DiagnosticConnexion from '../components/DiagnosticConnexion'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
@@ -1357,6 +1358,7 @@ export default function Parametres() {
         </form>
       </div>
       {profil?.role === 'admin' && <SectionConsommationIA />}
+      {profil?.role === 'admin' && <DiagnosticConnexion />}
     </div>
   )
 }

@@ -159,5 +159,10 @@
     "erreurAucuneLigne": "Enter at least one counted quantity before confirming."
   },
   "erreurJustificatif": "The movement is saved, but the supporting document could not be uploaded. You can attach it from the Stock log.",
-  "erreurJustificatifEnvoi": "The supporting document could not be uploaded: stock was NOT changed"
+  "erreurJustificatifEnvoi": "The supporting document could not be uploaded: stock was NOT changed",
+  "etapesAjustement": {
+    "preparation": "Preparing file…",
+    "envoi": "Uploading file…",
+    "enregistrement": "Saving stock…"
+  }
 }

@@ -26,7 +26,7 @@ export async function compresserImage(fichier, { largeurMax = 1600, qualite = 0.
 // jamais écrasé (traçabilité). motifRemplacement est requis si le mouvement
 // a déjà un justificatif. Renvoie { error } (message lisible) ou {}.
 // Limite de temps par étape : un envoi ne doit jamais rester bloqué sans message.
-function avecDelai(promesse, ms, message) {
+export function avecDelai(promesse, ms, message) {
   let minuterie
   return Promise.race([
     promesse,

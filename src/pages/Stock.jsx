@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
-import { envoyerJustificatifMouvement, envoyerFichierJustificatif } from '../lib/justificatifs'
+import { envoyerJustificatifMouvement, envoyerFichierJustificatif, avecDelai } from '../lib/justificatifs'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise, genererRapportInventaireStock } from '../lib/export'
 import * as XLSX from 'xlsx'
@@ -55,6 +55,7 @@ export default function Stock() {
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
   const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '', numero_lot: '', date_peremption: '' })
   const [transfert, setTransfert] = useState({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
+  const [etapeAjustement, setEtapeAjustement] = useState('')
   const [enregistrement, setEnregistrement] = useState(false)
   const [erreur, setErreur] = useState('')
 
@@ -405,15 +406,17 @@ export default function Stock() {
     // qu'il existe bien et enregistre mouvement + justificatif ensemble.
     let fichierInfo = null
     if (fichierJustificatif) {
-      const resultatEnvoi = await envoyerFichierJustificatif({ entrepriseId: entreprise.id, fichier: fichierJustificatif })
+      const resultatEnvoi = await envoyerFichierJustificatif({ entrepriseId: entreprise.id, fichier: fichierJustificatif, onEtape: setEtapeAjustement })
       if (resultatEnvoi.error) {
+        setEtapeAjustement('')
         setEnregistrement(false)
         setErreur(`${t('erreurJustificatifEnvoi')} — ${resultatEnvoi.error}`)
         return
       }
       fichierInfo = resultatEnvoi.fichierInfo
     }
-    const { error } = await supabase.rpc('ajuster_stock_manuel', {
+    setEtapeAjustement('enregistrement')
+    const { error } = await avecDelai(supabase.rpc('ajuster_stock_manuel', {
       p_produit_id: modalMouvement.id,
       p_type: mouvement.type,
       p_quantite: qte,
@@ -425,7 +428,8 @@ export default function Stock() {
       p_justificatif_nom: fichierInfo?.nom || null,
       p_justificatif_taille: fichierInfo?.taille || null,
       p_justificatif_type: fichierInfo?.type || null,
-    })
+    }), 30000, 'enregistrement : pas de réponse du serveur après 30 s').catch((e) => ({ error: e }))
+    setEtapeAjustement('')
     if (error) {
       setEnregistrement(false)
       setErreur(
@@ -1008,7 +1012,7 @@ export default function Stock() {
                   {t('mouvement.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
-                  {enregistrement ? t('mouvement.enregistrement') : t('mouvement.valider')}
+                  {enregistrement ? (etapeAjustement ? t(`etapesAjustement.${etapeAjustement}`) : t('mouvement.enregistrement')) : t('mouvement.valider')}
                 </button>
               </div>
             </form>
