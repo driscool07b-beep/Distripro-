@@ -176,7 +176,7 @@ export default function LocaliserStock() {
                 {c.telephone && <p className="text-xs text-petrol-600 mt-1">📞 {c.telephone}</p>}
               </div>
               {c.latitude != null && (
-                <button onClick={() => ouvrirItineraire(c)} className="text-blue-600 text-xs underline shrink-0">
+                <button data-aide="localiserstock.itineraire" onClick={() => ouvrirItineraire(c)} className="text-blue-600 text-xs underline shrink-0">
                   {t('itineraire')}
                 </button>
               )}

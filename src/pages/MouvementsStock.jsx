@@ -115,7 +115,7 @@ export default function MouvementsStock() {
 
               <div className="mt-2 flex items-center gap-3">
                 {m.reference_doc ? (
-                  <button onClick={() => voirJustificatif(m.reference_doc)} className="text-xs text-blue-600 underline">
+                  <button data-aide="mouvementsstock.voirJustificatif" onClick={() => voirJustificatif(m.reference_doc)} className="text-xs text-blue-600 underline">
                     {t('voirJustificatif')}
                   </button>
                 ) : mouvementCiblé === m.id ? (
@@ -135,7 +135,7 @@ export default function MouvementsStock() {
                     </button>
                   </div>
                 ) : (
-                  <button onClick={() => setMouvementCiblé(m.id)} className="text-xs text-petrol-500 underline">
+                  <button data-aide="mouvementsstock.joindreJustificatif" onClick={() => setMouvementCiblé(m.id)} className="text-xs text-petrol-500 underline">
                     {t('joindreJustificatif')}
                   </button>
                 )}

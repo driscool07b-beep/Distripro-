@@ -701,7 +701,7 @@ export default function Parametres() {
               value={nouvelleCaisseNom}
               onChange={(e) => setNouvelleCaisseNom(e.target.value)}
             />
-            <button onClick={ajouterCaisse} className="btn-secondary text-sm px-3">{t('caisses.ajouter')}</button>
+            <button data-aide="parametres.caisses.ajouter" onClick={ajouterCaisse} className="btn-secondary text-sm px-3">{t('caisses.ajouter')}</button>
           </div>
           {erreurCaisse && <p className="text-xs text-red-600 mt-2">{erreurCaisse}</p>}
         </div>
@@ -807,7 +807,7 @@ export default function Parametres() {
                       {t('organigramme.chefEquipe', { nom: e.profils?.nom || t('organigramme.aucun') })}
                     </p>
                   </div>
-                  <button onClick={() => supprimerEquipe(e.id)} className="text-xs text-red-600 underline">
+                  <button data-aide="parametres.organigramme.supprimer" onClick={() => supprimerEquipe(e.id)} className="text-xs text-red-600 underline">
                     {t('organigramme.supprimer')}
                   </button>
                 </div>
@@ -865,7 +865,7 @@ export default function Parametres() {
                   <option key={m.id} value={m.id}>{m.nom} — {m.role === 'manager' ? 'manager' : 'admin'}</option>
                 ))}
               </select>
-              <button onClick={creerEquipe} className="btn-primary shrink-0">{t('organigramme.creer')}</button>
+              <button data-aide="parametres.organigramme.creer" onClick={creerEquipe} className="btn-primary shrink-0">{t('organigramme.creer')}</button>
             </div>
             {erreurEquipe && <p className="text-xs text-red-600 mt-2">{erreurEquipe}</p>}
           </div>

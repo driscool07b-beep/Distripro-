@@ -315,7 +315,7 @@ export default function Utilisateurs() {
                   </p>
                 </div>
                 <div className="flex gap-3 shrink-0 flex-wrap justify-end">
-                  <button onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
+                  <button data-aide="utilisateurs.modifier" onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
                     {t('modifier')}
                   </button>
                   {m.id !== profil.id && (
@@ -327,12 +327,12 @@ export default function Utilisateurs() {
                     {m.ia_active === false ? t('activerIA') : t('desactiverIA')}
                   </button>
                   {m.id !== profil.id && (
-                    <button onClick={() => reinitialiserMotDePasse(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
+                    <button data-aide="utilisateurs.reinitialiserMdp" onClick={() => reinitialiserMotDePasse(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
                       {t('reinitialiserMdp')}
                     </button>
                   )}
                   {m.id !== profil.id && (
-                    <button onClick={() => regenererPin(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
+                    <button data-aide="utilisateurs.regenererPin" onClick={() => regenererPin(m)} className="text-xs text-amber-700 underline whitespace-nowrap">
                       {t('regenererPin')}
                     </button>
                   )}
@@ -344,7 +344,7 @@ export default function Utilisateurs() {
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
-        <button onClick={() => ouvrirModal(null)} className="btn-primary text-sm">
+        <button data-aide="utilisateurs.inviterCollaborateur" onClick={() => ouvrirModal(null)} className="btn-primary text-sm">
           {t('inviterCollaborateur')}
         </button>
       </div>
@@ -376,10 +376,10 @@ export default function Utilisateurs() {
                       >
                         {renvoiEnCours === inv.id ? t('envoi') : t('renvoyerEmail')}
                       </button>
-                      <button onClick={() => ouvrirModal(inv)} className="text-xs text-petrol-600 underline">
+                      <button data-aide="utilisateurs.modifier" onClick={() => ouvrirModal(inv)} className="text-xs text-petrol-600 underline">
                         {t('modifier')}
                       </button>
-                      <button onClick={() => annulerInvitation(inv.id)} className="text-xs text-red-600 underline">
+                      <button data-aide="utilisateurs.annulerInvitation" onClick={() => annulerInvitation(inv.id)} className="text-xs text-red-600 underline">
                         {t('annulerInvitation')}
                       </button>
                     </div>
@@ -397,7 +397,7 @@ export default function Utilisateurs() {
 
           {membres.some((m) => m.actif === false) && (
             <div className="mt-4">
-              <button onClick={() => setAnciensVisibles((v) => !v)} className="text-sm text-petrol-600 underline">
+              <button data-aide="utilisateurs.anciensMembres" onClick={() => setAnciensVisibles((v) => !v)} className="text-sm text-petrol-600 underline">
                 {anciensVisibles ? '▾' : '▸'} {t('anciensMembres', { n: membres.filter((m) => m.actif === false).length })}
               </button>
               {anciensVisibles && (
@@ -417,7 +417,7 @@ export default function Utilisateurs() {
                 <div className="bg-canvas border border-line rounded-lg p-3 text-center font-mono text-lg tracking-wider mb-4">
                   {valeurGeneree.valeur}
                 </div>
-                <button onClick={() => setValeurGeneree(null)} className="btn-primary w-full">{t('fermer')}</button>
+                <button data-aide="utilisateurs.fermer" onClick={() => setValeurGeneree(null)} className="btn-primary w-full">{t('fermer')}</button>
               </div>
             </div>
           )}
@@ -491,7 +491,7 @@ export default function Utilisateurs() {
               </p>
               {erreur && <p className="text-sm text-red-600">{erreur}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>
+                <button data-aide="utilisateurs.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>
                   {t('annuler')}
                 </button>
                 <button type="submit" disabled={envoi} className="btn-primary flex-1">
@@ -597,7 +597,7 @@ export default function Utilisateurs() {
               )}
               {erreurMembre && <p className="text-sm text-red-600">{erreurMembre}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalMembreOuvert(false)}>
+                <button data-aide="utilisateurs.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalMembreOuvert(false)}>
                   {t('annuler')}
                 </button>
                 <button type="submit" disabled={envoiMembre} className="btn-primary flex-1">

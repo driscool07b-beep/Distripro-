@@ -1,0 +1,13 @@
+{
+  "commun": {
+    "excel": "按当前筛选条件将列表下载为 Excel 文件。",
+    "pdf": "生成当前列表的 PDF，可打印或发送。",
+    "importer": "从 Excel 文件批量导入数据（请先使用模板）。",
+    "telechargerModele": "下载导入前需填写的 Excel 模板。",
+    "itineraire": "在 Google 地图中打开前往此地的路线。",
+    "imprimer": "打印此文档。",
+    "receptionner": "确认收货：金额或货物将计入目的地。",
+    "historique": "显示修改历史。",
+    "filtrer": "应用所选筛选条件。"
+  }
+}

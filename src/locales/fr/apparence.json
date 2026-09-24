@@ -30,5 +30,10 @@
     "erreurRefuse": "Autorisation refusée. Vérifiez les réglages de notifications de votre navigateur pour ce site.",
     "erreurNonSupporte": "Les notifications ne sont pas prises en charge sur cet appareil/navigateur.",
     "erreurGenerique": "Impossible d'activer les notifications pour le moment."
+  },
+  "infobulles": {
+    "titre": "Bulles d'aide sur les boutons",
+    "actives": "Activées : survolez un bouton (ou appuyez longuement dessus sur téléphone) pour savoir à quoi il sert.",
+    "desactivees": "Désactivées sur cet appareil."
   }
 }

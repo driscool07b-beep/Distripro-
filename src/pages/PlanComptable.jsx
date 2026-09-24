@@ -152,7 +152,7 @@ export default function PlanComptable() {
       <p className="text-xs text-petrol-500 mb-4">{t('sousTitre')}</p>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        <button onClick={() => setModalCompte(true)} className="btn-primary text-sm">{t('nouveauCompte')}</button>
+        <button data-aide="plancomptable.nouveauCompte" onClick={() => setModalCompte(true)} className="btn-primary text-sm">{t('nouveauCompte')}</button>
         {comptes.length === 0 && (
           <button onClick={chargerSyscohada} disabled={envoiSyscohada} className="btn-secondary text-sm">
             {envoiSyscohada ? '…' : t('chargerSyscohada')}
@@ -162,7 +162,7 @@ export default function PlanComptable() {
           {envoiImport ? '…' : t('importerFichier')}
           <input type="file" accept=".xlsx,.xls" onChange={lireFichierImport} className="hidden" disabled={envoiImport} />
         </label>
-        <button onClick={telechargerModele} className="text-xs text-blue-600 underline self-center">{t('telechargerModele')}</button>
+        <button data-aide="plancomptable.telechargerModele" onClick={telechargerModele} className="text-xs text-blue-600 underline self-center">{t('telechargerModele')}</button>
       </div>
       {resultatImport && <p className="text-xs text-petrol-600 mb-3">{resultatImport}</p>}
 
@@ -183,7 +183,7 @@ export default function PlanComptable() {
                 <span className="font-mono font-medium">{c.numero_compte}</span>
                 <span className="text-petrol-600"> — {c.libelle}</span>
               </div>
-              <button onClick={() => supprimerCompte(c.id)} className="text-xs text-red-600 underline shrink-0 ml-2">{t('supprimer')}</button>
+              <button data-aide="plancomptable.supprimer" onClick={() => supprimerCompte(c.id)} className="text-xs text-red-600 underline shrink-0 ml-2">{t('supprimer')}</button>
             </div>
           ))}
           {comptesFiltres.length === 0 && <p className="text-petrol-400 text-center py-12 text-sm">{t('aucunCompte')}</p>}
@@ -205,7 +205,7 @@ export default function PlanComptable() {
               </div>
               {erreurCompte && <p className="text-xs text-red-600">{erreurCompte}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalCompte(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="plancomptable.annuler" type="button" onClick={() => setModalCompte(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiCompte} className="btn-primary flex-1">{envoiCompte ? t('enCours') : t('enregistrer')}</button>
               </div>
             </form>

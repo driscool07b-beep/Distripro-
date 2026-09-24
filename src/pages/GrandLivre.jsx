@@ -99,7 +99,7 @@ export default function GrandLivre() {
       <div className="no-print flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {client && (
-          <button onClick={() => window.print()} className="btn-secondary text-sm">
+          <button data-aide="grandlivre.imprimer" onClick={() => window.print()} className="btn-secondary text-sm">
             {t('imprimer')}
           </button>
         )}

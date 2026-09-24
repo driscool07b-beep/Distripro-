@@ -114,7 +114,7 @@ export default function Depots() {
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
-        <button onClick={() => ouvrirModal(null)} className="btn-primary text-sm">
+        <button data-aide="depots.nouveauDepot" onClick={() => ouvrirModal(null)} className="btn-primary text-sm">
           {t('nouveauDepot')}
         </button>
       </div>
@@ -135,7 +135,7 @@ export default function Depots() {
                   {d.profils?.nom ? ` — ${t('responsable', { nom: d.profils.nom })}` : ''}
                 </p>
               </div>
-              <button onClick={() => ouvrirModal(d)} className="text-xs text-petrol-600 underline">
+              <button data-aide="depots.modifier" onClick={() => ouvrirModal(d)} className="text-xs text-petrol-600 underline">
                 {t('modifier')}
               </button>
             </div>
@@ -177,7 +177,7 @@ export default function Depots() {
               )}
               {erreur && <p className="text-sm text-red-600">{erreur}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('annuler')}</button>
+                <button data-aide="depots.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('annuler')}</button>
                 <button type="submit" disabled={envoi} className="btn-primary flex-1">
                   {envoi ? t('enregistrement') : t('enregistrer')}
                 </button>

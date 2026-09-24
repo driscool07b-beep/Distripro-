@@ -505,10 +505,10 @@ export default function Clients() {
           <p className="text-sm text-petrol-700 mt-1">{t('compteur', { n: clients.length })}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary" onClick={ouvrirModalImport}>
+          <button data-aide="clients.importer" className="btn-secondary" onClick={ouvrirModalImport}>
             📥 {t('importer')}
           </button>
-          <button className="btn-primary" onClick={ouvrirNouveauClient}>
+          <button data-aide="clients.nouveauClient" className="btn-primary" onClick={ouvrirNouveauClient}>
             {t('nouveauClient')}
           </button>
         </div>
@@ -539,7 +539,7 @@ export default function Clients() {
                 {commerciauxActifs.map((m) => <option key={m.id} value={m.id}>{m.nom}</option>)}
                 <option value="aucun">{t('portefeuille.retirerPortefeuille')}</option>
               </select>
-              <button className="btn-primary" disabled={!cibleAttribution || attributionEnCours} onClick={attribuerSelection}>
+              <button data-aide="clients.portefeuille.appliquer" className="btn-primary" disabled={!cibleAttribution || attributionEnCours} onClick={attribuerSelection}>
                 {t('portefeuille.appliquer')}
               </button>
             </>
@@ -593,7 +593,7 @@ export default function Clients() {
                       </span>
                     )}
                     {Number(c.solde_credit) > 0 && (
-                      <button
+                      <button data-aide="clients.table.creditTitle"
                         type="button"
                         onClick={() => ouvrirModalRemboursement(c)}
                         className="ml-2 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded hover:bg-green-200"
@@ -613,14 +613,14 @@ export default function Clients() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-3 text-xs">
-                      <button
+                      <button data-aide="clients.table.modifier"
                         type="button"
                         onClick={() => ouvrirEditionClient(c)}
                         className="text-petrol-700 underline"
                       >
                         {t('table.modifier')}
                       </button>
-                      <button
+                      <button data-aide="clients.table.itineraire"
                         type="button"
                         onClick={() => ouvrirItineraire(c)}
                         disabled={c.latitude == null || c.longitude == null}
@@ -736,7 +736,7 @@ export default function Clients() {
                         onChange={(e) => setNouveauType(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), ajouterTypeClient())}
                       />
-                      <button type="button" className="btn-secondary" onClick={ajouterTypeClient}>
+                      <button data-aide="clients.form.ok" type="button" className="btn-secondary" onClick={ajouterTypeClient}>
                         {t('form.ok')}
                       </button>
                       <button
@@ -929,7 +929,7 @@ export default function Clients() {
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
               <div className="flex gap-2 pt-2">
-                <button
+                <button data-aide="clients.form.annuler"
                   type="button"
                   className="btn-secondary flex-1"
                   onClick={() => {
@@ -970,7 +970,7 @@ export default function Clients() {
             <p className="text-sm text-petrol-600 mb-3">
               {t('import.consigne')}
             </p>
-            <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
+            <button data-aide="clients.import.telechargerModele" onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
               {t('import.telechargerModele')}
             </button>
 
@@ -1061,7 +1061,7 @@ export default function Clients() {
               </div>
               {erreurRemboursement && <p className="text-sm text-red-600">{erreurRemboursement}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalRemboursement(null)}>
+                <button data-aide="clients.remboursement.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalRemboursement(null)}>
                   {t('remboursement.annuler')}
                 </button>
                 <button type="submit" disabled={envoiRemboursement} className="btn-primary flex-1">

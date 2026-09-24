@@ -588,10 +588,10 @@ export default function JournalCaisse() {
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {peutCreer && (
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => setModalRetourFonds(true)} className="btn-secondary text-xs">{t('retourFonds')}</button>
-            <button onClick={() => setModalTransfert(true)} className="btn-secondary text-xs">{t('transfert')}</button>
-            <button onClick={() => setModalApprovisionnement(true)} className="btn-secondary text-xs">{t('approvisionnement')}</button>
-            <button onClick={() => setModalNouvelleDemande(true)} className="btn-primary text-xs">{t('nouvelleDemande')}</button>
+            <button data-aide="journalcaisse.retourFonds" onClick={() => setModalRetourFonds(true)} className="btn-secondary text-xs">{t('retourFonds')}</button>
+            <button data-aide="journalcaisse.transfert" onClick={() => setModalTransfert(true)} className="btn-secondary text-xs">{t('transfert')}</button>
+            <button data-aide="journalcaisse.approvisionnement" onClick={() => setModalApprovisionnement(true)} className="btn-secondary text-xs">{t('approvisionnement')}</button>
+            <button data-aide="journalcaisse.nouvelleDemande" onClick={() => setModalNouvelleDemande(true)} className="btn-primary text-xs">{t('nouvelleDemande')}</button>
           </div>
         )}
       </div>
@@ -638,7 +638,7 @@ export default function JournalCaisse() {
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="font-mono">{formatXOF(tr.montant)}</span>
                         {confirmationTransfertId !== tr.id && (
-                          <button
+                          <button data-aide="journalcaisse.receptionner"
                             onClick={() => (entreprise?.justificatif_transfert_requis ? setConfirmationTransfertId(tr.id) : receptionnerTransfert(tr.id, tr.origine, null))}
                             disabled={envoiAction === tr.id}
                             className="bg-blue-600 text-white text-xs rounded-lg px-3 py-1.5"
@@ -657,7 +657,7 @@ export default function JournalCaisse() {
                           onChange={(e) => setFichierConfirmationTransfert(e.target.files?.[0] || null)}
                         />
                         <div className="flex gap-2">
-                          <button
+                          <button data-aide="journalcaisse.annuler"
                             type="button"
                             onClick={() => { setConfirmationTransfertId(null); setFichierConfirmationTransfert(null) }}
                             className="btn-secondary text-xs flex-1"
@@ -747,8 +747,8 @@ export default function JournalCaisse() {
                               <input type="number" min="0" className="input-field text-sm" value={editMontant} onChange={(e) => setEditMontant(e.target.value)} placeholder={t('montant')} />
                               <input className="input-field text-sm" value={editBeneficiaire} onChange={(e) => setEditBeneficiaire(e.target.value)} placeholder={t('beneficiaire')} />
                               <div className="flex gap-2">
-                                <button onClick={() => setEditionEnCours(null)} className="btn-secondary text-xs flex-1">{t('annuler')}</button>
-                                <button onClick={() => enregistrerEdition(d.id)} disabled={envoiAction === d.id} className="btn-primary text-xs flex-1">{t('enregistrer')}</button>
+                                <button data-aide="journalcaisse.annuler" onClick={() => setEditionEnCours(null)} className="btn-secondary text-xs flex-1">{t('annuler')}</button>
+                                <button data-aide="journalcaisse.enregistrer" onClick={() => enregistrerEdition(d.id)} disabled={envoiAction === d.id} className="btn-primary text-xs flex-1">{t('enregistrer')}</button>
                               </div>
                             </div>
                           ) : (
@@ -768,8 +768,8 @@ export default function JournalCaisse() {
                           )}
                           {d.demande_par === profil?.id && (
                             <div className="flex gap-3 mb-2">
-                              <button onClick={() => ouvrirEdition(d)} className="text-xs text-petrol-600 underline block">{t('corriger')}</button>
-                              <button onClick={() => annulerDemande(d.id)} disabled={envoiAction === d.id} className="text-xs text-red-600 underline block">{t('annulerMaDemande')}</button>
+                              <button data-aide="journalcaisse.corriger" onClick={() => ouvrirEdition(d)} className="text-xs text-petrol-600 underline block">{t('corriger')}</button>
+                              <button data-aide="journalcaisse.annulerMaDemande" onClick={() => annulerDemande(d.id)} disabled={envoiAction === d.id} className="text-xs text-red-600 underline block">{t('annulerMaDemande')}</button>
                             </div>
                           )}
 
@@ -785,8 +785,8 @@ export default function JournalCaisse() {
                             <div className="mt-2 space-y-2">
                               <input className="input-field text-sm" placeholder={t('motifRefusPlaceholder')} value={motifRefus} onChange={(e) => setMotifRefus(e.target.value)} />
                               <div className="flex gap-2">
-                                <button onClick={() => setRefusEnCours(null)} className="btn-secondary text-xs flex-1">{t('annuler')}</button>
-                                <button onClick={() => confirmerRefus(d.id)} disabled={envoiAction === d.id} className="bg-red-600 text-white text-xs rounded-lg px-3 py-1.5 flex-1">{t('confirmerRefus')}</button>
+                                <button data-aide="journalcaisse.annuler" onClick={() => setRefusEnCours(null)} className="btn-secondary text-xs flex-1">{t('annuler')}</button>
+                                <button data-aide="journalcaisse.confirmerRefus" onClick={() => confirmerRefus(d.id)} disabled={envoiAction === d.id} className="bg-red-600 text-white text-xs rounded-lg px-3 py-1.5 flex-1">{t('confirmerRefus')}</button>
                               </div>
                             </div>
                           ) : (
@@ -799,7 +799,7 @@ export default function JournalCaisse() {
                               />
                               <span className="text-xs text-petrol-500">{t('aValiderSurDemande', { montant: formatXOF(d.montant_demande) })}</span>
                               <div className="flex-1" />
-                              <button onClick={() => setRefusEnCours(d.id)} className="text-xs text-red-600 underline">{t('refuser')}</button>
+                              <button data-aide="journalcaisse.refuser" onClick={() => setRefusEnCours(d.id)} className="text-xs text-red-600 underline">{t('refuser')}</button>
                               <button onClick={() => valider(d.id)} disabled={envoiAction === d.id} className="bg-green-600 text-white text-xs rounded-lg px-3 py-1.5">
                                 {envoiAction === d.id ? '…' : t('valider')}
                               </button>
@@ -825,8 +825,8 @@ export default function JournalCaisse() {
                               <input type="number" min="0" className="input-field text-sm" value={editMontant} onChange={(e) => setEditMontant(e.target.value)} placeholder={t('montant')} />
                               <input className="input-field text-sm" value={editBeneficiaire} onChange={(e) => setEditBeneficiaire(e.target.value)} placeholder={t('beneficiaire')} />
                               <div className="flex gap-2">
-                                <button onClick={() => setEditionEnCours(null)} className="btn-secondary text-xs flex-1">{t('annuler')}</button>
-                                <button onClick={() => enregistrerEdition(d.id)} disabled={envoiAction === d.id} className="btn-primary text-xs flex-1">{t('enregistrer')}</button>
+                                <button data-aide="journalcaisse.annuler" onClick={() => setEditionEnCours(null)} className="btn-secondary text-xs flex-1">{t('annuler')}</button>
+                                <button data-aide="journalcaisse.enregistrer" onClick={() => enregistrerEdition(d.id)} disabled={envoiAction === d.id} className="btn-primary text-xs flex-1">{t('enregistrer')}</button>
                               </div>
                             </div>
                           ) : (
@@ -839,8 +839,8 @@ export default function JournalCaisse() {
                                 <span className="font-mono text-sm">{formatXOF(d.montant_demande)}</span>
                               </div>
                               <div className="flex gap-3 mt-2">
-                                <button onClick={() => ouvrirEdition(d)} className="text-xs text-petrol-600 underline">{t('corriger')}</button>
-                                <button onClick={() => annulerDemande(d.id)} disabled={envoiAction === d.id} className="text-xs text-red-600 underline">{t('annulerMaDemande')}</button>
+                                <button data-aide="journalcaisse.corriger" onClick={() => ouvrirEdition(d)} className="text-xs text-petrol-600 underline">{t('corriger')}</button>
+                                <button data-aide="journalcaisse.annulerMaDemande" onClick={() => annulerDemande(d.id)} disabled={envoiAction === d.id} className="text-xs text-red-600 underline">{t('annulerMaDemande')}</button>
                               </div>
                             </>
                           )}
@@ -919,11 +919,11 @@ export default function JournalCaisse() {
                   <label className="label">{t('au')}</label>
                   <input type="date" lang={i18n.language} className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
                 </div>
-                <button onClick={chargerGrandLivre} className="btn-secondary text-sm">{t('filtrer')}</button>
+                <button data-aide="journalcaisse.filtrer" onClick={chargerGrandLivre} className="btn-secondary text-sm">{t('filtrer')}</button>
                 <div className="flex-1" />
-                <button onClick={exporterGrandLivreExcel} className="btn-secondary text-sm no-print">{t('excel')}</button>
-                <button onClick={exporterGrandLivrePDF} className="btn-secondary text-sm no-print">{t('pdf')}</button>
-                <button onClick={() => window.print()} className="btn-secondary text-sm no-print">{t('imprimer')}</button>
+                <button data-aide="journalcaisse.excel" onClick={exporterGrandLivreExcel} className="btn-secondary text-sm no-print">{t('excel')}</button>
+                <button data-aide="journalcaisse.pdf" onClick={exporterGrandLivrePDF} className="btn-secondary text-sm no-print">{t('pdf')}</button>
+                <button data-aide="journalcaisse.imprimer" onClick={() => window.print()} className="btn-secondary text-sm no-print">{t('imprimer')}</button>
                 <button onClick={exporterComptabiliteCaisse} disabled={envoiExportCompta} className="btn-secondary text-sm no-print">
                   {envoiExportCompta ? '…' : t('exporterComptabilite')}
                 </button>
@@ -974,7 +974,7 @@ export default function JournalCaisse() {
           {onglet === 'inventaire' && (
             <div>
               <div className="flex justify-end mb-3">
-                <button onClick={() => { setComptageDenominations({}); setNotesInventaire(''); setErreurInventaire(''); setModalInventaire(true) }} className="btn-primary text-sm">{t('inventaire.nouveau')}</button>
+                <button data-aide="journalcaisse.inventaire.nouveau" onClick={() => { setComptageDenominations({}); setNotesInventaire(''); setErreurInventaire(''); setModalInventaire(true) }} className="btn-primary text-sm">{t('inventaire.nouveau')}</button>
               </div>
               <p className="text-xs text-petrol-500 mb-3">{t('inventaire.aide')}</p>
               {chargementInventaires ? (
@@ -990,7 +990,7 @@ export default function JournalCaisse() {
                             {t('inventaire.controlePar', { nom: inv.controleur?.nom || '—', date: formatDate(inv.created_at) })}
                           </p>
                         </div>
-                        <button onClick={() => imprimerInventaire(inv)} className="text-xs text-blue-600 underline">{t('inventaire.imprimer')}</button>
+                        <button data-aide="journalcaisse.inventaire.imprimer" onClick={() => imprimerInventaire(inv)} className="text-xs text-blue-600 underline">{t('inventaire.imprimer')}</button>
                       </div>
                       <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
                         <div>
@@ -1060,7 +1060,7 @@ export default function JournalCaisse() {
               </div>
               {erreurDemande && <p className="text-xs text-red-600">{erreurDemande}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalNouvelleDemande(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="journalcaisse.annuler" type="button" onClick={() => setModalNouvelleDemande(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiDemande} className="btn-primary flex-1">{envoiDemande ? t('envoi') : t('envoyerDemande')}</button>
               </div>
             </form>
@@ -1095,7 +1095,7 @@ export default function JournalCaisse() {
               </div>
               {erreurAppro && <p className="text-xs text-red-600">{erreurAppro}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalApprovisionnement(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="journalcaisse.annuler" type="button" onClick={() => setModalApprovisionnement(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiAppro} className="btn-primary flex-1">{envoiAppro ? t('envoi') : t('enregistrer')}</button>
               </div>
             </form>
@@ -1110,10 +1110,10 @@ export default function JournalCaisse() {
             <form onSubmit={creerTransfert} className="space-y-3">
               <p className="text-xs text-petrol-500">{t('depuisCaisse', { nom: caisses.find((c) => c.id === caisseId)?.nom || '' })}</p>
               <div className="flex gap-2">
-                <button type="button" onClick={() => setTransfertDestinationType('caisse')} className={`flex-1 text-sm px-3 py-2 rounded-lg border ${transfertDestinationType === 'caisse' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}>
+                <button data-aide="journalcaisse.versAutreCaisse" type="button" onClick={() => setTransfertDestinationType('caisse')} className={`flex-1 text-sm px-3 py-2 rounded-lg border ${transfertDestinationType === 'caisse' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}>
                   {t('versAutreCaisse')}
                 </button>
-                <button type="button" onClick={() => setTransfertDestinationType('banque')} className={`flex-1 text-sm px-3 py-2 rounded-lg border ${transfertDestinationType === 'banque' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}>
+                <button data-aide="journalcaisse.versBanque" type="button" onClick={() => setTransfertDestinationType('banque')} className={`flex-1 text-sm px-3 py-2 rounded-lg border ${transfertDestinationType === 'banque' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}>
                   {t('versBanque')}
                 </button>
               </div>
@@ -1151,7 +1151,7 @@ export default function JournalCaisse() {
               )}
               {erreurTransfert && <p className="text-xs text-red-600">{erreurTransfert}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalTransfert(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="journalcaisse.annuler" type="button" onClick={() => setModalTransfert(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiTransfert} className="btn-primary flex-1">{envoiTransfert ? t('envoi') : t('envoyer')}</button>
               </div>
             </form>
@@ -1181,7 +1181,7 @@ export default function JournalCaisse() {
               </div>
               {erreurRetour && <p className="text-xs text-red-600">{erreurRetour}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalRetourFonds(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="journalcaisse.annuler" type="button" onClick={() => setModalRetourFonds(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiRetour} className="btn-primary flex-1">{envoiRetour ? t('envoi') : t('enregistrer')}</button>
               </div>
             </form>
@@ -1258,7 +1258,7 @@ export default function JournalCaisse() {
               </div>
               {erreurInventaire && <p className="text-xs text-red-600">{erreurInventaire}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalInventaire(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="journalcaisse.annuler" type="button" onClick={() => setModalInventaire(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiInventaire} className="btn-primary flex-1">{envoiInventaire ? t('envoi') : t('inventaire.valider')}</button>
               </div>
             </form>

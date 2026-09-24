@@ -535,7 +535,7 @@ export default function Tournees() {
   if (selectedTournee) {
     return (
       <div className="p-4 max-w-2xl mx-auto">
-        <button
+        <button data-aide="tournees.detail.retour"
           onClick={() => setSelectedTournee(null)}
           className="mb-4 text-blue-600 flex items-center gap-1"
         >
@@ -555,9 +555,9 @@ export default function Tournees() {
             <p className="text-sm font-medium text-amber-800">{t('validation.enAttente')}</p>
             {estResponsableTournees && selectedTournee.commercial_id !== profil?.id ? (
               <div className="flex gap-2 mt-2">
-                <button onClick={() => validerTournee(true)} disabled={validationEnCours}
+                <button data-aide="tournees.validation.approuver" onClick={() => validerTournee(true)} disabled={validationEnCours}
                   className="bg-green-600 text-white px-3 py-1.5 rounded text-sm disabled:opacity-50">{t('validation.approuver')}</button>
-                <button onClick={() => validerTournee(false)} disabled={validationEnCours}
+                <button data-aide="tournees.validation.refuser" onClick={() => validerTournee(false)} disabled={validationEnCours}
                   className="bg-white border border-red-300 text-red-700 px-3 py-1.5 rounded text-sm disabled:opacity-50">{t('validation.refuser')}</button>
               </div>
             ) : (
@@ -574,7 +574,7 @@ export default function Tournees() {
                 <p className="text-xs text-blue-700 font-medium mb-0.5">{t('detail.prochainArret')}</p>
                 <p className="font-medium text-sm">{prochaine.clients?.nom || 'Client'}</p>
               </div>
-              <button
+              <button data-aide="tournees.detail.meGuider"
                 onClick={() => ouvrirItineraire(prochaine)}
                 className="bg-blue-600 text-white px-3 py-2 rounded text-sm shrink-0"
               >
@@ -603,7 +603,7 @@ export default function Tournees() {
               </div>
               {ligne.statut !== 'visite' && (
                 <div className="flex gap-2">
-                  <button
+                  <button data-aide="tournees.detail.itineraire"
                     onClick={() => ouvrirItineraire(ligne)}
                     disabled={ligne.clients?.latitude == null}
                     title={ligne.clients?.latitude == null ? t('detail.pasPositionGPS') : t('detail.ouvrirItineraireGoogle')}
@@ -611,7 +611,7 @@ export default function Tournees() {
                   >
                     {t('detail.itineraire')}
                   </button>
-                  <button
+                  <button data-aide="tournees.detail.marquerVisitee"
                     onClick={() => marquerVisitee(ligne)}
                     disabled={selectedTournee.en_attente_validation}
                     title={selectedTournee.en_attente_validation ? t('validation.enAttente') : undefined}
@@ -620,7 +620,7 @@ export default function Tournees() {
                     {t('detail.marquerVisitee')}
                   </button>
                   {estResponsableTournees && (
-                    <button
+                    <button data-aide="tournees.detail.retirer"
                       onClick={() => retirerClient(ligne.id)}
                       className="border border-red-500 text-red-600 px-3 py-1.5 rounded text-sm"
                     >
@@ -652,7 +652,7 @@ export default function Tournees() {
                     <option key={c.id} value={c.id}>{c.nom}</option>
                   ))}
               </select>
-              <button
+              <button data-aide="tournees.ajouter"
                 onClick={ajouterClient}
                 disabled={!clientAAjouter}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-40"
@@ -678,7 +678,7 @@ export default function Tournees() {
     .sort((x, y) => y.date_tournee.localeCompare(x.date_tournee))
 
   const renderTournee = (tournee) => (
-    <button
+    <button data-aide="tournees.validation.badge"
       key={tournee.id}
       onClick={() => ouvrirTournee(tournee)}
       className="w-full text-left border rounded-lg p-3 hover:bg-gray-50 flex justify-between items-center"
@@ -702,7 +702,7 @@ export default function Tournees() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {autoriseProgrammer && (
-          <button
+          <button data-aide="tournees.nouvelleTournee"
             onClick={() => setShowForm(!showForm)}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
           >
@@ -783,7 +783,7 @@ export default function Tournees() {
                 placeholder={t('ia.consignesPlaceholder')}
                 className="w-full border rounded px-2 py-1.5 text-sm bg-white"
               />
-              <button type="button" onClick={proposerAvecIA} disabled={chargementIA || portefeuille.length === 0}
+              <button data-aide="tournees.ia.proposer" type="button" onClick={proposerAvecIA} disabled={chargementIA || portefeuille.length === 0}
                 className="w-full bg-purple-600 text-white py-2 rounded-lg text-sm font-medium disabled:opacity-60">
                 {chargementIA ? t('ia.enCours') : t('ia.proposer')}
               </button>
@@ -809,7 +809,7 @@ export default function Tournees() {
                               {c.nom}
                               {c.raison && <span className="block text-xs text-purple-700">✨ {c.raison}</span>}
                             </div>
-                            <button type="button" onClick={() => retirerDuPlan(j.date, c.client_id)}
+                            <button data-aide="tournees.ia.retirer" type="button" onClick={() => retirerDuPlan(j.date, c.client_id)}
                               className="text-xs text-red-600 shrink-0" title={t('ia.retirer')}>✕</button>
                           </div>
                         ))}
@@ -817,7 +817,7 @@ export default function Tournees() {
                     ))}
                   </div>
                   {planIA.jours.length > 0 && (
-                    <button type="button" onClick={creerToutesLesTournees} disabled={creationPlanEnCours}
+                    <button data-aide="tournees.ia.creerTournees" type="button" onClick={creerToutesLesTournees} disabled={creationPlanEnCours}
                       className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium disabled:opacity-60">
                       {creationPlanEnCours ? t('ia.creationEnCours') : t('ia.creerTournees', { n: planIA.jours.length })}
                     </button>
@@ -853,7 +853,7 @@ export default function Tournees() {
                   )}
                 </div>
               </div>
-              <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium">
+              <button data-aide="tournees.creerTourneeOptimisee" type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium">
                 {t('creerTourneeOptimisee')}
               </button>
             </>
@@ -883,14 +883,14 @@ export default function Tournees() {
 
       {tourneesArchivees.length > 0 && (
         <div className="mt-6">
-          <button onClick={() => setArchivesVisibles((v) => !v)} className="text-sm text-gray-600 underline">
+          <button data-aide="tournees.liste.archives" onClick={() => setArchivesVisibles((v) => !v)} className="text-sm text-gray-600 underline">
             {archivesVisibles ? '▾' : '▸'} {t('liste.archives', { n: tourneesArchivees.length })}
           </button>
           {archivesVisibles && (
             <div className="space-y-2 mt-2 opacity-80">
               {tourneesArchivees.slice(0, nbArchivesAffichees).map(renderTournee)}
               {tourneesArchivees.length > nbArchivesAffichees && (
-                <button onClick={() => setNbArchivesAffichees((n) => n + 20)} className="w-full text-sm text-blue-600 py-2">
+                <button data-aide="tournees.liste.afficherPlus" onClick={() => setNbArchivesAffichees((n) => n + 20)} className="w-full text-sm text-blue-600 py-2">
                   {t('liste.afficherPlus')}
                 </button>
               )}
@@ -944,7 +944,7 @@ export default function Tournees() {
                       <option key={p.id} value={p.id}>{p.nom}</option>
                     ))}
                 </select>
-                <button
+                <button data-aide="tournees.ajouter"
                   type="button"
                   onClick={ajouterLigneProduit}
                   className="bg-petrol-800 text-white px-3 rounded text-sm"
@@ -960,7 +960,7 @@ export default function Tournees() {
                       <div key={ligne.produit_id} className="border rounded-lg p-2">
                         <div className="flex items-center justify-between mb-1">
                           <p className="text-sm font-medium">{produit?.nom || t('rapport.produitDefaut')}</p>
-                          <button
+                          <button data-aide="tournees.rapport.retirer"
                             type="button"
                             onClick={() => retirerLigneProduit(ligne.produit_id)}
                             className="text-red-600 text-xs"
@@ -1114,7 +1114,7 @@ export default function Tournees() {
 
             <div className="flex gap-2 pt-2">
               {!entreprise?.photo_rapport_obligatoire && (
-                <button
+                <button data-aide="tournees.rapport.passer"
                   type="button"
                   onClick={fermerRapport}
                   disabled={rapportEnvoi}

@@ -170,10 +170,10 @@ export default function Versements() {
 
       <div className="flex items-center gap-3 mb-2 flex-wrap">
         <input type="date" lang={i18n.language} className="input-field max-w-xs" value={date} onChange={(e) => setDate(e.target.value)} />
-        <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterExcel(`versements-${date}`, COLONNES, lignes)}>
+        <button data-aide="versements.excel" className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterExcel(`versements-${date}`, COLONNES, lignes)}>
           📊 {t('excel')}
         </button>
-        <button
+        <button data-aide="versements.pdf"
           className="btn-secondary text-xs"
           disabled={lignes.length === 0}
           onClick={() => exporterPDF(`versements-${date}`, t('titre'), date, COLONNES, lignes, t('totalGeneral'), formatMontantPDF(totalGeneral) + ' F CFA', entreprise)}
@@ -226,7 +226,7 @@ export default function Versements() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     {l.resteAVerser > 0 && (
-                      <button
+                      <button data-aide="versements.enregistrer"
                         onClick={() => ouvrirModalVersement(l)}
                         disabled={caisses.length === 0}
                         className="text-xs text-blue-600 underline whitespace-nowrap"
@@ -286,7 +286,7 @@ export default function Versements() {
               </div>
               {erreurVersement && <p className="text-sm text-red-600">{erreurVersement}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>
+                <button data-aide="versements.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>
                   {t('annuler')}
                 </button>
                 <button onClick={confirmerVersement} disabled={envoiVersement} className="btn-primary flex-1">

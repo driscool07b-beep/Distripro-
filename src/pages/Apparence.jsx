@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { infobullesActives, definirInfobulles } from '../components/InfobullesAide'
 import { useAuth } from '../context/AuthContext'
 import { appliquerApparence, TAILLES_POLICE } from '../lib/apparence'
 import { pushSupporte, estAbonne, activerNotifications, desactiverNotifications } from '../lib/push'
@@ -18,6 +19,7 @@ export default function Apparence() {
   const { profil, rechargerProfil } = useAuth()
   const [theme, setTheme] = useState(profil?.theme || 'petrol')
   const [taillePolice, setTaillePolice] = useState(profil?.taille_police || 'normal')
+  const [bullesActives, setBullesActives] = useState(infobullesActives())
   const [enregistrement, setEnregistrement] = useState(false)
   const [confirmation, setConfirmation] = useState(false)
   const [abonnePush, setAbonnePush] = useState(null)
@@ -124,6 +126,23 @@ export default function Apparence() {
               <span className="text-xs text-petrol-500 mt-1 block">{t(`taillePolice.${valeur}`)}</span>
             </button>
           ))}
+        </div>
+      </div>
+
+      <div className="card p-4 mb-4">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="font-semibold mb-1">{t('infobulles.titre')}</h2>
+            <p className="text-xs text-petrol-500">{bullesActives ? t('infobulles.actives') : t('infobulles.desactivees')}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => { definirInfobulles(!bullesActives); setBullesActives(!bullesActives) }}
+            className={`shrink-0 w-12 h-7 rounded-full transition-colors relative ${bullesActives ? 'bg-amber-500' : 'bg-line'}`}
+            aria-label={t('infobulles.titre')}
+          >
+            <span className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${bullesActives ? 'translate-x-6' : 'translate-x-1'}`} />
+          </button>
         </div>
       </div>
 

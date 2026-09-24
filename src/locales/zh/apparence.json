@@ -30,5 +30,10 @@
     "erreurRefuse": "权限被拒绝。请检查您浏览器针对此网站的通知设置。",
     "erreurNonSupporte": "此设备/浏览器不支持通知功能。",
     "erreurGenerique": "暂时无法启用通知。"
+  },
+  "infobulles": {
+    "titre": "按钮帮助气泡",
+    "actives": "已开启：将鼠标悬停在按钮上（手机上长按）即可查看其作用。",
+    "desactivees": "已在此设备上关闭。"
   }
 }

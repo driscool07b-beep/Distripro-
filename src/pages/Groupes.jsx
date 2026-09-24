@@ -156,10 +156,10 @@ export default function Groupes() {
             {rapport && (
               <>
                 <div className="flex gap-2 mb-3">
-                  <button className="btn-secondary text-xs" disabled={rapport.length === 0} onClick={() => exporterExcel(`groupe-${groupeNom}-${dateDebut}-${dateFin}`, COLONNES, rapport)}>
+                  <button data-aide="groupes.excel" className="btn-secondary text-xs" disabled={rapport.length === 0} onClick={() => exporterExcel(`groupe-${groupeNom}-${dateDebut}-${dateFin}`, COLONNES, rapport)}>
                     📊 {t('excel')}
                   </button>
-                  <button
+                  <button data-aide="groupes.pdf"
                     className="btn-secondary text-xs"
                     disabled={rapport.length === 0}
                     onClick={() => exporterPDF(`groupe-${groupeNom}-${dateDebut}-${dateFin}`, t('recapLivraisonsTitre', { groupe: groupeNom }), t('periode', { debut: dateDebut, fin: dateFin }), COLONNES, rapport, t('total'), formatXOF(totalValeur), entreprise)}

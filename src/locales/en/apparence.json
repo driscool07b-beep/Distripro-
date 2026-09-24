@@ -30,5 +30,10 @@
     "erreurRefuse": "Permission denied. Check your browser's notification settings for this site.",
     "erreurNonSupporte": "Notifications aren't supported on this device/browser.",
     "erreurGenerique": "Couldn't enable notifications right now."
+  },
+  "infobulles": {
+    "titre": "Help bubbles on buttons",
+    "actives": "On: hover over a button (or long-press it on a phone) to see what it does.",
+    "desactivees": "Off on this device."
   }
 }

@@ -69,7 +69,7 @@ export default function NotesUtilisation() {
           {envoiCalcul ? t('calculEnCours') : t('calculerLeMois')}
         </button>
         {notes.length > 0 && (
-          <button onClick={exporterPDF} className="btn-secondary text-sm">{t('exporterPdf')}</button>
+          <button data-aide="notesutilisation.exporterPdf" onClick={exporterPDF} className="btn-secondary text-sm">{t('exporterPdf')}</button>
         )}
       </div>
       {erreur && <p className="text-xs text-red-600 mb-3">{erreur}</p>}

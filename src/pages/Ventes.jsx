@@ -508,13 +508,13 @@ export default function Ventes() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary text-sm" onClick={exportExcel} disabled={ventes.length === 0}>
+          <button data-aide="ventes.excel" className="btn-secondary text-sm" onClick={exportExcel} disabled={ventes.length === 0}>
             📊 {t('excel')}
           </button>
-          <button className="btn-secondary text-sm" onClick={exportPDF} disabled={ventes.length === 0}>
+          <button data-aide="ventes.pdf" className="btn-secondary text-sm" onClick={exportPDF} disabled={ventes.length === 0}>
             📄 {t('pdf')}
           </button>
-          <button className="btn-primary" onClick={ouvrirModal}>
+          <button data-aide="ventes.nouvelleVente" className="btn-primary" onClick={ouvrirModal}>
             {t('nouvelleVente')}
           </button>
         </div>
@@ -682,7 +682,7 @@ export default function Ventes() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="label mb-0">{t('form.articles')}</label>
-                  <button type="button" onClick={ajouterLigne} className="text-xs font-medium text-amber-600 hover:text-amber-700">
+                  <button data-aide="ventes.form.ajouterArticle" type="button" onClick={ajouterLigne} className="text-xs font-medium text-amber-600 hover:text-amber-700">
                     {t('form.ajouterArticle')}
                   </button>
                 </div>
@@ -880,7 +880,7 @@ export default function Ventes() {
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>
+                <button data-aide="ventes.form.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>
                   {t('form.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
@@ -1004,7 +1004,7 @@ export default function Ventes() {
                 {detailVente.vente?.statut === 'annulee' ? (
                   <div className="no-print border border-red-200 bg-red-50 rounded-lg p-3 space-y-2">
                     <p className="text-sm font-medium text-red-700">{t('detail.venteAnnulee')}</p>
-                    <button onClick={telechargerFactureAvoir} className="text-xs text-red-700 underline">
+                    <button data-aide="ventes.detail.telechargerAvoir" onClick={telechargerFactureAvoir} className="text-xs text-red-700 underline">
                       {t('detail.telechargerAvoir')}
                     </button>
                   </div>
@@ -1020,7 +1020,7 @@ export default function Ventes() {
                     />
                     {erreurAnnulation && <p className="text-xs text-red-600">{erreurAnnulation}</p>}
                     <div className="flex gap-2">
-                      <button
+                      <button data-aide="ventes.detail.retour"
                         type="button"
                         className="btn-secondary text-xs flex-1"
                         onClick={() => { setModeAnnulation(false); setMotifAnnulation(''); setErreurAnnulation('') }}
@@ -1039,20 +1039,20 @@ export default function Ventes() {
                 ) : null}
 
                 <div className="no-print flex gap-2 pt-4 mt-2 border-t border-line flex-wrap">
-                  <button onClick={() => window.print()} className="btn-secondary text-xs flex-1">
+                  <button data-aide="ventes.detail.imprimer" onClick={() => window.print()} className="btn-secondary text-xs flex-1">
                     {t('detail.imprimer')}
                   </button>
-                  <button onClick={telechargerRecu} className="btn-secondary text-xs flex-1">
+                  <button data-aide="ventes.detail.pdf" onClick={telechargerRecu} className="btn-secondary text-xs flex-1">
                     {t('detail.pdf')}
                   </button>
-                  <button onClick={telechargerBonLivraison} className="btn-secondary text-xs flex-1">
+                  <button data-aide="ventes.detail.bonLivraison" onClick={telechargerBonLivraison} className="btn-secondary text-xs flex-1">
                     {t('detail.bonLivraison')}
                   </button>
-                  <button onClick={partagerRecu} className="btn-primary text-xs flex-1">
+                  <button data-aide="ventes.detail.partager" onClick={partagerRecu} className="btn-primary text-xs flex-1">
                     {t('detail.partager')}
                   </button>
                   {['admin', 'manager'].includes(profil?.role) && detailVente.vente?.statut !== 'annulee' && !modeAnnulation && (
-                    <button onClick={() => setModeAnnulation(true)} className="text-xs text-red-600 underline w-full text-center pt-1">
+                    <button data-aide="ventes.detail.annulerVenteAvoir" onClick={() => setModeAnnulation(true)} className="text-xs text-red-600 underline w-full text-center pt-1">
                       {t('detail.annulerVenteAvoir')}
                     </button>
                   )}

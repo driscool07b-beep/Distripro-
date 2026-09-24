@@ -1,0 +1,137 @@
+{
+  "commun": {
+    "excel": "Télécharge la liste affichée dans un fichier Excel, avec les filtres en cours.",
+    "pdf": "Génère un document PDF de la liste affichée, prêt à imprimer ou à envoyer.",
+    "importer": "Ajoute des données en masse depuis un fichier Excel (utilisez d'abord le modèle).",
+    "telechargerModele": "Télécharge le fichier Excel modèle à remplir avant un import.",
+    "itineraire": "Ouvre l'itinéraire vers ce lieu dans Google Maps.",
+    "imprimer": "Imprime ce document.",
+    "receptionner": "Confirme la réception : le montant ou la marchandise est ajouté à la destination.",
+    "historique": "Affiche l'historique des modifications.",
+    "filtrer": "Applique les filtres choisis."
+  },
+  "clients": {
+    "nouveauClient": "Crée une fiche client. La position GPS est captée automatiquement si vous êtes chez le client.",
+    "portefeuille": {
+      "appliquer": "Attribue les clients cochés au portefeuille du commercial choisi."
+    },
+    "table": {
+      "modifier": "Modifie la fiche : coordonnées, GPS, photo, tarifs, commercial attitré.",
+      "creditTitle": "Le client a un avoir : cliquez pour le rembourser."
+    }
+  },
+  "commandes": {
+    "nouvelleCommande": "Enregistre une commande client à livrer plus tard.",
+    "detail": {
+      "confirmer": "Valide la commande : elle passe en préparation au dépôt.",
+      "demarrerPreparation": "Signale au dépôt que la commande est en cours de préparation.",
+      "enregistrerLivraison": "Confirme la livraison : la vente est créée et le stock déduit.",
+      "annulerCommande": "Annule la commande (elle reste visible dans l'historique).",
+      "facturePropforma": "Génère une facture proforma à envoyer au client avant livraison."
+    },
+    "form": {
+      "ajouterArticle": "Ajoute une ligne de produit à la commande."
+    }
+  },
+  "ventes": {
+    "nouvelleVente": "Enregistre une vente : le stock est déduit et, si crédit, une créance est créée.",
+    "detail": {
+      "annulerVenteAvoir": "Annule la vente par un avoir : le stock est réintégré, la vente reste tracée.",
+      "bonLivraison": "Génère le bon de livraison à faire signer par le client.",
+      "partager": "Envoie la facture au client (WhatsApp, e-mail…).",
+      "telechargerAvoir": "Télécharge le document d'avoir."
+    },
+    "form": {
+      "ajouterArticle": "Ajoute une ligne de produit à la vente."
+    }
+  },
+  "stock": {
+    "nouveauProduit": "Crée un produit dans le catalogue (prix, catégorie, seuil d'alerte).",
+    "inventaire": {
+      "bouton": "Lance un inventaire physique : comptez, l'app calcule les écarts."
+    },
+    "lots": {
+      "bouton": "Gère les lots et les dates de péremption."
+    },
+    "table": {
+      "ajusterStock": "Enregistre une entrée ou une sortie de stock avec son motif.",
+      "transfererDepots": "Déplace de la marchandise d'un dépôt à un autre.",
+      "historique": "Affiche l'historique des prix de ce produit."
+    },
+    "retirerFiltre": "Affiche de nouveau tous les produits."
+  },
+  "journalcaisse": {
+    "nouvelleDemande": "Demande un décaissement : il devra être validé puis payé.",
+    "retourFonds": "Enregistre l'argent rendu à la caisse (reliquat d'une avance).",
+    "transfert": "Envoie de l'argent vers une autre caisse ou vers une banque.",
+    "approvisionnement": "Enregistre une entrée d'argent dans la caisse.",
+    "versBanque": "Dépose l'argent de la caisse à la banque.",
+    "versAutreCaisse": "Transfère de l'argent vers une autre caisse.",
+    "inventaire": {
+      "nouveau": "Compte les billets et pièces : l'app compare au solde théorique."
+    },
+    "refuser": "Refuse la demande avec un motif.",
+    "corriger": "Corrige une écriture par une contre-écriture tracée."
+  },
+  "banques": {
+    "nouvelleBanque": "Ajoute un compte bancaire de l'entreprise.",
+    "nouveauTransfert": "Transfère de l'argent entre banque et caisse.",
+    "nouveauDecaissement": "Enregistre une sortie d'argent depuis la banque."
+  },
+  "tournees": {
+    "nouvelleTournee": "Programme une tournée de visites, manuellement ou avec l'IA.",
+    "creerTourneeOptimisee": "Crée la tournée : l'ordre de passage est calculé pour le trajet le plus court.",
+    "ia": {
+      "proposer": "L'IA choisit les clients à visiter et répartit les visites sur la période.",
+      "creerTournees": "Crée toutes les tournées du planning proposé.",
+      "retirer": "Retire ce client du planning."
+    },
+    "detail": {
+      "marquerVisitee": "Valide la visite (position GPS vérifiée) et ouvre le rapport de visite.",
+      "meGuider": "Lance la navigation vers le prochain client.",
+      "retirer": "Retire ce client de la tournée."
+    },
+    "validation": {
+      "approuver": "Approuve la tournée : le commercial peut commencer ses visites.",
+      "refuser": "Refuse la tournée : elle est supprimée, le commercial peut en proposer une autre."
+    },
+    "ajouter": "Ajoute un client à cette tournée."
+  },
+  "utilisateurs": {
+    "inviterCollaborateur": "Crée un compte pour un membre de l'équipe et lui envoie une invitation.",
+    "regenererPin": "Génère un nouveau code PIN temporaire pour ce membre.",
+    "reinitialiserMdp": "Génère un mot de passe temporaire que le membre devra changer.",
+    "annulerInvitation": "Annule l'invitation non encore acceptée."
+  },
+  "messagerie": {
+    "nouveauCanal": "Crée un groupe de discussion (ex. : toute l'équipe commerciale).",
+    "nouvelleConversation": "Démarre une discussion privée avec un collègue."
+  },
+  "mouvementsstock": {
+    "joindreJustificatif": "Joint une photo ou un document (bon de sortie, facture…) à ce mouvement."
+  },
+  "objectifs": {
+    "nouvelObjectif": "Fixe un objectif de ventes (montant ou quantité) sur une période.",
+    "unePersonne": "Objectif pour un commercial ou un chef d'équipe.",
+    "uneZone": "Objectif pour une zone géographique.",
+    "leBureau": "Objectif pour les ventes faites au bureau."
+  },
+  "depots": {
+    "nouveauDepot": "Ajoute un magasin de stockage et son responsable."
+  },
+  "creances": {
+    "soldeReporte": "Enregistre une dette client antérieure à l'utilisation de DistribPro."
+  },
+  "stockcommercial": {
+    "nouvelleSortie": "Confie de la marchandise à un commercial pour ses ventes terrain."
+  },
+  "versements": {
+    "enregistrer": "Enregistre l'argent remis par un commercial."
+  },
+  "plancomptable": {
+    "nouveauCompte": "Ajoute un compte au plan comptable."
+  },
+  "notesutilisation": {
+    "exporterPdf": "Exporte les notes d'utilisation en PDF."
+  }
+}

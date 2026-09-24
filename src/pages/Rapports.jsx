@@ -121,10 +121,10 @@ export default function Rapports() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary text-xs" onClick={exportExcel} disabled={rapports.length === 0}>
+          <button data-aide="rapports.excel" className="btn-secondary text-xs" onClick={exportExcel} disabled={rapports.length === 0}>
             📊 {t('excel')}
           </button>
-          <button className="btn-secondary text-xs" onClick={exportPDF} disabled={rapports.length === 0}>
+          <button data-aide="rapports.pdf" className="btn-secondary text-xs" onClick={exportPDF} disabled={rapports.length === 0}>
             📄 {t('pdf')}
           </button>
         </div>

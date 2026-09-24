@@ -280,7 +280,7 @@ function SortiesRetours() {
 
   return (
     <div>
-      <button onClick={ouvrirModalSortie} className="btn-primary text-sm mb-4">
+      <button data-aide="stockcommercial.nouvelleSortie" onClick={ouvrirModalSortie} className="btn-primary text-sm mb-4">
         {t('nouvelleSortie')}
       </button>
 
@@ -289,7 +289,7 @@ function SortiesRetours() {
       ) : (
         <div className="space-y-2">
           {sorties.map((s) => (
-            <button
+            <button data-aide="stockcommercial.articles"
               key={s.id}
               onClick={() => ouvrirDetailSortie(s.id)}
               className="w-full text-left border border-line rounded-lg p-3 flex justify-between items-center hover:bg-canvas/60"
@@ -357,7 +357,7 @@ function SortiesRetours() {
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={ajouterLigneSortie} className="text-xs text-petrol-600 underline mt-2">
+                <button data-aide="stockcommercial.ajouterArticle" type="button" onClick={ajouterLigneSortie} className="text-xs text-petrol-600 underline mt-2">
                   {t('ajouterArticle')}
                 </button>
               </div>
@@ -365,7 +365,7 @@ function SortiesRetours() {
               {erreur && <p className="text-sm text-red-600">{erreur}</p>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('annuler')}</button>
+                <button data-aide="stockcommercial.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('annuler')}</button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
                   {enregistrement ? t('enregistrement') : t('emettreSortie')}
                 </button>

@@ -1,0 +1,137 @@
+{
+  "commun": {
+    "excel": "Downloads the list shown as an Excel file, with current filters.",
+    "pdf": "Generates a PDF of the list shown, ready to print or send.",
+    "importer": "Adds data in bulk from an Excel file (use the template first).",
+    "telechargerModele": "Downloads the Excel template to fill in before importing.",
+    "itineraire": "Opens directions to this place in Google Maps.",
+    "imprimer": "Prints this document.",
+    "receptionner": "Confirms receipt: the amount or goods are added to the destination.",
+    "historique": "Shows the change history.",
+    "filtrer": "Applies the selected filters."
+  },
+  "clients": {
+    "nouveauClient": "Creates a customer record. GPS position is captured automatically if you are at the customer's.",
+    "portefeuille": {
+      "appliquer": "Assigns the checked customers to the chosen sales rep's portfolio."
+    },
+    "table": {
+      "modifier": "Edits the record: contact details, GPS, photo, prices, assigned rep.",
+      "creditTitle": "The customer has a credit: click to refund it."
+    }
+  },
+  "commandes": {
+    "nouvelleCommande": "Records a customer order to be delivered later.",
+    "detail": {
+      "confirmer": "Confirms the order: it goes to preparation at the warehouse.",
+      "demarrerPreparation": "Tells the warehouse the order is being prepared.",
+      "enregistrerLivraison": "Confirms delivery: the sale is created and stock deducted.",
+      "annulerCommande": "Cancels the order (it stays in the history).",
+      "facturePropforma": "Generates a proforma invoice to send before delivery."
+    },
+    "form": {
+      "ajouterArticle": "Adds a product line to the order."
+    }
+  },
+  "ventes": {
+    "nouvelleVente": "Records a sale: stock is deducted and, on credit, a receivable is created.",
+    "detail": {
+      "annulerVenteAvoir": "Cancels the sale with a credit note: stock is restored, the sale stays traced.",
+      "bonLivraison": "Generates the delivery note for the customer to sign.",
+      "partager": "Sends the invoice to the customer (WhatsApp, e-mail…).",
+      "telechargerAvoir": "Downloads the credit note."
+    },
+    "form": {
+      "ajouterArticle": "Adds a product line to the sale."
+    }
+  },
+  "stock": {
+    "nouveauProduit": "Creates a product in the catalogue (price, category, alert threshold).",
+    "inventaire": {
+      "bouton": "Starts a physical count: count, the app computes the differences."
+    },
+    "lots": {
+      "bouton": "Manages batches and expiry dates."
+    },
+    "table": {
+      "ajusterStock": "Records a stock entry or exit with its reason.",
+      "transfererDepots": "Moves goods from one warehouse to another.",
+      "historique": "Shows this product's price history."
+    },
+    "retirerFiltre": "Shows all products again."
+  },
+  "journalcaisse": {
+    "nouvelleDemande": "Requests a disbursement: it must be approved, then paid.",
+    "retourFonds": "Records money returned to the till (balance of an advance).",
+    "transfert": "Sends money to another till or to a bank.",
+    "approvisionnement": "Records money coming into the till.",
+    "versBanque": "Deposits till money at the bank.",
+    "versAutreCaisse": "Transfers money to another till.",
+    "inventaire": {
+      "nouveau": "Count notes and coins: the app compares with the theoretical balance."
+    },
+    "refuser": "Rejects the request with a reason.",
+    "corriger": "Corrects an entry with a traced reversing entry."
+  },
+  "banques": {
+    "nouvelleBanque": "Adds a company bank account.",
+    "nouveauTransfert": "Transfers money between bank and till.",
+    "nouveauDecaissement": "Records money going out of the bank."
+  },
+  "tournees": {
+    "nouvelleTournee": "Schedules a route of visits, manually or with AI.",
+    "creerTourneeOptimisee": "Creates the route: the visit order is computed for the shortest trip.",
+    "ia": {
+      "proposer": "AI picks the customers to visit and spreads visits over the period.",
+      "creerTournees": "Creates all routes of the suggested schedule.",
+      "retirer": "Removes this customer from the schedule."
+    },
+    "detail": {
+      "marquerVisitee": "Validates the visit (GPS checked) and opens the visit report.",
+      "meGuider": "Starts navigation to the next customer.",
+      "retirer": "Removes this customer from the route."
+    },
+    "validation": {
+      "approuver": "Approves the route: the rep can start the visits.",
+      "refuser": "Rejects the route: it is deleted, the rep can propose another."
+    },
+    "ajouter": "Adds a customer to this route."
+  },
+  "utilisateurs": {
+    "inviterCollaborateur": "Creates an account for a team member and sends an invitation.",
+    "regenererPin": "Generates a new temporary PIN for this member.",
+    "reinitialiserMdp": "Generates a temporary password the member must change.",
+    "annulerInvitation": "Cancels the invitation not yet accepted."
+  },
+  "messagerie": {
+    "nouveauCanal": "Creates a group chat (e.g. the whole sales team).",
+    "nouvelleConversation": "Starts a private chat with a colleague."
+  },
+  "mouvementsstock": {
+    "joindreJustificatif": "Attaches a photo or document (exit slip, invoice…) to this movement."
+  },
+  "objectifs": {
+    "nouvelObjectif": "Sets a sales target (amount or quantity) over a period.",
+    "unePersonne": "Target for a sales rep or team lead.",
+    "uneZone": "Target for a geographic area.",
+    "leBureau": "Target for sales made at the office."
+  },
+  "depots": {
+    "nouveauDepot": "Adds a warehouse and its manager."
+  },
+  "creances": {
+    "soldeReporte": "Records a customer debt from before DistribPro."
+  },
+  "stockcommercial": {
+    "nouvelleSortie": "Hands goods to a sales rep for field sales."
+  },
+  "versements": {
+    "enregistrer": "Records money handed in by a sales rep."
+  },
+  "plancomptable": {
+    "nouveauCompte": "Adds an account to the chart of accounts."
+  },
+  "notesutilisation": {
+    "exporterPdf": "Exports the usage notes as PDF."
+  }
+}

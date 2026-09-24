@@ -415,7 +415,7 @@ export default function Banques() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         {onglet === 'banques' && (
-          <button onClick={ouvrirNouvelleBanque} className="btn-primary text-xs">{t('nouvelleBanque')}</button>
+          <button data-aide="banques.nouvelleBanque" onClick={ouvrirNouvelleBanque} className="btn-primary text-xs">{t('nouvelleBanque')}</button>
         )}
       </div>
 
@@ -450,7 +450,7 @@ export default function Banques() {
                     <span className="font-mono font-semibold">{formatXOF(soldes[b.id] || 0)}</span>
                   </div>
                   <div className="flex gap-3 mt-2">
-                    <button onClick={() => ouvrirEditionBanque(b)} className="text-xs text-petrol-600 underline">{t('modifier')}</button>
+                    <button data-aide="banques.modifier" onClick={() => ouvrirEditionBanque(b)} className="text-xs text-petrol-600 underline">{t('modifier')}</button>
                     <button onClick={() => basculerActifBanque(b)} className="text-xs text-petrol-600 underline">
                       {b.actif ? t('desactiver') : t('reactiver')}
                     </button>
@@ -544,8 +544,8 @@ export default function Banques() {
                     {banques.map((b) => <option key={b.id} value={b.id}>{b.nom}</option>)}
                   </select>
                 </div>
-                <button onClick={() => setModalTransfert(true)} className="btn-primary text-sm">{t('nouveauTransfert')}</button>
-                <button onClick={() => setModalDecaissement(true)} className="btn-secondary text-sm">{t('nouveauDecaissement')}</button>
+                <button data-aide="banques.nouveauTransfert" onClick={() => setModalTransfert(true)} className="btn-primary text-sm">{t('nouveauTransfert')}</button>
+                <button data-aide="banques.nouveauDecaissement" onClick={() => setModalDecaissement(true)} className="btn-secondary text-sm">{t('nouveauDecaissement')}</button>
               </div>
 
               {transfertsEntrants.length > 0 && (
@@ -562,7 +562,7 @@ export default function Banques() {
                           <div className="flex items-center gap-2 shrink-0">
                             <span className="font-mono">{formatXOF(tr.montant)}</span>
                             {confirmationEntrantId !== tr.id && (
-                              <button
+                              <button data-aide="banques.receptionner"
                                 onClick={() => (entreprise?.justificatif_transfert_requis ? setConfirmationEntrantId(tr.id) : receptionnerTransfertEntrant(tr.id, null))}
                                 disabled={envoiAction === tr.id}
                                 className="bg-blue-600 text-white text-xs rounded-lg px-3 py-1.5"
@@ -580,7 +580,7 @@ export default function Banques() {
                               onChange={(e) => setFichierConfirmationEntrant(e.target.files?.[0] || null)}
                             />
                             <div className="flex gap-2">
-                              <button
+                              <button data-aide="banques.annuler"
                                 type="button"
                                 onClick={() => { setConfirmationEntrantId(null); setFichierConfirmationEntrant(null) }}
                                 className="btn-secondary text-xs flex-1"
@@ -660,7 +660,7 @@ export default function Banques() {
 
                 <label className="label">{t('releveExcel')}</label>
                 <input type="file" accept=".xlsx,.xls" onChange={lireReleveExcel} className="text-sm mb-1" />
-                <button type="button" onClick={telechargerModeleReleve} className="text-xs text-blue-600 underline block mb-2">
+                <button data-aide="banques.telechargerModele" type="button" onClick={telechargerModeleReleve} className="text-xs text-blue-600 underline block mb-2">
                   {t('telechargerModele')}
                 </button>
                 {fichierReleveNom && ligneReleve.length > 0 && (
@@ -731,7 +731,7 @@ export default function Banques() {
               </div>
               {erreurBanque && <p className="text-xs text-red-600">{erreurBanque}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalBanque(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="banques.annuler" type="button" onClick={() => setModalBanque(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiBanque} className="btn-primary flex-1">{envoiBanque ? t('enCours') : t('enregistrer')}</button>
               </div>
             </form>
@@ -765,7 +765,7 @@ export default function Banques() {
               </div>
               {erreurTransfert && <p className="text-xs text-red-600">{erreurTransfert}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalTransfert(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="banques.annuler" type="button" onClick={() => setModalTransfert(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiTransfert} className="btn-primary flex-1">{envoiTransfert ? t('enCours') : t('envoyer')}</button>
               </div>
             </form>
@@ -807,7 +807,7 @@ export default function Banques() {
               </div>
               {erreurDecaissement && <p className="text-xs text-red-600">{erreurDecaissement}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalDecaissement(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="banques.annuler" type="button" onClick={() => setModalDecaissement(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiDecaissement} className="btn-primary flex-1">{envoiDecaissement ? t('enCours') : t('enregistrer')}</button>
               </div>
             </form>

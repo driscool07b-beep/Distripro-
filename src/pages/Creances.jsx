@@ -363,14 +363,14 @@ export default function Creances() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary text-xs" onClick={exportExcel} disabled={creancesAffichees.length === 0}>
+          <button data-aide="creances.excel" className="btn-secondary text-xs" onClick={exportExcel} disabled={creancesAffichees.length === 0}>
             📊 {t('excel')}
           </button>
-          <button className="btn-secondary text-xs" onClick={exportPDF} disabled={creancesAffichees.length === 0}>
+          <button data-aide="creances.pdf" className="btn-secondary text-xs" onClick={exportPDF} disabled={creancesAffichees.length === 0}>
             📄 {t('pdf')}
           </button>
           {['admin', 'manager'].includes(profil?.role) && (
-            <button className="btn-secondary text-xs" onClick={ouvrirModalImport}>
+            <button data-aide="creances.importer" className="btn-secondary text-xs" onClick={ouvrirModalImport}>
               📥 {t('importer')}
             </button>
           )}
@@ -444,7 +444,7 @@ export default function Creances() {
           const echue = estEchue(v)
           const resteDu = Number(v.total) - Number(v.montant_regle)
           return (
-            <button
+            <button data-aide="creances.soldeReporte"
               key={v.id}
               onClick={() => ouvrirDetail(v.id)}
               className={`w-full text-left border rounded-lg p-3 flex justify-between items-center ${
@@ -639,7 +639,7 @@ export default function Creances() {
             <p className="text-sm text-petrol-600 mb-3">
               {t('import.consigne')}
             </p>
-            <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
+            <button data-aide="creances.import.telechargerModele" onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
               {t('import.telechargerModele')}
             </button>
 

@@ -385,13 +385,13 @@ export default function Commandes() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterExcel('commandes', COLONNES_EXPORT, donneesExport())}>
+          <button data-aide="commandes.excel" className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterExcel('commandes', COLONNES_EXPORT, donneesExport())}>
             📊 {t('excel')}
           </button>
-          <button className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterPDF('commandes', 'Commandes', null, COLONNES_EXPORT, donneesExport(), undefined, undefined, entreprise)}>
+          <button data-aide="commandes.pdf" className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterPDF('commandes', 'Commandes', null, COLONNES_EXPORT, donneesExport(), undefined, undefined, entreprise)}>
             📄 {t('pdf')}
           </button>
-          <button onClick={ouvrirModal} className="btn-primary text-sm">
+          <button data-aide="commandes.nouvelleCommande" onClick={ouvrirModal} className="btn-primary text-sm">
             {t('nouvelleCommande')}
           </button>
         </div>
@@ -438,7 +438,7 @@ export default function Commandes() {
       )}
 
       <div className="mb-4 flex gap-2 flex-wrap">
-        <button
+        <button data-aide="commandes.statuts.toutes"
           onClick={() => setFiltreStatut('')}
           className={`text-xs px-3 py-1.5 rounded-full border ${!filtreStatut ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
         >
@@ -457,7 +457,7 @@ export default function Commandes() {
 
       <div className="space-y-2">
         {commandes.map((c) => (
-          <button
+          <button data-aide="commandes.liste.articles"
             key={c.id}
             onClick={() => ouvrirDetail(c.id)}
             className="w-full text-left border border-line rounded-lg p-3 flex justify-between items-center hover:bg-canvas/60"
@@ -534,7 +534,7 @@ export default function Commandes() {
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={ajouterLigne} className="text-xs text-petrol-600 underline mt-2">
+                <button data-aide="commandes.form.ajouterArticle" type="button" onClick={ajouterLigne} className="text-xs text-petrol-600 underline mt-2">
                   {t('form.ajouterArticle')}
                 </button>
               </div>
@@ -587,7 +587,7 @@ export default function Commandes() {
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('form.annuler')}</button>
+                <button data-aide="commandes.form.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('form.annuler')}</button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
                   {enregistrement ? t('form.enregistrement') : t('form.creerCommande')}
                 </button>
@@ -720,22 +720,22 @@ export default function Commandes() {
                 {erreurAction && <p className="text-sm text-red-600">{erreurAction}</p>}
 
                 <div className="flex flex-wrap gap-2 pt-2 border-t border-line">
-                  <button onClick={telechargerProforma} className="btn-secondary text-sm">
+                  <button data-aide="commandes.detail.facturePropforma" onClick={telechargerProforma} className="btn-secondary text-sm">
                     {t('detail.facturePropforma')}
                   </button>
 
                   {detail.commande?.statut === 'brouillon' && (
-                    <button onClick={() => changerStatut('confirmee')} disabled={actionEnvoi} className="bg-blue-600 text-white px-3 py-2 rounded text-sm">
+                    <button data-aide="commandes.detail.confirmer" onClick={() => changerStatut('confirmee')} disabled={actionEnvoi} className="bg-blue-600 text-white px-3 py-2 rounded text-sm">
                       {t('detail.confirmer')}
                     </button>
                   )}
                   {detail.commande?.statut === 'confirmee' && (
-                    <button onClick={() => changerStatut('en_preparation')} disabled={actionEnvoi} className="bg-purple-600 text-white px-3 py-2 rounded text-sm">
+                    <button data-aide="commandes.detail.demarrerPreparation" onClick={() => changerStatut('en_preparation')} disabled={actionEnvoi} className="bg-purple-600 text-white px-3 py-2 rounded text-sm">
                       {t('detail.demarrerPreparation')}
                     </button>
                   )}
                   {detail.commande?.statut === 'en_preparation' && !modeLivraison && (
-                    <button onClick={() => setModeLivraison(true)} className="bg-green-600 text-white px-3 py-2 rounded text-sm">
+                    <button data-aide="commandes.detail.enregistrerLivraison" onClick={() => setModeLivraison(true)} className="bg-green-600 text-white px-3 py-2 rounded text-sm">
                       {t('detail.enregistrerLivraison')}
                     </button>
                   )}
@@ -745,7 +745,7 @@ export default function Commandes() {
                     </button>
                   )}
                   {!['livree', 'annulee'].includes(detail.commande?.statut) && !modeLivraison && (
-                    <button onClick={() => changerStatut('annulee')} disabled={actionEnvoi} className="text-red-600 text-sm px-3 py-2">
+                    <button data-aide="commandes.detail.annulerCommande" onClick={() => changerStatut('annulee')} disabled={actionEnvoi} className="text-red-600 text-sm px-3 py-2">
                       {t('detail.annulerCommande')}
                     </button>
                   )}

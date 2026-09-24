@@ -74,10 +74,10 @@ export default function Messagerie() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
         <div className="flex gap-2">
-          <button onClick={() => setModalNouveauCanal(true)} className="btn-secondary text-sm">
+          <button data-aide="messagerie.nouveauCanal" onClick={() => setModalNouveauCanal(true)} className="btn-secondary text-sm">
             {t('nouveauCanal')}
           </button>
-          <button onClick={() => setModalNouvelleConv(true)} className="btn-primary text-sm">
+          <button data-aide="messagerie.nouvelleConversation" onClick={() => setModalNouvelleConv(true)} className="btn-primary text-sm">
             {t('nouvelleConversation')}
           </button>
         </div>
@@ -138,7 +138,7 @@ export default function Messagerie() {
               ))}
               {collegues.length === 0 && <p className="text-sm text-petrol-400">{t('aucunCollegue')}</p>}
             </div>
-            <button onClick={() => setModalNouvelleConv(false)} className="btn-secondary w-full mt-3">
+            <button data-aide="messagerie.annuler" onClick={() => setModalNouvelleConv(false)} className="btn-secondary w-full mt-3">
               {t('annuler')}
             </button>
           </div>
@@ -196,8 +196,8 @@ function ModalNouveauCanal({ collegues, onAnnuler, onCreer }) {
         </div>
         {erreur && <p className="text-xs text-red-600 mb-2">{erreur}</p>}
         <div className="flex gap-2">
-          <button onClick={onAnnuler} className="btn-secondary flex-1">{t('annuler')}</button>
-          <button onClick={valider} className="btn-primary flex-1">{t('creerLeCanal')}</button>
+          <button data-aide="messagerie.annuler" onClick={onAnnuler} className="btn-secondary flex-1">{t('annuler')}</button>
+          <button data-aide="messagerie.creerLeCanal" onClick={valider} className="btn-primary flex-1">{t('creerLeCanal')}</button>
         </div>
       </div>
     </div>

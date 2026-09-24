@@ -81,21 +81,136 @@
 }
 
 @layer components {
+  /* ---------- Cartes : coins plus doux, ombre légère ---------- */
   .card {
-    @apply bg-white border border-line rounded-xl;
+    @apply bg-white border border-line rounded-2xl;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 20px rgb(var(--petrol-900) / 0.05);
   }
+
+  /* ---------- Boutons en relief (3D) ----------
+     Un dégradé + une « tranche » sous le bouton ; il s'enfonce au clic. */
   .btn-primary {
-    @apply bg-petrol-800 text-white font-medium px-4 py-2 rounded-lg hover:bg-petrol-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply relative inline-flex items-center justify-center gap-1.5 text-white font-semibold px-4 py-2.5 rounded-xl select-none
+      transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(180deg, rgb(var(--petrol-600)) 0%, rgb(var(--petrol-800)) 60%, rgb(var(--petrol-900)) 100%);
+    box-shadow: 0 4px 0 rgb(var(--petrol-950)), 0 8px 16px rgb(var(--petrol-900) / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.2);
+    text-shadow: 0 1px 1px rgb(0 0 0 / 0.25);
   }
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 rgb(var(--petrol-950)), 0 12px 20px rgb(var(--petrol-900) / 0.3), inset 0 1px 0 rgb(255 255 255 / 0.25);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgb(var(--petrol-950)), 0 2px 6px rgb(var(--petrol-900) / 0.2), inset 0 2px 4px rgb(0 0 0 / 0.2);
+  }
+
   .btn-secondary {
-    @apply bg-white border border-line text-petrol-900 font-medium px-4 py-2 rounded-lg hover:bg-canvas transition-colors;
+    @apply relative inline-flex items-center justify-center gap-1.5 border border-line text-petrol-900 font-semibold px-4 py-2.5 rounded-xl select-none
+      transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(180deg, #ffffff 0%, rgb(var(--canvas)) 100%);
+    box-shadow: 0 3px 0 rgb(var(--line)), 0 6px 12px rgb(var(--petrol-900) / 0.08), inset 0 1px 0 #ffffff;
   }
+  .btn-secondary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: rgb(var(--amber-400));
+    box-shadow: 0 4px 0 rgb(var(--amber-400) / 0.6), 0 10px 16px rgb(var(--petrol-900) / 0.1), inset 0 1px 0 #ffffff;
+  }
+  .btn-secondary:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgb(var(--line)), inset 0 2px 4px rgb(0 0 0 / 0.08);
+  }
+
+  /* ---------- Champs de saisie ---------- */
   .input-field {
-    @apply w-full border border-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 transition-shadow;
+    @apply w-full bg-white border border-line rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 transition-shadow;
+    box-shadow: inset 0 1px 2px rgb(var(--petrol-900) / 0.06);
   }
   .label {
-    @apply block text-xs font-medium text-petrol-700 mb-1;
+    @apply block text-xs font-semibold text-petrol-700 mb-1;
   }
+
+  /* ---------- Bulles d'aide ---------- */
+  .infobulle {
+    @apply fixed z-[100] text-xs leading-snug text-white px-3 py-2 rounded-xl pointer-events-none flex gap-1.5 items-start;
+    background: rgb(var(--petrol-950) / 0.95);
+    box-shadow: 0 10px 24px rgb(0 0 0 / 0.25);
+    animation: infobulle-apparition 0.15s ease-out;
+  }
+  .infobulle-icone {
+    @apply shrink-0;
+  }
+}
+
+@layer utilities {
+  /* Boutons de couleur « bruts » (anciennes pages) : même relief que les
+     autres, et le bleu hors charte est ramené aux couleurs de l'app. */
+  button.bg-blue-600,
+  button.bg-green-600,
+  button.bg-purple-600,
+  button.bg-red-600 {
+    @apply font-semibold rounded-xl transition-all duration-150 select-none;
+    box-shadow: 0 4px 0 rgb(0 0 0 / 0.28), 0 8px 14px rgb(0 0 0 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.2);
+  }
+  button.bg-blue-600 {
+    background: linear-gradient(180deg, rgb(var(--petrol-600)) 0%, rgb(var(--petrol-800)) 60%, rgb(var(--petrol-900)) 100%);
+  }
+  button.bg-green-600 { background: linear-gradient(180deg, #22c55e 0%, #16a34a 60%, #15803d 100%); }
+  button.bg-purple-600 { background: linear-gradient(180deg, #a855f7 0%, #9333ea 60%, #7e22ce 100%); }
+  button.bg-red-600 { background: linear-gradient(180deg, #ef4444 0%, #dc2626 60%, #b91c1c 100%); }
+  :is(button.bg-blue-600, button.bg-green-600, button.bg-purple-600, button.bg-red-600):hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  :is(button.bg-blue-600, button.bg-green-600, button.bg-purple-600, button.bg-red-600):active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgb(0 0 0 / 0.28), inset 0 2px 4px rgb(0 0 0 / 0.2);
+  }
+
+  /* Lignes cliquables des listes (commandes, tournées, dépôts…) : fond blanc,
+     ombre douce, légère élévation au survol. */
+  main :is(a, button).border.rounded-lg:not(.btn-primary):not(.btn-secondary) {
+    @apply bg-white rounded-2xl transition-all duration-150;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 12px rgb(var(--petrol-900) / 0.04);
+  }
+  main :is(a, button).border.rounded-lg:not(.btn-primary):not(.btn-secondary):hover {
+    transform: translateY(-1px);
+    border-color: rgb(var(--amber-400));
+    box-shadow: 0 6px 18px rgb(var(--petrol-900) / 0.1);
+  }
+
+  /* Tableaux : en-tête marqué, lignes alternées. */
+  main table thead tr {
+    background: linear-gradient(180deg, rgb(var(--canvas)) 0%, #ffffff 140%);
+  }
+  main table tbody tr:nth-child(even) {
+    background: rgb(var(--canvas) / 0.55);
+  }
+
+  /* Titre de chaque page : petite barre dorée d'accent. */
+  main h1 {
+    position: relative;
+    padding-bottom: 0.4rem;
+  }
+  main h1::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    bottom: 0;
+    width: 2.25rem;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgb(var(--amber-500)), rgb(var(--amber-400)));
+  }
+}
+
+@keyframes infobulle-apparition {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Appui long sur téléphone : pas de menu contextuel ni de sélection de texte sur les boutons. */
+button, [data-aide] {
+  -webkit-touch-callout: none;
 }
 
 @media print {

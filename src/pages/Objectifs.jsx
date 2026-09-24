@@ -204,7 +204,7 @@ export default function Objectifs() {
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <h1 className="text-xl font-bold">{t('titre')}</h1>
-        <button onClick={ouvrirModal} className="btn-primary text-sm">
+        <button data-aide="objectifs.nouvelObjectif" onClick={ouvrirModal} className="btn-primary text-sm">
           {t('nouvelObjectif')}
         </button>
       </div>
@@ -228,21 +228,21 @@ export default function Objectifs() {
               <div>
                 <label className="label">{t('cible')}</label>
                 <div className="flex gap-2 mb-2">
-                  <button
+                  <button data-aide="objectifs.unePersonne"
                     type="button"
                     onClick={() => setTypeCible('commercial')}
                     className={`flex-1 text-sm px-3 py-2 rounded-lg border ${typeCible === 'commercial' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
                   >
                     {t('unePersonne')}
                   </button>
-                  <button
+                  <button data-aide="objectifs.uneZone"
                     type="button"
                     onClick={() => setTypeCible('zone')}
                     className={`flex-1 text-sm px-3 py-2 rounded-lg border ${typeCible === 'zone' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
                   >
                     {t('uneZone')}
                   </button>
-                  <button
+                  <button data-aide="objectifs.leBureau"
                     type="button"
                     onClick={() => setTypeCible('bureau')}
                     className={`flex-1 text-sm px-3 py-2 rounded-lg border ${typeCible === 'bureau' ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}
@@ -329,7 +329,7 @@ export default function Objectifs() {
               {erreur && <p className="text-sm text-red-600">{erreur}</p>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('annuler')}</button>
+                <button data-aide="objectifs.annuler" type="button" className="btn-secondary flex-1" onClick={() => setModalOuvert(false)}>{t('annuler')}</button>
                 <button type="submit" disabled={envoi} className="btn-primary flex-1">
                   {envoi ? t('enregistrement') : t('creerObjectif')}
                 </button>
@@ -362,7 +362,7 @@ function CarteObjectif({ objectif: o, onSupprimer }) {
             {o.produits?.nom ? ` — ${o.produits.nom}` : ''}
           </p>
         </div>
-        <button onClick={onSupprimer} className="text-xs text-red-600 underline">{t('supprimer')}</button>
+        <button data-aide="objectifs.supprimer" onClick={onSupprimer} className="text-xs text-red-600 underline">{t('supprimer')}</button>
       </div>
 
       {o.montant_cible != null && (

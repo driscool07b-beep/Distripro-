@@ -119,14 +119,14 @@ function RecapQuotidien({ entreprise }) {
     <div>
       <div className="flex items-center gap-3 mb-4">
         <input type="date" lang={i18n.language} className="input-field max-w-xs" value={date} onChange={(e) => setDate(e.target.value)} />
-        <button
+        <button data-aide="analytique.excel"
           className="btn-secondary text-xs"
           disabled={lignes.length === 0}
           onClick={() => exporterExcel(`recap-${date}`, COLONNES, lignes)}
         >
           📊 {t('excel')}
         </button>
-        <button
+        <button data-aide="analytique.pdf"
           className="btn-secondary text-xs"
           disabled={lignes.length === 0}
           onClick={() => exporterPDF(`recap-${date}`, t('onglets.recap'), date, COLONNES, lignes, undefined, undefined, entreprise)}
@@ -242,10 +242,10 @@ function TauxRotation({ entreprise }) {
         {t('rotation.explication')}
       </p>
       <div className="flex gap-2 mb-4">
-        <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterExcel('taux-rotation', COLONNES, lignes)}>
+        <button data-aide="analytique.excel" className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterExcel('taux-rotation', COLONNES, lignes)}>
           📊 {t('excel')}
         </button>
-        <button className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterPDF('taux-rotation', t('onglets.rotation'), null, COLONNES, lignes, undefined, undefined, entreprise)}>
+        <button data-aide="analytique.pdf" className="btn-secondary text-xs" disabled={lignes.length === 0} onClick={() => exporterPDF('taux-rotation', t('onglets.rotation'), null, COLONNES, lignes, undefined, undefined, entreprise)}>
           📄 {t('pdf')}
         </button>
       </div>
@@ -343,9 +343,9 @@ function TauxPresence({ entreprise }) {
           <div className="flex items-center justify-between mb-2">
             <h2 className="font-semibold text-sm">{t('presence.nosProduits')}</h2>
             <div className="flex gap-1">
-              <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterExcel('presence-nos-produits', COLONNES, propres)}>{t('excel')}</button>
+              <button data-aide="analytique.excel" className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterExcel('presence-nos-produits', COLONNES, propres)}>{t('excel')}</button>
               <span className="text-petrol-300">·</span>
-              <button className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterPDF('presence-nos-produits', `${t('onglets.presence')} — ${t('presence.nosProduits')}`, null, COLONNES, propres, undefined, undefined, entreprise)}>{t('pdf')}</button>
+              <button data-aide="analytique.onglets.presence" className="text-xs text-petrol-600 underline" disabled={propres.length === 0} onClick={() => exporterPDF('presence-nos-produits', `${t('onglets.presence')} — ${t('presence.nosProduits')}`, null, COLONNES, propres, undefined, undefined, entreprise)}>{t('pdf')}</button>
             </div>
           </div>
           <TableauPresence lignes={propres} />
@@ -355,9 +355,9 @@ function TauxPresence({ entreprise }) {
           <div className="flex items-center justify-between mb-2">
             <h2 className="font-semibold text-sm">{t('presence.produitsConcurrents')}</h2>
             <div className="flex gap-1">
-              <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterExcel('presence-concurrents', COLONNES, concurrents)}>{t('excel')}</button>
+              <button data-aide="analytique.excel" className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterExcel('presence-concurrents', COLONNES, concurrents)}>{t('excel')}</button>
               <span className="text-petrol-300">·</span>
-              <button className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterPDF('presence-concurrents', `${t('onglets.presence')} — ${t('presence.produitsConcurrents')}`, null, COLONNES, concurrents, undefined, undefined, entreprise)}>{t('pdf')}</button>
+              <button data-aide="analytique.onglets.presence" className="text-xs text-petrol-600 underline" disabled={concurrents.length === 0} onClick={() => exporterPDF('presence-concurrents', `${t('onglets.presence')} — ${t('presence.produitsConcurrents')}`, null, COLONNES, concurrents, undefined, undefined, entreprise)}>{t('pdf')}</button>
             </div>
           </div>
           <TableauPresence lignes={concurrents} />
@@ -494,8 +494,8 @@ function ManqueAGagner({ entreprise }) {
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-semibold text-sm">{t('manque.commandesAnnulees')}</h2>
           <div className="flex gap-2">
-            <button className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterExcel('commandes-annulees', COLONNES_ANNULEES, annulees)}>{t('excel')}</button>
-            <button className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterPDF('commandes-annulees', t('manque.commandesAnnulees'), null, COLONNES_ANNULEES, annulees, t('manque.valeurTotalePerdue'), formatXOF(totalAnnule), entreprise)}>{t('pdf')}</button>
+            <button data-aide="analytique.excel" className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterExcel('commandes-annulees', COLONNES_ANNULEES, annulees)}>{t('excel')}</button>
+            <button data-aide="analytique.pdf" className="text-xs text-petrol-600 underline" disabled={annulees.length === 0} onClick={() => exporterPDF('commandes-annulees', t('manque.commandesAnnulees'), null, COLONNES_ANNULEES, annulees, t('manque.valeurTotalePerdue'), formatXOF(totalAnnule), entreprise)}>{t('pdf')}</button>
           </div>
         </div>
         <p className="text-xs text-petrol-500 mb-2">{t('manque.valeurTotalePerdue')} : <span className="font-semibold text-red-600">{formatXOF(totalAnnule)}</span></p>
@@ -528,8 +528,8 @@ function ManqueAGagner({ entreprise }) {
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-semibold text-sm">{t('manque.livraisonsPartielles')}</h2>
           <div className="flex gap-2">
-            <button className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterExcel('livraisons-partielles', COLONNES_ECARTS, livraisonsPartielles)}>{t('excel')}</button>
-            <button className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterPDF('livraisons-partielles', t('manque.livraisonsPartielles'), null, COLONNES_ECARTS, livraisonsPartielles, t('manque.manqueAGagnerTotal'), formatXOF(totalManque), entreprise)}>{t('pdf')}</button>
+            <button data-aide="analytique.excel" className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterExcel('livraisons-partielles', COLONNES_ECARTS, livraisonsPartielles)}>{t('excel')}</button>
+            <button data-aide="analytique.pdf" className="text-xs text-petrol-600 underline" disabled={livraisonsPartielles.length === 0} onClick={() => exporterPDF('livraisons-partielles', t('manque.livraisonsPartielles'), null, COLONNES_ECARTS, livraisonsPartielles, t('manque.manqueAGagnerTotal'), formatXOF(totalManque), entreprise)}>{t('pdf')}</button>
           </div>
         </div>
         <p className="text-xs text-petrol-500 mb-2">{t('manque.manqueAGagnerTotal')} : <span className="font-semibold text-amber-600">{formatXOF(totalManque)}</span></p>

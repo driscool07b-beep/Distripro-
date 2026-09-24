@@ -619,24 +619,24 @@ export default function Stock() {
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary text-sm" onClick={exportExcel} disabled={produitsFiltres.length === 0}>
+          <button data-aide="stock.excel" className="btn-secondary text-sm" onClick={exportExcel} disabled={produitsFiltres.length === 0}>
             📊 {t('excel')}
           </button>
-          <button className="btn-secondary text-sm" onClick={exportPDF} disabled={produitsFiltres.length === 0}>
+          <button data-aide="stock.pdf" className="btn-secondary text-sm" onClick={exportPDF} disabled={produitsFiltres.length === 0}>
             📄 {t('pdf')}
           </button>
           {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && (
             <>
-              <button className="btn-secondary text-sm" onClick={ouvrirModalImport}>
+              <button data-aide="stock.importer" className="btn-secondary text-sm" onClick={ouvrirModalImport}>
                 📥 {t('importer')}
               </button>
-              <button className="btn-secondary text-sm" onClick={ouvrirModalInventaire}>
+              <button data-aide="stock.inventaire.bouton" className="btn-secondary text-sm" onClick={ouvrirModalInventaire}>
                 📋 {t('inventaire.bouton')}
               </button>
-              <button className="btn-secondary text-sm" onClick={ouvrirModalLots}>
+              <button data-aide="stock.lots.bouton" className="btn-secondary text-sm" onClick={ouvrirModalLots}>
                 🏷️ {t('lots.bouton')}
               </button>
-              <button className="btn-primary" onClick={() => { setProduitEnEdition(null); setFormulaire(PRODUIT_VIDE); setModalProduit(true) }}>
+              <button data-aide="stock.nouveauProduit" className="btn-primary" onClick={() => { setProduitEnEdition(null); setFormulaire(PRODUIT_VIDE); setModalProduit(true) }}>
                 {t('nouveauProduit')}
               </button>
             </>
@@ -659,7 +659,7 @@ export default function Stock() {
                     {new Date(t2.envoye_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </p>
                 </div>
-                <button className="btn-primary text-xs shrink-0" onClick={() => ouvrirModalReception(t2)}>
+                <button data-aide="stock.receptionner" className="btn-primary text-xs shrink-0" onClick={() => ouvrirModalReception(t2)}>
                   {t('receptionner')}
                 </button>
               </div>
@@ -681,7 +681,7 @@ export default function Stock() {
           <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">
             {t('filtreAlertes')}
           </span>
-          <button
+          <button data-aide="stock.retirerFiltre"
             onClick={() => setSearchParams({})}
             className="text-petrol-500 underline text-xs"
           >
@@ -726,14 +726,14 @@ export default function Stock() {
                     <td className="px-4 py-3 text-right">
                       {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && !(profil?.role === 'gestionnaire_stock' && depots.length === 0) && (
                         <div className="flex flex-col items-end gap-1">
-                          <button
+                          <button data-aide="stock.table.ajusterStock"
                             className="text-xs font-medium text-amber-700 hover:text-amber-800"
                             onClick={() => ouvrirModalMouvement(p)}
                           >
                             📦 {t('table.ajusterStock')}
                           </button>
                           {tousLesDepots.length > 1 && depots.length > 0 && (
-                            <button
+                            <button data-aide="stock.table.transfererDepots"
                               className="text-xs font-medium text-blue-600 hover:text-blue-700"
                               onClick={() => ouvrirModalTransfert(p)}
                             >
@@ -741,10 +741,10 @@ export default function Stock() {
                             </button>
                           )}
                           <div className="flex gap-2">
-                            <button className="text-xs text-petrol-500 underline" onClick={() => ouvrirModalEdition(p)}>
+                            <button data-aide="stock.table.modifier" className="text-xs text-petrol-500 underline" onClick={() => ouvrirModalEdition(p)}>
                               {t('table.modifier')}
                             </button>
-                            <button className="text-xs text-petrol-500 underline" onClick={() => ouvrirHistorique(p)}>
+                            <button data-aide="stock.table.historique" className="text-xs text-petrol-500 underline" onClick={() => ouvrirHistorique(p)}>
                               {t('table.historique')}
                             </button>
                           </div>
@@ -853,7 +853,7 @@ export default function Stock() {
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
               <div className="flex gap-2 pt-2">
-                <button
+                <button data-aide="stock.formProduit.annuler"
                   type="button"
                   className="btn-secondary flex-1"
                   onClick={() => {
@@ -881,7 +881,7 @@ export default function Stock() {
             <p className="text-sm text-petrol-600 mb-4">{modalMouvement.nom} — {t('mouvement.stockActuel')} : {modalMouvement.quantite}</p>
             <form onSubmit={enregistrerMouvement} className="space-y-3">
               <div className="grid grid-cols-2 gap-2">
-                <button
+                <button data-aide="stock.mouvement.entree"
                   type="button"
                   onClick={() => setMouvement({ ...mouvement, type: 'entree', raison: '' })}
                   className={`py-2 rounded-lg text-sm font-medium border ${
@@ -892,7 +892,7 @@ export default function Stock() {
                 >
                   {t('mouvement.entree')}
                 </button>
-                <button
+                <button data-aide="stock.mouvement.sortie"
                   type="button"
                   onClick={() => setMouvement({ ...mouvement, type: 'sortie', raison: '' })}
                   className={`py-2 rounded-lg text-sm font-medium border ${
@@ -909,7 +909,7 @@ export default function Stock() {
                   <p className="text-xs text-amber-800">
                     {t('mouvement.avertissementTransfert')}
                   </p>
-                  <button
+                  <button data-aide="stock.mouvement.ouvrirTransfertPlutot"
                     type="button"
                     onClick={() => { fermerModalMouvement(); ouvrirModalTransfert(modalMouvement) }}
                     className="text-xs font-medium text-blue-700 underline mt-1"
@@ -1005,7 +1005,7 @@ export default function Stock() {
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
               <div className="flex gap-2 pt-2">
-                <button
+                <button data-aide="stock.mouvement.annuler"
                   type="button"
                   className="btn-secondary flex-1"
                   onClick={fermerModalMouvement}
@@ -1090,7 +1090,7 @@ export default function Stock() {
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={fermerModalTransfert}>
+                <button data-aide="stock.transfert.annuler" type="button" className="btn-secondary flex-1" onClick={fermerModalTransfert}>
                   {t('transfert.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
@@ -1155,7 +1155,7 @@ export default function Stock() {
               {erreur && <div className="text-sm text-red-600">{erreur}</div>}
 
               <div className="flex gap-2 pt-2">
-                <button type="button" className="btn-secondary flex-1" onClick={fermerModalReception}>
+                <button data-aide="stock.reception.annuler" type="button" className="btn-secondary flex-1" onClick={fermerModalReception}>
                   {t('reception.annuler')}
                 </button>
                 <button type="submit" disabled={enregistrement} className="btn-primary flex-1">
@@ -1178,7 +1178,7 @@ export default function Stock() {
             <p className="text-sm text-petrol-600 mb-3">
               {t('import.consigne')}
             </p>
-            <button onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
+            <button data-aide="stock.import.telechargerModele" onClick={telechargerModeleImport} className="btn-secondary text-sm mb-4">
               {t('import.telechargerModele')}
             </button>
 
@@ -1281,7 +1281,7 @@ export default function Stock() {
               </div>
               {erreurInventaire && <p className="text-xs text-red-600">{erreurInventaire}</p>}
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setModalInventaire(false)} className="btn-secondary flex-1">{t('annuler')}</button>
+                <button data-aide="stock.annuler" type="button" onClick={() => setModalInventaire(false)} className="btn-secondary flex-1">{t('annuler')}</button>
                 <button type="submit" disabled={envoiInventaire} className="btn-primary flex-1">
                   {envoiInventaire ? t('inventaire.enregistrement') : t('inventaire.valider')}
                 </button>
@@ -1388,7 +1388,7 @@ export default function Stock() {
                 ))}
               </div>
             )}
-            <button className="btn-secondary w-full mt-4" onClick={() => setModalHistorique(null)}>
+            <button data-aide="stock.historiquePrix.fermer" className="btn-secondary w-full mt-4" onClick={() => setModalHistorique(null)}>
               {t('historiquePrix.fermer')}
             </button>
           </div>
