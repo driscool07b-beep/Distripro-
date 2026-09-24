@@ -203,6 +203,146 @@
   }
 }
 
+
+/* ---------- Tableaux en fiches empilées sur téléphone ---------- */
+@media screen and (max-width: 640px) {
+  table.tableau-responsif {
+    min-width: 0 !important;
+    width: 100% !important;
+    border-collapse: separate;
+  }
+  table.tableau-responsif thead {
+    display: none;
+  }
+  table.tableau-responsif,
+  table.tableau-responsif tbody,
+  table.tableau-responsif tr,
+  table.tableau-responsif td {
+    display: block;
+  }
+  /* Le cadre autour du tableau disparaît : ce sont les fiches qui portent le style. */
+  .card:has(> table.tableau-responsif),
+  .overflow-x-auto:has(> table.tableau-responsif) {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+  table.tableau-responsif tbody > tr {
+    position: relative;
+    background: #ffffff !important;
+    border: 1px solid rgb(var(--line));
+    border-radius: 1rem;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 16px rgb(var(--petrol-900) / 0.06);
+  }
+  /* Chaque cellule : titre de la colonne à gauche, valeur à droite. */
+  table.tableau-responsif td {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.25rem 0.5rem;
+    text-align: end;
+    padding: 0.45rem 0 !important;
+    border: 0 !important;
+    border-bottom: 1px dashed rgb(var(--line)) !important;
+    min-height: 2.25rem;
+    white-space: normal !important;
+  }
+  table.tableau-responsif td:last-child {
+    border-bottom: 0 !important;
+  }
+  table.tableau-responsif td::before {
+    content: attr(data-label);
+    margin-inline-end: auto;
+    padding-inline-end: 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: rgb(var(--petrol-500));
+    font-family: Inter, sans-serif;
+    text-align: start;
+    max-width: 45%;
+  }
+  table.tableau-responsif td[data-label='']::before {
+    display: none;
+  }
+  /* Première cellule = titre de la fiche (nom du produit, du client…). */
+  table.tableau-responsif td:first-child,
+  table.tableau-responsif tr:has(> td:first-child > input[type='checkbox']) > td:nth-child(2) {
+    display: block;
+    text-align: start;
+    font-size: 1rem;
+    font-weight: 600;
+    padding-top: 0 !important;
+    padding-bottom: 0.55rem !important;
+    border-bottom: 1px solid rgb(var(--line)) !important;
+    min-height: 0;
+  }
+  table.tableau-responsif td:first-child::before,
+  table.tableau-responsif tr:has(> td:first-child > input[type='checkbox']) > td:nth-child(2)::before {
+    display: none;
+  }
+  /* Case à cocher : en haut à droite de la fiche. */
+  table.tableau-responsif td:first-child:has(> input[type='checkbox']) {
+    position: absolute;
+    top: 0.75rem;
+    inset-inline-end: 0.9rem;
+    padding: 0 !important;
+    border: 0 !important;
+    min-height: 0;
+  }
+  table.tableau-responsif tr:has(> td:first-child > input[type='checkbox']) > td:nth-child(2) {
+    padding-inline-end: 2rem;
+  }
+  table.tableau-responsif td:first-child > input[type='checkbox'] {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  /* Ligne pleine largeur (« Aucun résultat », chargement…). */
+  table.tableau-responsif td[data-pleine] {
+    display: block;
+    text-align: center;
+    border: 0 !important;
+    font-size: 0.875rem;
+    font-weight: 400;
+    padding: 1rem 0 !important;
+  }
+  table.tableau-responsif td[data-pleine]::before {
+    display: none;
+  }
+  table.tableau-responsif tbody > tr:has(> td[data-pleine]) {
+    box-shadow: none;
+    background: transparent !important;
+    border-style: dashed;
+  }
+  /* Pied de tableau (totaux) : en bas, mis en valeur. */
+  table.tableau-responsif tfoot {
+    display: block;
+  }
+  table.tableau-responsif tfoot tr {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background: rgb(var(--petrol-900) / 0.05);
+    border-radius: 1rem;
+    padding: 0.75rem 0.9rem;
+    font-weight: 600;
+  }
+  table.tableau-responsif tfoot td {
+    display: inline;
+    border: 0 !important;
+    padding: 0 0.25rem !important;
+    min-height: 0;
+  }
+  table.tableau-responsif tfoot td::before {
+    display: none;
+  }
+}
+
 @keyframes infobulle-apparition {
   from { opacity: 0; }
   to { opacity: 1; }

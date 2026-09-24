@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import InfobullesAide from './InfobullesAide'
+import TableauxResponsifs from './TableauxResponsifs'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
@@ -406,6 +407,7 @@ export default function Layout() {
           <span className="font-display font-semibold">DistribPro</span>
         </div>
         <InfobullesAide />
+        <TableauxResponsifs />
         <main className="flex-1 min-w-0 overflow-x-hidden">
           <BandeauHorsLigne />
           <Outlet />
