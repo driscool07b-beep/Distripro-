@@ -17,5 +17,18 @@
   "venteCredit": "销售（赊账）",
   "venteComptant": "销售（现金）",
   "reglementComptant": "现金结算",
-  "paiementRecu": "已收付款"
+  "paiementRecu": "已收付款",
+  "numero": "单据号",
+  "du": "从",
+  "au": "至",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "titrePdf": "客户分类账 — {{nom}}",
+  "soldeReporte": "上期结转",
+  "periode": "期间 {{debut}} 至 {{fin}}",
+  "totalDebit": "借方合计",
+  "totalCredit": "贷方合计",
+  "plafond": "信用额度",
+  "annulationAvoir": "作废（贷项通知）",
+  "paiementRecuSur": "已收付款 — {{numero}}"
 }

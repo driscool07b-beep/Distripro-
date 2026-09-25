@@ -20,7 +20,8 @@
     "aucuneCommandeEnAttente": "لا توجد طلبات معلقة حاليًا.",
     "produit": "المنتج",
     "quantite": "الكمية",
-    "valeurEstimee": "القيمة المقدرة"
+    "valeurEstimee": "القيمة المقدرة",
+    "titrePdf": "ملخص الطلبات الجارية"
   },
   "liste": {
     "articles": "{{n}} صنف(أصناف)",
@@ -90,5 +91,12 @@
     "statut": "الحالة",
     "montantTtc": "المبلغ الإجمالي",
     "date": "التاريخ"
-  }
+  },
+  "du": "من",
+  "au": "إلى",
+  "total": "المجموع",
+  "effacerDates": "مسح التواريخ",
+  "compteurTotal": "{{n}} طلب — المجموع (دون الملغاة)",
+  "periode": "الفترة من {{debut}} إلى {{fin}}",
+  "imprimer": "طباعة"
 }

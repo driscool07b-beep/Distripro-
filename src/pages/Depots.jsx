@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
@@ -125,16 +126,17 @@ export default function Depots() {
         <div className="space-y-2">
           {depots.map((d) => (
             <div key={d.id} className={`border rounded-lg p-3 flex justify-between items-center ${d.actif ? 'border-line' : 'border-red-200 bg-red-50/40'}`}>
-              <div>
-                <p className="text-sm font-medium">
-                  {d.nom}
+              <Link to={`/stock?depot=${d.id}`} className="min-w-0 flex-1 group" data-aide="depots.voirStock">
+                <p className="text-sm font-medium group-hover:underline">
+                  📦 {d.nom}
                   {!d.actif && <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">{t('inactif')}</span>}
                 </p>
                 <p className="text-xs text-petrol-500">
                   {LIBELLES_TYPE[d.type] || d.type || t('typeNonPrecise')}
                   {d.profils?.nom ? ` — ${t('responsable', { nom: d.profils.nom })}` : ''}
                 </p>
-              </div>
+                <p className="text-xs text-amber-700 mt-0.5">{t('voirStock')} →</p>
+              </Link>
               <button data-aide="depots.modifier" onClick={() => ouvrirModal(d)} className="text-xs text-petrol-600 underline">
                 {t('modifier')}
               </button>

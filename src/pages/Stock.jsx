@@ -16,6 +16,7 @@ export default function Stock() {
   const { entreprise, profil } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const filtreAlertes = searchParams.get('filtre') === 'alertes'
+  const filtreDepot = searchParams.get('depot') || ''
   const [produits, setProduits] = useState([])
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
@@ -567,11 +568,17 @@ export default function Stock() {
     fermerModalReception()
   }
 
-  const produitsFiltres = produits
+  // Vue « tous les magasins » (total) ou d'un seul magasin (?depot=…).
+  const produitsVue = filtreDepot
+    ? produits.map((p) => ({ ...p, quantite: (p.stocks || []).filter((x) => x.depot_id === filtreDepot).reduce((s, x) => s + (x.quantite || 0), 0) }))
+    : produits
+  const depotFiltre = tousLesDepots.find((d) => d.id === filtreDepot)
+  const produitsFiltres = produitsVue
     .filter((p) => p.nom.toLowerCase().includes(recherche.toLowerCase()))
     .filter((p) => !filtreAlertes || p.quantite <= (p.seuil_alerte ?? 0))
-  const nbAlertes = produits.filter((p) => p.quantite <= (p.seuil_alerte ?? 0)).length
-  const valeurTotaleStock = produits.reduce((s, p) => s + p.quantite * (p.prix_vente || 0), 0)
+  const nbAlertes = produitsVue.filter((p) => p.quantite <= (p.seuil_alerte ?? 0)).length
+  const valeurTotaleStock = produitsVue.reduce((s, p) => s + p.quantite * (p.prix_vente || 0), 0)
+  const produitComplet = (p) => produits.find((x) => x.id === p.id) || p
 
   const COLONNES_EXPORT = [
     { cle: 'nom', titre: t('export.produit') },
@@ -667,13 +674,31 @@ export default function Stock() {
         </div>
       )}
 
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
       <input
         type="text"
         placeholder={t('rechercherProduit')}
         value={recherche}
         onChange={(e) => setRecherche(e.target.value)}
-        className="input-field max-w-sm mb-4"
+        className="input-field sm:max-w-sm"
       />
+        {tousLesDepots.length > 0 && (
+          <select
+            className="input-field sm:max-w-xs"
+            value={filtreDepot}
+            onChange={(e) => {
+              const suivants = new URLSearchParams(searchParams)
+              if (e.target.value) suivants.set('depot', e.target.value)
+              else suivants.delete('depot')
+              setSearchParams(suivants)
+            }}
+          >
+            <option value="">{t('tousLesMagasins')}</option>
+            {tousLesDepots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+          </select>
+        )}
+        {depotFiltre && <span className="text-xs font-medium text-amber-700">📍 {t('vueMagasin', { nom: depotFiltre.nom })}</span>}
+      </div>
 
       {filtreAlertes && (
         <div className="mb-4 flex items-center gap-2 text-sm">
@@ -724,17 +749,17 @@ export default function Stock() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && !(profil?.role === 'gestionnaire_stock' && depots.length === 0) && (
-                        <div className="flex flex-col items-end gap-1">
+                        <div className="flex flex-col items-end gap-2">
                           <button data-aide="stock.table.ajusterStock"
-                            className="text-xs font-medium text-amber-700 hover:text-amber-800"
-                            onClick={() => ouvrirModalMouvement(p)}
+                            className="btn-3d btn-3d-ambre text-xs px-3 py-1.5"
+                            onClick={() => ouvrirModalMouvement(produitComplet(p))}
                           >
                             📦 {t('table.ajusterStock')}
                           </button>
                           {tousLesDepots.length > 1 && depots.length > 0 && (
                             <button data-aide="stock.table.transfererDepots"
-                              className="text-xs font-medium text-blue-600 hover:text-blue-700"
-                              onClick={() => ouvrirModalTransfert(p)}
+                              className="btn-3d btn-3d-bleu text-xs px-3 py-1.5"
+                              onClick={() => ouvrirModalTransfert(produitComplet(p))}
                             >
                               🔁 {t('table.transfererDepots')}
                             </button>

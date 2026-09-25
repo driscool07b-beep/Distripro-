@@ -17,5 +17,18 @@
   "venteCredit": "Vente (crédit)",
   "venteComptant": "Vente (comptant)",
   "reglementComptant": "Règlement comptant",
-  "paiementRecu": "Paiement reçu"
+  "paiementRecu": "Paiement reçu",
+  "numero": "N° pièce",
+  "du": "Du",
+  "au": "Au",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "titrePdf": "Grand livre client — {{nom}}",
+  "soldeReporte": "Solde reporté",
+  "periode": "Période du {{debut}} au {{fin}}",
+  "totalDebit": "Total débit",
+  "totalCredit": "Total crédit",
+  "plafond": "Plafond de crédit",
+  "annulationAvoir": "Annulation (avoir)",
+  "paiementRecuSur": "Paiement reçu — {{numero}}"
 }

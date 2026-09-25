@@ -165,5 +165,18 @@
     "texte": "请先保存正在输入的内容，然后更新。",
     "bouton": "更新"
   },
-  "erreurFicheEntreprise": "无法加载公司资料：部分功能将无法使用"
+  "erreurFicheEntreprise": "无法加载公司资料：部分功能将无法使用",
+  "navigation": {
+    "retour": "返回"
+  },
+  "raccourcis": {
+    "titre": "键盘快捷键",
+    "echap": "关闭打开的表单（同取消）",
+    "recherche": "跳到搜索框",
+    "nouveau": "新建…（本页主要操作）",
+    "retour": "返回上一页",
+    "accueil": "仪表板",
+    "aide": "显示 / 隐藏此列表",
+    "fermer": "关闭"
+  }
 }

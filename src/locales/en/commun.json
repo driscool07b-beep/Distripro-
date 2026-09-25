@@ -165,5 +165,18 @@
     "texte": "Save what you are typing, then update.",
     "bouton": "Update"
   },
-  "erreurFicheEntreprise": "Your company record could not be loaded: some features (file uploads, documents) will not work"
+  "erreurFicheEntreprise": "Your company record could not be loaded: some features (file uploads, documents) will not work",
+  "navigation": {
+    "retour": "Back"
+  },
+  "raccourcis": {
+    "titre": "Keyboard shortcuts",
+    "echap": "Close the open form (like Cancel)",
+    "recherche": "Go to the search field",
+    "nouveau": "New… (page's main action)",
+    "retour": "Go back to the previous page",
+    "accueil": "Dashboard",
+    "aide": "Show / hide this list",
+    "fermer": "Close"
+  }
 }

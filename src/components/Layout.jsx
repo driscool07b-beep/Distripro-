@@ -7,6 +7,7 @@ import Avatar from './Avatar'
 import InfobullesAide from './InfobullesAide'
 import TableauxResponsifs from './TableauxResponsifs'
 import MiseAJour from './MiseAJour'
+import NavigationClavier, { BoutonRetour } from './NavigationClavier'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
@@ -415,7 +416,9 @@ export default function Layout() {
         <InfobullesAide />
         <TableauxResponsifs />
         <MiseAJour />
+        <NavigationClavier />
         <main className="flex-1 min-w-0 overflow-x-hidden">
+          <BoutonRetour />
           {profil && !entreprise && (
             <div className="m-3 p-3 rounded-xl bg-red-50 border border-red-300 text-red-700 text-sm">
               ⚠️ {t('erreurFicheEntreprise')}{profilError ? ` — ${profilError}` : ''}

@@ -24,5 +24,6 @@
   "depotActif": "Active warehouse",
   "annuler": "Cancel",
   "enregistrement": "Saving…",
-  "enregistrer": "Save"
+  "enregistrer": "Save",
+  "voirStock": "View this warehouse's stock"
 }

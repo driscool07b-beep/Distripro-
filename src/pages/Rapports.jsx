@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { liensPhotos } from '../lib/photos'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF } from '../lib/export'
@@ -88,13 +89,8 @@ export default function Rapports() {
     setChargementDetail(false)
 
     if (rapport.photos_paths?.length) {
-      const urls = await Promise.all(
-        rapport.photos_paths.map(async (chemin) => {
-          const { data } = await supabase.storage.from('client-photos').createSignedUrl(chemin, 3600)
-          return data?.signedUrl
-        })
-      )
-      setPhotosUrls(urls.filter(Boolean))
+      // Un seul appel pour tous les liens ; miniatures légères à l'écran.
+      setPhotosUrls(await liensPhotos('client-photos', rapport.photos_paths))
     }
   }
 
@@ -232,9 +228,9 @@ export default function Rapports() {
                       <div>
                         <p className="text-xs font-medium text-petrol-600 mb-1">{t('photos')}</p>
                         <div className="flex gap-2 flex-wrap">
-                          {photosUrls.map((url, i) => (
-                            <a key={i} href={url} target="_blank" rel="noreferrer">
-                              <img src={url} alt="" className="w-20 h-20 object-cover rounded border" />
+                          {photosUrls.map((p, i) => (
+                            <a key={i} href={p.complete} target="_blank" rel="noreferrer">
+                              <img src={p.miniature} alt="" loading="lazy" decoding="async" className="w-20 h-20 object-cover rounded border bg-canvas" />
                             </a>
                           ))}
                         </div>

@@ -8,7 +8,8 @@
     "imprimer": "Prints this document.",
     "receptionner": "Confirms receipt: the amount or goods are added to the destination.",
     "historique": "Shows the change history.",
-    "filtrer": "Applies the selected filters."
+    "filtrer": "Applies the selected filters.",
+    "retour": "Goes back to the previous page (shortcut: Alt + R)."
   },
   "clients": {
     "nouveauClient": "Creates a customer record. GPS position is captured automatically if you are at the customer's.",
@@ -121,7 +122,8 @@
     "leBureau": "Target for sales made at the office."
   },
   "depots": {
-    "nouveauDepot": "Adds a warehouse and its manager."
+    "nouveauDepot": "Adds a warehouse and its manager.",
+    "voirStock": "Opens Products & Stock filtered on this warehouse."
   },
   "creances": {
     "soldeReporte": "Records a customer debt from before DistribPro."

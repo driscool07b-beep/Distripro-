@@ -164,5 +164,7 @@
     "preparation": "Preparing file…",
     "envoi": "Uploading file…",
     "enregistrement": "Saving stock…"
-  }
+  },
+  "tousLesMagasins": "All warehouses (overall stock)",
+  "vueMagasin": "Warehouse stock: {{nom}}"
 }

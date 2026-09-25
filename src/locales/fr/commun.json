@@ -165,5 +165,18 @@
     "texte": "Enregistrez votre saisie en cours, puis mettez à jour.",
     "bouton": "Mettre à jour"
   },
-  "erreurFicheEntreprise": "La fiche de votre entreprise n'a pas pu être chargée : certaines fonctions (envoi de fichiers, documents) ne marcheront pas"
+  "erreurFicheEntreprise": "La fiche de votre entreprise n'a pas pu être chargée : certaines fonctions (envoi de fichiers, documents) ne marcheront pas",
+  "navigation": {
+    "retour": "Retour"
+  },
+  "raccourcis": {
+    "titre": "Raccourcis clavier",
+    "echap": "Fermer le formulaire ouvert (comme Annuler)",
+    "recherche": "Aller au champ de recherche",
+    "nouveau": "Nouveau… (action principale de la page)",
+    "retour": "Revenir à la page précédente",
+    "accueil": "Tableau de bord",
+    "aide": "Afficher / masquer cette liste",
+    "fermer": "Fermer"
+  }
 }

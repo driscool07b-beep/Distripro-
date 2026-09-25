@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { compresserImage } from '../lib/justificatifs'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import * as XLSX from 'xlsx'
@@ -218,11 +219,12 @@ export default function Clients() {
   }
 
   async function envoyerPhotoDevanture(e) {
-    const fichier = e.target.files?.[0]
+    let fichier = e.target.files?.[0]
     if (!fichier || !clientEnEdition || !profil?.entreprise_id) return
     setPhotoErreur('')
     setPhotoEnvoi(true)
 
+    fichier = await compresserImage(fichier, { largeurMax: 1600, qualite: 0.75 })
     const extension = fichier.name.split('.').pop() || 'jpg'
     const chemin = `${profil.entreprise_id}/${clientEnEdition}/${Date.now()}.${extension}`
 

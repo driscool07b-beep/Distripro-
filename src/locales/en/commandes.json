@@ -20,7 +20,8 @@
     "aucuneCommandeEnAttente": "No pending orders at the moment.",
     "produit": "Product",
     "quantite": "Quantity",
-    "valeurEstimee": "Estimated value"
+    "valeurEstimee": "Estimated value",
+    "titrePdf": "Pending orders summary"
   },
   "liste": {
     "articles": "{{n}} item(s)",
@@ -90,5 +91,12 @@
     "statut": "Status",
     "montantTtc": "Total amount",
     "date": "Date"
-  }
+  },
+  "du": "From",
+  "au": "To",
+  "total": "Total",
+  "effacerDates": "Clear dates",
+  "compteurTotal": "{{n}} order(s) — total (excl. cancelled)",
+  "periode": "Period {{debut}} to {{fin}}",
+  "imprimer": "Print"
 }

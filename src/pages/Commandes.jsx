@@ -40,6 +40,8 @@ export default function Commandes() {
   const [depots, setDepots] = useState([])
   const [chargement, setChargement] = useState(true)
   const [filtreStatut, setFiltreStatut] = useState('')
+  const [dateDebut, setDateDebut] = useState('')
+  const [dateFin, setDateFin] = useState('')
 
   const [modalOuvert, setModalOuvert] = useState(false)
   const [clientId, setClientId] = useState('')
@@ -73,7 +75,7 @@ export default function Commandes() {
 
   useEffect(() => {
     if (profil) chargerCommandes()
-  }, [filtreStatut, profil])
+  }, [filtreStatut, profil, dateDebut, dateFin])
 
   useEffect(() => {
     if (profil) chargerRecap()
@@ -84,6 +86,8 @@ export default function Commandes() {
       .from('lignes_commande')
       .select('quantite, prix_unitaire, produits(nom), commandes!inner(statut, commercial_id)')
       .in('commandes.statut', ['brouillon', 'confirmee', 'en_preparation'])
+    if (dateDebut) requete = requete.gte('commandes.created_at', `${dateDebut}T00:00:00`)
+    if (dateFin) requete = requete.lte('commandes.created_at', `${dateFin}T23:59:59`)
 
     if (profil?.role === 'commercial' && !profil?.acces_etendu) {
       requete = requete.eq('commandes.commercial_id', profil.id)
@@ -111,6 +115,8 @@ export default function Commandes() {
       .select('id, numero, statut, montant_ttc, montant_paye, date_livraison_souhaitee, created_at, clients(nom), profils!commercial_id(nom), lignes_commande(id)')
       .order('created_at', { ascending: false })
     if (filtreStatut) requete = requete.eq('statut', filtreStatut)
+    if (dateDebut) requete = requete.gte('created_at', `${dateDebut}T00:00:00`)
+    if (dateFin) requete = requete.lte('created_at', `${dateFin}T23:59:59`)
     if (profil?.role === 'commercial' && !profil?.acces_etendu) {
       requete = requete.eq('commercial_id', profil.id)
     }
@@ -357,6 +363,15 @@ export default function Commandes() {
     { cle: 'montant', titre: `${t('export.montantTtc')} (${symboleDevise()})`, alignDroite: true },
     { cle: 'date', titre: t('export.date') },
   ]
+  const totalCommandes = commandes.filter((c) => c.statut !== 'annulee').reduce((s, c) => s + Number(c.montant_ttc || 0), 0)
+  const periodeTexte = dateDebut || dateFin ? t('periode', { debut: dateDebut ? formatDate(dateDebut) : '…', fin: dateFin ? formatDate(dateFin) : '…' }) : null
+  const COLONNES_RECAP = [
+    { cle: 'produit', titre: t('recap.produit') },
+    { cle: 'quantite', titre: t('recap.quantite') },
+    { cle: 'valeur', titre: t('recap.valeurEstimee') },
+  ]
+  const lignesRecapExport = () => (recap?.lignes || []).map((l) => ({ produit: l.produit, quantite: l.quantite, valeur: l.valeur }))
+
   function donneesExport() {
     return commandes.map((c) => ({
       numero: c.numero,
@@ -388,7 +403,7 @@ export default function Commandes() {
           <button data-aide="commandes.excel" className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterExcel('commandes', COLONNES_EXPORT, donneesExport())}>
             📊 {t('excel')}
           </button>
-          <button data-aide="commandes.pdf" className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterPDF('commandes', 'Commandes', null, COLONNES_EXPORT, donneesExport(), undefined, undefined, entreprise)}>
+          <button data-aide="commandes.pdf" className="btn-secondary text-xs" disabled={commandes.length === 0} onClick={() => exporterPDF('commandes', 'Commandes', periodeTexte, COLONNES_EXPORT, donneesExport(), t('total'), formatXOF(totalCommandes), entreprise)}>
             📄 {t('pdf')}
           </button>
           <button data-aide="commandes.nouvelleCommande" onClick={ouvrirModal} className="btn-primary text-sm">
@@ -410,6 +425,16 @@ export default function Commandes() {
             </span>
             <span className="text-petrol-400 text-xs">{recapOuvert ? '▲' : '▼'}</span>
           </button>
+          {recapOuvert && recap.lignes.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              <button data-aide="commandes.recap.excel" className="btn-secondary text-xs" onClick={() => exporterExcel('recap-commandes-en-cours', COLONNES_RECAP, lignesRecapExport())}>📊 {t('excel')}</button>
+              <button
+                data-aide="commandes.recap.pdf"
+                className="btn-secondary text-xs"
+                onClick={() => exporterPDF('recap-commandes-en-cours', t('recap.titrePdf'), periodeTexte, COLONNES_RECAP, lignesRecapExport(), t('total'), formatXOF(recap.totalValeur), entreprise)}
+              >📄 {t('pdf')} / 🖨️ {t('imprimer')}</button>
+            </div>
+          )}
           {recapOuvert && (
             recap.lignes.length > 0 ? (
               <table className="w-full text-xs mt-3">
@@ -429,6 +454,13 @@ export default function Commandes() {
                     </tr>
                   ))}
                 </tbody>
+                <tfoot>
+                  <tr className="border-t border-line font-semibold">
+                    <td className="py-1.5">{t('total')}</td>
+                    <td className="py-1.5 text-right font-mono">{recap.lignes.reduce((s, l) => s + l.quantite, 0)}</td>
+                    <td className="py-1.5 text-right font-mono">{formatXOF(recap.totalValeur)}</td>
+                  </tr>
+                </tfoot>
               </table>
             ) : (
               <p className="text-xs text-petrol-400 mt-2">{t('recap.aucuneCommandeEnAttente')}</p>
@@ -436,6 +468,25 @@ export default function Commandes() {
           )}
         </div>
       )}
+
+      <div className="mb-3 flex gap-2 items-end flex-wrap">
+        <div>
+          <label className="label">{t('du')}</label>
+          <input type="date" className="input-field text-sm" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
+        </div>
+        <div>
+          <label className="label">{t('au')}</label>
+          <input type="date" className="input-field text-sm" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
+        </div>
+        {(dateDebut || dateFin) && (
+          <button className="text-xs underline text-petrol-600 pb-2" onClick={() => { setDateDebut(''); setDateFin('') }}>{t('effacerDates')}</button>
+        )}
+        <div className="flex-1" />
+        <div className="text-end">
+          <p className="text-xs text-petrol-500">{t('compteurTotal', { n: commandes.length })}</p>
+          <p className="font-mono text-lg font-semibold">{formatXOF(totalCommandes)}</p>
+        </div>
+      </div>
 
       <div className="mb-4 flex gap-2 flex-wrap">
         <button data-aide="commandes.statuts.toutes"
@@ -469,9 +520,12 @@ export default function Commandes() {
                 {c.profils?.nom ? ` — ${c.profils.nom}` : ''}
               </p>
             </div>
-            <span className={`text-xs px-2 py-1 rounded-full border shrink-0 ml-2 ${COULEURS_STATUT[c.statut]}`}>
-              {LIBELLES_STATUT[c.statut] || c.statut}
-            </span>
+            <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
+              <span className={`font-mono text-sm font-semibold ${c.statut === 'annulee' ? 'line-through text-petrol-400' : ''}`}>{formatXOF(c.montant_ttc || 0)}</span>
+              <span className={`text-xs px-2 py-1 rounded-full border ${COULEURS_STATUT[c.statut]}`}>
+                {LIBELLES_STATUT[c.statut] || c.statut}
+              </span>
+            </div>
           </button>
         ))}
         {commandes.length === 0 && (

@@ -24,5 +24,6 @@
   "depotActif": "启用该仓库",
   "annuler": "取消",
   "enregistrement": "保存中…",
-  "enregistrer": "保存"
+  "enregistrer": "保存",
+  "voirStock": "查看该仓库库存"
 }

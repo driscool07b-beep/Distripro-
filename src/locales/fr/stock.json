@@ -189,5 +189,7 @@
     "preparation": "Préparation du fichier…",
     "envoi": "Envoi du fichier…",
     "enregistrement": "Enregistrement du stock…"
-  }
+  },
+  "tousLesMagasins": "Tous les magasins (stock général)",
+  "vueMagasin": "Stock du magasin : {{nom}}"
 }

@@ -20,7 +20,8 @@
     "aucuneCommandeEnAttente": "Aucune commande en attente pour le moment.",
     "produit": "Produit",
     "quantite": "Quantité",
-    "valeurEstimee": "Valeur estimée"
+    "valeurEstimee": "Valeur estimée",
+    "titrePdf": "Récapitulatif des commandes en cours"
   },
   "liste": {
     "articles": "{{n}} article(s)",
@@ -90,5 +91,12 @@
     "statut": "Statut",
     "montantTtc": "Montant TTC",
     "date": "Date"
-  }
+  },
+  "du": "Du",
+  "au": "Au",
+  "total": "Total",
+  "effacerDates": "Effacer les dates",
+  "compteurTotal": "{{n}} commande(s) — total (hors annulées)",
+  "periode": "Période du {{debut}} au {{fin}}",
+  "imprimer": "Imprimer"
 }

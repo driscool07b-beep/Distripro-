@@ -10,6 +10,7 @@
 // logique de rejeu par type.
 
 import { supabase } from './supabase'
+import { envoyerPhotoVisite } from './photos'
 
 const DB_NAME = 'distripro-offline'
 const DB_VERSION = 1
@@ -146,9 +147,7 @@ const EXECUTEURS = {
     const cheminsPhotos = []
     for (let i = 0; i < (photos || []).length; i++) {
       const file = photos[i]
-      const extension = (file.name || 'jpg').split('.').pop() || 'jpg'
-      const chemin = `${entrepriseId}/rapports/${tourneeLigneId}/${Date.now()}-${i}.${extension}`
-      const { error: erreurUpload } = await supabase.storage.from('client-photos').upload(chemin, file, { upsert: false })
+      const { chemin, error: erreurUpload } = await envoyerPhotoVisite('client-photos', `${entrepriseId}/rapports/${tourneeLigneId}/${Date.now()}-${i}`, file)
       if (erreurUpload) throw erreurUpload
       cheminsPhotos.push(chemin)
     }

@@ -17,5 +17,18 @@
   "venteCredit": "Sale (credit)",
   "venteComptant": "Sale (cash)",
   "reglementComptant": "Cash payment",
-  "paiementRecu": "Payment received"
+  "paiementRecu": "Payment received",
+  "numero": "Doc. no.",
+  "du": "From",
+  "au": "To",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "titrePdf": "Customer ledger — {{nom}}",
+  "soldeReporte": "Balance brought forward",
+  "periode": "Period {{debut}} to {{fin}}",
+  "totalDebit": "Total debit",
+  "totalCredit": "Total credit",
+  "plafond": "Credit limit",
+  "annulationAvoir": "Cancellation (credit note)",
+  "paiementRecuSur": "Payment received — {{numero}}"
 }

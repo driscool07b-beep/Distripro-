@@ -20,7 +20,8 @@
     "aucuneCommandeEnAttente": "目前没有待处理订单。",
     "produit": "产品",
     "quantite": "数量",
-    "valeurEstimee": "预估价值"
+    "valeurEstimee": "预估价值",
+    "titrePdf": "进行中订单汇总"
   },
   "liste": {
     "articles": "{{n}} 项",
@@ -90,5 +91,12 @@
     "statut": "状态",
     "montantTtc": "含税总额",
     "date": "日期"
-  }
+  },
+  "du": "从",
+  "au": "至",
+  "total": "合计",
+  "effacerDates": "清除日期",
+  "compteurTotal": "{{n}} 个订单 — 合计（不含已取消）",
+  "periode": "期间 {{debut}} 至 {{fin}}",
+  "imprimer": "打印"
 }

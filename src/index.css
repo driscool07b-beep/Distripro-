@@ -121,6 +121,23 @@
     box-shadow: 0 1px 0 rgb(var(--line)), inset 0 2px 4px rgb(0 0 0 / 0.08);
   }
 
+
+  /* Boutons d'action colorés en relief (ex. Ajuster le stock, Transférer, Archives). */
+  .btn-3d {
+    @apply relative inline-flex items-center justify-center gap-1.5 text-white font-semibold rounded-xl select-none whitespace-nowrap
+      transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+    box-shadow: 0 4px 0 rgb(0 0 0 / 0.25), 0 8px 14px rgb(0 0 0 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.25);
+    text-shadow: 0 1px 1px rgb(0 0 0 / 0.25);
+  }
+  .btn-3d:hover:not(:disabled) { transform: translateY(-1px); }
+  .btn-3d:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgb(0 0 0 / 0.25), inset 0 2px 4px rgb(0 0 0 / 0.2);
+  }
+  .btn-3d-ambre { background: linear-gradient(180deg, #fbbf24 0%, #d97706 60%, #b45309 100%); }
+  .btn-3d-bleu { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 60%, #075985 100%); }
+  .btn-3d-rouge { background: linear-gradient(180deg, #f87171 0%, #dc2626 60%, #991b1b 100%); }
+
   /* ---------- Champs de saisie ---------- */
   .input-field {
     @apply w-full bg-white border border-line rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 transition-shadow;

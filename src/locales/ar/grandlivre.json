@@ -17,5 +17,18 @@
   "venteCredit": "بيع (آجل)",
   "venteComptant": "بيع (نقدي)",
   "reglementComptant": "تسوية نقدية",
-  "paiementRecu": "دفعة مستلمة"
+  "paiementRecu": "دفعة مستلمة",
+  "numero": "رقم المستند",
+  "du": "من",
+  "au": "إلى",
+  "excel": "Excel",
+  "pdf": "PDF",
+  "titrePdf": "دفتر أستاذ العميل — {{nom}}",
+  "soldeReporte": "الرصيد المرحّل",
+  "periode": "الفترة من {{debut}} إلى {{fin}}",
+  "totalDebit": "مجموع المدين",
+  "totalCredit": "مجموع الدائن",
+  "plafond": "سقف الائتمان",
+  "annulationAvoir": "إلغاء (إشعار دائن)",
+  "paiementRecuSur": "دفعة مستلمة — {{numero}}"
 }

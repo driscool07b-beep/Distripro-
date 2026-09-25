@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { envoyerPhotoVisite } from '../lib/photos';
 import { useAuth } from '../context/AuthContext';
 import { accesAutorise } from '../lib/accesRole';
 import { traduireErreur } from '../lib/erreurs'
@@ -410,11 +411,7 @@ export default function Tournees() {
     const cheminsPhotos = [];
     for (let i = 0; i < rapportPhotos.length; i++) {
       const { file } = rapportPhotos[i];
-      const extension = file.name.split('.').pop() || 'jpg';
-      const chemin = `${entrepriseId}/rapports/${rapportLigne.id}/${Date.now()}-${i}.${extension}`;
-      const { error: erreurUpload } = await supabase.storage
-        .from('client-photos')
-        .upload(chemin, file, { upsert: false });
+      const { chemin, error: erreurUpload } = await envoyerPhotoVisite('client-photos', `${entrepriseId}/rapports/${rapportLigne.id}/${Date.now()}-${i}`, file);
       if (erreurUpload) {
         setRapportEnvoi(false);
         setRapportErreur(t('erreurs.envoiPhoto', { n: i + 1, message: erreurUpload.message }));
@@ -896,7 +893,7 @@ export default function Tournees() {
 
       {tourneesArchivees.length > 0 && (
         <div className="mt-6">
-          <button data-aide="tournees.liste.archives" onClick={() => setArchivesVisibles((v) => !v)} className="text-sm text-gray-600 underline">
+          <button data-aide="tournees.liste.archives" onClick={() => setArchivesVisibles((v) => !v)} className="btn-3d btn-3d-rouge text-sm px-4 py-2">
             {archivesVisibles ? '▾' : '▸'} {t('liste.archives', { n: tourneesArchivees.length })}
           </button>
           {archivesVisibles && (

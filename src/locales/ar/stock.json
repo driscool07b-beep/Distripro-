@@ -164,5 +164,7 @@
     "preparation": "تحضير الملف…",
     "envoi": "إرسال الملف…",
     "enregistrement": "حفظ المخزون…"
-  }
+  },
+  "tousLesMagasins": "كل المخازن (المخزون العام)",
+  "vueMagasin": "مخزون المخزن: {{nom}}"
 }

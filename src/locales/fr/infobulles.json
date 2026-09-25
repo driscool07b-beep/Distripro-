@@ -8,7 +8,8 @@
     "imprimer": "Imprime ce document.",
     "receptionner": "Confirme la réception : le montant ou la marchandise est ajouté à la destination.",
     "historique": "Affiche l'historique des modifications.",
-    "filtrer": "Applique les filtres choisis."
+    "filtrer": "Applique les filtres choisis.",
+    "retour": "Revient à la page précédente (raccourci : Alt + R)."
   },
   "clients": {
     "nouveauClient": "Crée une fiche client. La position GPS est captée automatiquement si vous êtes chez le client.",
@@ -121,7 +122,8 @@
     "leBureau": "Objectif pour les ventes faites au bureau."
   },
   "depots": {
-    "nouveauDepot": "Ajoute un magasin de stockage et son responsable."
+    "nouveauDepot": "Ajoute un magasin de stockage et son responsable.",
+    "voirStock": "Ouvre la page Produits & Stock filtrée sur ce magasin."
   },
   "creances": {
     "soldeReporte": "Enregistre une dette client antérieure à l'utilisation de DistribPro."

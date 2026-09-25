@@ -164,5 +164,7 @@
     "preparation": "准备文件…",
     "envoi": "上传文件…",
     "enregistrement": "保存库存…"
-  }
+  },
+  "tousLesMagasins": "所有仓库（总库存）",
+  "vueMagasin": "仓库库存：{{nom}}"
 }
