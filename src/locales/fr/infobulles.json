@@ -57,7 +57,8 @@
     "table": {
       "ajusterStock": "Enregistre une entrée ou une sortie de stock avec son motif.",
       "transfererDepots": "Déplace de la marchandise d'un dépôt à un autre.",
-      "historique": "Affiche l'historique des prix de ce produit."
+      "historique": "Affiche l'historique des prix de ce produit.",
+      "detail": "Ouvre le détail du stock : répartition par magasin, lots, dates, réceptionnaire, état, coût et marge."
     },
     "retirerFiltre": "Affiche de nouveau tous les produits."
   },

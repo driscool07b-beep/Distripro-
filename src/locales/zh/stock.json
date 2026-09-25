@@ -30,7 +30,9 @@
     "ajusterStock": "调整库存",
     "transfererDepots": "仓库间调拨",
     "modifier": "编辑",
-    "historique": "历史记录"
+    "historique": "历史记录",
+    "prixAchat": "Cost price",
+    "marge": "Gross margin"
   },
   "formProduit": {
     "titreModifier": "编辑产品",
@@ -78,7 +80,10 @@
     "erreurMotifAutre": "请为“其他”指定具体原因。",
     "erreurJustificatifObligatoire": "任何库存调整都必须提供凭证（照片或PDF）。",
     "erreurStockInsuffisant": "此次出库库存不足。",
-    "erreurPlusieursDepots": "存在多个仓库 — 该选择功能即将推出，请联系管理员。"
+    "erreurPlusieursDepots": "存在多个仓库 — 该选择功能即将推出，请联系管理员。",
+    "etat": "Condition of goods",
+    "prixAchat": "Unit purchase price",
+    "aideEndommage": "Goods will be stored in a 'damaged' batch, sold last and shown in the stock detail."
   },
   "transfert": {
     "titre": "仓库间调拨",
@@ -166,5 +171,50 @@
     "enregistrement": "保存库存…"
   },
   "tousLesMagasins": "所有仓库（总库存）",
-  "vueMagasin": "仓库库存：{{nom}}"
+  "vueMagasin": "仓库库存：{{nom}}",
+  "resume": {
+    "coutStock": "Stock cost:",
+    "prixRevientMoyen": "average cost price:",
+    "margeMoyenne": "average margin:",
+    "partiel": "on products with a known purchase price"
+  },
+  "detail": {
+    "fermer": "Close",
+    "parMagasin": "By warehouse",
+    "dontEndommages": "incl. {{n}} damaged",
+    "sansLot": "{{n}} without batch number",
+    "alerteEndommage": "{{n}} damaged unit(s) in stock: check them, then record an exit if unsellable.",
+    "lots": "Batches in stock",
+    "lotsAide": "The batch number traces where goods come from, sells what expires first and finds a faulty batch.",
+    "aucunLot": "No batch recorded for this product.",
+    "numeroLot": "Batch no.",
+    "magasin": "Warehouse",
+    "restantInitial": "Left / received",
+    "dateEntree": "Received",
+    "peremption": "Expiry",
+    "receptionnePar": "Received by",
+    "etat": "Condition",
+    "etatBon": "Good",
+    "etatEndommage": "Damaged",
+    "marquerBon": "Mark as good",
+    "marquerEndommage": "Report damaged",
+    "lotsEpuises": "Used-up batches ({{n}})",
+    "confirmerEndommage": "Report batch {{lot}} as damaged: enter the reason.",
+    "confirmerBon": "Set batch {{lot}} back to good: enter the reason.",
+    "motifPlaceholder": "Reason (required)",
+    "valider": "Confirm",
+    "annuler": "Cancel",
+    "coutMarge": "Cost and margin",
+    "prixRevient": "Cost price (average)",
+    "prixVente": "Selling price",
+    "margeUnitaire": "Unit margin",
+    "tauxMarge": "Margin rate",
+    "prixNonRenseigne": "Purchase price not set: it is computed when you enter it on a stock entry, or set it below.",
+    "fixerPrix": "Set purchase price",
+    "enregistrer": "Save",
+    "historiqueCouts": "Purchase price history ({{n}})",
+    "sourceEntree": "entry of {{q}}",
+    "sourceManuel": "set manually",
+    "moyen": "average"
+  }
 }

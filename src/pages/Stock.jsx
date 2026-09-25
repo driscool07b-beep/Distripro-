@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import DetailStockProduit from '../components/DetailStockProduit'
 import { envoyerJustificatifMouvement, envoyerFichierJustificatif, avecDelai } from '../lib/justificatifs'
 import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise, genererRapportInventaireStock } from '../lib/export'
@@ -54,7 +55,9 @@ export default function Stock() {
   const [fichierJustificatif, setFichierJustificatif] = useState(null)
   const [fichierJustificatifTransfert, setFichierJustificatifTransfert] = useState(null)
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
-  const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '', numero_lot: '', date_peremption: '' })
+  const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '', numero_lot: '', date_peremption: '', etat: 'bon', prix_achat: '' })
+  const [produitDetail, setProduitDetail] = useState(null)
+  const [couts, setCouts] = useState({}) // produit_id -> prix de revient (rôles habilités uniquement)
   const [transfert, setTransfert] = useState({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
   const [etapeAjustement, setEtapeAjustement] = useState('')
   const [enregistrement, setEnregistrement] = useState(false)
@@ -91,6 +94,11 @@ export default function Stock() {
       .from('produits')
       .select('id, nom, categorie, prix_vente, seuil_alerte, created_at, tva_applicable, taux_tva, stocks(quantite, depot_id)')
       .order('created_at', { ascending: false })
+    if (['admin', 'manager', 'comptable', 'gestionnaire_stock'].includes(profil?.role)) {
+      supabase.from('produits_couts').select('produit_id, prix_achat_moyen').then(({ data: c }) => {
+        setCouts(Object.fromEntries((c || []).map((x) => [x.produit_id, Number(x.prix_achat_moyen)])))
+      })
+    }
     if (!error) {
       setProduits(
         (data || []).map((p) => ({
@@ -429,6 +437,8 @@ export default function Stock() {
       p_justificatif_nom: fichierInfo?.nom || null,
       p_justificatif_taille: fichierInfo?.taille || null,
       p_justificatif_type: fichierInfo?.type || null,
+      p_etat: mouvement.type === 'entree' ? mouvement.etat : 'bon',
+      p_prix_achat: mouvement.type === 'entree' && mouvement.prix_achat !== '' ? Number(mouvement.prix_achat) : null,
     }), 30000, 'enregistrement : pas de réponse du serveur après 30 s').catch((e) => ({ error: e }))
     setEtapeAjustement('')
     if (error) {
@@ -450,7 +460,7 @@ export default function Stock() {
 
   function fermerModalMouvement() {
     setModalMouvement(null)
-    setMouvement({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '' })
+    setMouvement({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '', numero_lot: '', date_peremption: '', etat: 'bon', prix_achat: '' })
     setFichierJustificatif(null)
     setErreur('')
   }
@@ -579,6 +589,14 @@ export default function Stock() {
   const nbAlertes = produitsVue.filter((p) => p.quantite <= (p.seuil_alerte ?? 0)).length
   const valeurTotaleStock = produitsVue.reduce((s, p) => s + p.quantite * (p.prix_vente || 0), 0)
   const produitComplet = (p) => produits.find((x) => x.id === p.id) || p
+  // Prix de revient et marges : direction et comptable uniquement.
+  const voitMarges = ['admin', 'manager', 'comptable'].includes(profil?.role)
+  const produitsAvecCout = produitsVue.filter((p) => couts[p.id] != null && p.quantite > 0)
+  const quantiteCoutee = produitsAvecCout.reduce((n, p) => n + p.quantite, 0)
+  const coutStock = produitsAvecCout.reduce((n, p) => n + p.quantite * couts[p.id], 0)
+  const venteStock = produitsAvecCout.reduce((n, p) => n + p.quantite * Number(p.prix_vente || 0), 0)
+  const prixRevientMoyen = quantiteCoutee > 0 ? coutStock / quantiteCoutee : null
+  const margeMoyenne = venteStock > 0 ? ((venteStock - coutStock) / venteStock) * 100 : null
 
   const COLONNES_EXPORT = [
     { cle: 'nom', titre: t('export.produit') },
@@ -617,6 +635,12 @@ export default function Stock() {
           </p>
           <p className="text-sm text-petrol-700 mt-0.5">
             {t('valeurTotaleStock')} : <span className="font-mono font-medium">{formatXOF(valeurTotaleStock)}</span>
+            {voitMarges && prixRevientMoyen != null && (
+              <span className="block text-xs text-petrol-600 mt-1">
+                {t('resume.coutStock')} <span className="font-mono">{formatXOF(coutStock)}</span> · {t('resume.prixRevientMoyen')} <span className="font-mono">{formatXOF(prixRevientMoyen)}</span> · {t('resume.margeMoyenne')} <span className="font-mono font-semibold text-emerald-700">{margeMoyenne.toFixed(1)} %</span>
+                {produitsAvecCout.length < produitsVue.filter((p) => p.quantite > 0).length && <span className="text-petrol-400"> ({t('resume.partiel')})</span>}
+              </span>
+            )}
           </p>
           {profil?.role === 'gestionnaire_stock' && depots.length === 0 && (
             <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5 mt-2">
@@ -723,20 +747,26 @@ export default function Stock() {
               <th className="px-4 py-3 font-medium">{t('table.prixUnitaire')}</th>
               <th className="px-4 py-3 font-medium">{t('table.stock')}</th>
               <th className="px-4 py-3 font-medium">{t('table.valeur')}</th>
+              {voitMarges && <th className="px-4 py-3 font-medium">{t('table.prixAchat')}</th>}
+              {voitMarges && <th className="px-4 py-3 font-medium">{t('table.marge')}</th>}
               <th className="px-4 py-3 font-medium text-right">{t('table.actions')}</th>
             </tr>
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
+              <tr><td colSpan={voitMarges ? 8 : 6} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
             ) : produitsFiltres.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.aucunProduit')}</td></tr>
+              <tr><td colSpan={voitMarges ? 8 : 6} className="px-4 py-8 text-center text-petrol-500">{t('table.aucunProduit')}</td></tr>
             ) : (
               produitsFiltres.map((p) => {
                 const enAlerte = p.quantite <= (p.seuil_alerte ?? 0)
                 return (
                   <tr key={p.id} className="border-b border-line last:border-0 hover:bg-canvas/60">
-                    <td className="px-4 py-3 font-medium">{p.nom}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <button type="button" data-aide="stock.table.detail" onClick={() => setProduitDetail(produitComplet(p))} className="text-left hover:underline decoration-amber-500 underline-offset-4">
+                        {p.nom} <span className="text-amber-600 text-xs">›</span>
+                      </button>
+                    </td>
                     <td className="px-4 py-3 text-petrol-700">{p.categorie || '—'}</td>
                     <td className="px-4 py-3 font-mono text-petrol-700">{formatXOF(p.prix_vente)}</td>
                     <td className="px-4 py-3">
@@ -747,6 +777,19 @@ export default function Stock() {
                     <td className="px-4 py-3 font-mono text-petrol-700">
                       {formatXOF(p.quantite * (p.prix_vente || 0))}
                     </td>
+                    {voitMarges && (
+                      <td className="px-4 py-3 font-mono text-petrol-700">{couts[p.id] != null ? formatXOF(couts[p.id]) : '—'}</td>
+                    )}
+                    {voitMarges && (
+                      <td className="px-4 py-3 font-mono">
+                        {couts[p.id] != null && Number(p.prix_vente) > 0 ? (
+                          <span className={Number(p.prix_vente) - couts[p.id] < 0 ? 'text-red-600' : 'text-emerald-700'}>
+                            {formatXOF(Number(p.prix_vente) - couts[p.id])}
+                            <span className="block text-xs text-petrol-500">{(((Number(p.prix_vente) - couts[p.id]) / Number(p.prix_vente)) * 100).toFixed(1)} %</span>
+                          </span>
+                        ) : '—'}
+                      </td>
+                    )}
                     <td className="px-4 py-3 text-right">
                       {['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role) && !(profil?.role === 'gestionnaire_stock' && depots.length === 0) && (
                         <div className="flex flex-col items-end gap-2">
@@ -987,6 +1030,29 @@ export default function Stock() {
                       onChange={(e) => setMouvement({ ...mouvement, date_peremption: e.target.value })}
                     />
                   </div>
+                </div>
+              )}
+              {mouvement.type === 'entree' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="label">{t('mouvement.etat')}</label>
+                    <select className="input-field" value={mouvement.etat} onChange={(e) => setMouvement({ ...mouvement, etat: e.target.value })}>
+                      <option value="bon">{t('detail.etatBon')}</option>
+                      <option value="endommage">{t('detail.etatEndommage')}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="label">{t('mouvement.prixAchat')} ({t('mouvement.optionnel')})</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="input-field"
+                      value={mouvement.prix_achat}
+                      onChange={(e) => setMouvement({ ...mouvement, prix_achat: e.target.value })}
+                      placeholder="0"
+                    />
+                  </div>
+                  {mouvement.etat === 'endommage' && <p className="col-span-2 text-xs text-rose-700">{t('mouvement.aideEndommage')}</p>}
                 </div>
               )}
               <div>
@@ -1417,6 +1483,15 @@ export default function Stock() {
             </button>
           </div>
         </div>
+      )}
+      {produitDetail && (
+        <DetailStockProduit
+          produit={produitDetail}
+          depots={tousLesDepots}
+          depotFiltre={filtreDepot}
+          onFermer={() => setProduitDetail(null)}
+          onModifie={chargerProduits}
+        />
       )}
     </div>
   )

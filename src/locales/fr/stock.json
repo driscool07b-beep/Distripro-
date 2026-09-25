@@ -30,7 +30,9 @@
     "ajusterStock": "Ajuster le stock",
     "transfererDepots": "Transférer entre dépôts",
     "modifier": "Modifier",
-    "historique": "Historique"
+    "historique": "Historique",
+    "prixAchat": "Prix de revient",
+    "marge": "Marge brute"
   },
   "formProduit": {
     "titreModifier": "Modifier le produit",
@@ -84,7 +86,10 @@
     "numeroLot": "Numéro de lot",
     "numeroLotPlaceholder": "Tel qu'inscrit par le fabricant",
     "datePeremption": "Date de péremption",
-    "erreurNumeroLotObligatoire": "Le numéro de lot est obligatoire pour votre entreprise."
+    "erreurNumeroLotObligatoire": "Le numéro de lot est obligatoire pour votre entreprise.",
+    "etat": "État de la marchandise",
+    "prixAchat": "Prix d'achat unitaire",
+    "aideEndommage": "La marchandise sera enregistrée dans un lot « endommagé », vendu en dernier et visible dans le détail du stock."
   },
   "transfert": {
     "titre": "Transférer entre dépôts",
@@ -191,5 +196,50 @@
     "enregistrement": "Enregistrement du stock…"
   },
   "tousLesMagasins": "Tous les magasins (stock général)",
-  "vueMagasin": "Stock du magasin : {{nom}}"
+  "vueMagasin": "Stock du magasin : {{nom}}",
+  "resume": {
+    "coutStock": "Coût du stock :",
+    "prixRevientMoyen": "prix de revient moyen :",
+    "margeMoyenne": "marge moyenne :",
+    "partiel": "sur les produits dont le prix d'achat est renseigné"
+  },
+  "detail": {
+    "fermer": "Fermer",
+    "parMagasin": "Répartition par magasin",
+    "dontEndommages": "dont {{n}} endommagé(s)",
+    "sansLot": "{{n}} sans numéro de lot",
+    "alerteEndommage": "{{n}} unité(s) endommagée(s) en stock : à contrôler, puis sortir (« Sortie — casse / défectueux ») si elles ne sont pas vendables.",
+    "lots": "Lots en stock",
+    "lotsAide": "Le numéro de lot (celui du fabricant ou le vôtre) permet de savoir d'où vient chaque marchandise, de sortir d'abord ce qui périme en premier et de retrouver un lot défectueux.",
+    "aucunLot": "Aucun lot enregistré pour ce produit (les entrées ont été faites sans numéro de lot).",
+    "numeroLot": "N° de lot",
+    "magasin": "Magasin",
+    "restantInitial": "Restant / reçu",
+    "dateEntree": "Entré le",
+    "peremption": "Péremption",
+    "receptionnePar": "Réceptionné par",
+    "etat": "État",
+    "etatBon": "Bon état",
+    "etatEndommage": "Endommagé",
+    "marquerBon": "Marquer en bon état",
+    "marquerEndommage": "Signaler endommagé",
+    "lotsEpuises": "Lots épuisés ({{n}})",
+    "confirmerEndommage": "Signaler le lot {{lot}} comme endommagé : indiquez le motif.",
+    "confirmerBon": "Remettre le lot {{lot}} en bon état : indiquez le motif.",
+    "motifPlaceholder": "Motif (obligatoire) — ex. : cartons mouillés, contrôle qualité…",
+    "valider": "Valider",
+    "annuler": "Annuler",
+    "coutMarge": "Coût et marge",
+    "prixRevient": "Prix de revient (moyen)",
+    "prixVente": "Prix de vente",
+    "margeUnitaire": "Marge unitaire",
+    "tauxMarge": "Taux de marge",
+    "prixNonRenseigne": "Prix d'achat non renseigné : il se calcule automatiquement quand vous saisissez le prix d'achat lors d'une entrée en stock, ou se fixe ci-dessous.",
+    "fixerPrix": "Fixer le prix d'achat",
+    "enregistrer": "Enregistrer",
+    "historiqueCouts": "Historique des prix d'achat ({{n}})",
+    "sourceEntree": "entrée de {{q}}",
+    "sourceManuel": "fixé manuellement",
+    "moyen": "moyen"
+  }
 }

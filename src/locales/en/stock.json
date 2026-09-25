@@ -30,7 +30,9 @@
     "ajusterStock": "Adjust stock",
     "transfererDepots": "Transfer between warehouses",
     "modifier": "Edit",
-    "historique": "History"
+    "historique": "History",
+    "prixAchat": "Cost price",
+    "marge": "Gross margin"
   },
   "formProduit": {
     "titreModifier": "Edit product",
@@ -78,7 +80,10 @@
     "erreurMotifAutre": "Specify the reason for \"Other\".",
     "erreurJustificatifObligatoire": "A supporting document (photo or PDF) is required for any stock adjustment.",
     "erreurStockInsuffisant": "Insufficient stock for this outgoing movement.",
-    "erreurPlusieursDepots": "Multiple warehouses exist — this selection feature is coming soon, contact an administrator."
+    "erreurPlusieursDepots": "Multiple warehouses exist — this selection feature is coming soon, contact an administrator.",
+    "etat": "Condition of goods",
+    "prixAchat": "Unit purchase price",
+    "aideEndommage": "Goods will be stored in a 'damaged' batch, sold last and shown in the stock detail."
   },
   "transfert": {
     "titre": "Transfer between warehouses",
@@ -166,5 +171,50 @@
     "enregistrement": "Saving stock…"
   },
   "tousLesMagasins": "All warehouses (overall stock)",
-  "vueMagasin": "Warehouse stock: {{nom}}"
+  "vueMagasin": "Warehouse stock: {{nom}}",
+  "resume": {
+    "coutStock": "Stock cost:",
+    "prixRevientMoyen": "average cost price:",
+    "margeMoyenne": "average margin:",
+    "partiel": "on products with a known purchase price"
+  },
+  "detail": {
+    "fermer": "Close",
+    "parMagasin": "By warehouse",
+    "dontEndommages": "incl. {{n}} damaged",
+    "sansLot": "{{n}} without batch number",
+    "alerteEndommage": "{{n}} damaged unit(s) in stock: check them, then record an exit if unsellable.",
+    "lots": "Batches in stock",
+    "lotsAide": "The batch number traces where goods come from, sells what expires first and finds a faulty batch.",
+    "aucunLot": "No batch recorded for this product.",
+    "numeroLot": "Batch no.",
+    "magasin": "Warehouse",
+    "restantInitial": "Left / received",
+    "dateEntree": "Received",
+    "peremption": "Expiry",
+    "receptionnePar": "Received by",
+    "etat": "Condition",
+    "etatBon": "Good",
+    "etatEndommage": "Damaged",
+    "marquerBon": "Mark as good",
+    "marquerEndommage": "Report damaged",
+    "lotsEpuises": "Used-up batches ({{n}})",
+    "confirmerEndommage": "Report batch {{lot}} as damaged: enter the reason.",
+    "confirmerBon": "Set batch {{lot}} back to good: enter the reason.",
+    "motifPlaceholder": "Reason (required)",
+    "valider": "Confirm",
+    "annuler": "Cancel",
+    "coutMarge": "Cost and margin",
+    "prixRevient": "Cost price (average)",
+    "prixVente": "Selling price",
+    "margeUnitaire": "Unit margin",
+    "tauxMarge": "Margin rate",
+    "prixNonRenseigne": "Purchase price not set: it is computed when you enter it on a stock entry, or set it below.",
+    "fixerPrix": "Set purchase price",
+    "enregistrer": "Save",
+    "historiqueCouts": "Purchase price history ({{n}})",
+    "sourceEntree": "entry of {{q}}",
+    "sourceManuel": "set manually",
+    "moyen": "average"
+  }
 }
