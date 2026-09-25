@@ -47,7 +47,10 @@ export default function InfobullesAide() {
     let minuterie = null
     let fermeture = null
     let cibleSurvol = null
-    let bloquerProchainClic = false
+    // Élément dont on doit ignorer le prochain clic (celui qui suit l'appui long
+    // ayant affiché la bulle) — et seulement pendant 1,5 s, seulement sur CE bouton.
+    let clicABloquer = null
+    let finBlocage = 0
 
     const texteDe = (el) => {
       const cle = el.getAttribute('data-aide')
@@ -89,7 +92,8 @@ export default function InfobullesAide() {
       if (!el) return
       minuterie = setTimeout(() => {
         if (afficher(el)) {
-          bloquerProchainClic = true
+          clicABloquer = el
+          finBlocage = Date.now() + 1500
           clearTimeout(fermeture)
           fermeture = setTimeout(() => setBulle(null), 3500)
         }
@@ -99,10 +103,11 @@ export default function InfobullesAide() {
     const finAppui = () => clearTimeout(minuterie)
 
     const clic = (e) => {
-      if (bloquerProchainClic) {
+      const el = clicABloquer
+      clicABloquer = null
+      if (el && Date.now() < finBlocage && e.target.closest?.('[data-aide]') === el) {
         e.preventDefault()
         e.stopPropagation()
-        bloquerProchainClic = false
       }
     }
 
