@@ -279,16 +279,16 @@ export default function Commandes() {
 
   async function envoyerBonCommande(e) {
     const fichier = e.target.files?.[0]
-    if (!fichier || !commandeOuverte || !entreprise?.id) return
+    if (!fichier || !commandeOuverte || !profil?.entreprise_id) return
     setErreurBonCommande('')
     setEnvoiBonCommande(true)
 
     const extension = fichier.name.split('.').pop() || 'pdf'
-    const chemin = `${entreprise.id}/commandes/${commandeOuverte}.${extension}`
+    const chemin = `${profil.entreprise_id}/commandes/${commandeOuverte}/${Date.now()}.${extension}`
 
     const { error: erreurUpload } = await supabase.storage
       .from('pieces-jointes')
-      .upload(chemin, fichier, { upsert: true })
+      .upload(chemin, fichier, { upsert: false })
 
     if (erreurUpload) {
       setEnvoiBonCommande(false)

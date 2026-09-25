@@ -69,7 +69,9 @@
     "erreurCreationGroupe": "Error creating the group",
     "erreurTarifChoix": "Choose a product and a price.",
     "pays": "Country (optional)",
-    "paysPlaceholder": "E.g. Côte d'Ivoire"
+    "paysPlaceholder": "E.g. Côte d'Ivoire",
+    "reserveDirection": "Only an administrator or a manager can change this.",
+    "gpsVerrouille": "GPS position already recorded: only an administrator or a manager can correct it (it is used to verify visits)."
   },
   "import": {
     "titre": "Import clients (Excel)",

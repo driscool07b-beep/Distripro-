@@ -411,10 +411,10 @@ export default function Tournees() {
     for (let i = 0; i < rapportPhotos.length; i++) {
       const { file } = rapportPhotos[i];
       const extension = file.name.split('.').pop() || 'jpg';
-      const chemin = `${entrepriseId}/rapports/${rapportLigne.id}/${i}.${extension}`;
+      const chemin = `${entrepriseId}/rapports/${rapportLigne.id}/${Date.now()}-${i}.${extension}`;
       const { error: erreurUpload } = await supabase.storage
         .from('client-photos')
-        .upload(chemin, file, { upsert: true });
+        .upload(chemin, file, { upsert: false });
       if (erreurUpload) {
         setRapportEnvoi(false);
         setRapportErreur(t('erreurs.envoiPhoto', { n: i + 1, message: erreurUpload.message }));

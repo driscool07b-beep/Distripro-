@@ -148,7 +148,7 @@ const EXECUTEURS = {
       const file = photos[i]
       const extension = (file.name || 'jpg').split('.').pop() || 'jpg'
       const chemin = `${entrepriseId}/rapports/${tourneeLigneId}/${Date.now()}-${i}.${extension}`
-      const { error: erreurUpload } = await supabase.storage.from('client-photos').upload(chemin, file, { upsert: true })
+      const { error: erreurUpload } = await supabase.storage.from('client-photos').upload(chemin, file, { upsert: false })
       if (erreurUpload) throw erreurUpload
       cheminsPhotos.push(chemin)
     }

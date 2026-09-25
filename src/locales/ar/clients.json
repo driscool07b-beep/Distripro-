@@ -69,7 +69,9 @@
     "erreurCreationGroupe": "خطأ في إنشاء المجموعة",
     "erreurTarifChoix": "اختر منتجًا وسعرًا.",
     "pays": "الدولة (اختياري)",
-    "paysPlaceholder": "مثال: كوت ديفوار"
+    "paysPlaceholder": "مثال: كوت ديفوار",
+    "reserveDirection": "يمكن تعديله فقط من قبل مسؤول أو مدير.",
+    "gpsVerrouille": "الموقع مسجّل مسبقًا: يمكن للمسؤول أو المدير فقط تصحيحه."
   },
   "import": {
     "titre": "استيراد العملاء (Excel)",

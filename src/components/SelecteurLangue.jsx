@@ -16,7 +16,9 @@ export default function SelecteurLangue({ className = '' }) {
   async function changerLangue(code) {
     i18n.changeLanguage(code)
     if (profil?.id) {
-      await supabase.from('profils').update({ langue: code }).eq('id', profil.id)
+      const { error } = await supabase.rpc('definir_ma_langue', { p_langue: code })
+      // Repli si la fonction n'est pas encore installée dans la base.
+      if (error) await supabase.from('profils').update({ langue: code }).eq('id', profil.id)
       rechargerProfil?.()
     }
   }

@@ -80,6 +80,11 @@ export default function Clients() {
   const [attributionEnCours, setAttributionEnCours] = useState(false)
   const [commercialImport, setCommercialImport] = useState('')
   const gerePortefeuilles = ['admin', 'manager'].includes(profil?.role) || profil?.responsable_tournees
+  // Anti-fraude (contrôlé aussi côté serveur) : plafond de crédit et correction
+  // d'une position GPS déjà enregistrée réservés à la direction.
+  const peutModifierCredit = ['admin', 'manager'].includes(profil?.role)
+  const clientEdite = clientEnEdition ? clients.find((c) => c.id === clientEnEdition) : null
+  const gpsVerrouille = !peutModifierCredit && clientEdite?.latitude != null && clientEdite?.longitude != null
 
   useEffect(() => {
     if (!gerePortefeuilles) return
@@ -219,11 +224,11 @@ export default function Clients() {
     setPhotoEnvoi(true)
 
     const extension = fichier.name.split('.').pop() || 'jpg'
-    const chemin = `${profil.entreprise_id}/${clientEnEdition}.${extension}`
+    const chemin = `${profil.entreprise_id}/${clientEnEdition}/${Date.now()}.${extension}`
 
     const { error: erreurUpload } = await supabase.storage
       .from('client-photos')
-      .upload(chemin, fichier, { upsert: true })
+      .upload(chemin, fichier, { upsert: false })
 
     if (erreurUpload) {
       setPhotoEnvoi(false)
@@ -824,11 +829,13 @@ export default function Clients() {
                 <input
                   type="number"
                   min="0"
-                  className="input-field"
+                  className="input-field disabled:opacity-60"
                   value={formulaire.limite_credit}
                   onChange={(e) => setFormulaire({ ...formulaire, limite_credit: e.target.value })}
                   placeholder="0"
+                  disabled={!peutModifierCredit}
                 />
+                {!peutModifierCredit && <p className="text-xs text-petrol-400 mt-1">{t('form.reserveDirection')}</p>}
               </div>
               <div>
                 <label className="label">{t('form.notes')}</label>
@@ -913,18 +920,20 @@ export default function Clients() {
                 {captureGps === 'echec' && (
                   <span className="text-amber-600">{t('form.captureEchec')}</span>
                 )}
-                {captureGps !== 'en_cours' && (
+                {captureGps !== 'en_cours' && !gpsVerrouille && (
                   <button type="button" onClick={capturerPositionActuelle} className="underline text-petrol-600">
                     {clientEnEdition ? t('form.recapturer') : t('form.reessayerCapture')}
                   </button>
                 )}
               </div>
+              {gpsVerrouille && <p className="text-xs text-petrol-400">{t('form.gpsVerrouille')}</p>}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label">{t('form.latitude')}</label>
                   <input
                     className="input-field font-mono"
                     value={formulaire.latitude}
+                    disabled={gpsVerrouille}
                     onChange={(e) => setFormulaire({ ...formulaire, latitude: e.target.value })}
                     placeholder="5.3097"
                   />
@@ -934,6 +943,7 @@ export default function Clients() {
                   <input
                     className="input-field font-mono"
                     value={formulaire.longitude}
+                    disabled={gpsVerrouille}
                     onChange={(e) => setFormulaire({ ...formulaire, longitude: e.target.value })}
                     placeholder="-4.0126"
                   />

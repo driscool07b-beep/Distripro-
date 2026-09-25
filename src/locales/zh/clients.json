@@ -69,7 +69,9 @@
     "erreurCreationGroupe": "创建分组时出错",
     "erreurTarifChoix": "请选择产品和价格。",
     "pays": "国家（可选）",
-    "paysPlaceholder": "例如：科特迪瓦"
+    "paysPlaceholder": "例如：科特迪瓦",
+    "reserveDirection": "仅管理员或经理可修改。",
+    "gpsVerrouille": "GPS 位置已记录：仅管理员或经理可更正（用于核实拜访）。"
   },
   "import": {
     "titre": "导入客户（Excel）",
