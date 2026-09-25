@@ -2,7 +2,12 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Numéro de version affiché dans l'app (date et heure de construction, heure d'Abidjan) :
+// permet de vérifier d'un coup d'œil qu'un appareil a bien la dernière version.
+const VERSION_APP = new Date().toISOString().slice(0, 16).replace('T', ' ')
+
 export default defineConfig({
+  define: { __VERSION_APP__: JSON.stringify(VERSION_APP) },
   plugins: [
     react(),
     VitePWA({
