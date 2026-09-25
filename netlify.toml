@@ -5,13 +5,6 @@
 # Indispensable pour une SPA (React Router) : sans ça, recharger une
 # page autre que l'accueil (ex. /ventes) renverrait une erreur 404,
 # puisque Netlify chercherait un vrai fichier /ventes qui n'existe pas.
-# Un fichier /assets/... introuvable (ancienne version) doit renvoyer une
-# vraie erreur 404, pas la page d'accueil déguisée en script.
-[[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
-  status = 404
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
