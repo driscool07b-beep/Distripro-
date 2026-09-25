@@ -18,14 +18,18 @@
   <body>
     <div id="root"></div>
     <script>
-      // Filet de sécurité : si l'application ne s'est pas affichée au bout de
-      // 12 s (fichiers d'une ancienne version introuvables…), on vide le cache
-      // de l'application et on recharge — une seule fois.
-      setTimeout(function () {
-        var racine = document.getElementById('root')
-        if (racine && racine.children.length > 0) return
-        if (sessionStorage.getItem('distribpro-reparation')) return
-        sessionStorage.setItem('distribpro-reparation', '1')
+      // Filet de sécurité : on note toute erreur de démarrage ; si l'application
+      // ne s'est pas affichée au bout de 10 s, on affiche ces erreurs (au lieu
+      // d'une page blanche) avec un bouton pour réparer.
+      window.__erreursDemarrage = []
+      window.addEventListener('error', function (e) {
+        var cible = e.target && (e.target.src || e.target.href)
+        window.__erreursDemarrage.push(cible ? 'Fichier non chargé : ' + cible : (e.message || 'erreur') + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : ''))
+      }, true)
+      window.addEventListener('unhandledrejection', function (e) {
+        window.__erreursDemarrage.push('Promesse rejetée : ' + (e.reason && (e.reason.message || e.reason)))
+      })
+      function reparerDistribPro() {
         var taches = []
         if ('serviceWorker' in navigator) {
           taches.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -38,13 +42,21 @@
           }))
         }
         Promise.all(taches).finally(function () { location.reload() })
-      }, 12000)
-      window.addEventListener('load', function () {
-        setTimeout(function () {
-          var racine = document.getElementById('root')
-          if (racine && racine.children.length > 0) sessionStorage.removeItem('distribpro-reparation')
-        }, 3000)
-      })
+      }
+      setTimeout(function () {
+        var racine = document.getElementById('root')
+        if (!racine || racine.children.length > 0) return
+        var liste = window.__erreursDemarrage.length ? window.__erreursDemarrage : ['Aucune erreur signalée — le chargement est peut-être encore en cours (connexion lente).']
+        racine.innerHTML =
+          '<div style="font-family:system-ui,sans-serif;max-width:560px;margin:40px auto;padding:20px;color:#0a1f26">' +
+          '<h1 style="font-size:20px;margin:0 0 8px">DistribPro ne parvient pas à démarrer</h1>' +
+          '<p style="font-size:14px;margin:0 0 12px">Faites une capture de cet écran et envoyez-la à l\u2019assistance.</p>' +
+          '<pre style="white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px;font-size:12px">' +
+          liste.map(function (x) { return String(x).replace(/</g, '&lt;') }).join('\n') +
+          '\n\nNavigateur : ' + navigator.userAgent + '\nEn ligne : ' + navigator.onLine + '</pre>' +
+          '<button onclick="reparerDistribPro()" style="margin-top:12px;background:#0f4c5c;color:#fff;border:0;border-radius:10px;padding:12px 16px;font-size:15px">Réparer et recharger</button>' +
+          '</div>'
+      }, 10000)
     </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
