@@ -34,5 +34,20 @@
   "venduImplicite": "Sold (implied)",
   "venduReel": "Sold (actual)",
   "ecart": "Gap",
-  "ecartDetecte": "⚠️ Discrepancy detected: the number of missing units (issued − returned) doesn't match the sales recorded that day for this sales rep. Needs review."
+  "ecartDetecte": "⚠️ Discrepancy detected: the number of missing units (issued − returned) doesn't match the sales recorded that day for this sales rep. Needs review.",
+  "echanges": {
+    "onglet": "Defective exchanges",
+    "titre": "Exchange defective products",
+    "aide": "The sales rep brings back damaged products and leaves with good ones. Their stock is unchanged; damaged goods enter the warehouse in a 'damaged' batch.",
+    "commercial": "— Sales rep —",
+    "magasin": "— Warehouse —",
+    "produit": "— Product (in hand) —",
+    "enMain": "{{n}} in hand",
+    "quantite": "Quantity",
+    "motif": "Reason (required)",
+    "valider": "Record exchange",
+    "historique": "Exchange history",
+    "aucun": "No exchange recorded.",
+    "par": "recorded by {{nom}}"
+  }
 }

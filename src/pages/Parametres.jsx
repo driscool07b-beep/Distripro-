@@ -1357,6 +1357,7 @@ export default function Parametres() {
           </button>
         </form>
       </div>
+      {profil?.role === 'admin' && <SectionReconciliation />}
       {profil?.role === 'admin' && <SectionConsommationIA />}
       {profil?.role === 'admin' && <DiagnosticConnexion />}
     </div>
@@ -1419,6 +1420,68 @@ function SectionConsommationIA() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// Paramètres de la réconciliation des commerciaux et des écritures.
+function SectionReconciliation() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [v, setV] = useState(null)
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+
+  useEffect(() => {
+    if (!entreprise) return
+    setV({
+      racine: entreprise.compte_racine_commerciaux || '471',
+      valorisation: entreprise.valorisation_manquant || 'prix_vente',
+      ventes: entreprise.compte_ventes_numero || '701',
+      stock: entreprise.compte_stock_numero || '31',
+      pertes: entreprise.compte_pertes_numero || '658',
+      caisse: entreprise.compte_caisse_defaut_numero || '571',
+      clients: entreprise.compte_clients_numero || '411',
+    })
+  }, [entreprise])
+
+  if (!v) return null
+  const champ = (cle) => (
+    <div key={cle}>
+      <label className="label">{t(`reconciliation.${cle}`)}</label>
+      <input className="input-field font-mono" value={v[cle]} onChange={(e) => setV({ ...v, [cle]: e.target.value })} />
+    </div>
+  )
+
+  async function enregistrer() {
+    setErreur(''); setMessage('')
+    const { error } = await supabase.rpc('modifier_parametres_reconciliation', {
+      p_racine: v.racine, p_valorisation: v.valorisation, p_ventes: v.ventes, p_stock: v.stock,
+      p_pertes: v.pertes, p_caisse: v.caisse, p_clients: v.clients,
+    })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    await rechargerProfil()
+    setMessage(t('enregistre'))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">{t('reconciliation.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('reconciliation.aide')}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {champ('racine')}
+        <div>
+          <label className="label">{t('reconciliation.valorisation')}</label>
+          <select className="input-field" value={v.valorisation} onChange={(e) => setV({ ...v, valorisation: e.target.value })}>
+            <option value="prix_vente">{t('reconciliation.prixVente')}</option>
+            <option value="prix_revient">{t('reconciliation.prixRevient')}</option>
+          </select>
+        </div>
+        {['ventes', 'clients', 'stock', 'pertes', 'caisse'].map(champ)}
+      </div>
+      <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>
   )
 }

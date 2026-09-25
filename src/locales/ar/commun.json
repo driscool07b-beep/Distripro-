@@ -31,7 +31,8 @@
     "aide": "المساعدة",
     "banques": "البنوك",
     "planComptable": "الدليل المحاسبي",
-    "notesUtilisation": "درجات الاستخدام"
+    "notesUtilisation": "درجات الاستخدام",
+    "reconciliations": "المطابقات"
   },
   "actions": {
     "annuler": "إلغاء",

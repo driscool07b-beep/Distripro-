@@ -342,6 +342,23 @@
           "r": "Settings → Additional information to collect — add a question (free text, number, yes/no, or choice from a list), it will automatically appear in every sales rep's visit report form."
         }
       ]
+    },
+    {
+      "titre": "Sales reps stock",
+      "items": [
+        {
+          "q": "How do I exchange a sales rep's defective products?",
+          "r": "Sales reps stock → 'Defective exchanges' tab: choose the rep, warehouse, product, quantity and reason. The rep leaves with good products; damaged ones enter a 'damaged' batch."
+        },
+        {
+          "q": "How do I reconcile a sales rep?",
+          "r": "Reconciliations → '+ New reconciliation' → rep and period. The app computes stock and cash; enter the counted stock, then approve: cashier first, then the accountant, who decides for each gap (debt or write-off)."
+        },
+        {
+          "q": "How do I track a sales rep's debt?",
+          "r": "Reconciliations → 'Sales rep debts' tab: balance and history (debts, repayments, write-offs)."
+        }
+      ]
     }
   ]
 }

@@ -104,6 +104,14 @@
         {
           "q": "Un mouvement a été enregistré sans justificatif : comment le régulariser ?",
           "r": "Journal de stock → 'Régulariser (joindre le justificatif)'. Réservé à l'admin et au manager. Le justificatif porte alors la mention 'ajouté ultérieurement' (ajouté plus de 10 minutes après le mouvement) : un auditeur voit immédiatement qu'il n'a pas été fourni sur le moment. Les sorties liées à une vente n'ont pas besoin de justificatif : la vente en fait office."
+        },
+        {
+          "q": "Comment voir le détail du stock d'un produit ?",
+          "r": "Produits & Stock → clique sur le nom du produit : répartition par magasin, lots (quantités, date d'entrée, péremption, réceptionné par, état bon / endommagé), coût et marge (direction et comptable)."
+        },
+        {
+          "q": "Comment suivre mes marges ?",
+          "r": "Saisis le prix d'achat unitaire lors d'une entrée en stock (facultatif) ou fixe-le dans le détail du produit : le prix de revient est tenu au coût moyen pondéré (CMUP). Les colonnes Prix de revient et Marge brute, et le résumé du stock (coût, prix de revient moyen, marge moyenne) s'affichent pour la direction et le comptable ; jamais pour les commerciaux."
         }
       ]
     },
@@ -324,6 +332,10 @@
         {
           "q": "Comment désactiver l'IA pour un membre de l'équipe ?",
           "r": "Équipe → sur le membre, 'Désactiver l'IA'. Il ne voit plus les fonctions IA et le serveur refuse ses demandes. La consommation d'IA du mois (par fonction et par personne) est visible en bas de Paramètres."
+        },
+        {
+          "q": "Comment modifier un objectif ?",
+          "r": "Objectifs → 'Modifier' (admin, manager) : période, montants, quantité, notes, avec un motif obligatoire. '🕘 Historique' montre qui a créé ou modifié l'objectif, quand, pourquoi et ce qui a changé. La suppression demande aussi un motif et reste tracée."
         }
       ]
     },
@@ -466,6 +478,27 @@
         {
           "q": "Un commercial voit-il sa propre note ?",
           "r": "Oui — une carte 'Ma note d'utilisation ce mois-ci' apparaît sur son Dashboard dès qu'un calcul a été fait pour le mois en cours, avec le détail des 3 indicateurs."
+        }
+      ]
+    },
+    {
+      "titre": "Stock des commerciaux",
+      "items": [
+        {
+          "q": "Comment échanger des produits défectueux d'un commercial ?",
+          "r": "Stock des commerciaux → onglet 'Échanges défectueux' (magasin, admin ou manager) : choisis le commercial, le magasin, le produit et la quantité, puis le motif. Le commercial repart avec des produits sains, son stock ne change pas ; les produits abîmés entrent au magasin dans un lot « endommagé », visible dans le détail du stock."
+        },
+        {
+          "q": "Comment faire la réconciliation d'un commercial ?",
+          "r": "Réconciliations → '+ Nouvelle réconciliation' → commercial et période. L'app calcule le stock (début, sorties, ventes, retours, théorique) et l'argent (ventes comptant, recouvrements, versements, écart). Saisis le stock réellement compté, puis 'Enregistrer le comptage'. La fiche est imprimable et liste les fiches de versement de la période."
+        },
+        {
+          "q": "Qui valide une fiche de réconciliation ?",
+          "r": "Deux validations successives : d'abord la caisse (responsable de caisse, comptable ou direction) — les écritures de la période sont alors générées ; puis le comptable, par une autre personne, qui décide pour chaque écart : à la charge du commercial (dette) ou justifié (perte, avec commentaire). Le commercial peut justifier ses écarts avant la clôture."
+        },
+        {
+          "q": "Comment suivre la dette d'un commercial ?",
+          "r": "Réconciliations → onglet 'Dettes des commerciaux' : solde de chaque commercial et historique (dettes, remboursements, abandons). Le comptable encaisse un remboursement en caisse ; seul l'admin peut abandonner une dette, avec motif. Chaque commercial a un sous-compte comptable (ex. 471001), paramétrable dans Paramètres."
         }
       ]
     }

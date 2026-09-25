@@ -31,7 +31,8 @@
     "aide": "Help",
     "banques": "Banks",
     "planComptable": "Chart of accounts",
-    "notesUtilisation": "Usage scores"
+    "notesUtilisation": "Usage scores",
+    "reconciliations": "Reconciliations"
   },
   "actions": {
     "annuler": "Cancel",

@@ -195,5 +195,19 @@
       "planification_tournees": "Route planning",
       "assistant": "AI assistant"
     }
+  },
+  "reconciliation": {
+    "titre": "Sales reps reconciliation — accounting",
+    "aide": "Each sales rep gets a sub-account (root + number, e.g. 471001). Reconciliation entries use the accounts below.",
+    "racine": "Sales reps account root (e.g. 471, 421)",
+    "valorisation": "Value stock shortages",
+    "prixVente": "at selling price",
+    "prixRevient": "at cost price",
+    "ventes": "Sales account",
+    "clients": "Customers account",
+    "stock": "Stock account",
+    "pertes": "Losses / expenses account",
+    "caisse": "Default till account",
+    "enregistrer": "Save"
   }
 }

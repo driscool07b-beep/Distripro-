@@ -195,5 +195,19 @@
       "planification_tournees": "Planification des tournées",
       "assistant": "Assistant IA"
     }
+  },
+  "reconciliation": {
+    "titre": "Réconciliation des commerciaux — comptabilité",
+    "aide": "Chaque commercial reçoit un sous-compte (racine + numéro, ex. 471001). Les écritures de réconciliation utilisent les comptes ci-dessous.",
+    "racine": "Racine du compte des commerciaux (ex. 471, 421)",
+    "valorisation": "Valoriser les manquants de stock",
+    "prixVente": "au prix de vente",
+    "prixRevient": "au prix de revient",
+    "ventes": "Compte de ventes",
+    "clients": "Compte clients",
+    "stock": "Compte de stock",
+    "pertes": "Compte de pertes / charges",
+    "caisse": "Compte de caisse par défaut",
+    "enregistrer": "Enregistrer"
   }
 }
