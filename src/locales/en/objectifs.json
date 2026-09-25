@@ -38,5 +38,24 @@
   "noteRealiseManager": "The realized amount will be the sum of sales from every sales rep affiliated with their team (configurable in Settings → Sales org chart).",
   "noteRealiseAdmin": "The realized amount will be the sum of all company sales for the period (company-wide target).",
   "leBureau": "The office",
-  "noteRealiseBureau": "The realized amount will be the sum of office sales (sold from the warehouse, not attributed to a sales rep) for the period."
+  "noteRealiseBureau": "The realized amount will be the sum of office sales (sold from the warehouse, not attributed to a sales rep) for the period.",
+  "modifier": "Edit",
+  "motifModification": "Reason for the change (required)",
+  "enregistrerModification": "Save change",
+  "motifSuppression": "Reason for deleting (required):",
+  "historique": {
+    "bouton": "History",
+    "titre": "Target history",
+    "vide": "No history.",
+    "debut": "Start",
+    "fin": "End",
+    "montant": "Target amount",
+    "quantite": "Target quantity",
+    "notes": "Notes",
+    "actions": {
+      "creation": "Created",
+      "modification": "Changed",
+      "suppression": "Deleted"
+    }
+  }
 }
