@@ -26,6 +26,10 @@
         {
           "q": "How do I install the app on my phone?",
           "r": "Open the app in your phone's browser, then choose 'Add to Home Screen' (Android/Chrome) or 'Add to Home Screen' from the share menu (iPhone/Safari). It will then open like a real app, and keep working for sales/visits even without network."
+        },
+        {
+          "q": "A 'New version available' banner appears: what should I do?",
+          "r": "Save what you are typing, then tap 'Update'. The version shown next to 'DistribPro' lets you check the device is up to date."
         }
       ]
     },
@@ -47,6 +51,10 @@
         {
           "q": "How do I import several clients at once?",
           "r": "Clients → 'Import' → download the Excel template, fill it in keeping the column order, then re-import it."
+        },
+        {
+          "q": "How do I assign customers to a sales rep's portfolio?",
+          "r": "Customers → check customers → 'Assign to…' → choose the rep → Apply. Also possible in the customer record or during Excel import. Portfolios are used for route planning."
         }
       ]
     },
@@ -55,7 +63,7 @@
       "items": [
         {
           "q": "How do I adjust a product's stock (in or out)?",
-          "r": "Stock → click the product → 'Adjust stock'. A supporting document (photo or PDF) may be required depending on the policy set in Settings."
+          "r": "Products & Stock → on the product, 'Adjust stock' → choose In or Out, quantity, warehouse and reason. Attach the supporting document (photo or PDF) in this form. The file is uploaded first: if it fails, stock is NOT changed. If your company made the document mandatory (Settings), the server refuses the adjustment without it."
         },
         {
           "q": "What's the difference between 'adjust stock' and 'transfer between warehouses'?",
@@ -68,6 +76,18 @@
         {
           "q": "Where can I see a product's price history?",
           "r": "Stock → on the product's row → 'History' — shows every price change, with the date."
+        },
+        {
+          "q": "Where do I find supporting documents for an audit?",
+          "r": "Stock log: each movement shows '📎 View supporting document' with who uploaded it and when, or 'No supporting document'. The 'With / Without document' filter spots unjustified movements. Accountants have read access."
+        },
+        {
+          "q": "I attached the wrong file: how do I fix it?",
+          "r": "Stock log → 'Replace' → pick the right file and enter the reason. The old file is never deleted (anti-fraud rule): it stays in 'History' with who replaced it, when and why."
+        },
+        {
+          "q": "A movement was saved without a document: how do I regularise it?",
+          "r": "Stock log → 'Regularise (attach document)'. Admins and managers only. The document is marked 'added later' so an auditor sees it was not provided at the time. Sale-related exits need no document."
         }
       ]
     },
@@ -127,6 +147,14 @@
         {
           "q": "Does it work without network?",
           "r": "Yes, for a sales rep: creating a sale (from their own stock), confirming a visit, submitting a report, and recording a payment received on a receivable all work offline — collection also works offline for a collection agent. Everything syncs automatically once the connection returns. A banner at the top of the app shows the number of pending actions."
+        },
+        {
+          "q": "How do I plan routes with AI?",
+          "r": "In the new route form, '✨ AI planning': choose the period (1 day to 1 month), target visits per day and optional instructions. AI picks who to visit and how often, with the reason for each choice, and spreads visits day by day grouping nearby customers. Remove any customer, then 'Create the N routes'."
+        },
+        {
+          "q": "Why can't a past route be changed?",
+          "r": "A route whose date has passed is closed: view only, with a summary and unvisited customers marked '❌ Not visited'. Only exception: a visit made offline can still be validated until the end of the next day, while the phone syncs. Past routes are in 'Archive'."
         }
       ]
     },
@@ -219,6 +247,10 @@
         {
           "q": "What does the Analytics page show?",
           "r": "A daily route summary, product turnover rate (based on successive visit reports), shelf presence rate versus competitors, and cancelled or partially delivered orders (lost revenue)."
+        },
+        {
+          "q": "How do I download an AI analysis as PDF or Word?",
+          "r": "AI analysis → select the analysis → 'Download as PDF' or 'Download as Word' (.docx, editable)."
         }
       ]
     },
@@ -249,6 +281,10 @@
         {
           "q": "A member forgot their password, what do I do?",
           "r": "Team → on their row → 'Reset password' — generates a temporary password to give them, which they'll have to change on their next login. As an admin, you'll never see either the old or the new password."
+        },
+        {
+          "q": "How do I remove someone who left the team?",
+          "r": "Team → 'Deactivate'. They can no longer sign in, no longer count toward your subscription and move to 'Former members'. Their history is kept."
         }
       ]
     },
@@ -279,6 +315,14 @@
         {
           "q": "How do I enlarge the text if I have trouble reading?",
           "r": "Appearance menu → Text size — Normal, Large, or Extra large. Applies to the whole app immediately."
+        },
+        {
+          "q": "How do I add my profile photo?",
+          "r": "Tap your name at the bottom of the menu (or Appearance) → 'Profile photo' → 'Choose a photo'. It appears in messaging, Team and the menu."
+        },
+        {
+          "q": "What are the 💡 bubbles on buttons?",
+          "r": "Hover (computer) or long-press (phone) a button to see what it does — a long-press does not trigger it. Turn them off in Appearance."
         }
       ]
     },

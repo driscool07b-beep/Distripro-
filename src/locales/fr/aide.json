@@ -26,6 +26,14 @@
         {
           "q": "Comment installer l'application sur mon téléphone ?",
           "r": "Ouvre l'app dans le navigateur de ton téléphone, puis choisis 'Ajouter à l'écran d'accueil' (Android/Chrome) ou 'Sur l'écran d'accueil' (iPhone/Safari, dans le menu de partage). Elle s'ouvrira ensuite comme une vraie application, et continuera à fonctionner pour les ventes/visites même sans réseau."
+        },
+        {
+          "q": "Un bandeau 'Nouvelle version disponible' apparaît : que faire ?",
+          "r": "Termine et enregistre ta saisie en cours, puis touche 'Mettre à jour'. La version affichée à côté de 'DistribPro' (en haut) permet de vérifier que l'appareil est à jour."
+        },
+        {
+          "q": "L'application ne démarre pas ou un envoi de fichier ne passe pas : que faire ?",
+          "r": "Si l'app ne s'affiche pas, un écran d'erreur apparaît au bout de 10 secondes avec un bouton 'Réparer et recharger' : envoie d'abord une capture à l'assistance. Pour un problème d'envoi, l'admin peut lancer le 'Diagnostic de connexion' en bas de Paramètres et envoyer une capture du résultat."
         }
       ]
     },
@@ -47,6 +55,10 @@
         {
           "q": "Comment importer plusieurs clients d'un coup ?",
           "r": "Clients → 'Importer' → télécharge le modèle Excel, remplis-le en gardant l'ordre des colonnes, puis réimporte-le."
+        },
+        {
+          "q": "Comment attribuer des clients au portefeuille d'un commercial ?",
+          "r": "Clients → coche les clients voulus → 'Attribuer à…' → choisis le commercial → Appliquer. Tu peux aussi le faire dans la fiche du client ('Commercial attitré') ou au moment d'un import Excel. Le filtre en haut de la liste affiche un portefeuille précis ou les clients non attribués. Le portefeuille sert notamment à la planification des tournées."
         }
       ]
     },
@@ -55,7 +67,7 @@
       "items": [
         {
           "q": "Comment ajuster le stock d'un produit (entrée ou sortie) ?",
-          "r": "Stock → clique sur le produit → 'Ajuster le stock'. Un justificatif (photo ou PDF) peut être exigé selon la politique définie dans Paramètres."
+          "r": "Produits & Stock → sur le produit, 'Ajuster le stock' → choisis Entrée ou Sortie, la quantité, le dépôt et la raison. Joins le justificatif (photo ou PDF : bon de livraison, bon de sortie, photo de casse…) directement dans ce formulaire. Le fichier est envoyé en premier : s'il ne passe pas, le stock n'est PAS modifié et un message s'affiche. Si ton entreprise a rendu le justificatif obligatoire (Paramètres), l'ajustement est refusé sans lui — contrôle fait par le serveur, impossible à contourner."
         },
         {
           "q": "Quelle différence entre 'ajuster le stock' et 'transférer entre dépôts' ?",
@@ -80,6 +92,18 @@
         {
           "q": "Comment fonctionne la traçabilité par numéro de lot ?",
           "r": "À chaque entrée de stock, indique le numéro de lot (tel qu'inscrit par le fabricant) et sa date de péremption. À la vente, le système consomme automatiquement le lot le plus proche de la péremption en premier (FIFO) — le commercial n'a rien à faire. Stock → 'Lots' permet de voir les lots à écouler en priorité, et de rechercher un numéro de lot pour retrouver instantanément tous les clients livrés à partir de ce lot — essentiel en cas de rappel produit."
+        },
+        {
+          "q": "Où retrouver les justificatifs pour un audit ?",
+          "r": "Journal de stock : chaque mouvement affiche '📎 Voir le justificatif' avec qui l'a déposé et quand, ou 'Sans justificatif'. Le filtre 'Avec / Sans justificatif' permet de repérer d'un coup les mouvements non justifiés. Le comptable y a accès en consultation."
+        },
+        {
+          "q": "J'ai joint le mauvais fichier : comment le corriger ?",
+          "r": "Journal de stock → sur le mouvement, 'Remplacer' → choisis le bon fichier et indique obligatoirement le motif. L'ancien fichier n'est jamais supprimé (règle anti-fraude) : il reste consultable dans 'Historique', avec qui l'a remplacé, quand et pourquoi."
+        },
+        {
+          "q": "Un mouvement a été enregistré sans justificatif : comment le régulariser ?",
+          "r": "Journal de stock → 'Régulariser (joindre le justificatif)'. Réservé à l'admin et au manager. Le justificatif porte alors la mention 'ajouté ultérieurement' (ajouté plus de 10 minutes après le mouvement) : un auditeur voit immédiatement qu'il n'a pas été fourni sur le moment. Les sorties liées à une vente n'ont pas besoin de justificatif : la vente en fait office."
         }
       ]
     },
@@ -126,7 +150,7 @@
       "items": [
         {
           "q": "Comment créer une tournée pour un commercial ?",
-          "r": "Tournées → '+ Nouvelle tournée' → choisis la date et les clients à visiter. L'itinéraire est optimisé automatiquement (plus court trajet)."
+          "r": "Tournées → '+ Nouvelle tournée' → choisis le commercial et la date. Seuls les clients de son portefeuille apparaissent. Manuellement : coche les clients, l'ordre de passage est optimisé automatiquement. Avec l'IA : voir la question suivante."
         },
         {
           "q": "Comment valider une visite chez un client ?",
@@ -139,6 +163,18 @@
         {
           "q": "Est-ce que ça marche sans réseau ?",
           "r": "Oui, pour un commercial : créer une vente (depuis son propre stock), valider une visite, envoyer un rapport, et enregistrer un paiement reçu sur une créance fonctionnent hors-ligne — le recouvrement fonctionne aussi hors-ligne pour un agent de recouvrement. Tout se synchronise automatiquement dès que la connexion revient. Un bandeau en haut de l'app indique le nombre d'actions en attente."
+        },
+        {
+          "q": "Comment planifier les tournées avec l'IA ?",
+          "r": "Dans le formulaire de nouvelle tournée, bloc '✨ Planification par l'IA' : choisis la période (1 jour à 1 mois), l'objectif de visites par jour, et ajoute si besoin des consignes (ex. 'priorité aux créances'). L'IA choisit qui visiter et à quelle fréquence (stocks bas, créances échues, clients non visités…) en donnant la raison de chaque choix ; les visites sont réparties jour par jour en regroupant les clients proches. Retire les clients voulus puis 'Créer les N tournées'."
+        },
+        {
+          "q": "Un commercial peut-il programmer sa propre tournée ?",
+          "r": "Oui, uniquement la sienne. Si l'option 'Validation des tournées programmées par un commercial' est activée (Paramètres), sa tournée doit être approuvée par un responsable avant qu'il puisse valider des visites."
+        },
+        {
+          "q": "Pourquoi une tournée passée n'est-elle plus modifiable ?",
+          "r": "Une tournée dont la date est passée est clôturée : consultation seule, avec un bilan (visites faites / prévues) et les clients non visités marqués '❌ Non visitée'. Anti-fraude : impossible d'y ajouter ou retirer un client après coup. Seule tolérance : une visite faite hors connexion peut encore être validée jusqu'à la fin du lendemain, le temps que le téléphone se synchronise. Les tournées passées sont rangées dans 'Archives'."
         }
       ]
     },
@@ -280,6 +316,14 @@
         {
           "q": "Que montre la page Analytique ?",
           "r": "Récap quotidien des tournées, taux de rotation des produits (basé sur les rapports de visite successifs), taux de présence en rayon face à la concurrence, et les commandes annulées ou partiellement livrées (manque à gagner)."
+        },
+        {
+          "q": "Comment télécharger une Analyse IA en PDF ou Word ?",
+          "r": "Analyse IA → sélectionne l'analyse → '📄 Télécharger en PDF' (prêt à imprimer, avec l'en-tête de l'entreprise) ou '📝 Télécharger en Word' (fichier .docx modifiable)."
+        },
+        {
+          "q": "Comment désactiver l'IA pour un membre de l'équipe ?",
+          "r": "Équipe → sur le membre, 'Désactiver l'IA'. Il ne voit plus les fonctions IA et le serveur refuse ses demandes. La consommation d'IA du mois (par fonction et par personne) est visible en bas de Paramètres."
         }
       ]
     },
@@ -318,6 +362,10 @@
         {
           "q": "Un membre a oublié son mot de passe, que faire ?",
           "r": "Équipe → sur sa ligne → 'Réinit. mot de passe' — génère un mot de passe temporaire à lui transmettre, qu'il devra changer à sa prochaine connexion. Toi-même en tant qu'admin ne verras jamais ni l'ancien ni le nouveau mot de passe."
+        },
+        {
+          "q": "Comment retirer de l'équipe une personne qui est partie ?",
+          "r": "Équipe → 'Désactiver' sur son compte. Elle ne peut plus se connecter, ne compte plus dans votre abonnement et passe dans la section repliée 'Anciens membres'. Son historique (ventes, visites, versements) est conservé ; tu peux la réactiver à tout moment."
         }
       ]
     },
@@ -352,6 +400,14 @@
         {
           "q": "Comment agrandir le texte si j'ai du mal à lire ?",
           "r": "Menu Apparence → Taille du texte — Normale, Grande, ou Très grande. S'applique à toute l'application immédiatement."
+        },
+        {
+          "q": "Comment ajouter ma photo de profil ?",
+          "r": "Touche ton nom en bas du menu (ou Apparence) → 'Photo de profil' → '📷 Choisir une photo'. Elle est recadrée automatiquement et apparaît dans la messagerie, la page Équipe et le menu."
+        },
+        {
+          "q": "À quoi servent les bulles 💡 sur les boutons ?",
+          "r": "Survole un bouton (ordinateur) ou appuie longuement dessus (téléphone) pour savoir à quoi il sert — l'appui long n'exécute pas le bouton. Pour les désactiver : Apparence → 'Bulles d'aide sur les boutons'."
         }
       ]
     },
