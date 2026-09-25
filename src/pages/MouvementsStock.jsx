@@ -99,7 +99,7 @@ export default function MouvementsStock() {
     let resultat
     try {
       resultat = await envoyerJustificatifMouvement({
-        entrepriseId: entreprise.id,
+        entrepriseId: profil.entreprise_id,
         mouvementId: formulaire.mouvementId,
         fichier,
         motifRemplacement: formulaire.remplacement ? motif.trim() : null,

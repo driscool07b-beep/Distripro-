@@ -164,5 +164,6 @@
     "titre": "Nouvelle version disponible",
     "texte": "Enregistrez votre saisie en cours, puis mettez à jour.",
     "bouton": "Mettre à jour"
-  }
+  },
+  "erreurFicheEntreprise": "La fiche de votre entreprise n'a pas pu être chargée : certaines fonctions (envoi de fichiers, documents) ne marcheront pas"
 }

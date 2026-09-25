@@ -13,7 +13,7 @@ function avecDelai(promesse, ms) {
 }
 
 export default function DiagnosticConnexion() {
-  const { entreprise } = useAuth()
+  const { entreprise, profil, profilError } = useAuth()
   const [lignes, setLignes] = useState([])
   const [enCours, setEnCours] = useState(false)
 
@@ -34,8 +34,20 @@ export default function DiagnosticConnexion() {
   async function lancer() {
     setLignes([])
     setEnCours(true)
+    try {
+      await lancerEtapes()
+    } catch (e) {
+      setLignes((l) => [...l, { nom: 'Erreur inattendue', ok: false, texte: e?.message || String(e) }])
+    }
+    setEnCours(false)
+  }
+
+  async function lancerEtapes() {
     const infos = `${navigator.onLine ? 'en ligne' : 'HORS LIGNE'} · ${navigator.connection?.effectiveType || '?'}`
-    setLignes([{ nom: 'Appareil', ok: true, texte: infos }])
+    setLignes([
+      { nom: 'Appareil', ok: true, texte: infos },
+      { nom: 'Fiche entreprise', ok: !!entreprise, texte: entreprise ? 'chargée' : `NON chargée${profilError ? ` — ${profilError}` : ''}` },
+    ])
     await etape('1. Session', async () => {
       const { data, error } = await supabase.auth.getSession()
       if (error) throw error
@@ -47,7 +59,7 @@ export default function DiagnosticConnexion() {
       const { error } = await supabase.from('depots').select('id').limit(1)
       if (error) throw error
     })
-    const chemin = `${entreprise.id}/mouvements-stock/diagnostic/${Date.now()}.txt`
+    const chemin = `${profil.entreprise_id}/mouvements-stock/diagnostic/${Date.now()}.txt`
     const envoiOk = await etape('3. Envoi d\'un petit fichier (stockage)', async () => {
       const fichier = new Blob([`diagnostic ${new Date().toISOString()}`], { type: 'text/plain' })
       const { error } = await supabase.storage.from('justificatifs-stock').upload(chemin, fichier, { upsert: false, contentType: 'text/plain' })

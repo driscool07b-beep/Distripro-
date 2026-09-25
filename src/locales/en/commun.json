@@ -164,5 +164,6 @@
     "titre": "New version available",
     "texte": "Save what you are typing, then update.",
     "bouton": "Update"
-  }
+  },
+  "erreurFicheEntreprise": "Your company record could not be loaded: some features (file uploads, documents) will not work"
 }

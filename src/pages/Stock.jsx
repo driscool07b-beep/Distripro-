@@ -406,7 +406,7 @@ export default function Stock() {
     // qu'il existe bien et enregistre mouvement + justificatif ensemble.
     let fichierInfo = null
     if (fichierJustificatif) {
-      const resultatEnvoi = await envoyerFichierJustificatif({ entrepriseId: entreprise.id, fichier: fichierJustificatif, onEtape: setEtapeAjustement })
+      const resultatEnvoi = await envoyerFichierJustificatif({ entrepriseId: profil.entreprise_id, fichier: fichierJustificatif, onEtape: setEtapeAjustement })
       if (resultatEnvoi.error) {
         setEtapeAjustement('')
         setEnregistrement(false)
@@ -493,7 +493,7 @@ export default function Stock() {
     }
 
     if (fichierJustificatifTransfert && resultat?.mouvement_sortie_id) {
-      const { error: erreurUpload } = await envoyerJustificatifMouvement({ entrepriseId: entreprise.id, mouvementId: resultat.mouvement_sortie_id, fichier: fichierJustificatifTransfert })
+      const { error: erreurUpload } = await envoyerJustificatifMouvement({ entrepriseId: profil.entreprise_id, mouvementId: resultat.mouvement_sortie_id, fichier: fichierJustificatifTransfert })
       if (erreurUpload) {
         // Le mouvement est déjà enregistré : on prévient sans bloquer ; le
         // justificatif pourra être joint depuis le Journal de stock.
@@ -553,7 +553,7 @@ export default function Stock() {
     }
 
     if (fichierJustificatifReception && mouvementEntreeId) {
-      const { error: erreurUpload } = await envoyerJustificatifMouvement({ entrepriseId: entreprise.id, mouvementId: mouvementEntreeId, fichier: fichierJustificatifReception })
+      const { error: erreurUpload } = await envoyerJustificatifMouvement({ entrepriseId: profil.entreprise_id, mouvementId: mouvementEntreeId, fichier: fichierJustificatifReception })
       if (erreurUpload) {
         // Le mouvement est déjà enregistré : on prévient sans bloquer ; le
         // justificatif pourra être joint depuis le Journal de stock.

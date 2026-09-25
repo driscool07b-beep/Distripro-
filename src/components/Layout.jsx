@@ -36,7 +36,7 @@ function navItems(t) {
 
 export default function Layout() {
   const { t } = useTranslation()
-  const { profil, entreprise, deconnexion } = useAuth()
+  const { profil, entreprise, deconnexion, profilError } = useAuth()
   const [menuOuvert, setMenuOuvert] = useState(false)
   const [messagesNonLus, setMessagesNonLus] = useState(0)
   const [badgeJournalCaisse, setBadgeJournalCaisse] = useState(0)
@@ -416,6 +416,11 @@ export default function Layout() {
         <TableauxResponsifs />
         <MiseAJour />
         <main className="flex-1 min-w-0 overflow-x-hidden">
+          {profil && !entreprise && (
+            <div className="m-3 p-3 rounded-xl bg-red-50 border border-red-300 text-red-700 text-sm">
+              ⚠️ {t('erreurFicheEntreprise')}{profilError ? ` — ${profilError}` : ''}
+            </div>
+          )}
           <BandeauHorsLigne />
           <Outlet />
         </main>
