@@ -29,7 +29,7 @@
   "sorti": "تم صرف: {{n}}",
   "envoi": "جارٍ الإرسال…",
   "validerRetourCloturer": "تأكيد الإرجاع والإغلاق",
-  "reconciliationTitre": "تسوية الصرف / الإرجاع / المبيعات الفعلية",
+  "reconciliationTitre": "Quick check of this issue (issued / returned / sold)",
   "produit": "المنتج",
   "venduImplicite": "مباع (ضمنيًا)",
   "venduReel": "مباع (فعليًا)",
@@ -49,5 +49,7 @@
     "historique": "Exchange history",
     "aucun": "No exchange recorded.",
     "par": "recorded by {{nom}}"
-  }
+  },
+  "controleRapideAide": "This quick check compares, for this issue only, what is missing at return with recorded sales. It creates no debt or entry: to handle a gap officially, prepare the reconciliation sheet.",
+  "creerFicheReconciliation": "Prepare the reconciliation sheet"
 }

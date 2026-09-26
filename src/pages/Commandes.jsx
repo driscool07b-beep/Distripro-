@@ -63,6 +63,7 @@ export default function Commandes() {
   const [modeLivraison, setModeLivraison] = useState(false)
   const [quantitesLivrees, setQuantitesLivrees] = useState({})
   const [montantSupplementaire, setMontantSupplementaire] = useState('')
+  const [depotLivraison, setDepotLivraison] = useState('')
   const [modePaiementLivraison, setModePaiementLivraison] = useState('cash')
   const [actionEnvoi, setActionEnvoi] = useState(false)
   const [erreurAction, setErreurAction] = useState('')
@@ -345,6 +346,7 @@ export default function Commandes() {
       p_lignes_livrees: lignesFinales,
       p_montant_supplementaire_paye: montantSupplementaire === '' ? 0 : Number(montantSupplementaire),
       p_mode_paiement: modePaiementLivraison,
+      p_depot_id: depotLivraison || (depots.length === 1 ? depots[0].id : null),
     })
     setActionEnvoi(false)
     if (error) {
@@ -748,6 +750,15 @@ export default function Commandes() {
                         </div>
                       ))}
                     </div>
+                    {depots.length > 1 && (
+                      <div className="mt-3">
+                        <label className="label">{t('detail.magasinLivraison')} *</label>
+                        <select className="input-field" value={depotLivraison} onChange={(e) => setDepotLivraison(e.target.value)}>
+                          <option value="">{t('detail.choisirMagasin')}</option>
+                          {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+                        </select>
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       <div>
                         <label className="label">{t('detail.montantSupplementaire')}</label>

@@ -29,7 +29,7 @@
   "sorti": "已领出：{{n}}",
   "envoi": "发送中…",
   "validerRetourCloturer": "确认退回并结清",
-  "reconciliationTitre": "领出/退回/实际销售对账",
+  "reconciliationTitre": "Quick check of this issue (issued / returned / sold)",
   "produit": "产品",
   "venduImplicite": "已售（推算）",
   "venduReel": "已售（实际）",
@@ -49,5 +49,7 @@
     "historique": "Exchange history",
     "aucun": "No exchange recorded.",
     "par": "recorded by {{nom}}"
-  }
+  },
+  "controleRapideAide": "This quick check compares, for this issue only, what is missing at return with recorded sales. It creates no debt or entry: to handle a gap officially, prepare the reconciliation sheet.",
+  "creerFicheReconciliation": "Prepare the reconciliation sheet"
 }

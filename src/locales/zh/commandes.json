@@ -82,7 +82,9 @@
     "annulerCommande": "取消订单",
     "historique": "历史记录",
     "par": "由",
-    "impossibleChargerDetail": "无法加载详情。"
+    "impossibleChargerDetail": "无法加载详情。",
+    "magasinLivraison": "Warehouse shipping the goods",
+    "choisirMagasin": "— Choose warehouse —"
   },
   "export": {
     "numero": "编号",
