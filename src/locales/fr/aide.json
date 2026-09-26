@@ -499,6 +499,10 @@
         {
           "q": "Comment suivre la dette d'un commercial ?",
           "r": "Réconciliations → onglet 'Dettes des commerciaux' : solde de chaque commercial et historique (dettes, remboursements, abandons). Le comptable encaisse un remboursement en caisse ; seul l'admin peut abandonner une dette, avec motif. Chaque commercial a un sous-compte comptable (ex. 471001), paramétrable dans Paramètres."
+        },
+        {
+          "q": "Comment récupérer une dette sur le salaire d'un commercial ?",
+          "r": "Réconciliations → Dettes → sur le commercial, 'Recouvrement forcé (retenue sur salaire)' (admin, comptable) : montant, nombre de mensualités, premier mois et motif. La dette est reclassée du 471 vers le 421 (avance sur salaire). Imprime la notification et fais-la signer. Chaque mois, 'État des retenues du mois' liste les montants à reporter sur les bulletins ; enregistre ensuite la retenue. Anti-doublon : par défaut, c'est la paie qui comptabilise les retenues (422/421), DistribPro n'en fait que le suivi — réglable dans Paramètres."
         }
       ]
     }

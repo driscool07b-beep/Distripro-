@@ -208,6 +208,15 @@
     "stock": "Compte de stock",
     "pertes": "Compte de pertes / charges",
     "caisse": "Compte de caisse par défaut",
-    "enregistrer": "Enregistrer"
+    "enregistrer": "Enregistrer",
+    "titreRetenues": "Recouvrement forcé et retenues sur salaire",
+    "aideRetenues": "Le reclassement de la dette (421 / 471) est toujours passé par DistribPro. Les retenues mensuelles (422 / 421) ne doivent être comptabilisées que par UN seul logiciel : choisissez lequel pour éviter tout doublon. Faites valider le plafond mensuel par votre RH (encadrement légal des retenues sur salaire).",
+    "avances": "Racine du compte d'avances au personnel (ex. 421)",
+    "remuneration": "Compte des rémunérations dues (ex. 422)",
+    "retenuesPar": "Les retenues mensuelles sont comptabilisées par",
+    "parPaie": "le logiciel de paie (DistribPro en fait seulement le suivi)",
+    "parDistribpro": "DistribPro (ne pas les comptabiliser dans la paie)",
+    "plafond": "Plafond de retenue mensuelle (facultatif)",
+    "sansPlafond": "Aucun plafond"
   }
 }

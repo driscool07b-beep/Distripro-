@@ -1442,6 +1442,10 @@ function SectionReconciliation() {
       pertes: entreprise.compte_pertes_numero || '658',
       caisse: entreprise.compte_caisse_defaut_numero || '571',
       clients: entreprise.compte_clients_numero || '411',
+      avances: entreprise.compte_racine_avances || '421',
+      remuneration: entreprise.compte_remuneration_numero || '422',
+      retenuesPar: entreprise.retenues_comptabilisees_par || 'paie',
+      plafond: entreprise.plafond_retenue_mensuelle ?? '',
     })
   }, [entreprise])
 
@@ -1458,6 +1462,8 @@ function SectionReconciliation() {
     const { error } = await supabase.rpc('modifier_parametres_reconciliation', {
       p_racine: v.racine, p_valorisation: v.valorisation, p_ventes: v.ventes, p_stock: v.stock,
       p_pertes: v.pertes, p_caisse: v.caisse, p_clients: v.clients,
+      p_racine_avances: v.avances, p_remuneration: v.remuneration,
+      p_retenues_par: v.retenuesPar, p_plafond: v.plafond === '' ? null : Number(v.plafond),
     })
     if (error) { setErreur(traduireErreur(error.message)); return }
     await rechargerProfil()
@@ -1478,6 +1484,23 @@ function SectionReconciliation() {
           </select>
         </div>
         {['ventes', 'clients', 'stock', 'pertes', 'caisse'].map(champ)}
+      </div>
+      <h3 className="font-semibold text-sm mt-5 mb-1">{t('reconciliation.titreRetenues')}</h3>
+      <p className="text-xs text-petrol-500 mb-3">{t('reconciliation.aideRetenues')}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {champ('avances')}
+        {champ('remuneration')}
+        <div>
+          <label className="label">{t('reconciliation.retenuesPar')}</label>
+          <select className="input-field" value={v.retenuesPar} onChange={(e) => setV({ ...v, retenuesPar: e.target.value })}>
+            <option value="paie">{t('reconciliation.parPaie')}</option>
+            <option value="distribpro">{t('reconciliation.parDistribpro')}</option>
+          </select>
+        </div>
+        <div>
+          <label className="label">{t('reconciliation.plafond')}</label>
+          <input type="number" min="0" className="input-field" value={v.plafond} onChange={(e) => setV({ ...v, plafond: e.target.value })} placeholder={t('reconciliation.sansPlafond')} />
+        </div>
       </div>
       <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}

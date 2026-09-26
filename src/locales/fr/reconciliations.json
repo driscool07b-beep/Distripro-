@@ -100,7 +100,53 @@
   "typesDette": {
     "dette": "Dette",
     "remboursement": "Remboursement",
-    "annulation": "Abandon"
+    "annulation": "Abandon",
+    "transfert_salaire": "Recouvrement forcé (421)"
   },
-  "aucunCommercial": "Aucun commercial."
+  "aucunCommercial": "Aucun commercial.",
+  "avances": {
+    "bouton": "Recouvrement forcé (retenue sur salaire)",
+    "titre": "Recouvrement forcé par retenue sur salaire",
+    "aide": "La dette est reclassée du compte de tiers vers le compte d'avances au personnel ({{racine}}…) et récupérée par mensualités sur le salaire. Faites signer la notification au commercial.",
+    "nbMensualites": "Nombre de mensualités",
+    "premierMois": "Premier mois de retenue",
+    "apercu": "Mensualité : {{mensualite}}",
+    "plafond": "plafond : {{plafond}}",
+    "motif": "Motif (obligatoire)",
+    "confirmer": "Reclasser cette dette en avance sur salaire ? L'écriture 421 / 471 sera passée.",
+    "valider": "Valider le recouvrement forcé",
+    "avance": "Avance sur salaire",
+    "aPartirDe": "à partir de {{mois}}",
+    "restant": "Reste à retenir :",
+    "statuts": {
+      "en_cours": "En cours",
+      "soldee": "Soldée"
+    },
+    "par": {
+      "paie": "comptabilisée par la paie",
+      "distribpro": "comptabilisée par DistribPro"
+    },
+    "notifBouton": "Notification à signer",
+    "retenueBouton": "Enregistrer la retenue de {{mois}}",
+    "montantRetenue": "Montant retenu sur la paie de {{mois}} :",
+    "moisPaie": "Mois de paie",
+    "etatBouton": "État des retenues du mois (pour la paie)",
+    "modePaie": "Les retenues sont comptabilisées par le logiciel de paie : DistribPro en assure seulement le suivi (aucune écriture 422/421 ici, pas de doublon).",
+    "modeDistribpro": "Les retenues sont comptabilisées par DistribPro (écriture 422/421) : ne les comptabilisez pas aussi dans la paie.",
+    "etatTitre": "État des retenues sur salaire — {{mois}}",
+    "etatNotePaie": "À reporter sur les bulletins et à comptabiliser par la paie (débit 422 / crédit 421). Non comptabilisé dans DistribPro.",
+    "etatNoteDistribpro": "Déjà comptabilisé dans DistribPro (débit 422 / crédit 421) : ne pas recomptabiliser dans la paie.",
+    "compte": "Compte d'avance",
+    "retenue": "Retenue du mois",
+    "resteApres": "Reste après retenue",
+    "notifTitre": "Notification de retenue sur salaire",
+    "notifSalarie": "Salarié : {{nom}}",
+    "notifMontant": "Montant à rembourser : {{montant}}",
+    "notifMotif": "Origine : {{motif}}",
+    "notifEcheancier": "Échéancier : {{nb}} mensualité(s) de {{mensualite}}, à compter de la paie de {{debut}}.",
+    "notifTexte": "Le salarié reconnaît devoir la somme ci-dessus, résultant d'écarts constatés lors des réconciliations de son stock et de ses encaissements, et accepte son remboursement par retenues sur salaire selon l'échéancier indiqué, dans la limite fixée par la réglementation en vigueur.",
+    "notifFait": "Fait le {{date}}",
+    "signSalarie": "Signature du salarié (précédée de « lu et approuvé »)",
+    "signEmployeur": "Pour l'employeur"
+  }
 }

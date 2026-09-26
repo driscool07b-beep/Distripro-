@@ -171,6 +171,7 @@ export default function Reconciliations() {
 
       {onglet === 'dettes' && (
         <DettesCommerciaux
+          entreprise={entreprise}
           commerciaux={estCommercial ? membres.filter((m) => m.id === profil?.id) : commerciaux}
           caisses={caisses}
           peutEncaisser={['admin', 'manager', 'comptable'].includes(role)}
@@ -428,17 +429,30 @@ function FicheReconciliation({ id, nomMembre, peutPreparer, estComptable, estDir
   )
 }
 
-function DettesCommerciaux({ commerciaux, caisses, peutEncaisser, peutAnnuler }) {
+function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, peutAnnuler }) {
   const { t } = useTranslation('reconciliations')
   const [mouvements, setMouvements] = useState([])
+  const [avances, setAvances] = useState([])
+  const [retenues, setRetenues] = useState([])
+  const [forcage, setForcage] = useState(null) // { commercial_id, montant, nb, periode, motif }
+  const { profil } = useAuth()
+  const peutForcer = ['admin', 'comptable'].includes(profil?.role)
+  const moisCourant = new Date().toISOString().slice(0, 7)
+  const [moisEtat, setMoisEtat] = useState(moisCourant)
   const [ouvert, setOuvert] = useState(null)
   const [saisie, setSaisie] = useState({ caisse_id: '', montant: '', motif: '' })
   const [erreur, setErreur] = useState('')
   const [envoi, setEnvoi] = useState(false)
 
   async function charger() {
-    const { data } = await supabase.from('dettes_commerciaux').select('*, auteur:profils!effectue_par(nom)').order('created_at', { ascending: false })
+    const [{ data }, { data: av }, { data: re }] = await Promise.all([
+      supabase.from('dettes_commerciaux').select('*, auteur:profils!effectue_par(nom)').order('created_at', { ascending: false }),
+      supabase.from('avances_salaire').select('*').order('created_at', { ascending: false }),
+      supabase.from('retenues_salaire').select('*').order('periode_paie'),
+    ])
     setMouvements(data || [])
+    setAvances(av || [])
+    setRetenues(re || [])
   }
   useEffect(() => { charger() }, [])
 
@@ -466,9 +480,92 @@ function DettesCommerciaux({ commerciaux, caisses, peutEncaisser, peutAnnuler })
     charger()
   }
 
+  const restant = (a) => Number(a.montant) - retenues.filter((r) => r.avance_id === a.id).reduce((n, r) => n + Number(r.montant), 0)
+  const nom = (id) => commerciaux.find((c) => c.id === id)?.nom || '—'
+  const retenueParAvanceEtMois = (a, mois) => retenues.find((r) => r.avance_id === a.id && r.periode_paie === mois)
+  // Mensualité due pour un mois : la mensualité (ou le reste, s'il est plus petit),
+  // à partir du premier mois de retenue.
+  const dueDuMois = (a, mois) => (a.statut === 'en_cours' && mois >= a.premiere_periode ? Math.min(Number(a.mensualite), restant(a)) : 0)
+
+  async function lancerForcage() {
+    setErreur('')
+    setEnvoi(true)
+    const { error } = await supabase.rpc('recouvrement_force', {
+      p_commercial_id: forcage.commercial_id, p_montant: Number(forcage.montant), p_nb_mensualites: Number(forcage.nb),
+      p_premiere_periode: forcage.periode, p_motif: forcage.motif,
+    })
+    setEnvoi(false)
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    setForcage(null)
+    charger()
+  }
+
+  async function enregistrerRetenue(a) {
+    const montant = window.prompt(t('avances.montantRetenue', { mois: moisEtat }), String(dueDuMois(a, moisEtat) || Number(a.mensualite)))
+    if (!montant) return
+    const { error } = await supabase.rpc('enregistrer_retenue_salaire', { p_avance_id: a.id, p_periode_paie: moisEtat, p_montant: Number(montant) })
+    if (error) { alert(traduireErreur(error.message)); return }
+    charger()
+  }
+
+  function imprimerNotification(a) {
+    const doc = new jsPDF()
+    let y = ecrireEnTeteEntreprise(doc, entreprise)
+    doc.setFontSize(14)
+    doc.text(t('avances.notifTitre'), 14, y + 6)
+    doc.setFontSize(10)
+    const lignes = [
+      t('avances.notifSalarie', { nom: nom(a.commercial_id) }),
+      t('avances.notifMontant', { montant: formatXOF(a.montant) }),
+      t('avances.notifMotif', { motif: a.motif }),
+      t('avances.notifEcheancier', { nb: a.nb_mensualites, mensualite: formatXOF(a.mensualite), debut: a.premiere_periode }),
+      '',
+      t('avances.notifTexte'),
+    ]
+    let yy = y + 16
+    lignes.forEach((l) => { const d = doc.splitTextToSize(l, 180); doc.text(d, 14, yy); yy += d.length * 5 + 2 })
+    yy += 14
+    doc.text(t('avances.notifFait', { date: formatDate(new Date()) }), 14, yy)
+    doc.text(`${t('avances.signSalarie')} :`, 14, yy + 14)
+    doc.text(`${t('avances.signEmployeur')} :`, 120, yy + 14)
+    doc.save(`notification-retenue-${nom(a.commercial_id).replace(/\s+/g, '-')}.pdf`)
+  }
+
+  function imprimerEtatMensuel() {
+    const lignes = avances
+      .map((a) => ({ a, due: dueDuMois(a, moisEtat), saisie: retenueParAvanceEtMois(a, moisEtat) }))
+      .filter((x) => x.due > 0 || x.saisie)
+    const doc = new jsPDF()
+    const y = ecrireEnTeteEntreprise(doc, entreprise)
+    doc.setFontSize(14)
+    doc.text(t('avances.etatTitre', { mois: moisEtat }), 14, y + 6)
+    doc.setFontSize(9)
+    doc.text(entreprise?.retenues_comptabilisees_par === 'distribpro' ? t('avances.etatNoteDistribpro') : t('avances.etatNotePaie'), 14, y + 12, { maxWidth: 180 })
+    autoTable(doc, {
+      startY: y + 20,
+      head: [[t('commercial'), t('avances.compte'), t('avances.retenue'), t('avances.resteApres')]],
+      body: lignes.map(({ a, due, saisie }) => {
+        const montant = saisie ? Number(saisie.montant) : due
+        return [nom(a.commercial_id), commerciaux.find((c) => c.id === a.commercial_id)?.compte_avance_numero || '421…', formatXOF(montant), formatXOF(restant(a) - (saisie ? 0 : montant))]
+      }),
+      styles: { fontSize: 9 },
+    })
+    doc.save(`etat-retenues-${moisEtat}.pdf`)
+  }
+
   return (
     <div className="space-y-2">
       <p className="text-xs text-petrol-500 mb-2">{t('dettesAide')}</p>
+      {peutForcer && avances.some((a) => a.statut === 'en_cours') && (
+        <div className="card p-3 flex flex-wrap items-end gap-2 mb-2">
+          <div>
+            <label className="label">{t('avances.moisPaie')}</label>
+            <input type="month" className="input-field" value={moisEtat} onChange={(e) => setMoisEtat(e.target.value)} />
+          </div>
+          <button data-aide="reconciliations.etatRetenues" className="btn-secondary text-sm" onClick={imprimerEtatMensuel}>🖨️ {t('avances.etatBouton')}</button>
+          <p className="text-xs text-petrol-500 w-full">{entreprise?.retenues_comptabilisees_par === 'distribpro' ? t('avances.modeDistribpro') : t('avances.modePaie')}</p>
+        </div>
+      )}
       {commerciaux.map((c) => {
         const s = solde(c.id)
         const historique = mouvements.filter((m) => m.commercial_id === c.id)
@@ -488,7 +585,7 @@ function DettesCommerciaux({ commerciaux, caisses, peutEncaisser, peutAnnuler })
                     {historique.map((m) => (
                       <li key={m.id} className="flex flex-wrap justify-between gap-2 border-b border-line pb-1">
                         <span>{formatDate(m.created_at)} — {t(`typesDette.${m.type}`)} — {m.motif} — {m.auteur?.nom || '—'}</span>
-                        <span className={`font-mono ${m.type === 'dette' ? 'text-red-600' : 'text-emerald-700'}`}>{m.type === 'dette' ? '+' : '−'}{formatXOF(m.montant)}</span>
+                        <span className={`font-mono ${m.type === 'dette' ? 'text-red-600' : m.type === 'transfert_salaire' ? 'text-amber-700' : 'text-emerald-700'}`}>{m.type === 'dette' ? '+' : '−'}{formatXOF(m.montant)}</span>
                       </li>
                     ))}
                   </ul>
@@ -502,8 +599,52 @@ function DettesCommerciaux({ commerciaux, caisses, peutEncaisser, peutAnnuler })
                     <input type="number" min="0" max={s} className="input-field sm:max-w-[160px]" placeholder={t('montant')} value={saisie.montant} onChange={(e) => setSaisie({ ...saisie, montant: e.target.value })} />
                     <button className="btn-primary text-sm" disabled={envoi || !saisie.caisse_id || !saisie.montant} onClick={() => rembourser(c.id)}>{t('encaisserRemboursement')}</button>
                     {peutAnnuler && <button className="btn-secondary text-sm" onClick={() => annuler(c.id)}>{t('abandonnerDette')}</button>}
+                    {peutForcer && (
+                      <button data-aide="reconciliations.recouvrementForce" className="btn-3d btn-3d-rouge text-sm px-3 py-2"
+                        onClick={() => setForcage({ commercial_id: c.id, montant: String(s), nb: '1', periode: moisCourant, motif: '' })}>
+                        {t('avances.bouton')}
+                      </button>
+                    )}
                   </div>
                 )}
+                {forcage?.commercial_id === c.id && (
+                  <div className="rounded-xl border border-rose-200 bg-rose-50/60 p-3 space-y-2">
+                    <p className="text-sm font-medium">{t('avances.titre')}</p>
+                    <p className="text-xs text-petrol-600">{t('avances.aide', { racine: entreprise?.compte_racine_avances || '421' })}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div><label className="label">{t('montant')}</label><input type="number" min="0" max={s} className="input-field" value={forcage.montant} onChange={(e) => setForcage({ ...forcage, montant: e.target.value })} /></div>
+                      <div><label className="label">{t('avances.nbMensualites')}</label><input type="number" min="1" max="60" className="input-field" value={forcage.nb} onChange={(e) => setForcage({ ...forcage, nb: e.target.value })} /></div>
+                      <div><label className="label">{t('avances.premierMois')}</label><input type="month" className="input-field" value={forcage.periode} onChange={(e) => setForcage({ ...forcage, periode: e.target.value })} /></div>
+                    </div>
+                    {Number(forcage.nb) > 0 && Number(forcage.montant) > 0 && (
+                      <p className="text-xs">{t('avances.apercu', { mensualite: formatXOF(Math.ceil(Number(forcage.montant) / Number(forcage.nb))) })}
+                        {entreprise?.plafond_retenue_mensuelle ? ` — ${t('avances.plafond', { plafond: formatXOF(entreprise.plafond_retenue_mensuelle) })}` : ''}</p>
+                    )}
+                    <input className="input-field" value={forcage.motif} onChange={(e) => setForcage({ ...forcage, motif: e.target.value })} placeholder={t('avances.motif')} />
+                    <div className="flex gap-2">
+                      <button className="btn-primary text-sm" disabled={envoi || forcage.motif.trim().length < 3} onClick={() => { if (window.confirm(t('avances.confirmer'))) lancerForcage() }}>{t('avances.valider')}</button>
+                      <button className="btn-secondary text-sm" onClick={() => setForcage(null)}>{t('annuler')}</button>
+                    </div>
+                  </div>
+                )}
+                {avances.filter((a) => a.commercial_id === c.id).map((a) => (
+                  <div key={a.id} className="rounded-xl border border-line p-3 text-xs space-y-1">
+                    <p className="font-medium text-sm">
+                      {t('avances.avance')} {formatXOF(a.montant)} — {a.nb_mensualites} × {formatXOF(a.mensualite)} {t('avances.aPartirDe', { mois: a.premiere_periode })}
+                      <span className={`ms-2 px-2 py-0.5 rounded-full ${a.statut === 'soldee' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-800'}`}>{t(`avances.statuts.${a.statut}`)}</span>
+                    </p>
+                    <p className="text-petrol-600">{a.motif} · {t('avances.restant')} <span className="font-mono font-semibold">{formatXOF(restant(a))}</span></p>
+                    {retenues.filter((r) => r.avance_id === a.id).map((r) => (
+                      <p key={r.id} className="text-petrol-500">✓ {r.periode_paie} : {formatXOF(r.montant)} ({t(`avances.par.${r.comptabilisee_par}`)})</p>
+                    ))}
+                    <div className="flex flex-wrap gap-3 pt-1">
+                      <button className="underline text-petrol-700" onClick={() => imprimerNotification(a)}>🖨️ {t('avances.notifBouton')}</button>
+                      {peutForcer && a.statut === 'en_cours' && !retenueParAvanceEtMois(a, moisEtat) && (
+                        <button className="underline text-amber-700" onClick={() => enregistrerRetenue(a)}>{t('avances.retenueBouton', { mois: moisEtat })}</button>
+                      )}
+                    </div>
+                  </div>
+                ))}
                 {erreur && <p className="text-xs text-red-600">{erreur}</p>}
               </div>
             )}

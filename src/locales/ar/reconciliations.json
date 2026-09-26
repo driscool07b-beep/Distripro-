@@ -100,7 +100,53 @@
   "typesDette": {
     "dette": "Debt",
     "remboursement": "Repayment",
-    "annulation": "Write-off"
+    "annulation": "Write-off",
+    "transfert_salaire": "Forced recovery (421)"
   },
-  "aucunCommercial": "No sales rep."
+  "aucunCommercial": "No sales rep.",
+  "avances": {
+    "bouton": "Forced recovery (salary deduction)",
+    "titre": "Forced recovery by salary deduction",
+    "aide": "The debt is moved from the third-party account to the staff advances account ({{racine}}…) and recovered monthly from salary. Have the rep sign the notice.",
+    "nbMensualites": "Number of instalments",
+    "premierMois": "First deduction month",
+    "apercu": "Instalment: {{mensualite}}",
+    "plafond": "cap: {{plafond}}",
+    "motif": "Reason (required)",
+    "confirmer": "Reclassify this debt as a salary advance? The 421 / 471 entry will be posted.",
+    "valider": "Confirm forced recovery",
+    "avance": "Salary advance",
+    "aPartirDe": "from {{mois}}",
+    "restant": "Left to deduct:",
+    "statuts": {
+      "en_cours": "Ongoing",
+      "soldee": "Settled"
+    },
+    "par": {
+      "paie": "booked by payroll",
+      "distribpro": "booked by DistribPro"
+    },
+    "notifBouton": "Notice to sign",
+    "retenueBouton": "Record {{mois}} deduction",
+    "montantRetenue": "Amount deducted from {{mois}} payroll:",
+    "moisPaie": "Payroll month",
+    "etatBouton": "Monthly deductions report (for payroll)",
+    "modePaie": "Deductions are booked by the payroll software: DistribPro only tracks them (no 422/421 entry here, no duplicate).",
+    "modeDistribpro": "Deductions are booked by DistribPro (422/421 entry): do not book them in payroll too.",
+    "etatTitre": "Salary deductions — {{mois}}",
+    "etatNotePaie": "To apply on payslips and book in payroll (debit 422 / credit 421). Not booked in DistribPro.",
+    "etatNoteDistribpro": "Already booked in DistribPro (debit 422 / credit 421): do not book again in payroll.",
+    "compte": "Advance account",
+    "retenue": "Deduction",
+    "resteApres": "Left after",
+    "notifTitre": "Salary deduction notice",
+    "notifSalarie": "Employee: {{nom}}",
+    "notifMontant": "Amount to repay: {{montant}}",
+    "notifMotif": "Origin: {{motif}}",
+    "notifEcheancier": "Schedule: {{nb}} instalment(s) of {{mensualite}}, from the {{debut}} payroll.",
+    "notifTexte": "The employee acknowledges owing the above amount and agrees to repay it through salary deductions per the schedule, within the limits set by applicable regulations.",
+    "notifFait": "Done on {{date}}",
+    "signSalarie": "Employee signature",
+    "signEmployeur": "For the employer"
+  }
 }
