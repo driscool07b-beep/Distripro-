@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import SelecteurCompte from '../components/SelecteurCompte'
+import { SYSCOHADA_DEPART } from '../lib/syscohada'
 import DiagnosticConnexion from '../components/DiagnosticConnexion'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
@@ -53,6 +55,17 @@ export default function Parametres() {
   const [enregistrementRegularisation, setEnregistrementRegularisation] = useState(false)
   const [confirmationRegularisation, setConfirmationRegularisation] = useState(false)
   const [planComptable, setPlanComptable] = useState([])
+  const [chargementPlan, setChargementPlan] = useState(false)
+  async function rechargerPlan() {
+    const { data } = await supabase.from('plan_comptable').select('id, numero_compte, libelle').order('numero_compte')
+    setPlanComptable(data || [])
+  }
+  async function chargerPlanDepart() {
+    setChargementPlan(true)
+    await supabase.rpc('importer_plan_comptable', { p_comptes: SYSCOHADA_DEPART })
+    await rechargerPlan()
+    setChargementPlan(false)
+  }
   const [compteChargesId, setCompteChargesId] = useState('')
   const [compteClientsId, setCompteClientsId] = useState('')
   const [compteEcartsId, setCompteEcartsId] = useState('')
@@ -139,7 +152,7 @@ export default function Parametres() {
       chargerEquipes()
     }
     if (['admin', 'manager', 'comptable'].includes(profil?.role)) {
-      supabase.from('plan_comptable').select('id, numero_compte, libelle').order('numero_compte').then(({ data }) => setPlanComptable(data || []))
+      rechargerPlan()
     }
   }, [profil])
 
@@ -1000,48 +1013,41 @@ export default function Parametres() {
         <div className="card p-4">
           <h2 className="font-semibold mb-1">{t('comptabilite.titre')}</h2>
           <p className="text-xs text-petrol-500 mb-3">{t('comptabilite.sousTitre')}</p>
-          {planComptable.length === 0 ? (
-            <p className="text-xs text-amber-700 mb-3">{t('comptabilite.aucunPlanComptable')}</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-              <div>
-                <label className="label">{t('comptabilite.compteCharges')}</label>
-                <select className="input-field text-sm" value={compteChargesId} onChange={(e) => setCompteChargesId(e.target.value)}>
-                  <option value="">{t('comptabilite.nonDefini')}</option>
-                  {planComptable.map((c) => <option key={c.id} value={c.id}>{c.numero_compte} — {c.libelle}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="label">{t('comptabilite.compteClients')}</label>
-                <select className="input-field text-sm" value={compteClientsId} onChange={(e) => setCompteClientsId(e.target.value)}>
-                  <option value="">{t('comptabilite.nonDefini')}</option>
-                  {planComptable.map((c) => <option key={c.id} value={c.id}>{c.numero_compte} — {c.libelle}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="label">{t('comptabilite.compteEcarts')}</label>
-                <select className="input-field text-sm" value={compteEcartsId} onChange={(e) => setCompteEcartsId(e.target.value)}>
-                  <option value="">{t('comptabilite.nonDefini')}</option>
-                  {planComptable.map((c) => <option key={c.id} value={c.id}>{c.numero_compte} — {c.libelle}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="label">{t('comptabilite.compteApports')}</label>
-                <select className="input-field text-sm" value={compteApportsId} onChange={(e) => setCompteApportsId(e.target.value)}>
-                  <option value="">{t('comptabilite.nonDefini')}</option>
-                  {planComptable.map((c) => <option key={c.id} value={c.id}>{c.numero_compte} — {c.libelle}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="label">{t('comptabilite.codeJournalCaisse')}</label>
-                <input className="input-field text-sm" value={codeJournalCaisse} onChange={(e) => setCodeJournalCaisse(e.target.value)} maxLength={3} />
-              </div>
-              <div>
-                <label className="label">{t('comptabilite.codeJournalBanque')}</label>
-                <input className="input-field text-sm" value={codeJournalBanque} onChange={(e) => setCodeJournalBanque(e.target.value)} maxLength={3} />
-              </div>
+          {planComptable.length === 0 && (
+            <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 mb-3">
+              <p className="text-xs text-amber-800 mb-2">{t('comptabilite.aucunPlanComptable')}</p>
+              <button type="button" className="btn-secondary text-xs" disabled={chargementPlan} onClick={chargerPlanDepart}>
+                {chargementPlan ? '…' : t('comptabilite.chargerPlanDepart')}
+              </button>
             </div>
           )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+            <div>
+              <label className="label">{t('comptabilite.compteCharges')}</label>
+              <SelecteurCompte valeur={compteChargesId} onChange={setCompteChargesId} comptes={planComptable} onCree={rechargerPlan} aide={t('comptabilite.aideCharges')} />
+            </div>
+            <div>
+              <label className="label">{t('comptabilite.compteClients')}</label>
+              <SelecteurCompte valeur={compteClientsId} onChange={setCompteClientsId} comptes={planComptable} onCree={rechargerPlan} aide={t('comptabilite.aideClients')} />
+            </div>
+            <div>
+              <label className="label">{t('comptabilite.compteEcarts')}</label>
+              <SelecteurCompte valeur={compteEcartsId} onChange={setCompteEcartsId} comptes={planComptable} onCree={rechargerPlan} aide={t('comptabilite.aideEcarts')} />
+            </div>
+            <div>
+              <label className="label">{t('comptabilite.compteApports')}</label>
+              <SelecteurCompte valeur={compteApportsId} onChange={setCompteApportsId} comptes={planComptable} onCree={rechargerPlan} aide={t('comptabilite.aideApports')} />
+            </div>
+            <div>
+              <label className="label">{t('comptabilite.codeJournalCaisse')}</label>
+              <input className="input-field text-sm" value={codeJournalCaisse} onChange={(e) => setCodeJournalCaisse(e.target.value)} maxLength={3} />
+              <p className="text-[11px] text-petrol-500 mt-1">{t('comptabilite.aideJournaux')}</p>
+            </div>
+            <div>
+              <label className="label">{t('comptabilite.codeJournalBanque')}</label>
+              <input className="input-field text-sm" value={codeJournalBanque} onChange={(e) => setCodeJournalBanque(e.target.value)} maxLength={3} />
+            </div>
+          </div>
           <button onClick={enregistrerComptesParDefaut} disabled={enregistrementComptes} className="btn-primary text-sm">
             {enregistrementComptes ? t('enregistrement') : t('enregistrer')}
           </button>
@@ -1431,6 +1437,12 @@ function SectionReconciliation() {
   const [v, setV] = useState(null)
   const [message, setMessage] = useState('')
   const [erreur, setErreur] = useState('')
+  const [plan, setPlan] = useState([])
+  const chargerPlan = async () => {
+    const { data } = await supabase.from('plan_comptable').select('id, numero_compte, libelle').order('numero_compte')
+    setPlan(data || [])
+  }
+  useEffect(() => { chargerPlan() }, [])
 
   useEffect(() => {
     if (!entreprise) return
@@ -1450,10 +1462,18 @@ function SectionReconciliation() {
   }, [entreprise])
 
   if (!v) return null
+  // Racines (471, 421) : saisies en chiffres ; autres comptes : choisis dans le plan.
   const champ = (cle) => (
     <div key={cle}>
       <label className="label">{t(`reconciliation.${cle}`)}</label>
-      <input className="input-field font-mono" value={v[cle]} onChange={(e) => setV({ ...v, [cle]: e.target.value })} />
+      {['racine', 'avances'].includes(cle) ? (
+        <>
+          <input className="input-field font-mono" value={v[cle]} onChange={(e) => setV({ ...v, [cle]: e.target.value })} />
+          <p className="text-[11px] text-petrol-500 mt-1">{t(`reconciliation.aide_${cle}`)}</p>
+        </>
+      ) : (
+        <SelecteurCompte mode="numero" valeur={v[cle]} onChange={(val) => setV({ ...v, [cle]: val })} comptes={plan} onCree={chargerPlan} aide={t(`reconciliation.aide_${cle}`)} />
+      )}
     </div>
   )
 

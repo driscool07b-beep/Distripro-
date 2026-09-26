@@ -158,8 +158,8 @@
   },
   "comptabilite": {
     "titre": "Accounting — default accounts",
-    "sousTitre": "Used to generate the counterpart of each entry during the accounting export. Requires a Chart of accounts to be created or imported first.",
-    "aucunPlanComptable": "No chart of accounts yet — go to Chart of accounts (menu) first to create one.",
+    "sousTitre": "For each type of operation, choose the account that receives the counterpart in exported entries. If an account is missing, create it with '➕ Create an account or sub-account'.",
+    "aucunPlanComptable": "No chart of accounts yet. Load the starter SYSCOHADA chart (editable), or create accounts one by one below.",
     "compteCharges": "Expense account (disbursements)",
     "compteClients": "Clients account (deposits/payments)",
     "compteEcarts": "Cash discrepancy account (regularizations)",
@@ -167,7 +167,13 @@
     "codeJournalCaisse": "Journal code — cash",
     "codeJournalBanque": "Journal code — bank",
     "nonDefini": "— Not set —",
-    "compteNonAffecte": "No account assigned"
+    "compteNonAffecte": "No account assigned",
+    "chargerPlanDepart": "Load starter SYSCOHADA chart",
+    "aideCharges": "Account debited when the till pays an expense without a specific account.",
+    "aideClients": "Account credited when a customer pays.",
+    "aideEcarts": "Account used to regularise a till shortage or surplus.",
+    "aideApports": "Account credited when the till is topped up.",
+    "aideJournaux": "Short journal code in your accounting software (e.g. CA till, BQ bank)."
   },
   "notation": {
     "titre": "App usage score (sales reps)",
@@ -217,6 +223,30 @@
     "parPaie": "the payroll software (DistribPro only tracks them)",
     "parDistribpro": "DistribPro (do not book them in payroll)",
     "plafond": "Monthly deduction cap (optional)",
-    "sansPlafond": "No cap"
+    "sansPlafond": "No cap",
+    "aide_racine": "Root of the sub-accounts created for each sales rep (471 → 471001…).",
+    "aide_avances": "Root of the salary advance sub-accounts (421 → 421001…).",
+    "aide_ventes": "Credited with cash sales collected by a rep.",
+    "aide_clients": "Credited with collections by a rep.",
+    "aide_stock": "Credited with a stock shortage.",
+    "aide_pertes": "Debited with a written-off gap or debt.",
+    "aide_caisse": "Debited with deposits if the till has no own account.",
+    "aide_remuneration": "Debited with salary deductions, if DistribPro books them."
+  },
+  "selecteurCompte": {
+    "creer": "Create an account or sub-account…",
+    "titre": "New account",
+    "compteRacine": "Main account (not a sub-account)",
+    "sousCompteDe": "Sub-account of",
+    "numero": "No. (e.g. 411101)",
+    "libelle": "Label",
+    "aideSousCompte": "The number must start with {{parent}} and be longer.",
+    "numeroInvalide": "Invalid number: digits only.",
+    "sousCompteInvalide": "A sub-account of {{parent}} must start with {{parent}} and be longer.",
+    "existeDeja": "This number already exists.",
+    "libelleObligatoire": "Label is required.",
+    "creerBouton": "Create and select",
+    "annuler": "Cancel",
+    "horsPlan": "not in the chart of accounts"
   }
 }

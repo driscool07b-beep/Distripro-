@@ -158,8 +158,8 @@
   },
   "comptabilite": {
     "titre": "Comptabilité — comptes par défaut",
-    "sousTitre": "Utilisés pour générer la contrepartie de chaque écriture lors de l'export comptable. Nécessite d'avoir d'abord créé ou importé un Plan comptable.",
-    "aucunPlanComptable": "Aucun plan comptable créé — va d'abord dans Plan comptable (menu) pour en créer un.",
+    "sousTitre": "Pour chaque type d'opération, choisissez le compte qui reçoit la contrepartie dans les écritures exportées. Si un compte manque, créez-le directement avec « ➕ Créer un compte ou un sous-compte ».",
+    "aucunPlanComptable": "Aucun plan comptable pour l'instant. Chargez le plan SYSCOHADA de départ (modifiable ensuite), ou créez vos comptes un par un dans les listes ci-dessous.",
     "compteCharges": "Compte de charges (décaissements)",
     "compteClients": "Compte clients (versements/règlements)",
     "compteEcarts": "Compte d'écarts de caisse (régularisations)",
@@ -167,7 +167,13 @@
     "codeJournalCaisse": "Code journal — caisse",
     "codeJournalBanque": "Code journal — banque",
     "nonDefini": "— Non défini —",
-    "compteNonAffecte": "Aucun compte affecté"
+    "compteNonAffecte": "Aucun compte affecté",
+    "chargerPlanDepart": "Charger le plan SYSCOHADA de départ",
+    "aideCharges": "Compte débité quand la caisse paie une dépense sans compte précis (ex. 658000 Charges diverses). Une dépense peut aussi avoir son propre compte.",
+    "aideClients": "Compte crédité quand un client règle sa facture (ex. 411100 Clients).",
+    "aideEcarts": "Compte utilisé pour régulariser un manquant ou un excédent de caisse constaté à l'inventaire (ex. 658000 Charges diverses).",
+    "aideApports": "Compte crédité quand on approvisionne la caisse (ex. 585000 Virements de fonds s'il vient de la banque).",
+    "aideJournaux": "Code court du journal dans votre logiciel comptable (ex. CA pour la caisse, BQ pour la banque)."
   },
   "notation": {
     "titre": "Note d'utilisation de l'app (commerciaux)",
@@ -217,6 +223,30 @@
     "parPaie": "le logiciel de paie (DistribPro en fait seulement le suivi)",
     "parDistribpro": "DistribPro (ne pas les comptabiliser dans la paie)",
     "plafond": "Plafond de retenue mensuelle (facultatif)",
-    "sansPlafond": "Aucun plafond"
+    "sansPlafond": "Aucun plafond",
+    "aide_racine": "Racine des sous-comptes créés automatiquement pour chaque commercial (471 → 471001, 471002…).",
+    "aide_avances": "Racine des sous-comptes d'avance sur salaire (421 → 421001…).",
+    "aide_ventes": "Crédité des ventes au comptant encaissées par un commercial (ex. 701100).",
+    "aide_clients": "Crédité des recouvrements encaissés par un commercial (ex. 411100).",
+    "aide_stock": "Crédité d'un manquant de stock (ex. 311000 Marchandises).",
+    "aide_pertes": "Débité d'un écart passé en perte ou d'une dette abandonnée (ex. 658000).",
+    "aide_caisse": "Débité des versements si la caisse n'a pas son propre compte (ex. 571100).",
+    "aide_remuneration": "Débité des retenues sur salaire, si DistribPro les comptabilise (ex. 422000)."
+  },
+  "selecteurCompte": {
+    "creer": "Créer un compte ou un sous-compte…",
+    "titre": "Nouveau compte",
+    "compteRacine": "Compte principal (pas un sous-compte)",
+    "sousCompteDe": "Sous-compte de",
+    "numero": "N° (ex. 411101)",
+    "libelle": "Libellé (ex. Clients — grossistes)",
+    "aideSousCompte": "Le numéro doit commencer par {{parent}} et être plus long (ex. {{parent}}1).",
+    "numeroInvalide": "Numéro invalide : chiffres uniquement.",
+    "sousCompteInvalide": "Un sous-compte de {{parent}} doit commencer par {{parent}} et être plus long.",
+    "existeDeja": "Ce numéro existe déjà dans le plan.",
+    "libelleObligatoire": "Le libellé est obligatoire.",
+    "creerBouton": "Créer et sélectionner",
+    "annuler": "Annuler",
+    "horsPlan": "absent du plan comptable"
   }
 }

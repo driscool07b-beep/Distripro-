@@ -2,34 +2,11 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as XLSX from 'xlsx'
 import { supabase } from '../lib/supabase'
+import { SYSCOHADA_DEPART } from '../lib/syscohada'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { traduireErreur } from '../lib/erreurs'
 
-const SYSCOHADA_DEPART = [
-  { numero_compte: '101000', libelle: 'Capital social' },
-  { numero_compte: '401000', libelle: 'Fournisseurs' },
-  { numero_compte: '411000', libelle: 'Clients' },
-  { numero_compte: '421000', libelle: 'Personnel, rémunérations dues' },
-  { numero_compte: '445200', libelle: 'État, TVA facturée' },
-  { numero_compte: '445660', libelle: 'État, TVA récupérable' },
-  { numero_compte: '521000', libelle: 'Banques locales' },
-  { numero_compte: '571000', libelle: 'Caisse' },
-  { numero_compte: '601000', libelle: 'Achats de marchandises' },
-  { numero_compte: '605000', libelle: 'Autres achats' },
-  { numero_compte: '605300', libelle: 'Fournitures de bureau' },
-  { numero_compte: '611000', libelle: 'Transports sur achats' },
-  { numero_compte: '613000', libelle: 'Locations' },
-  { numero_compte: '616000', libelle: "Primes d'assurances" },
-  { numero_compte: '622000', libelle: "Rémunérations d'intermédiaires et honoraires" },
-  { numero_compte: '624000', libelle: 'Transports de biens et de personnel' },
-  { numero_compte: '627000', libelle: 'Services bancaires et assimilés' },
-  { numero_compte: '628000', libelle: 'Divers (autres charges externes)' },
-  { numero_compte: '641000', libelle: 'Rémunérations directes versées au personnel' },
-  { numero_compte: '658000', libelle: 'Charges diverses de gestion courante' },
-  { numero_compte: '707000', libelle: 'Ventes de marchandises' },
-  { numero_compte: '758000', libelle: 'Produits divers de gestion courante' },
-]
 
 export default function PlanComptable() {
   const { t } = useTranslation('plancomptable')
