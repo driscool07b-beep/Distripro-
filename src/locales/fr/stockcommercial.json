@@ -34,5 +34,20 @@
   "venduImplicite": "Vendu (implicite)",
   "venduReel": "Vendu (réel)",
   "ecart": "Écart",
-  "ecartDetecte": "⚠️ Écart détecté : le nombre d'unités manquantes (sorti − retourné) ne correspond pas aux ventes enregistrées ce jour pour ce commercial. À vérifier."
+  "ecartDetecte": "⚠️ Écart détecté : le nombre d'unités manquantes (sorti − retourné) ne correspond pas aux ventes enregistrées ce jour pour ce commercial. À vérifier.",
+  "echanges": {
+    "onglet": "Échanges défectueux",
+    "titre": "Échanger des produits défectueux",
+    "aide": "Le commercial rapporte des produits abîmés et repart avec des produits sains. Son stock ne change pas ; les produits abîmés entrent au magasin dans un lot « endommagé ».",
+    "commercial": "— Commercial —",
+    "magasin": "— Magasin —",
+    "produit": "— Produit (en main) —",
+    "enMain": "{{n}} en main",
+    "quantite": "Quantité",
+    "motif": "Motif (obligatoire) — ex. : emballages percés, produit périmé…",
+    "valider": "Enregistrer l'échange",
+    "historique": "Historique des échanges",
+    "aucun": "Aucun échange enregistré.",
+    "par": "enregistré par {{nom}}"
+  }
 }

@@ -120,7 +120,9 @@
     "nouvelObjectif": "Fixe un objectif de ventes (montant ou quantité) sur une période.",
     "unePersonne": "Objectif pour un commercial ou un chef d'équipe.",
     "uneZone": "Objectif pour une zone géographique.",
-    "leBureau": "Objectif pour les ventes faites au bureau."
+    "leBureau": "Objectif pour les ventes faites au bureau.",
+    "modifier": "Modifie la période, les montants ou les notes de l'objectif. Le motif et les anciennes valeurs sont conservés dans l'historique.",
+    "historiqueBouton": "Affiche qui a créé ou modifié cet objectif, quand, et ce qui a changé."
   },
   "depots": {
     "nouveauDepot": "Ajoute un magasin de stockage et son responsable.",

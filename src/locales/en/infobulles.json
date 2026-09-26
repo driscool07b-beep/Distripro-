@@ -120,7 +120,9 @@
     "nouvelObjectif": "Sets a sales target (amount or quantity) over a period.",
     "unePersonne": "Target for a sales rep or team lead.",
     "uneZone": "Target for a geographic area.",
-    "leBureau": "Target for sales made at the office."
+    "leBureau": "Target for sales made at the office.",
+    "modifier": "Changes the target's period, amounts or notes. The reason and old values are kept in the history.",
+    "historiqueBouton": "Shows who created or changed this target, when, and what changed."
   },
   "depots": {
     "nouveauDepot": "Adds a warehouse and its manager.",

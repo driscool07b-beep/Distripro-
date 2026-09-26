@@ -38,5 +38,24 @@
   "noteRealiseManager": "Le montant réalisé sera la somme des ventes de tous les commerciaux affiliés à son équipe (paramétrable dans Paramètres → Organigramme commercial).",
   "noteRealiseAdmin": "Le montant réalisé sera la somme de toutes les ventes de l'entreprise sur la période (objectif global).",
   "leBureau": "Le bureau",
-  "noteRealiseBureau": "Le montant réalisé sera la somme des ventes de bureau (vendues depuis le dépôt, non attribuées à un commercial) sur la période."
+  "noteRealiseBureau": "Le montant réalisé sera la somme des ventes de bureau (vendues depuis le dépôt, non attribuées à un commercial) sur la période.",
+  "modifier": "Modifier",
+  "motifModification": "Motif de la modification (obligatoire)",
+  "enregistrerModification": "Enregistrer la modification",
+  "motifSuppression": "Motif de la suppression (obligatoire) :",
+  "historique": {
+    "bouton": "Historique",
+    "titre": "Historique de l'objectif",
+    "vide": "Aucun historique.",
+    "debut": "Début",
+    "fin": "Fin",
+    "montant": "Montant cible",
+    "quantite": "Quantité cible",
+    "notes": "Notes",
+    "actions": {
+      "creation": "Créé",
+      "modification": "Modifié",
+      "suppression": "Supprimé"
+    }
+  }
 }

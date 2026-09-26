@@ -188,7 +188,10 @@ export default function Objectifs() {
   }
 
   async function supprimerObjectif(id) {
-    await supabase.from('objectifs').delete().eq('id', id)
+    const motif = window.prompt(t('motifSuppression'))
+    if (motif === null) return
+    const { error } = await supabase.rpc('supprimer_objectif', { p_objectif_id: id, p_motif: motif })
+    if (error) { alert(traduireErreur(error.message)); return }
     charger()
   }
 
@@ -214,7 +217,7 @@ export default function Objectifs() {
       ) : (
         <div className="space-y-3">
           {objectifs.map((o) => (
-            <CarteObjectif key={o.id} objectif={o} onSupprimer={() => supprimerObjectif(o.id)} />
+            <CarteObjectif key={o.id} objectif={o} onSupprimer={() => supprimerObjectif(o.id)} onModifie={charger} />
           ))}
           {objectifs.length === 0 && <p className="text-petrol-400 text-center py-8 text-sm">{t('aucunObjectif')}</p>}
         </div>
@@ -342,8 +345,58 @@ export default function Objectifs() {
   )
 }
 
-function CarteObjectif({ objectif: o, onSupprimer }) {
+function CarteObjectif({ objectif: o, onSupprimer, onModifie }) {
   const { t } = useTranslation('objectifs')
+  const [edition, setEdition] = useState(null)
+  const [historique, setHistorique] = useState(null)
+  const [erreurEdition, setErreurEdition] = useState('')
+  const [envoiEdition, setEnvoiEdition] = useState(false)
+
+  function ouvrirEdition() {
+    setErreurEdition('')
+    setEdition({
+      periode_debut: o.periode_debut, periode_fin: o.periode_fin,
+      montant_cible: o.montant_cible ?? '', quantite_cible: o.quantite_cible ?? '',
+      notes: o.notes || '', motif: '',
+    })
+  }
+
+  async function enregistrerEdition() {
+    setErreurEdition('')
+    setEnvoiEdition(true)
+    const { error } = await supabase.rpc('modifier_objectif', {
+      p_objectif_id: o.id,
+      p_periode_debut: edition.periode_debut,
+      p_periode_fin: edition.periode_fin,
+      p_montant_cible: edition.montant_cible === '' ? null : Number(edition.montant_cible),
+      p_quantite_cible: edition.quantite_cible === '' ? null : Number(edition.quantite_cible),
+      p_notes: edition.notes,
+      p_motif: edition.motif,
+    })
+    setEnvoiEdition(false)
+    if (error) { setErreurEdition(traduireErreur(error.message)); return }
+    setEdition(null)
+    setHistorique(null)
+    onModifie()
+  }
+
+  async function basculerHistorique() {
+    if (historique) { setHistorique(null); return }
+    const { data } = await supabase
+      .from('historique_objectifs')
+      .select('action, avant, apres, motif, created_at, auteur:profils!effectue_par(nom)')
+      .eq('objectif_id', o.id)
+      .order('created_at', { ascending: false })
+    setHistorique(data || [])
+  }
+
+  const champsSuivis = [
+    ['periode_debut', t('historique.debut'), (v) => (v ? formatDate(v) : '—')],
+    ['periode_fin', t('historique.fin'), (v) => (v ? formatDate(v) : '—')],
+    ['montant_cible', t('historique.montant'), (v) => (v != null ? formatXOF(v) : '—')],
+    ['quantite_cible', t('historique.quantite'), (v) => (v != null ? v : '—')],
+    ['notes', t('historique.notes'), (v) => v || '—'],
+  ]
   const cible = o.profils?.nom || o.zone || (o.cible_bureau ? t('leBureau') : '')
   const roleCible = o.profils?.role && o.profils.role !== 'commercial' ? t(`roles.${o.profils.role}`) : null
   const pctMontant = o.montant_cible ? Math.min(100, Math.round((o.montantRealise / o.montant_cible) * 100)) : null
@@ -362,7 +415,11 @@ function CarteObjectif({ objectif: o, onSupprimer }) {
             {o.produits?.nom ? ` — ${o.produits.nom}` : ''}
           </p>
         </div>
-        <button data-aide="objectifs.supprimer" onClick={onSupprimer} className="text-xs text-red-600 underline">{t('supprimer')}</button>
+        <div className="flex gap-3 shrink-0">
+          <button data-aide="objectifs.modifier" onClick={ouvrirEdition} className="text-xs text-petrol-700 underline">{t('modifier')}</button>
+          <button data-aide="objectifs.historiqueBouton" onClick={basculerHistorique} className="text-xs text-petrol-500 underline">🕘 {t('historique.bouton')}</button>
+          <button data-aide="objectifs.supprimer" onClick={onSupprimer} className="text-xs text-red-600 underline">{t('supprimer')}</button>
+        </div>
       </div>
 
       {o.montant_cible != null && (
@@ -386,6 +443,60 @@ function CarteObjectif({ objectif: o, onSupprimer }) {
       )}
 
       {o.notes && <p className="text-xs text-petrol-500 mt-2">{o.notes}</p>}
+
+      {edition && (
+        <div className="mt-3 border-t border-line pt-3 space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="label">{t('historique.debut')}</label>
+              <input type="date" className="input-field" value={edition.periode_debut} onChange={(e) => setEdition({ ...edition, periode_debut: e.target.value })} />
+            </div>
+            <div>
+              <label className="label">{t('historique.fin')}</label>
+              <input type="date" className="input-field" value={edition.periode_fin} onChange={(e) => setEdition({ ...edition, periode_fin: e.target.value })} />
+            </div>
+            <div>
+              <label className="label">{t('historique.montant')}</label>
+              <input type="number" min="0" className="input-field" value={edition.montant_cible} onChange={(e) => setEdition({ ...edition, montant_cible: e.target.value })} />
+            </div>
+            <div>
+              <label className="label">{t('historique.quantite')}</label>
+              <input type="number" min="0" className="input-field" value={edition.quantite_cible} onChange={(e) => setEdition({ ...edition, quantite_cible: e.target.value })} disabled={!o.produit_id} />
+            </div>
+          </div>
+          <input className="input-field" value={edition.notes} onChange={(e) => setEdition({ ...edition, notes: e.target.value })} placeholder={t('historique.notes')} />
+          <input className="input-field" value={edition.motif} onChange={(e) => setEdition({ ...edition, motif: e.target.value })} placeholder={t('motifModification')} />
+          {erreurEdition && <p className="text-xs text-red-600">{erreurEdition}</p>}
+          <div className="flex gap-2">
+            <button className="btn-primary text-xs px-3 py-1.5" disabled={envoiEdition || edition.motif.trim().length < 3} onClick={enregistrerEdition}>
+              {envoiEdition ? t('enregistrement') : t('enregistrerModification')}
+            </button>
+            <button className="btn-secondary text-xs px-3 py-1.5" onClick={() => setEdition(null)}>{t('annuler')}</button>
+          </div>
+        </div>
+      )}
+
+      {historique && (
+        <div className="mt-3 border-t border-line pt-3">
+          <p className="text-xs font-semibold text-petrol-600 mb-2">{t('historique.titre')}</p>
+          {historique.length === 0 && <p className="text-xs text-petrol-400">{t('historique.vide')}</p>}
+          <ul className="space-y-2">
+            {historique.map((h, i) => (
+              <li key={i} className="text-xs bg-canvas rounded-lg p-2">
+                <p className="font-medium">
+                  {t(`historique.actions.${h.action}`)} — {h.auteur?.nom || '—'} — {new Date(h.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
+                </p>
+                {h.motif && <p className="text-amber-700">« {h.motif} »</p>}
+                {h.action === 'modification' && champsSuivis
+                  .filter(([cle]) => JSON.stringify(h.avant?.[cle] ?? null) !== JSON.stringify(h.apres?.[cle] ?? null))
+                  .map(([cle, libelle, format]) => (
+                    <p key={cle} className="text-petrol-600">{libelle} : <span className="line-through">{format(h.avant?.[cle])}</span> → <strong>{format(h.apres?.[cle])}</strong></p>
+                  ))}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

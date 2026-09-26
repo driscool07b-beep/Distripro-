@@ -31,7 +31,8 @@
     "aide": "Aide",
     "banques": "Banques",
     "planComptable": "Plan comptable",
-    "notesUtilisation": "Notes d'utilisation"
+    "notesUtilisation": "Notes d'utilisation",
+    "reconciliations": "Réconciliations"
   },
   "actions": {
     "annuler": "Annuler",

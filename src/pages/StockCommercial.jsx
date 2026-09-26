@@ -39,6 +39,7 @@ export default function StockCommercial() {
         {[
           { id: 'enmain', label: t('ongletStockEnMain') },
           { id: 'sorties', label: t('ongletSortiesRetours') },
+          ...(['admin', 'manager', 'gestionnaire_stock', 'comptable'].includes(profil?.role) ? [{ id: 'echanges', label: t('echanges.onglet') }] : []),
         ].map((o) => (
           <button
             key={o.id}
@@ -54,6 +55,7 @@ export default function StockCommercial() {
 
       {onglet === 'enmain' && <StockEnMain />}
       {onglet === 'sorties' && <SortiesRetours />}
+      {onglet === 'echanges' && <EchangesDefectueux />}
     </div>
   )
 }
@@ -458,3 +460,93 @@ function SortiesRetours() {
   )
 }
 
+
+// Échange de produits défectueux au magasin : le commercial rapporte des
+// produits abîmés et repart avec des produits sains. Le stock du commercial
+// ne change pas ; les produits abîmés entrent dans un lot « endommagé ».
+function EchangesDefectueux() {
+  const { t } = useTranslation('stockcommercial')
+  const { profil } = useAuth()
+  const [historique, setHistorique] = useState([])
+  const [commerciaux, setCommerciaux] = useState([])
+  const [depots, setDepots] = useState([])
+  const [enMain, setEnMain] = useState([])
+  const [form, setForm] = useState({ commercial_id: '', depot_id: '', produit_id: '', quantite: 1, motif: '' })
+  const [erreur, setErreur] = useState('')
+  const [envoi, setEnvoi] = useState(false)
+  const peutEchanger = ['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)
+
+  async function charger() {
+    const { data } = await supabase.from('echanges_defectueux')
+      .select('id, quantite, motif, created_at, commercial:profils!commercial_id(nom), agent:profils!effectue_par(nom), produits(nom), depots(nom)')
+      .order('created_at', { ascending: false }).limit(100)
+    setHistorique(data || [])
+  }
+  useEffect(() => {
+    charger()
+    supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom').then(({ data }) => setCommerciaux(data || []))
+    supabase.from('depots').select('id, nom').order('nom').then(({ data }) => setDepots(data || []))
+  }, [])
+  useEffect(() => {
+    if (!form.commercial_id) { setEnMain([]); return }
+    supabase.from('stock_commercial').select('produit_id, quantite, produits(nom)').eq('commercial_id', form.commercial_id).gt('quantite', 0)
+      .then(({ data }) => setEnMain(data || []))
+  }, [form.commercial_id])
+
+  async function valider() {
+    setErreur('')
+    setEnvoi(true)
+    const { error } = await supabase.rpc('echanger_produits_defectueux', {
+      p_commercial_id: form.commercial_id, p_depot_id: form.depot_id, p_produit_id: form.produit_id,
+      p_quantite: Number(form.quantite), p_motif: form.motif,
+    })
+    setEnvoi(false)
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    setForm({ ...form, produit_id: '', quantite: 1, motif: '' })
+    charger()
+  }
+
+  return (
+    <div className="space-y-4">
+      {peutEchanger && (
+        <div className="card p-4 space-y-3">
+          <p className="font-semibold">{t('echanges.titre')}</p>
+          <p className="text-xs text-petrol-500">{t('echanges.aide')}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <select className="input-field" value={form.commercial_id} onChange={(e) => setForm({ ...form, commercial_id: e.target.value, produit_id: '' })}>
+              <option value="">{t('echanges.commercial')}</option>
+              {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
+            </select>
+            <select className="input-field" value={form.depot_id} onChange={(e) => setForm({ ...form, depot_id: e.target.value })}>
+              <option value="">{t('echanges.magasin')}</option>
+              {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+            </select>
+            <select className="input-field" value={form.produit_id} onChange={(e) => setForm({ ...form, produit_id: e.target.value })} disabled={!form.commercial_id}>
+              <option value="">{t('echanges.produit')}</option>
+              {enMain.map((l) => <option key={l.produit_id} value={l.produit_id}>{l.produits?.nom} ({t('echanges.enMain', { n: l.quantite })})</option>)}
+            </select>
+            <input type="number" min="1" className="input-field" value={form.quantite} onChange={(e) => setForm({ ...form, quantite: e.target.value })} placeholder={t('echanges.quantite')} />
+          </div>
+          <input className="input-field" value={form.motif} onChange={(e) => setForm({ ...form, motif: e.target.value })} placeholder={t('echanges.motif')} />
+          {erreur && <p className="text-sm text-red-600">{erreur}</p>}
+          <button data-aide="stockcommercial.echanges.valider" className="btn-primary text-sm"
+            disabled={envoi || !form.commercial_id || !form.depot_id || !form.produit_id || form.motif.trim().length < 3}
+            onClick={valider}>{envoi ? '…' : t('echanges.valider')}</button>
+        </div>
+      )}
+      <div className="card p-4">
+        <p className="font-semibold mb-2">{t('echanges.historique')}</p>
+        {historique.length === 0 ? <p className="text-sm text-petrol-400">{t('echanges.aucun')}</p> : (
+          <ul className="text-sm space-y-1.5">
+            {historique.map((h) => (
+              <li key={h.id} className="border-b border-line pb-1.5">
+                <span className="font-medium">{h.produits?.nom} × {h.quantite}</span> — {h.commercial?.nom} — {h.depots?.nom}
+                <span className="block text-xs text-petrol-500">{formatDate(h.created_at)} · {h.motif} · {t('echanges.par', { nom: h.agent?.nom || '—' })}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  )
+}

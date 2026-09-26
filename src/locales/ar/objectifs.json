@@ -38,5 +38,24 @@
   "noteRealiseManager": "سيكون المبلغ المحقق مجموع مبيعات جميع المندوبين المنتسبين لفريقه (قابل للتهيئة في الإعدادات ← الهيكل التنظيمي للمبيعات).",
   "noteRealiseAdmin": "سيكون المبلغ المحقق مجموع كل مبيعات الشركة خلال الفترة (هدف شامل للشركة).",
   "leBureau": "المكتب",
-  "noteRealiseBureau": "سيكون المبلغ المحقق مجموع مبيعات المكتب (المباعة من المستودع، غير المنسوبة لمندوب) خلال الفترة."
+  "noteRealiseBureau": "سيكون المبلغ المحقق مجموع مبيعات المكتب (المباعة من المستودع، غير المنسوبة لمندوب) خلال الفترة.",
+  "modifier": "Edit",
+  "motifModification": "Reason for the change (required)",
+  "enregistrerModification": "Save change",
+  "motifSuppression": "Reason for deleting (required):",
+  "historique": {
+    "bouton": "History",
+    "titre": "Target history",
+    "vide": "No history.",
+    "debut": "Start",
+    "fin": "End",
+    "montant": "Target amount",
+    "quantite": "Target quantity",
+    "notes": "Notes",
+    "actions": {
+      "creation": "Created",
+      "modification": "Changed",
+      "suppression": "Deleted"
+    }
+  }
 }

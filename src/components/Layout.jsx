@@ -244,6 +244,22 @@ export default function Layout() {
               {t('menu.versements')}
             </NavLink>
           )}
+          {['admin', 'manager', 'comptable', 'commercial'].includes(profil?.role) && (
+            <NavLink
+              to="/reconciliations"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <JournalIcon className="w-4 h-4 shrink-0" />
+              {t('menu.reconciliations')}
+            </NavLink>
+          )}
           {['admin', 'manager', 'comptable'].includes(profil?.role) && (
             <NavLink
               to="/journal-caisse"
