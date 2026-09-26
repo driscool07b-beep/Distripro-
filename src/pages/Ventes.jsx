@@ -29,6 +29,7 @@ export default function Ventes() {
   const [venteOuverte, setVenteOuverte] = useState(null)
   const [modeAnnulation, setModeAnnulation] = useState(false)
   const [motifAnnulation, setMotifAnnulation] = useState('')
+  const [depotRetour, setDepotRetour] = useState('')
   const [envoiAnnulation, setEnvoiAnnulation] = useState(false)
   const [erreurAnnulation, setErreurAnnulation] = useState('')
   const [detailVente, setDetailVente] = useState(null)
@@ -49,6 +50,8 @@ export default function Ventes() {
   const [creditDisponible, setCreditDisponible] = useState(0)
   const [creditUtilise, setCreditUtilise] = useState('')
   const [commercialVendeurId, setCommercialVendeurId] = useState('')
+  const [sourceStock, setSourceStock] = useState('depot') // 'depot' | 'commercial'
+  const [totauxServeur, setTotauxServeur] = useState(null)
   const [depotId, setDepotId] = useState('')
   const [stocksParDepot, setStocksParDepot] = useState({}) // { produit_id: { depot_id: quantite } }
   const [montantPaye, setMontantPaye] = useState('')
@@ -87,7 +90,7 @@ export default function Ventes() {
   async function chargerVentes() {
     setChargement(true)
 
-    let selectStr = 'id, numero_vente, total, created_at, statut, clients!inner(nom, ville), profils!created_by(nom)'
+    let selectStr = 'id, numero_vente, total, created_at, statut, clients!inner(nom, ville), profils!created_by(nom), commercial:profils!commercial_id(nom)'
     selectStr += filtres.produitId ? ', ventes_lignes!inner(id, produit_id)' : ', ventes_lignes(id)'
 
     let requete = supabase.from('ventes').select(selectStr).order('created_at', { ascending: false }).limit(200)
@@ -115,7 +118,7 @@ export default function Ventes() {
     }
     if (filtres.clientId) requete = requete.eq('client_id', filtres.clientId)
     if (filtres.ville) requete = requete.eq('clients.ville', filtres.ville)
-    if (filtres.commercialId) requete = requete.eq('created_by', filtres.commercialId)
+    if (filtres.commercialId) requete = requete.or(`commercial_id.eq.${filtres.commercialId},and(commercial_id.is.null,created_by.eq.${filtres.commercialId})`)
     if (filtres.produitId) requete = requete.eq('ventes_lignes.produit_id', filtres.produitId)
     if (profil?.role === 'commercial' && !profil?.acces_etendu) {
       requete = requete.eq('commercial_id', profil.id)
@@ -135,7 +138,7 @@ export default function Ventes() {
     const [{ data: vente }, { data: lignes }, { data: autresTaxes }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, montant_ht, montant_tva, montant_autres_taxes, clients(nom, telephone, adresse, ville), profils!created_by(nom)')
+        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, montant_ht, montant_tva, montant_autres_taxes, depot_id, clients(nom, telephone, adresse, ville), profils!created_by(nom), commercial:profils!commercial_id(nom)')
         .eq('id', venteId)
         .single(),
       supabase
@@ -171,6 +174,7 @@ export default function Ventes() {
     const { error } = await supabase.rpc('creer_avoir', {
       p_vente_id: venteOuverte,
       p_motif: motif,
+      p_depot_id: depotRetour || null,
     })
     setEnvoiAnnulation(false)
     if (error) {
@@ -375,7 +379,24 @@ export default function Ventes() {
   const sousTotal = lignes.reduce((s, l) => s + Number(l.quantite || 0) * Number(l.prix_unitaire || 0), 0)
   const remisePourcentageEffectif = Math.min(Math.max(Number(remisePourcentage || 0), 0), 100)
   const remiseEffective = Math.round(sousTotal * (remisePourcentageEffectif / 100))
-  const total = sousTotal - remiseEffective
+  // Le total affiché est celui que le serveur enregistrera (TVA et autres
+  // taxes comprises) : calculé par la même fonction que la vente.
+  const totalHorsTaxes = sousTotal - remiseEffective
+  const total = totauxServeur ? Number(totauxServeur.total) : totalHorsTaxes
+  const cleTotaux = JSON.stringify([lignes.map((l) => [l.produit_id, l.quantite, l.prix_unitaire]), remiseEffective])
+  useEffect(() => {
+    const lignesCalc = lignes.filter((l) => l.produit_id && Number(l.quantite) > 0)
+    if (lignesCalc.length === 0) { setTotauxServeur(null); return }
+    const minuterie = setTimeout(async () => {
+      const { data, error } = await supabase.rpc('calculer_totaux_vente', {
+        p_lignes: lignesCalc.map((l) => ({ produit_id: l.produit_id, quantite: Number(l.quantite), prix_unitaire: Number(l.prix_unitaire || 0) })),
+        p_remise_montant: remiseEffective,
+      })
+      setTotauxServeur(error ? null : data)
+    }, 300)
+    return () => clearTimeout(minuterie)
+  }, [cleTotaux])
+
   const creditEffectif = Math.min(Math.max(Number(creditUtilise || 0), 0), creditDisponible, total)
   const totalFiltre = ventes.reduce((s, v) => (v.statut === 'annulee' ? s : s + Number(v.total || 0)), 0)
 
@@ -394,7 +415,7 @@ export default function Ventes() {
       date: formatDate(v.created_at),
       client: v.clients?.nom || '—',
       ville: v.clients?.ville || '—',
-      commercial: v.profils?.nom || '—',
+      commercial: v.commercial?.nom || t('bureau'),
       articles: v.ventes_lignes?.length || 0,
       total: Number(v.total || 0),
     }))
@@ -445,6 +466,8 @@ export default function Ventes() {
       p_motif_remise: remiseEffective > 0 ? motifRemise.trim() : null,
       p_depot_id: depotId || null,
       p_credit_utilise: creditEffectif,
+      // Choix explicite de la marchandise : magasin ou stock terrain du commercial.
+      p_source_stock: profil?.role === 'commercial' ? null : (commercialVendeurId ? sourceStock : 'depot'),
     }
 
     // Hors-ligne : uniquement possible pour un commercial vendant depuis
@@ -644,7 +667,7 @@ export default function Ventes() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-petrol-700">{v.clients?.ville || '—'}</td>
-                  <td className="px-4 py-3 text-petrol-700">{v.profils?.nom || '—'}</td>
+                  <td className="px-4 py-3 text-petrol-700">{v.commercial?.nom || <span className="text-petrol-400">{t('bureau')}</span>}</td>
                   <td className="px-4 py-3 text-petrol-700">{t('table.nbArticles', { n: v.ventes_lignes?.length || 0 })}</td>
                   <td className="px-4 py-3 font-mono text-right">{formatXOF(v.total)}</td>
                 </tr>
@@ -787,8 +810,19 @@ export default function Ventes() {
                   )
                 )}
 
+                {totauxServeur && (Number(totauxServeur.tva) > 0 || (totauxServeur.autres_taxes || []).length > 0) && (
+                  <div className="text-sm space-y-0.5 pt-1">
+                    <div className="flex justify-between text-petrol-600"><span>{t('form.totalHT')}</span><span className="font-mono">{formatXOF(totauxServeur.ht)}</span></div>
+                    {Number(totauxServeur.tva) > 0 && (
+                      <div className="flex justify-between text-petrol-600"><span>{t('form.tva')}</span><span className="font-mono">{formatXOF(totauxServeur.tva)}</span></div>
+                    )}
+                    {(totauxServeur.autres_taxes || []).map((tx) => (
+                      <div key={tx.nom} className="flex justify-between text-petrol-600"><span>{tx.nom} ({tx.taux}%)</span><span className="font-mono">{formatXOF(tx.montant)}</span></div>
+                    ))}
+                  </div>
+                )}
                 <div className="flex items-center justify-between pt-1">
-                  <span className="text-sm font-medium text-petrol-700">{t('form.total')}</span>
+                  <span className="text-sm font-medium text-petrol-700">{totauxServeur && Number(totauxServeur.total) !== Number(totauxServeur.ht) ? t('form.totalTTC') : t('form.total')}</span>
                   <span className="font-mono text-lg font-semibold">{formatXOF(total)}</span>
                 </div>
               </div>
@@ -800,14 +834,29 @@ export default function Ventes() {
                     {t('form.vousMeme')}
                   </p>
                 ) : (
-                  <select
-                    className="input-field"
-                    value={commercialVendeurId}
-                    onChange={(e) => setCommercialVendeurId(e.target.value)}
-                  >
-                    <option value="">{t('form.venteDeBureau')}</option>
-                    {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
-                  </select>
+                  <>
+                    <select
+                      className="input-field"
+                      value={commercialVendeurId}
+                      onChange={(e) => { setCommercialVendeurId(e.target.value); setSourceStock('depot') }}
+                    >
+                      <option value="">{t('form.venteDeBureau')}</option>
+                      {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
+                    </select>
+                    {commercialVendeurId && (
+                      <div className="mt-2 rounded-lg border border-line p-3 space-y-1.5">
+                        <p className="text-xs font-medium text-petrol-700">{t('form.sourceMarchandise')}</p>
+                        <label className="flex items-start gap-2 text-sm">
+                          <input type="radio" name="source" className="mt-1" checked={sourceStock === 'depot'} onChange={() => setSourceStock('depot')} />
+                          <span>{t('form.sourceDepot')}</span>
+                        </label>
+                        <label className="flex items-start gap-2 text-sm">
+                          <input type="radio" name="source" className="mt-1" checked={sourceStock === 'commercial'} onChange={() => setSourceStock('commercial')} />
+                          <span>{t('form.sourceCommercial', { nom: commerciaux.find((c) => c.id === commercialVendeurId)?.nom || '' })}</span>
+                        </label>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -934,7 +983,8 @@ export default function Ventes() {
                       })}
                     </p>
                     <p className="text-xs text-petrol-500 mt-1">{t('detail.commercial')}</p>
-                    <p className="text-petrol-700">{detailVente.vente?.profils?.nom || '—'}</p>
+                    <p className="text-petrol-700">{detailVente.vente?.commercial?.nom || t('bureau')}</p>
+                    <p className="text-xs text-petrol-500">{t('saisiPar', { nom: detailVente.vente?.profils?.nom || '—' })}</p>
                   </div>
                 </div>
 
@@ -1018,6 +1068,15 @@ export default function Ventes() {
                       onChange={(e) => setMotifAnnulation(e.target.value)}
                       placeholder={t('detail.motifAnnulationPlaceholder')}
                     />
+                    {!detailVente?.vente?.depot_id && depots.length > 1 && (
+                      <div>
+                        <label className="text-xs font-medium text-red-700">{t('detail.magasinRetour')}</label>
+                        <select className="input-field text-sm" value={depotRetour} onChange={(e) => setDepotRetour(e.target.value)}>
+                          <option value="">{t('detail.choisirMagasin')}</option>
+                          {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+                        </select>
+                      </div>
+                    )}
                     {erreurAnnulation && <p className="text-xs text-red-600">{erreurAnnulation}</p>}
                     <div className="flex gap-2">
                       <button data-aide="ventes.detail.retour"

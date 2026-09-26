@@ -77,7 +77,13 @@
     "erreurSelectionnerClient": "Select a client.",
     "erreurArticleValide": "Add at least one valid item.",
     "erreurMotifRemise": "A reason is required to apply a discount.",
-    "erreurCreationVente": "Error (sale creation)"
+    "erreurCreationVente": "Error (sale creation)",
+    "totalHT": "Total excl. tax",
+    "tva": "VAT",
+    "totalTTC": "Total incl. tax",
+    "sourceMarchandise": "Goods taken from:",
+    "sourceDepot": "the warehouse (above) — the sale is only credited to the rep",
+    "sourceCommercial": "{{nom}}'s field stock (they deliver)"
   },
   "detail": {
     "chargement": "Loading…",
@@ -110,7 +116,9 @@
     "impossibleChargerDetail": "Unable to load details.",
     "erreurMotifObligatoire": "The reason is required.",
     "partagePasDisponible": "Direct sharing isn't available on this browser. Download the PDF and share it manually (WhatsApp, email…).",
-    "titrePartage": "Sales receipt"
+    "titrePartage": "Sales receipt",
+    "magasinRetour": "Warehouse receiving the returned goods",
+    "choisirMagasin": "— Choose —"
   },
   "accesRefuse": "This page isn't accessible for your role.",
   "export": {
@@ -121,5 +129,7 @@
     "commercial": "Sales rep",
     "articles": "Items",
     "total": "Total"
-  }
+  },
+  "bureau": "Office sale",
+  "saisiPar": "Entered by {{nom}}"
 }

@@ -77,7 +77,13 @@
     "erreurSelectionnerClient": "请选择客户。",
     "erreurArticleValide": "请至少添加一项有效商品。",
     "erreurMotifRemise": "应用折扣需要填写原因。",
-    "erreurCreationVente": "错误（创建销售）"
+    "erreurCreationVente": "错误（创建销售）",
+    "totalHT": "Total excl. tax",
+    "tva": "VAT",
+    "totalTTC": "Total incl. tax",
+    "sourceMarchandise": "Goods taken from:",
+    "sourceDepot": "the warehouse (above) — the sale is only credited to the rep",
+    "sourceCommercial": "{{nom}}'s field stock (they deliver)"
   },
   "detail": {
     "chargement": "加载中…",
@@ -110,7 +116,9 @@
     "impossibleChargerDetail": "无法加载详情。",
     "erreurMotifObligatoire": "原因为必填项。",
     "partagePasDisponible": "此浏览器不支持直接分享。请下载 PDF 后手动分享（WhatsApp、邮件等）。",
-    "titrePartage": "销售收据"
+    "titrePartage": "销售收据",
+    "magasinRetour": "Warehouse receiving the returned goods",
+    "choisirMagasin": "— Choose —"
   },
   "accesRefuse": "此页面不适用于您的角色。",
   "export": {
@@ -121,5 +129,7 @@
     "commercial": "销售代表",
     "articles": "商品",
     "total": "总计"
-  }
+  },
+  "bureau": "Office sale",
+  "saisiPar": "Entered by {{nom}}"
 }

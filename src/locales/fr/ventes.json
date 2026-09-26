@@ -77,7 +77,13 @@
     "erreurSelectionnerClient": "Sélectionnez un client.",
     "erreurArticleValide": "Ajoutez au moins un article valide.",
     "erreurMotifRemise": "Un motif est requis pour appliquer une remise.",
-    "erreurCreationVente": "Erreur (création vente)"
+    "erreurCreationVente": "Erreur (création vente)",
+    "totalHT": "Total HT",
+    "tva": "TVA",
+    "totalTTC": "Total TTC",
+    "sourceMarchandise": "Marchandise prise dans :",
+    "sourceDepot": "le magasin (dépôt de vente ci-dessus) — la vente est seulement attribuée au commercial",
+    "sourceCommercial": "le stock terrain de {{nom}} (il livre lui-même)"
   },
   "detail": {
     "chargement": "Chargement…",
@@ -110,7 +116,9 @@
     "impossibleChargerDetail": "Impossible de charger le détail.",
     "erreurMotifObligatoire": "Le motif est obligatoire.",
     "partagePasDisponible": "Le partage direct n'est pas disponible sur ce navigateur. Téléchargez le PDF puis partagez-le manuellement (WhatsApp, email…).",
-    "titrePartage": "Reçu de vente"
+    "titrePartage": "Reçu de vente",
+    "magasinRetour": "Magasin où la marchandise est rendue",
+    "choisirMagasin": "— Choisir —"
   },
   "accesRefuse": "Cette page n'est pas accessible pour votre rôle.",
   "export": {
@@ -121,5 +129,7 @@
     "commercial": "Commercial",
     "articles": "Articles",
     "total": "Total"
-  }
+  },
+  "bureau": "Vente de bureau",
+  "saisiPar": "Saisie par {{nom}}"
 }

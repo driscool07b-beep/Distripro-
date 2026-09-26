@@ -77,7 +77,13 @@
     "erreurSelectionnerClient": "اختر عميلًا.",
     "erreurArticleValide": "أضف صنفًا صحيحًا واحدًا على الأقل.",
     "erreurMotifRemise": "سبب الخصم مطلوب لتطبيقه.",
-    "erreurCreationVente": "خطأ (إنشاء عملية البيع)"
+    "erreurCreationVente": "خطأ (إنشاء عملية البيع)",
+    "totalHT": "Total excl. tax",
+    "tva": "VAT",
+    "totalTTC": "Total incl. tax",
+    "sourceMarchandise": "Goods taken from:",
+    "sourceDepot": "the warehouse (above) — the sale is only credited to the rep",
+    "sourceCommercial": "{{nom}}'s field stock (they deliver)"
   },
   "detail": {
     "chargement": "جارٍ التحميل…",
@@ -110,7 +116,9 @@
     "impossibleChargerDetail": "تعذر تحميل التفاصيل.",
     "erreurMotifObligatoire": "السبب إلزامي.",
     "partagePasDisponible": "المشاركة المباشرة غير متاحة على هذا المتصفح. نزّل ملف PDF ثم شاركه يدويًا (واتساب، بريد إلكتروني…).",
-    "titrePartage": "إيصال بيع"
+    "titrePartage": "إيصال بيع",
+    "magasinRetour": "Warehouse receiving the returned goods",
+    "choisirMagasin": "— Choose —"
   },
   "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
   "export": {
@@ -121,5 +129,7 @@
     "commercial": "المندوب",
     "articles": "الأصناف",
     "total": "المجموع"
-  }
+  },
+  "bureau": "Office sale",
+  "saisiPar": "Entered by {{nom}}"
 }

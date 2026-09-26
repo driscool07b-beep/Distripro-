@@ -154,7 +154,8 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes }) {
   if (vente.clients?.telephone) doc.text(`Téléphone : ${vente.clients.telephone}`, 14, yInfo + 6)
   if (vente.clients?.adresse) doc.text(`Adresse : ${vente.clients.adresse}`, 14, yInfo + 12)
   doc.text(`Date : ${formatDateHeure(vente.created_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
-  if (vente.profils?.nom) doc.text(`Commercial : ${vente.profils.nom}`, 120, yInfo + 6)
+  doc.text(`Commercial : ${vente.commercial?.nom || 'Vente de bureau'}`, 120, yInfo + 6)
+  if (vente.profils?.nom) doc.text(`Saisi par : ${vente.profils.nom}`, 120, yInfo + 12)
 
   autoTable(doc, {
     startY: yInfo + 20,
@@ -390,7 +391,7 @@ export function genererBonLivraison({ entreprise, vente, lignes }) {
   if (vente.clients?.telephone) doc.text(`Téléphone : ${vente.clients.telephone}`, 14, yInfo + 6)
   if (vente.clients?.adresse) doc.text(`Adresse de livraison : ${vente.clients.adresse}`, 14, yInfo + 12)
   doc.text(`Date : ${formatDateHeure(vente.created_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
-  if (vente.profils?.nom) doc.text(`Livré par : ${vente.profils.nom}`, 120, yInfo + 6)
+  if (vente.commercial?.nom || vente.profils?.nom) doc.text(`Commercial : ${vente.commercial?.nom || 'Vente de bureau'}`, 120, yInfo + 6)
   if (vente.numero_vente) doc.text(`Réf. vente : ${vente.numero_vente}`, 120, yInfo + 12)
 
   autoTable(doc, {
