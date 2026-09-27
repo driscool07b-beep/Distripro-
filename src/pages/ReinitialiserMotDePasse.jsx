@@ -28,13 +28,9 @@ export default function ReinitialiserMotDePasse() {
       if (erreurLien) { setLienInvalide(true); return }
       // Lien au format « token_hash » (modèle d'email Supabase conseillé) :
       // fonctionne même si le lien s'ouvre dans un autre navigateur.
-      const tokenHash = params.get('token_hash')
-      if (tokenHash) {
-        const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' })
-        if (error) { setLienInvalide(true); return }
-        setPret(true)
-        return
-      }
+      // Lien « token_hash » : on ne le consomme qu'à la validation du
+      // formulaire (une messagerie qui ouvre le lien ne l'use donc pas).
+      if (params.get('token_hash')) { setPret(true); return }
       const { data } = await supabase.auth.getSession()
       if (data.session) { setPret(true); return }
       // Laisse au client le temps de lire le jeton de l'URL, sinon lien invalide.
@@ -59,6 +55,11 @@ export default function ReinitialiserMotDePasse() {
       return
     }
     setEnvoi(true)
+    const tokenHash = new URLSearchParams(window.location.search).get('token_hash')
+    if (tokenHash) {
+      const { error: erreurVerif } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' })
+      if (erreurVerif) { setEnvoi(false); setLienInvalide(true); return }
+    }
     const { error } = await supabase.auth.updateUser({ password: motDePasse })
     setEnvoi(false)
     if (error) {

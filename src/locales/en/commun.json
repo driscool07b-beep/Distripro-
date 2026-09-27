@@ -94,11 +94,17 @@
     "motDePasseOublie": "Forgot password?",
     "oubli": {
       "titre": "Reset your password",
-      "sousTitre": "Enter your email — if an account exists, a reset link will be sent to you.",
+      "sousTitre": "Enter your email — if an account exists, you will receive a code (and a link) to choose a new password.",
       "retour": "Back",
-      "envoyer": "Send link",
-      "envoye": "If an account exists with this address, an email was just sent — check your spam folder too.",
-      "erreur": "Something went wrong. Please try again shortly."
+      "envoyer": "Get the code",
+      "envoye": "Email sent: enter the code below. Always use the latest email.",
+      "erreur": "Something went wrong. Please try again shortly.",
+      "dejaCode": "I already have a code",
+      "titreCode": "Enter the code from the email",
+      "aideCode": "Type the 6-digit code from the email (more reliable than the link), then choose your new password.",
+      "code": "Code from the email",
+      "codeInvalide": "Wrong or expired code: check the email address above and use the code from the latest email.",
+      "validerCode": "Change my password"
     },
     "reinitialisation": {
       "titre": "New password",

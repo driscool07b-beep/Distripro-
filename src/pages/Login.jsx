@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Navigate, Link } from 'react-router-dom'
+import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -15,10 +15,16 @@ export default function Login() {
   const [erreur, setErreur] = useState('')
   const [chargement, setChargement] = useState(false)
   const [fondEcran, setFondEcran] = useState(illustrationParDefaut)
+  const navigate = useNavigate()
   const [modeOubli, setModeOubli] = useState(false)
   const [emailOubli, setEmailOubli] = useState('')
   const [envoiOubli, setEnvoiOubli] = useState(false)
   const [messageOubli, setMessageOubli] = useState('')
+  const [codeEnvoye, setCodeEnvoye] = useState(false)
+  const [code, setCode] = useState('')
+  const [nouveauMdp, setNouveauMdp] = useState('')
+  const [confirmationMdp, setConfirmationMdp] = useState('')
+  const [erreurCode, setErreurCode] = useState('')
 
   useEffect(() => {
     const { data } = supabase.storage.from('plateforme-publique').getPublicUrl('connexion-fond.jpg')
@@ -54,6 +60,33 @@ export default function Login() {
     // Message identique en succès ou en erreur : on ne confirme jamais
     // si un compte existe ou non pour cette adresse, par sécurité.
     setMessageOubli(error ? t('connexion.oubli.erreur') : t('connexion.oubli.envoye'))
+    if (!error) setCodeEnvoye(true)
+  }
+
+  // Réinitialisation par CODE reçu par email : insensible aux messageries qui
+  // ouvrent automatiquement les liens (et les rendent inutilisables).
+  async function validerCode(e) {
+    e.preventDefault()
+    setErreurCode('')
+    if (nouveauMdp.length < 8) { setErreurCode(t('connexion.reinitialisation.erreurFaible')); return }
+    if (nouveauMdp !== confirmationMdp) { setErreurCode(t('connexion.reinitialisation.erreurConfirmation')); return }
+    setEnvoiOubli(true)
+    const { error: erreurVerif } = await supabase.auth.verifyOtp({ email: emailOubli.trim(), token: code.trim(), type: 'recovery' })
+    if (erreurVerif) {
+      setEnvoiOubli(false)
+      setErreurCode(t('connexion.oubli.codeInvalide'))
+      return
+    }
+    const { error } = await supabase.auth.updateUser({ password: nouveauMdp })
+    setEnvoiOubli(false)
+    if (error) {
+      const msg = error.message || ''
+      if (error.code === 'same_password' || /different from the old/i.test(msg)) setErreurCode(t('connexion.reinitialisation.erreurIdentique'))
+      else if (error.code === 'weak_password' || /weak|should contain|characters/i.test(msg)) setErreurCode(t('connexion.reinitialisation.erreurFaible'))
+      else setErreurCode(`${t('connexion.reinitialisation.erreurAutre')} (${msg})`)
+      return
+    }
+    navigate('/')
   }
 
   return (
@@ -142,13 +175,44 @@ export default function Login() {
                 </div>
               )}
               <div className="flex gap-2">
-                <button type="button" onClick={() => setModeOubli(false)} className="btn-secondary flex-1">
+                <button type="button" onClick={() => { setModeOubli(false); setCodeEnvoye(false) }} className="btn-secondary flex-1">
                   {t('connexion.oubli.retour')}
                 </button>
                 <button type="submit" disabled={envoiOubli} className="btn-primary flex-1">
                   {envoiOubli ? t('connexion.enCours') : t('connexion.oubli.envoyer')}
                 </button>
               </div>
+              {!codeEnvoye && (
+                <button type="button" className="text-xs underline text-petrol-600 w-full text-center" onClick={() => setCodeEnvoye(true)}>
+                  {t('connexion.oubli.dejaCode')}
+                </button>
+              )}
+            </form>
+          )}
+          {modeOubli && codeEnvoye && (
+            <form onSubmit={validerCode} className="bg-white rounded-2xl shadow-xl p-6 space-y-3 mt-3">
+              <div>
+                <h2 className="font-semibold text-petrol-900">{t('connexion.oubli.titreCode')}</h2>
+                <p className="text-xs text-petrol-500 mt-1">{t('connexion.oubli.aideCode')}</p>
+              </div>
+              <div>
+                <label className="label">{t('connexion.oubli.code')}</label>
+                <input inputMode="numeric" autoComplete="one-time-code" maxLength={10} required value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\s/g, ''))}
+                  className="input-field font-mono text-lg tracking-[0.4em] text-center" placeholder="••••••" />
+              </div>
+              <div>
+                <label className="label">{t('connexion.reinitialisation.nouveauMdp')}</label>
+                <ChampMotDePasse value={nouveauMdp} onChange={(e) => setNouveauMdp(e.target.value)} />
+              </div>
+              <div>
+                <label className="label">{t('connexion.reinitialisation.confirmerMdp')}</label>
+                <ChampMotDePasse value={confirmationMdp} onChange={(e) => setConfirmationMdp(e.target.value)} />
+              </div>
+              {erreurCode && <p className="text-xs text-red-600">{erreurCode}</p>}
+              <button type="submit" disabled={envoiOubli || !emailOubli} className="btn-primary w-full">
+                {envoiOubli ? t('connexion.enCours') : t('connexion.oubli.validerCode')}
+              </button>
             </form>
           )}
 
