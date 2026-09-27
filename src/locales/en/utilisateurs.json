@@ -65,5 +65,7 @@
   "confirmerDesactivation": "Deactivate {{nom}}'s account?\n\nThis person will no longer be able to sign in and will be moved to \"Former members\". Their history is kept and you can reactivate them at any time.",
   "iaDesactivee": "AI disabled",
   "activerIA": "Enable AI",
-  "desactiverIA": "Disable AI"
+  "desactiverIA": "Disable AI",
+  "oui": "yes",
+  "non": "no"
 }

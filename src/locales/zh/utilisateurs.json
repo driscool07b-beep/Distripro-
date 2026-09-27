@@ -65,5 +65,7 @@
   "confirmerDesactivation": "停用 {{nom}} 的账户？\n\n此人将无法再登录，并被移至“前成员”。其历史记录将被保留，您可以随时重新启用。",
   "iaDesactivee": "AI 已停用",
   "activerIA": "启用 AI",
-  "desactiverIA": "停用 AI"
+  "desactiverIA": "停用 AI",
+  "oui": "是",
+  "non": "否"
 }
