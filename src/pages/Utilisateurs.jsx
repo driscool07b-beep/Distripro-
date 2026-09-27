@@ -283,13 +283,17 @@ export default function Utilisateurs() {
     )
   }
 
+  // Journal : « actif : t → f » devient « actif : oui → non ».
+  const lisibleJournal = (texte) => String(texte)
+    .replace(/(^|[\s:(→])([tf])(?=\s*(→|$|,|\)))/g, (m0, avant, v) => `${avant}${v === 't' ? t('oui') : t('non')}`)
+
   const renderMembre = (m) => (
-              <div key={m.id} className={`border rounded-lg p-3 flex justify-between items-center ${m.actif ? 'border-line' : 'border-red-200 bg-red-50/40'}`}>
-                <div className="flex items-center gap-3 min-w-0">
-                <Avatar nom={m.nom_complet || m.nom} chemin={m.photo_path} taille={40} />
-                <div>
-                  <p className="text-sm font-medium">
-                    {m.nom_complet || m.nom}
+              <div key={m.id} className={`border rounded-lg p-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 ${m.actif ? 'border-line' : 'border-red-200 bg-red-50/40'}`}>
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="shrink-0"><Avatar nom={m.nom_complet || m.nom} chemin={m.photo_path} taille={40} /></div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium flex flex-wrap items-center gap-y-1">
+                    <span className="me-1">{m.nom_complet || m.nom}</span>
                     {!m.actif && <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">{t('desactive')}</span>}
                     {m.role === 'commercial' && m.acces_etendu && (
                       <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">{t('accesElargi')}</span>
@@ -318,7 +322,7 @@ export default function Utilisateurs() {
                   </p>
                 </div>
                 </div>
-                <div className="flex gap-3 shrink-0 flex-wrap justify-end">
+                <div className="flex gap-x-4 gap-y-2 flex-wrap sm:justify-end sm:max-w-[45%] border-t border-line pt-2 sm:border-0 sm:pt-0">
                   <button data-aide="utilisateurs.modifier" onClick={() => ouvrirModalMembre(m)} className="text-xs text-petrol-600 underline whitespace-nowrap">
                     {t('modifier')}
                   </button>
@@ -437,7 +441,7 @@ export default function Utilisateurs() {
                     </span>
                     {' — '}
                     <strong>{j.effectue_par?.nom || '—'}</strong> {t('aModifie')} <strong>{j.cible?.nom || '—'}</strong>
-                    {j.details ? ` : ${j.details}` : ''}
+                    {j.details ? ` : ${lisibleJournal(j.details)}` : ''}
                   </div>
                 ))}
               </div>

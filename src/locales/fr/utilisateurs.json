@@ -65,5 +65,7 @@
   "confirmerDesactivation": "Désactiver le compte de {{nom}} ?\n\nCette personne ne pourra plus se connecter et sera déplacée dans « Anciens membres ». Son historique est conservé et vous pourrez la réactiver à tout moment.",
   "iaDesactivee": "IA désactivée",
   "activerIA": "Activer l'IA",
-  "desactiverIA": "Désactiver l'IA"
+  "desactiverIA": "Désactiver l'IA",
+  "oui": "oui",
+  "non": "non"
 }
