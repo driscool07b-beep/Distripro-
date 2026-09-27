@@ -67,5 +67,7 @@
   "activerIA": "Activer l'IA",
   "desactiverIA": "Désactiver l'IA",
   "oui": "oui",
-  "non": "non"
+  "non": "non",
+  "mdpEnvoyeParEmail": "Mot de passe provisoire envoyé par email à {{nom}} ({{email}}), avec le lien de connexion. Il devra choisir un nouveau mot de passe dès sa connexion.",
+  "mdpEmailEchec": "L'email n'a pas pu être envoyé ({{raison}}). Communiquez ce mot de passe à l'utilisateur de vive voix, sans le copier dans une messagerie."
 }

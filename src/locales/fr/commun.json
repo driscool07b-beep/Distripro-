@@ -111,7 +111,12 @@
       "erreurGenerique": "Ce lien n'est plus valide ou a expiré — redemandez-en un depuis la page de connexion.",
       "enCours": "Enregistrement…",
       "valider": "Valider",
-      "succes": "Mot de passe modifié — redirection en cours…"
+      "succes": "Mot de passe modifié — redirection en cours…",
+      "erreurIdentique": "Le nouveau mot de passe doit être différent de l'ancien.",
+      "erreurFaible": "Mot de passe trop faible : utilisez au moins 8 caractères avec majuscules, minuscules, chiffres et un symbole.",
+      "erreurAutre": "Le mot de passe n'a pas pu être modifié",
+      "conseilNavigateur": "Astuce : ouvrez le lien de l'email dans le même navigateur que celui où vous avez demandé la réinitialisation, et utilisez le lien le plus récent (chaque nouvelle demande annule la précédente).",
+      "retourConnexion": "Retour à la connexion"
     }
   },
   "inscription": {
