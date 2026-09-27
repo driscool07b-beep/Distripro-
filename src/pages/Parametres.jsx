@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { compresserImage } from '../lib/justificatifs'
 import SelecteurCompte from '../components/SelecteurCompte'
 import { SYSCOHADA_DEPART } from '../lib/syscohada'
 import DiagnosticConnexion from '../components/DiagnosticConnexion'
@@ -325,13 +326,16 @@ export default function Parametres() {
   }
 
   async function televerserFondConnexion(e) {
-    const fichier = e.target.files?.[0]
-    if (!fichier) return
+    const original = e.target.files?.[0]
+    if (!original) return
     setErreurFondConnexion('')
     setEnvoiFondConnexion(true)
+    // Réduction avant envoi : une photo de plusieurs Mo échoue souvent sur
+    // réseau mobile ; 1920 px suffisent largement pour un fond d'écran.
+    const fichier = await compresserImage(original, { largeurMax: 1920, qualite: 0.8, forcer: true })
     const { error } = await supabase.storage
       .from('plateforme-publique')
-      .upload('connexion-fond.jpg', fichier, { upsert: true, contentType: fichier.type })
+      .upload('connexion-fond.jpg', fichier, { upsert: true, contentType: 'image/jpeg', cacheControl: '60' })
     setEnvoiFondConnexion(false)
     if (error) {
       setErreurFondConnexion(`Erreur : ${traduireErreur(error.message)}`)
