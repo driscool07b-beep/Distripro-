@@ -94,11 +94,17 @@
     "motDePasseOublie": "Mot de passe oublié ?",
     "oubli": {
       "titre": "Réinitialiser votre mot de passe",
-      "sousTitre": "Indiquez votre email — si un compte existe, un lien de réinitialisation vous sera envoyé.",
+      "sousTitre": "Indiquez votre email — si un compte existe, vous recevrez un code (et un lien) pour choisir un nouveau mot de passe.",
       "retour": "Retour",
-      "envoyer": "Envoyer le lien",
-      "envoye": "Si un compte existe avec cette adresse, un email vient de vous être envoyé — vérifiez aussi vos spams.",
-      "erreur": "Une erreur est survenue. Réessayez dans quelques instants."
+      "envoyer": "Recevoir le code",
+      "envoye": "Email envoyé : saisissez ci-dessous le code reçu. Utilisez toujours le dernier email reçu.",
+      "erreur": "Une erreur est survenue. Réessayez dans quelques instants.",
+      "dejaCode": "J'ai déjà reçu un code",
+      "titreCode": "Saisir le code reçu par email",
+      "aideCode": "Tapez le code à 6 chiffres de l'email (plus fiable que le lien), puis choisissez votre nouveau mot de passe.",
+      "code": "Code reçu par email",
+      "codeInvalide": "Code incorrect ou expiré : vérifiez l'adresse email ci-dessus et utilisez le code du dernier email reçu.",
+      "validerCode": "Changer mon mot de passe"
     },
     "reinitialisation": {
       "titre": "Nouveau mot de passe",
