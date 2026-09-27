@@ -111,7 +111,12 @@
       "erreurGenerique": "This link is no longer valid or has expired — request a new one from the login page.",
       "enCours": "Saving…",
       "valider": "Confirm",
-      "succes": "Password changed — redirecting…"
+      "succes": "Password changed — redirecting…",
+      "erreurIdentique": "The new password must be different from the old one.",
+      "erreurFaible": "Password too weak: use at least 8 characters with upper and lower case letters, digits and a symbol.",
+      "erreurAutre": "The password could not be changed",
+      "conseilNavigateur": "Tip: open the email link in the same browser where you requested the reset, and use the most recent link (each new request cancels the previous one).",
+      "retourConnexion": "Back to sign in"
     }
   },
   "inscription": {

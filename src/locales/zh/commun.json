@@ -111,7 +111,12 @@
       "erreurGenerique": "此链接已失效或已过期——请从登录页面重新申请。",
       "enCours": "保存中…",
       "valider": "确认",
-      "succes": "密码已更改——正在跳转…"
+      "succes": "密码已更改——正在跳转…",
+      "erreurIdentique": "新密码必须与旧密码不同。",
+      "erreurFaible": "密码过弱：请至少使用 8 个字符，包含大小写字母、数字和符号。",
+      "erreurAutre": "无法修改密码",
+      "conseilNavigateur": "提示：请在申请重置的同一浏览器中打开邮件链接，并使用最新的链接（每次新申请都会使之前的链接失效）。",
+      "retourConnexion": "返回登录"
     }
   },
   "inscription": {

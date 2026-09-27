@@ -262,7 +262,16 @@ export default function Utilisateurs() {
       alert(`${t('erreur')} : ${data?.error || error.message}`)
       return
     }
-    setValeurGeneree({ titre: t('mdpTemporaireTitre', { nom: membre.nom_complet || membre.nom }), valeur: data.mot_de_passe_temporaire })
+    if (data?.email_envoye) {
+      alert(t('mdpEnvoyeParEmail', { nom: membre.nom_complet || membre.nom, email: data.email }))
+      return
+    }
+    // Secours : l'email n'a pas pu partir, le mot de passe est affiché à l'administrateur.
+    setValeurGeneree({
+      titre: t('mdpTemporaireTitre', { nom: membre.nom_complet || membre.nom }),
+      valeur: data.mot_de_passe_temporaire,
+      note: data?.erreur_email ? t('mdpEmailEchec', { raison: data.erreur_email }) : null,
+    })
   }
 
   async function regenererPin(membre) {
@@ -422,6 +431,7 @@ export default function Utilisateurs() {
               <div className="card bg-white p-5 w-full max-w-sm">
                 <h2 className="font-semibold text-lg mb-2">{valeurGeneree.titre}</h2>
                 <p className="text-xs text-petrol-600 mb-3">{t('noterMaintenant')}</p>
+                {valeurGeneree.note && <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded p-2 mb-3">{valeurGeneree.note}</p>}
                 <div className="bg-canvas border border-line rounded-lg p-3 text-center font-mono text-lg tracking-wider mb-4">
                   {valeurGeneree.valeur}
                 </div>

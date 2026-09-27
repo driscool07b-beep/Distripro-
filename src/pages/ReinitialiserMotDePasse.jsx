@@ -13,17 +13,37 @@ export default function ReinitialiserMotDePasse() {
   const [erreur, setErreur] = useState('')
   const [envoi, setEnvoi] = useState(false)
   const [succes, setSucces] = useState(false)
+  const [lienInvalide, setLienInvalide] = useState(false)
 
   useEffect(() => {
     // Le lien reçu par email contient un jeton de récupération que le
     // client Supabase détecte automatiquement dans l'URL et transforme
     // en session temporaire — on attend juste que ce soit fait.
     const { data: subscription } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') setPret(true)
+      if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') setPret(true)
     })
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setPret(true)
-    })
+    const params = new URLSearchParams(window.location.search)
+    const erreurLien = params.get('error_description') || new URLSearchParams(window.location.hash.slice(1)).get('error_description')
+    ;(async () => {
+      if (erreurLien) { setLienInvalide(true); return }
+      // Lien au format « token_hash » (modèle d'email Supabase conseillé) :
+      // fonctionne même si le lien s'ouvre dans un autre navigateur.
+      const tokenHash = params.get('token_hash')
+      if (tokenHash) {
+        const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' })
+        if (error) { setLienInvalide(true); return }
+        setPret(true)
+        return
+      }
+      const { data } = await supabase.auth.getSession()
+      if (data.session) { setPret(true); return }
+      // Laisse au client le temps de lire le jeton de l'URL, sinon lien invalide.
+      setTimeout(async () => {
+        const { data: d2 } = await supabase.auth.getSession()
+        if (d2.session) setPret(true)
+        else setLienInvalide(true)
+      }, 6000)
+    })()
     return () => subscription.subscription.unsubscribe()
   }, [])
 
@@ -42,7 +62,13 @@ export default function ReinitialiserMotDePasse() {
     const { error } = await supabase.auth.updateUser({ password: motDePasse })
     setEnvoi(false)
     if (error) {
-      setErreur(t('connexion.reinitialisation.erreurGenerique'))
+      // Message précis selon la vraie raison du refus.
+      const code = error.code || ''
+      const msg = error.message || ''
+      if (code === 'same_password' || /different from the old/i.test(msg)) setErreur(t('connexion.reinitialisation.erreurIdentique'))
+      else if (code === 'weak_password' || /password.*(weak|should contain|at least|characters)/i.test(msg)) setErreur(t('connexion.reinitialisation.erreurFaible', { detail: msg }))
+      else if (/session|jwt|expired|not authenticated|Auth session missing/i.test(msg)) setErreur(t('connexion.reinitialisation.erreurGenerique'))
+      else setErreur(`${t('connexion.reinitialisation.erreurAutre')} (${msg})`)
       return
     }
     setSucces(true)
@@ -55,7 +81,13 @@ export default function ReinitialiserMotDePasse() {
         <div className="font-display font-bold text-xl mb-1">DistribPro</div>
         <h1 className="text-lg font-semibold mb-1">{t('connexion.reinitialisation.titre')}</h1>
 
-        {!pret ? (
+        {lienInvalide ? (
+          <div className="mt-3 space-y-3">
+            <p className="text-sm text-red-600">{t('connexion.reinitialisation.erreurGenerique')}</p>
+            <p className="text-xs text-petrol-500">{t('connexion.reinitialisation.conseilNavigateur')}</p>
+            <button className="btn-secondary w-full text-sm" onClick={() => navigate('/connexion')}>{t('connexion.reinitialisation.retourConnexion')}</button>
+          </div>
+        ) : !pret ? (
           <p className="text-sm text-petrol-500 mt-3">{t('connexion.reinitialisation.chargement')}</p>
         ) : succes ? (
           <p className="text-sm text-green-600 mt-3">{t('connexion.reinitialisation.succes')}</p>

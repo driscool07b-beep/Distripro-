@@ -67,5 +67,7 @@
   "activerIA": "Enable AI",
   "desactiverIA": "Disable AI",
   "oui": "yes",
-  "non": "no"
+  "non": "no",
+  "mdpEnvoyeParEmail": "Temporary password emailed to {{nom}} ({{email}}) with the sign-in link. They must choose a new password when signing in.",
+  "mdpEmailEchec": "The email could not be sent ({{raison}}). Give this password to the user in person."
 }
