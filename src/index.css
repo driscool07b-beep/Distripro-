@@ -238,8 +238,10 @@
     display: block;
   }
   /* Le cadre autour du tableau disparaît : ce sont les fiches qui portent le style. */
-  .card:has(> table.tableau-responsif),
-  .overflow-x-auto:has(> table.tableau-responsif) {
+  /* Seulement les cadres qui ne contiennent QUE le tableau : une fenêtre
+     (détail de vente…) qui contient aussi un tableau garde son fond blanc. */
+  .card:has(> table.tableau-responsif):not(:has(> :not(table.tableau-responsif))),
+  .overflow-x-auto:has(> table.tableau-responsif):not(:has(> :not(table.tableau-responsif))) {
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
