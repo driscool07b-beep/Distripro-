@@ -368,15 +368,15 @@ export default function Utilisateurs() {
               {erreurRenvoi && <p className="text-xs text-red-600 mb-2">{erreurRenvoi}</p>}
               <div className="space-y-2">
                 {invitationsEnAttente.map((inv) => (
-                  <div key={inv.id} className="border border-amber-200 bg-amber-50 rounded-lg p-3 flex justify-between items-center">
-                    <div>
+                  <div key={inv.id} className="border border-amber-200 bg-amber-50 rounded-lg p-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                    <div className="min-w-0">
                       <p className="text-sm font-medium">{inv.nom_complet || inv.email}</p>
                       <p className="text-xs text-petrol-500">
                         {inv.email} — {LIBELLES_ROLE[inv.role] || inv.role}
                         {inv.zone ? ` — ${inv.zone}` : ''}
                       </p>
                     </div>
-                    <div className="flex gap-3 shrink-0">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 sm:shrink-0">
                       <button
                         onClick={() => renvoyerEmailInvitation(inv.id)}
                         disabled={renvoiEnCours === inv.id}

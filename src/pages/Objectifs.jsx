@@ -404,8 +404,8 @@ function CarteObjectif({ objectif: o, onSupprimer, onModifie }) {
 
   return (
     <div className="card p-4">
-      <div className="flex justify-between items-start mb-2">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
+        <div className="min-w-0">
           <p className="font-medium text-sm">
             {cible}
             {roleCible && <span className="ml-1.5 text-xs bg-petrol-100 text-petrol-600 px-1.5 py-0.5 rounded">{roleCible}</span>}
@@ -415,7 +415,7 @@ function CarteObjectif({ objectif: o, onSupprimer, onModifie }) {
             {o.produits?.nom ? ` — ${o.produits.nom}` : ''}
           </p>
         </div>
-        <div className="flex gap-3 shrink-0">
+        <div className="flex flex-wrap gap-x-3 gap-y-1 sm:shrink-0">
           <button data-aide="objectifs.modifier" onClick={ouvrirEdition} className="text-xs text-petrol-700 underline">{t('modifier')}</button>
           <button data-aide="objectifs.historiqueBouton" onClick={basculerHistorique} className="text-xs text-petrol-500 underline">🕘 {t('historique.bouton')}</button>
           <button data-aide="objectifs.supprimer" onClick={onSupprimer} className="text-xs text-red-600 underline">{t('supprimer')}</button>
