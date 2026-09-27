@@ -83,8 +83,8 @@
     "historique": "السجل",
     "par": "بواسطة",
     "impossibleChargerDetail": "تعذر تحميل التفاصيل.",
-    "magasinLivraison": "Warehouse shipping the goods",
-    "choisirMagasin": "— Choose warehouse —"
+    "magasinLivraison": "المخزن الذي تُشحن منه البضاعة",
+    "choisirMagasin": "— اختر المخزن —"
   },
   "export": {
     "numero": "الرقم",

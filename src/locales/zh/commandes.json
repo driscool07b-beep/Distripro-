@@ -83,8 +83,8 @@
     "historique": "历史记录",
     "par": "由",
     "impossibleChargerDetail": "无法加载详情。",
-    "magasinLivraison": "Warehouse shipping the goods",
-    "choisirMagasin": "— Choose warehouse —"
+    "magasinLivraison": "发货仓库",
+    "choisirMagasin": "— 选择仓库 —"
   },
   "export": {
     "numero": "编号",

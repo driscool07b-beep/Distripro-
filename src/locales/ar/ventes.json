@@ -78,12 +78,12 @@
     "erreurArticleValide": "أضف صنفًا صحيحًا واحدًا على الأقل.",
     "erreurMotifRemise": "سبب الخصم مطلوب لتطبيقه.",
     "erreurCreationVente": "خطأ (إنشاء عملية البيع)",
-    "totalHT": "Total excl. tax",
-    "tva": "VAT",
-    "totalTTC": "Total incl. tax",
-    "sourceMarchandise": "Goods taken from:",
-    "sourceDepot": "the warehouse (above) — the sale is only credited to the rep",
-    "sourceCommercial": "{{nom}}'s field stock (they deliver)"
+    "totalHT": "الإجمالي دون ضريبة",
+    "tva": "ضريبة القيمة المضافة",
+    "totalTTC": "الإجمالي شامل الضريبة",
+    "sourceMarchandise": "البضاعة مأخوذة من:",
+    "sourceDepot": "المخزن (أعلاه) — تُنسب عملية البيع فقط إلى المندوب",
+    "sourceCommercial": "المخزون الميداني لـ {{nom}} (يسلّم بنفسه)"
   },
   "detail": {
     "chargement": "جارٍ التحميل…",
@@ -117,8 +117,8 @@
     "erreurMotifObligatoire": "السبب إلزامي.",
     "partagePasDisponible": "المشاركة المباشرة غير متاحة على هذا المتصفح. نزّل ملف PDF ثم شاركه يدويًا (واتساب، بريد إلكتروني…).",
     "titrePartage": "إيصال بيع",
-    "magasinRetour": "Warehouse receiving the returned goods",
-    "choisirMagasin": "— Choose —"
+    "magasinRetour": "المخزن الذي تُعاد إليه البضاعة",
+    "choisirMagasin": "— اختر —"
   },
   "accesRefuse": "هذه الصفحة غير متاحة لدورك.",
   "export": {
@@ -130,6 +130,6 @@
     "articles": "الأصناف",
     "total": "المجموع"
   },
-  "bureau": "Office sale",
-  "saisiPar": "Entered by {{nom}}"
+  "bureau": "بيع من المكتب",
+  "saisiPar": "أدخلها {{nom}}"
 }
