@@ -81,9 +81,14 @@
     "totalHT": "الإجمالي دون ضريبة",
     "tva": "ضريبة القيمة المضافة",
     "totalTTC": "الإجمالي شامل الضريبة",
-    "sourceMarchandise": "البضاعة مأخوذة من:",
+    "sourceMarchandise": "البضاعة مأخوذة من",
     "sourceDepot": "المخزن (أعلاه) — تُنسب عملية البيع فقط إلى المندوب",
-    "sourceCommercial": "المخزون الميداني لـ {{nom}} (يسلّم بنفسه)"
+    "sourceCommercial": "المخزون الميداني لـ {{nom}} (يسلّم بنفسه)",
+    "commercialAttribue": "المندوب (تُنسب إليه عملية البيع)",
+    "choisirSource": "— اختر المخزن أو المخزون الميداني —",
+    "choisirSourceCourt": "اختر المصدر أولًا",
+    "stockTerrainDe": "المخزون الميداني لـ {{nom}} (يسلّم بنفسه)",
+    "sourceObligatoire": "اختر مصدر البضاعة (مخزن أو مخزون ميداني)."
   },
   "detail": {
     "chargement": "جارٍ التحميل…",

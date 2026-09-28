@@ -81,9 +81,14 @@
     "totalHT": "Total excl. tax",
     "tva": "VAT",
     "totalTTC": "Total incl. tax",
-    "sourceMarchandise": "Goods taken from:",
+    "sourceMarchandise": "Goods taken from",
     "sourceDepot": "the warehouse (above) — the sale is only credited to the rep",
-    "sourceCommercial": "{{nom}}'s field stock (they deliver)"
+    "sourceCommercial": "{{nom}}'s field stock (they deliver)",
+    "commercialAttribue": "Sales rep (sale credited to)",
+    "choisirSource": "— Choose warehouse or field stock —",
+    "choisirSourceCourt": "choose the source first",
+    "stockTerrainDe": "{{nom}}'s field stock (they deliver)",
+    "sourceObligatoire": "Choose where the goods come from (warehouse or field stock)."
   },
   "detail": {
     "chargement": "Loading…",

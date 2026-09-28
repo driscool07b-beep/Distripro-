@@ -81,9 +81,14 @@
     "totalHT": "Total HT",
     "tva": "TVA",
     "totalTTC": "Total TTC",
-    "sourceMarchandise": "Marchandise prise dans :",
+    "sourceMarchandise": "Marchandise prise dans",
     "sourceDepot": "le magasin (dépôt de vente ci-dessus) — la vente est seulement attribuée au commercial",
-    "sourceCommercial": "le stock terrain de {{nom}} (il livre lui-même)"
+    "sourceCommercial": "le stock terrain de {{nom}} (il livre lui-même)",
+    "commercialAttribue": "Commercial (attribution de la vente)",
+    "choisirSource": "— Choisir le magasin ou le stock terrain —",
+    "choisirSourceCourt": "choisissez d'abord la source",
+    "stockTerrainDe": "Stock terrain de {{nom}} (il livre lui-même)",
+    "sourceObligatoire": "Choisissez d'où part la marchandise (magasin ou stock terrain)."
   },
   "detail": {
     "chargement": "Chargement…",

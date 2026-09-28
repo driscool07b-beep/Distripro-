@@ -54,6 +54,7 @@ export default function Ventes() {
   const [totauxServeur, setTotauxServeur] = useState(null)
   const [depotId, setDepotId] = useState('')
   const [stocksParDepot, setStocksParDepot] = useState({}) // { produit_id: { depot_id: quantite } }
+  const [stockTerrain, setStockTerrain] = useState({}) // { produit_id: quantite } du commercial choisi
   const [montantPaye, setMontantPaye] = useState('')
   const [remisePourcentage, setRemisePourcentage] = useState('')
   const [motifRemise, setMotifRemise] = useState('')
@@ -290,6 +291,8 @@ export default function Ventes() {
     setLignes([{ produit_id: '', quantite: 1, prix_unitaire: 0 }])
     setCommercialVendeurId(profil?.role === 'commercial' ? profil.id : '')
     setDepotId('')
+    setSourceStock('depot')
+    setStockTerrain({})
 
     const [{ data: c }, { data: p }, { data: com }, { data: d }] = await Promise.all([
       supabase.from('clients').select('id, nom').order('nom'),
@@ -333,10 +336,28 @@ export default function Ventes() {
 
   function changerDepot(nouveauDepotId) {
     setDepotId(nouveauDepotId)
-    if (profil?.role === 'commercial') return // le commercial vend depuis son stock en main, pas un dépôt
-    setProduits((prev) =>
-      prev.map((pr) => ({ ...pr, quantite_stock: nouveauDepotId ? (stocksParDepot[pr.id]?.[nouveauDepotId] ?? 0) : 0 }))
-    )
+  }
+
+  // Source unique de la marchandise : un magasin (depot:<id>) ou le stock
+  // terrain du commercial choisi (commercial).
+  const valeurSource = profil?.role === 'commercial' ? '' : (sourceStock === 'commercial' ? 'commercial' : (depotId ? `depot:${depotId}` : ''))
+  function changerSource(v) {
+    if (v === 'commercial') { setSourceStock('commercial'); setDepotId('') }
+    else { setSourceStock('depot'); setDepotId(v.replace('depot:', '')) }
+  }
+  async function changerCommercial(id) {
+    setCommercialVendeurId(id)
+    if (sourceStock === 'commercial') { setSourceStock('depot'); setDepotId(depots.length === 1 ? depots[0].id : '') }
+    if (!id) { setStockTerrain({}); return }
+    const { data } = await supabase.from('stock_commercial').select('produit_id, quantite').eq('commercial_id', id)
+    setStockTerrain(Object.fromEntries((data || []).map((x) => [x.produit_id, x.quantite])))
+  }
+  // Stock disponible d'un produit pour la source choisie (null = source non choisie).
+  function stockDisponible(pr) {
+    if (profil?.role === 'commercial') return pr.quantite_stock
+    if (sourceStock === 'commercial') return stockTerrain[pr.id] ?? 0
+    if (depotId) return stocksParDepot[pr.id]?.[depotId] ?? 0
+    return null
   }
 
   function ajouterLigne() {
@@ -442,6 +463,10 @@ export default function Ventes() {
       setErreur(t('form.erreurSelectionnerClient'))
       return
     }
+    if (profil?.role !== 'commercial' && !valeurSource) {
+      setErreur(t('form.sourceObligatoire'))
+      return
+    }
     const lignesValides = lignes.filter((l) => l.produit_id && Number(l.quantite) > 0)
     if (lignesValides.length === 0) {
       setErreur(t('form.erreurArticleValide'))
@@ -474,7 +499,7 @@ export default function Ventes() {
       p_depot_id: depotId || null,
       p_credit_utilise: creditEffectif,
       // Choix explicite de la marchandise : magasin ou stock terrain du commercial.
-      p_source_stock: profil?.role === 'commercial' ? null : (commercialVendeurId ? sourceStock : 'depot'),
+      p_source_stock: profil?.role === 'commercial' ? null : sourceStock,
     }
 
     // Hors-ligne : uniquement possible pour un commercial vendant depuis
@@ -699,13 +724,25 @@ export default function Ventes() {
                 />
               </div>
 
-              {profil?.role !== 'commercial' && depots.length > 1 && (
-                <div>
-                  <label className="label">{t('form.depotVente')}</label>
-                  <select className="input-field" value={depotId} onChange={(e) => changerDepot(e.target.value)}>
-                    <option value="">{t('form.selectionnerDepot')}</option>
-                    {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
-                  </select>
+              {profil?.role !== 'commercial' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="label">{t('form.commercialAttribue')}</label>
+                    <select className="input-field" value={commercialVendeurId} onChange={(e) => changerCommercial(e.target.value)}>
+                      <option value="">{t('form.venteDeBureau')}</option>
+                      {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="label">{t('form.sourceMarchandise')} *</label>
+                    <select className="input-field" value={valeurSource} onChange={(e) => changerSource(e.target.value)}>
+                      <option value="">{t('form.choisirSource')}</option>
+                      {depots.map((d) => <option key={d.id} value={`depot:${d.id}`}>🏬 {d.nom}</option>)}
+                      {commercialVendeurId && (
+                        <option value="commercial">🚚 {t('form.stockTerrainDe', { nom: commerciaux.find((c) => c.id === commercialVendeurId)?.nom || '' })}</option>
+                      )}
+                    </select>
+                  </div>
                 </div>
               )}
 
@@ -730,7 +767,9 @@ export default function Ventes() {
                           <option value="">{t('form.produitPlaceholder')}</option>
                           {produits.map((p) => (
                             <option key={p.id} value={p.id}>
-                              {p.nom} ({profil?.role === 'commercial' ? t('form.enMain') : t('form.stock')}: {p.quantite_stock})
+                              {p.nom} {stockDisponible(p) == null
+                                ? `(${t('form.choisirSourceCourt')})`
+                                : `(${profil?.role === 'commercial' || sourceStock === 'commercial' ? t('form.enMain') : t('form.stock')}: ${stockDisponible(p)})`}
                             </option>
                           ))}
                         </select>
@@ -752,7 +791,7 @@ export default function Ventes() {
                           {ligne.produit_id && tarifsClient[ligne.produit_id] != null && (
                             <span className="text-green-600" title={t('form.tarifNegocieApplique')}>%</span>
                           )}
-                          {produit && ligne.quantite > produit.quantite_stock && (
+                          {produit && stockDisponible(produit) != null && ligne.quantite > stockDisponible(produit) && (
                             <span className="text-red-600">{t('form.stockInsuffisant')}</span>
                           )}
                         </div>
@@ -834,38 +873,14 @@ export default function Ventes() {
                 </div>
               </div>
 
-              <div>
-                <label className="label">{t('form.venteRealiseePar')}</label>
-                {profil?.role === 'commercial' ? (
+              {profil?.role === 'commercial' && (
+                <div>
+                  <label className="label">{t('form.venteRealiseePar')}</label>
                   <p className="text-sm text-petrol-600 border border-line rounded-lg px-3 py-2 bg-canvas">
                     {t('form.vousMeme')}
                   </p>
-                ) : (
-                  <>
-                    <select
-                      className="input-field"
-                      value={commercialVendeurId}
-                      onChange={(e) => { setCommercialVendeurId(e.target.value); setSourceStock('depot') }}
-                    >
-                      <option value="">{t('form.venteDeBureau')}</option>
-                      {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
-                    </select>
-                    {commercialVendeurId && (
-                      <div className="mt-2 rounded-lg border border-line p-3 space-y-1.5">
-                        <p className="text-xs font-medium text-petrol-700">{t('form.sourceMarchandise')}</p>
-                        <label className="flex items-start gap-2 text-sm">
-                          <input type="radio" name="source" className="mt-1" checked={sourceStock === 'depot'} onChange={() => setSourceStock('depot')} />
-                          <span>{t('form.sourceDepot')}</span>
-                        </label>
-                        <label className="flex items-start gap-2 text-sm">
-                          <input type="radio" name="source" className="mt-1" checked={sourceStock === 'commercial'} onChange={() => setSourceStock('commercial')} />
-                          <span>{t('form.sourceCommercial', { nom: commerciaux.find((c) => c.id === commercialVendeurId)?.nom || '' })}</span>
-                        </label>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
+                </div>
+              )}
 
               {creditDisponible > 0 && (
                 <div className="border border-green-200 bg-green-50 rounded-lg p-3">

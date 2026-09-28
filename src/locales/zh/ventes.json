@@ -81,9 +81,14 @@
     "totalHT": "不含税合计",
     "tva": "增值税",
     "totalTTC": "含税合计",
-    "sourceMarchandise": "货物来源：",
+    "sourceMarchandise": "货物来源",
     "sourceDepot": "仓库（上方所选）— 销售仅计入该销售员名下",
-    "sourceCommercial": "{{nom}} 的外勤库存（由其本人送货）"
+    "sourceCommercial": "{{nom}} 的外勤库存（由其本人送货）",
+    "commercialAttribue": "销售员（销售归属）",
+    "choisirSource": "— 选择仓库或外勤库存 —",
+    "choisirSourceCourt": "请先选择来源",
+    "stockTerrainDe": "{{nom}} 的外勤库存（由其本人送货）",
+    "sourceObligatoire": "请选择货物来源（仓库或外勤库存）。"
   },
   "detail": {
     "chargement": "加载中…",
