@@ -51,5 +51,11 @@
     "par": "登记人 {{nom}}"
   },
   "controleRapideAide": "此快速核对仅针对本次出库，比较退回时的短缺与已登记的销售。它不产生债务或分录：如需正式处理差异，请填写对账单。",
-  "creerFicheReconciliation": "填写对账单"
+  "creerFicheReconciliation": "填写对账单",
+  "colonnes": {
+    "designation": "品名",
+    "quantite": "持有 / 已领",
+    "valeur": "金额",
+    "aideQuantite": "持有（粗体）/ 本次行程从仓库领取的数量（灰色），含补货。"
+  }
 }

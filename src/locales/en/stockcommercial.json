@@ -51,5 +51,11 @@
     "par": "recorded by {{nom}}"
   },
   "controleRapideAide": "This quick check compares, for this issue only, what is missing at return with recorded sales. It creates no debt or entry: to handle a gap officially, prepare the reconciliation sheet.",
-  "creerFicheReconciliation": "Prepare the reconciliation sheet"
+  "creerFicheReconciliation": "Prepare the reconciliation sheet",
+  "colonnes": {
+    "designation": "Item",
+    "quantite": "In hand / received",
+    "valeur": "Value",
+    "aideQuantite": "In hand (bold) / received from the warehouse on the current round (grey), restocks included."
+  }
 }

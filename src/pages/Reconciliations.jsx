@@ -322,7 +322,9 @@ function FicheReconciliation({ id, nomMembre, peutPreparer, estComptable, estDir
             <thead>
               <tr className="bg-canvas text-left text-petrol-600">
                 {['produit', 'debut', 'sorties', 'ventes', 'retours', 'autres', 'theorique', 'compte', 'ecart', 'valeur'].map((c) => (
-                  <th key={c} className={`px-2 py-2 ${c !== 'produit' ? 'text-right' : ''}`}>{t(`col.${c}`)}</th>
+                  <th key={c} title={t(`aideCol.${c}`)} className={`px-2 py-2 cursor-help ${c !== 'produit' ? 'text-right' : ''}`}>
+                    {t(`col.${c}`)}{c !== 'produit' && <span className="text-petrol-400"> ⓘ</span>}
+                  </th>
                 ))}
               </tr>
             </thead>

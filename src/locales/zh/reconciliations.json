@@ -155,5 +155,17 @@
     "notifFait": "日期：{{date}}",
     "signSalarie": "员工签字（注明“已阅读并同意”）",
     "signEmployeur": "雇主代表"
+  },
+  "aideCol": {
+    "produit": "Product",
+    "debut": "Stock the rep had at the start of the period.",
+    "sorties": "Quantities received from the warehouse in the period.",
+    "ventes": "Quantities sold from field stock in the period.",
+    "retours": "Unsold goods brought back to the warehouse.",
+    "autres": "Other movements: adjustments from a previous reconciliation, corrections.",
+    "theorique": "What they should have: start + issues − sales − returns ± other.",
+    "compte": "What they actually have, physically counted.",
+    "ecart": "Theoretical − counted. Positive = shortage.",
+    "valeur": "Gap × price (selling or cost, per setting)."
   }
 }

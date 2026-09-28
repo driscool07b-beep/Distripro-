@@ -72,11 +72,18 @@ function StockEnMain() {
 
   async function charger() {
     setChargement(true)
-    const { data } = await supabase
-      .from('stock_commercial')
-      .select('quantite, profils!commercial_id(nom), produits(nom, prix_vente)')
-      .gt('quantite', 0)
-    setLignes(data || [])
+    const [{ data }, { data: sorties }] = await Promise.all([
+      supabase.from('stock_commercial').select('commercial_id, produit_id, quantite, profils!commercial_id(nom), produits(nom, prix_vente)').gt('quantite', 0),
+      // Reçu du magasin sur les sorties encore ouvertes (tournée en cours),
+      // réapprovisionnements compris.
+      supabase.from('sorties_stock').select('commercial_id, sortie_stock_lignes(produit_id, quantite_sortie)').eq('statut', 'ouverte'),
+    ])
+    const recu = {}
+    ;(sorties || []).forEach((so) => (so.sortie_stock_lignes || []).forEach((l) => {
+      const cle = `${so.commercial_id}:${l.produit_id}`
+      recu[cle] = (recu[cle] || 0) + Number(l.quantite_sortie || 0)
+    }))
+    setLignes((data || []).map((l) => ({ ...l, recu: recu[`${l.commercial_id}:${l.produit_id}`] || null })))
     setChargement(false)
   }
 
@@ -85,7 +92,7 @@ function StockEnMain() {
     const nom = l.profils?.nom || t('inconnu')
     if (!groupes[nom]) groupes[nom] = { lignes: [], valeur: 0 }
     const valeur = l.quantite * (l.produits?.prix_vente || 0)
-    groupes[nom].lignes.push({ produit: l.produits?.nom, quantite: l.quantite, valeur })
+    groupes[nom].lignes.push({ produit: l.produits?.nom, quantite: l.quantite, recu: l.recu, valeur })
     groupes[nom].valeur += valeur
   })
 
@@ -99,12 +106,22 @@ function StockEnMain() {
             <h2 className="font-semibold text-sm">{nom}</h2>
             <span className="font-mono text-sm font-medium">{formatXOF(g.valeur)}</span>
           </div>
-          <table className="w-full text-xs">
+          <table className="w-full text-xs" data-tableau-classique>
+            <thead>
+              <tr className="text-petrol-500">
+                <th className="py-1.5 text-left font-medium">{t('colonnes.designation')}</th>
+                <th className="py-1.5 text-right font-medium" title={t('colonnes.aideQuantite')}>{t('colonnes.quantite')} ⓘ</th>
+                <th className="py-1.5 text-right font-medium">{t('colonnes.valeur')}</th>
+              </tr>
+            </thead>
             <tbody>
               {g.lignes.map((l, i) => (
                 <tr key={i} className="border-t border-line">
                   <td className="py-1.5">{l.produit}</td>
-                  <td className="py-1.5 text-right font-mono">{l.quantite}</td>
+                  <td className="py-1.5 text-right font-mono">
+                    <span className="font-semibold">{l.quantite}</span>
+                    {l.recu != null && <span className="text-petrol-400"> / {l.recu}</span>}
+                  </td>
                   <td className="py-1.5 text-right font-mono text-petrol-500">{formatXOF(l.valeur)}</td>
                 </tr>
               ))}

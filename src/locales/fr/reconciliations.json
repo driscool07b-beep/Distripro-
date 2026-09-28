@@ -155,5 +155,17 @@
     "comptable": "{{n}} fiche(s) à clôturer par le comptable (dette ou perte) → afficher",
     "justifier": "{{n}} fiche(s) avec un écart à justifier → afficher"
   },
-  "tousStatuts": "Tous les statuts"
+  "tousStatuts": "Tous les statuts",
+  "aideCol": {
+    "produit": "Produit",
+    "debut": "Stock que le commercial avait en main au début de la période.",
+    "sorties": "Quantités reçues du magasin pendant la période (fiches de sortie).",
+    "ventes": "Quantités vendues depuis son stock terrain pendant la période.",
+    "retours": "Invendus rapportés au magasin (retour saisi à la clôture de la sortie).",
+    "autres": "Autres mouvements : ajustements d'une réconciliation précédente, corrections. Les échanges de produits défectueux ne changent pas la quantité.",
+    "theorique": "Ce qu'il devrait avoir en main : début + sorties − ventes − retours ± autres.",
+    "compte": "Ce qu'il a réellement en main, compté physiquement. À saisir ; par défaut égal au théorique.",
+    "ecart": "Théorique − compté. Positif = manquant ; négatif = excédent.",
+    "valeur": "Écart × prix (de vente ou de revient, selon le paramètre)."
+  }
 }
