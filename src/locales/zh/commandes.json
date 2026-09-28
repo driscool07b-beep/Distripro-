@@ -92,7 +92,8 @@
     "resteAPayer": "待付余额",
     "excedentAvance": "预付款超过交货金额：{{montant}} 将作为客户余额保留。",
     "encaisserReste": "收取余额",
-    "depassement": "金额超过待付余额（{{reste}}）：超出部分将计入客户余额。"
+    "depassement": "金额超过待付余额（{{reste}}）：超出部分将计入客户余额。",
+    "voirFacture": "发票 / 收据及送货单"
   },
   "export": {
     "numero": "编号",

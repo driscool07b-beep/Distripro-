@@ -130,6 +130,13 @@ export default function Ventes() {
     setChargement(false)
   }
 
+  // Arrivée depuis une commande livrée (?vente=…) : ouvre directement la vente
+  // (reçu / facture, bon de livraison, partage).
+  useEffect(() => {
+    const id = searchParams.get('vente')
+    if (id) ouvrirDetailVente(id)
+  }, [])
+
   async function ouvrirDetailVente(venteId) {
     setVenteOuverte(venteId)
     setChargementDetail(true)

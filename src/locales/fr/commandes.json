@@ -92,7 +92,8 @@
     "resteAPayer": "Reste à payer",
     "excedentAvance": "L'avance dépasse la livraison : {{montant}} resteront en crédit (avoir) au client.",
     "encaisserReste": "Encaisser le reste à payer",
-    "depassement": "Montant supérieur au reste à payer ({{reste}}) : le surplus serait mis en avoir client."
+    "depassement": "Montant supérieur au reste à payer ({{reste}}) : le surplus serait mis en avoir client.",
+    "voirFacture": "Facture / reçu et bon de livraison"
   },
   "export": {
     "numero": "Numéro",

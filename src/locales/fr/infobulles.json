@@ -28,7 +28,8 @@
       "demarrerPreparation": "Signale au dépôt que la commande est en cours de préparation.",
       "enregistrerLivraison": "Confirme la livraison : la vente est créée et le stock déduit.",
       "annulerCommande": "Annule la commande (elle reste visible dans l'historique).",
-      "facturePropforma": "Génère une facture proforma à envoyer au client avant livraison."
+      "facturePropforma": "Génère une facture proforma à envoyer au client avant livraison.",
+      "voirFacture": "Ouvre la vente issue de cette livraison : reçu ou facture, bon de livraison, impression et partage."
     },
     "form": {
       "ajouterArticle": "Ajoute une ligne de produit à la commande."

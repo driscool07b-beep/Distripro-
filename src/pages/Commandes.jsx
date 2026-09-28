@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
@@ -254,7 +255,7 @@ export default function Commandes() {
     const [{ data: commande }, { data: lignesData }, { data: historique }] = await Promise.all([
       supabase
         .from('commandes')
-        .select('id, numero, statut, mode_paiement, montant_ht, montant_tva, montant_ttc, montant_paye, date_livraison_souhaitee, notes, bon_commande_client_path, bon_commande_client_reference, created_at, clients(nom, telephone, adresse), profils!commercial_id(nom)')
+        .select('id, numero, statut, mode_paiement, montant_ht, montant_tva, montant_ttc, montant_paye, date_livraison_souhaitee, notes, bon_commande_client_path, bon_commande_client_reference, created_at, vente_id, clients(nom, telephone, adresse), profils!commercial_id(nom)')
         .eq('id', commandeId)
         .single(),
       supabase.from('lignes_commande').select('id, produit_id, quantite, prix_unitaire, montant_ligne, quantite_livree, produits(nom)').eq('commande_id', commandeId),
@@ -846,6 +847,12 @@ export default function Commandes() {
                   <button data-aide="commandes.detail.facturePropforma" onClick={telechargerProforma} className="btn-secondary text-sm">
                     {t('detail.facturePropforma')}
                   </button>
+
+                  {detail.commande?.statut === 'livree' && detail.commande?.vente_id && (
+                    <Link data-aide="commandes.detail.voirFacture" to={`/ventes?vente=${detail.commande.vente_id}`} className="btn-primary text-sm">
+                      🧾 {t('detail.voirFacture')}
+                    </Link>
+                  )}
 
                   {detail.commande?.statut === 'brouillon' && (
                     <button data-aide="commandes.detail.confirmer" onClick={() => changerStatut('confirmee')} disabled={actionEnvoi} className="bg-blue-600 text-white px-3 py-2 rounded text-sm">

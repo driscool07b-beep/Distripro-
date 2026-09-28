@@ -92,7 +92,8 @@
     "resteAPayer": "Balance due",
     "excedentAvance": "The advance exceeds the delivery: {{montant}} will remain as customer credit.",
     "encaisserReste": "Collect the balance",
-    "depassement": "Amount above the balance due ({{reste}}): the surplus would become customer credit."
+    "depassement": "Amount above the balance due ({{reste}}): the surplus would become customer credit.",
+    "voirFacture": "Invoice / receipt and delivery note"
   },
   "export": {
     "numero": "Number",

@@ -28,7 +28,8 @@
       "demarrerPreparation": "Tells the warehouse the order is being prepared.",
       "enregistrerLivraison": "Confirms delivery: the sale is created and stock deducted.",
       "annulerCommande": "Cancels the order (it stays in the history).",
-      "facturePropforma": "Generates a proforma invoice to send before delivery."
+      "facturePropforma": "Generates a proforma invoice to send before delivery.",
+      "voirFacture": "Opens the sale created by this delivery: receipt or invoice, delivery note, print and share."
     },
     "form": {
       "ajouterArticle": "Adds a product line to the order."
