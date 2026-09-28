@@ -84,7 +84,15 @@
     "par": "by",
     "impossibleChargerDetail": "Unable to load details.",
     "magasinLivraison": "Warehouse shipping the goods",
-    "choisirMagasin": "— Choose warehouse —"
+    "choisirMagasin": "— Choose warehouse —",
+    "livraisonHT": "Delivered total excl. tax",
+    "livraisonTVA": "VAT",
+    "totalLivre": "Delivery total (incl. tax)",
+    "avanceRecue": "Advance already received",
+    "resteAPayer": "Balance due",
+    "excedentAvance": "The advance exceeds the delivery: {{montant}} will remain as customer credit.",
+    "encaisserReste": "Collect the balance",
+    "depassement": "Amount above the balance due ({{reste}}): the surplus would become customer credit."
   },
   "export": {
     "numero": "Number",

@@ -84,7 +84,15 @@
     "par": "بواسطة",
     "impossibleChargerDetail": "تعذر تحميل التفاصيل.",
     "magasinLivraison": "المخزن الذي تُشحن منه البضاعة",
-    "choisirMagasin": "— اختر المخزن —"
+    "choisirMagasin": "— اختر المخزن —",
+    "livraisonHT": "إجمالي المسلَّم دون ضريبة",
+    "livraisonTVA": "ضريبة القيمة المضافة",
+    "totalLivre": "إجمالي التسليم (شامل الضريبة)",
+    "avanceRecue": "الدفعة المسبقة المستلمة",
+    "resteAPayer": "المتبقي للدفع",
+    "excedentAvance": "الدفعة المسبقة تتجاوز التسليم: سيبقى {{montant}} رصيدًا دائنًا للعميل.",
+    "encaisserReste": "تحصيل المتبقي",
+    "depassement": "المبلغ أكبر من المتبقي ({{reste}}): سيُسجَّل الفائض رصيدًا للعميل."
   },
   "export": {
     "numero": "الرقم",

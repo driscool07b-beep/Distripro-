@@ -84,7 +84,15 @@
     "par": "par",
     "impossibleChargerDetail": "Impossible de charger le détail.",
     "magasinLivraison": "Magasin d'où part la marchandise",
-    "choisirMagasin": "— Choisir le magasin —"
+    "choisirMagasin": "— Choisir le magasin —",
+    "livraisonHT": "Total HT livré",
+    "livraisonTVA": "TVA",
+    "totalLivre": "Total de la livraison (TTC)",
+    "avanceRecue": "Avance déjà reçue",
+    "resteAPayer": "Reste à payer",
+    "excedentAvance": "L'avance dépasse la livraison : {{montant}} resteront en crédit (avoir) au client.",
+    "encaisserReste": "Encaisser le reste à payer",
+    "depassement": "Montant supérieur au reste à payer ({{reste}}) : le surplus serait mis en avoir client."
   },
   "export": {
     "numero": "Numéro",

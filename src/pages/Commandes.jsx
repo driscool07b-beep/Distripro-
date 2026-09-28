@@ -62,11 +62,18 @@ export default function Commandes() {
   const [chargementDetail, setChargementDetail] = useState(false)
   const [modeLivraison, setModeLivraison] = useState(false)
   const [quantitesLivrees, setQuantitesLivrees] = useState({})
+  const [totauxLivraison, setTotauxLivraison] = useState(null)
   const [montantSupplementaire, setMontantSupplementaire] = useState('')
   const [depotLivraison, setDepotLivraison] = useState('')
 
   // Magasins chargés dès l'ouverture de la page : nécessaires aussi pour
   // livrer une commande existante (pas seulement pour en créer une).
+  // Magasins chargés dès l'ouverture de la page (nécessaires aussi pour
+  // livrer une commande existante, pas seulement pour en créer une).
+  useEffect(() => {
+    supabase.from('depots').select('id, nom').eq('actif', true).order('nom').then(({ data }) => setDepots(data || []))
+  }, [])
+
   useEffect(() => {
     supabase.from('depots').select('id, nom').eq('actif', true).order('nom').then(({ data }) => setDepots(data || []))
   }, [])
@@ -371,6 +378,27 @@ export default function Commandes() {
     { cle: 'montant', titre: `${t('export.montantTtc')} (${symboleDevise()})`, alignDroite: true },
     { cle: 'date', titre: t('export.date') },
   ]
+  // Montant de la livraison calculé par le serveur (mêmes règles de taxes
+  // que la vente qui sera créée) → reste à payer après l'avance déjà reçue.
+  const cleLivraison = JSON.stringify([detail?.commande?.id, quantitesLivrees])
+  useEffect(() => {
+    if (!detail?.lignes?.length) { setTotauxLivraison(null); return }
+    const lignesCalc = detail.lignes
+      .map((l) => ({ produit_id: l.produit_id, quantite: Number(quantitesLivrees[l.produit_id] ?? l.quantite), prix_unitaire: Number(l.prix_unitaire || 0) }))
+      .filter((l) => l.quantite > 0)
+    if (lignesCalc.length === 0) { setTotauxLivraison({ total: 0 }); return }
+    const minuterie = setTimeout(async () => {
+      const { data, error } = await supabase.rpc('calculer_totaux_vente', { p_lignes: lignesCalc, p_remise_montant: 0 })
+      setTotauxLivraison(error ? null : data)
+    }, 300)
+    return () => clearTimeout(minuterie)
+  }, [cleLivraison])
+  const avanceRecue = Number(detail?.commande?.montant_paye || 0)
+  const totalLivre = totauxLivraison ? Number(totauxLivraison.total) : null
+  const resteAPayer = totalLivre != null ? Math.max(totalLivre - avanceRecue, 0) : null
+  const excedentAvance = totalLivre != null ? Math.max(avanceRecue - totalLivre, 0) : 0
+  const depassement = resteAPayer != null && Number(montantSupplementaire || 0) > resteAPayer
+
   const totalCommandes = commandes.filter((c) => c.statut !== 'annulee').reduce((s, c) => s + Number(c.montant_ttc || 0), 0)
   const periodeTexte = dateDebut || dateFin ? t('periode', { debut: dateDebut ? formatDate(dateDebut) : '…', fin: dateFin ? formatDate(dateFin) : '…' }) : null
   const COLONNES_RECAP = [
@@ -765,17 +793,41 @@ export default function Commandes() {
                         </select>
                       </div>
                     )}
+                    {totalLivre != null && (
+                      <div className="mt-3 rounded-xl border border-line bg-canvas p-3 text-sm space-y-1">
+                        {totauxLivraison && Number(totauxLivraison.tva) > 0 && (
+                          <div className="flex justify-between text-petrol-600"><span>{t('detail.livraisonHT')}</span><span className="font-mono">{formatXOF(totauxLivraison.ht)}</span></div>
+                        )}
+                        {totauxLivraison && Number(totauxLivraison.tva) > 0 && (
+                          <div className="flex justify-between text-petrol-600"><span>{t('detail.livraisonTVA')}</span><span className="font-mono">{formatXOF(totauxLivraison.tva)}</span></div>
+                        )}
+                        {(totauxLivraison?.autres_taxes || []).map((tx) => (
+                          <div key={tx.nom} className="flex justify-between text-petrol-600"><span>{tx.nom} ({tx.taux}%)</span><span className="font-mono">{formatXOF(tx.montant)}</span></div>
+                        ))}
+                        <div className="flex justify-between font-medium"><span>{t('detail.totalLivre')}</span><span className="font-mono">{formatXOF(totalLivre)}</span></div>
+                        <div className="flex justify-between text-emerald-700"><span>{t('detail.avanceRecue')}</span><span className="font-mono">− {formatXOF(avanceRecue)}</span></div>
+                        <div className="flex justify-between font-semibold border-t border-line pt-1"><span>{t('detail.resteAPayer')}</span><span className="font-mono text-base">{formatXOF(resteAPayer)}</span></div>
+                        {excedentAvance > 0 && <p className="text-xs text-sky-700">{t('detail.excedentAvance', { montant: formatXOF(excedentAvance) })}</p>}
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       <div>
                         <label className="label">{t('detail.montantSupplementaire')}</label>
                         <input
                           type="number"
                           min="0"
-                          className="input-field"
+                          max={resteAPayer ?? undefined}
+                          className={`input-field ${depassement ? 'border-red-400' : ''}`}
                           value={montantSupplementaire}
                           onChange={(e) => setMontantSupplementaire(e.target.value)}
                           placeholder="0"
                         />
+                        {resteAPayer > 0 && (
+                          <button type="button" className="text-xs underline text-petrol-600 mt-1" onClick={() => setMontantSupplementaire(String(resteAPayer))}>
+                            {t('detail.encaisserReste')}
+                          </button>
+                        )}
+                        {depassement && <p className="text-xs text-red-600 mt-1">{t('detail.depassement', { reste: formatXOF(resteAPayer) })}</p>}
                       </div>
                       <div>
                         <label className="label">{t('detail.modeDePaiement')}</label>
