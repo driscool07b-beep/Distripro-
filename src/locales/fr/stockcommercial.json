@@ -29,7 +29,7 @@
   "sorti": "sorti : {{n}}",
   "envoi": "Envoi…",
   "validerRetourCloturer": "Valider le retour et clôturer",
-  "reconciliationTitre": "Réconciliation sortie / retour / ventes réelles",
+  "reconciliationTitre": "Contrôle rapide de la sortie (sorti / retourné / vendu)",
   "produit": "Produit",
   "venduImplicite": "Vendu (implicite)",
   "venduReel": "Vendu (réel)",
@@ -49,5 +49,7 @@
     "historique": "Historique des échanges",
     "aucun": "Aucun échange enregistré.",
     "par": "enregistré par {{nom}}"
-  }
+  },
+  "controleRapideAide": "Ce contrôle rapide compare, pour cette seule sortie, ce qui manque au retour avec les ventes enregistrées. Il ne crée ni dette ni écriture : pour traiter officiellement un écart (dette du commercial ou perte), établissez la fiche de réconciliation.",
+  "creerFicheReconciliation": "Établir la fiche de réconciliation"
 }

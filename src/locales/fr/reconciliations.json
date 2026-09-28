@@ -148,5 +148,12 @@
     "notifFait": "Fait le {{date}}",
     "signSalarie": "Signature du salarié (précédée de « lu et approuvé »)",
     "signEmployeur": "Pour l'employeur"
-  }
+  },
+  "aTraiter": {
+    "titre": "À traiter",
+    "caisse": "{{n}} fiche(s) à valider par la caisse → afficher",
+    "comptable": "{{n}} fiche(s) à clôturer par le comptable (dette ou perte) → afficher",
+    "justifier": "{{n}} fiche(s) avec un écart à justifier → afficher"
+  },
+  "tousStatuts": "Tous les statuts"
 }

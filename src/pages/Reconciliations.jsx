@@ -7,6 +7,8 @@ import { useAuth } from '../context/AuthContext'
 import { formatXOF, formatDate } from '../lib/format'
 import { traduireErreur } from '../lib/erreurs'
 import { ecrireEnTeteEntreprise } from '../lib/export'
+import { useSearchParams } from 'react-router-dom'
+import { compterReconciliationsATraiter } from '../lib/reconciliationsATraiter'
 
 // Réconciliation des commerciaux : stock (sorties, ventes, retours, compté)
 // et argent (ventes comptant, recouvrements, versements), justification par
@@ -34,6 +36,9 @@ export default function Reconciliations() {
   const [nouvelle, setNouvelle] = useState(null)
   const [erreur, setErreur] = useState('')
   const [envoi, setEnvoi] = useState(false)
+  const [aTraiter, setATraiter] = useState(null)
+  const [filtreStatut, setFiltreStatut] = useState('')
+  const [searchParams] = useSearchParams()
 
   const role = profil?.role
   const estDirection = ['admin', 'manager'].includes(role)
@@ -46,8 +51,10 @@ export default function Reconciliations() {
   async function charger() {
     let requete = supabase.from('reconciliations_commercial').select('*').order('date_fin', { ascending: false }).limit(200)
     if (filtreCommercial) requete = requete.eq('commercial_id', filtreCommercial)
+    if (filtreStatut) requete = requete.eq('statut', filtreStatut)
     const { data } = await requete
     setFiches(data || [])
+    setATraiter(await compterReconciliationsATraiter(profil))
   }
 
   useEffect(() => {
@@ -58,7 +65,13 @@ export default function Reconciliations() {
     })
   }, [profil?.id])
 
-  useEffect(() => { charger() }, [filtreCommercial])
+  useEffect(() => { charger() }, [filtreCommercial, filtreStatut])
+
+  // Arrivée depuis le contrôle d'une sortie : fiche pré-remplie.
+  useEffect(() => {
+    const c = searchParams.get('commercial')
+    if (c) setNouvelle({ commercial_id: c, date_debut: searchParams.get('du') || aujourdhui(), date_fin: searchParams.get('au') || aujourdhui() })
+  }, [])
 
   async function creerFiche() {
     setErreur('')
@@ -101,6 +114,21 @@ export default function Reconciliations() {
         ))}
       </div>
 
+      {onglet === 'fiches' && aTraiter && aTraiter.total > 0 && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-3 mb-4 space-y-1.5">
+          <p className="text-sm font-semibold text-red-800">🔔 {t('aTraiter.titre')}</p>
+          {aTraiter.caisse > 0 && (
+            <button className="block text-sm text-red-700 underline" onClick={() => setFiltreStatut('brouillon')}>{t('aTraiter.caisse', { n: aTraiter.caisse })}</button>
+          )}
+          {aTraiter.comptable > 0 && (
+            <button className="block text-sm text-red-700 underline" onClick={() => setFiltreStatut('validee_caisse')}>{t('aTraiter.comptable', { n: aTraiter.comptable })}</button>
+          )}
+          {aTraiter.justifier > 0 && (
+            <button className="block text-sm text-red-700 underline" onClick={() => setFiltreStatut('brouillon')}>{t('aTraiter.justifier', { n: aTraiter.justifier })}</button>
+          )}
+        </div>
+      )}
+
       {onglet === 'fiches' && (
         <>
           <div className="flex flex-wrap gap-2 items-end mb-4">
@@ -110,6 +138,10 @@ export default function Reconciliations() {
                 {commerciaux.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
               </select>
             )}
+            <select className="input-field sm:max-w-[220px]" value={filtreStatut} onChange={(e) => setFiltreStatut(e.target.value)}>
+              <option value="">{t('tousStatuts')}</option>
+              {['brouillon', 'validee_caisse', 'validee', 'annulee'].map((st) => <option key={st} value={st}>{t(`statuts.${st}`)}</option>)}
+            </select>
             <div className="flex-1" />
             {peutPreparer && (
               <button data-aide="reconciliations.nouvelle" className="btn-primary text-sm"

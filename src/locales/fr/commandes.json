@@ -82,7 +82,9 @@
     "annulerCommande": "Annuler la commande",
     "historique": "Historique",
     "par": "par",
-    "impossibleChargerDetail": "Impossible de charger le détail."
+    "impossibleChargerDetail": "Impossible de charger le détail.",
+    "magasinLivraison": "Magasin d'où part la marchandise",
+    "choisirMagasin": "— Choisir le magasin —"
   },
   "export": {
     "numero": "Numéro",

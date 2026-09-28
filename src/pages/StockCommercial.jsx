@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
@@ -120,6 +121,7 @@ function StockEnMain() {
 
 function SortiesRetours() {
   const { t } = useTranslation('stockcommercial')
+  const { profil } = useAuth()
   const [sorties, setSorties] = useState([])
   const [chargement, setChargement] = useState(true)
   const [modalOuvert, setModalOuvert] = useState(false)
@@ -449,6 +451,17 @@ function SortiesRetours() {
                         {t('ecartDetecte')}
                       </p>
                     )}
+                    <div className="mt-3 rounded-lg bg-canvas p-3 text-xs text-petrol-600 space-y-2">
+                      <p>{t('controleRapideAide')}</p>
+                      {['admin', 'manager', 'comptable'].includes(profil?.role) && detail?.commercial_id && (
+                        <Link
+                          className="btn-secondary text-xs inline-block"
+                          to={`/reconciliations?commercial=${detail.commercial_id}&du=${detail.date_sortie || ''}&au=${new Date().toISOString().slice(0, 10)}`}
+                        >
+                          📋 {t('creerFicheReconciliation')}
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 )}
               </>

@@ -75,7 +75,7 @@ export default function Creances() {
     setChargement(true)
     let requete = supabase
       .from('ventes')
-      .select('id, total, montant_regle, date_echeance, created_at, solde_report, clients(nom, telephone), profils!created_by(nom)')
+      .select('id, total, montant_regle, date_echeance, created_at, solde_report, clients(nom, telephone), profils!created_by(nom), commercial:profils!commercial_id(nom)')
       .eq('mode_paiement', 'credit')
       .neq('statut', 'annulee')
       .order('date_echeance', { ascending: true, nullsFirst: false })
@@ -126,7 +126,7 @@ export default function Creances() {
   function donneesExport() {
     return creancesAffichees.map((v) => ({
       client: v.clients?.nom || '—',
-      commercial: v.profils?.nom || '—',
+      commercial: v.commercial?.nom || 'Vente de bureau',
       echeance: v.date_echeance ? formatDate(v.date_echeance) : '—',
       statut: estEchue(v) ? t('export.enRetard') : t('export.enCours'),
       resteDu: Number(v.total) - Number(v.montant_regle),
@@ -151,7 +151,7 @@ export default function Creances() {
     const [{ data: vente }, { data: lignes }, { data: paiements }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, numero_vente, total, montant_regle, date_echeance, created_at, solde_report, notes, clients(nom, telephone, adresse), profils!created_by(nom)')
+        .select('id, numero_vente, total, montant_regle, date_echeance, created_at, solde_report, notes, clients(nom, telephone, adresse), profils!created_by(nom), commercial:profils!commercial_id(nom)')
         .eq('id', venteId)
         .single(),
       supabase.from('ventes_lignes').select('quantite, prix_unitaire, sous_total, produits(nom)').eq('vente_id', venteId),
@@ -458,7 +458,7 @@ export default function Creances() {
                   {estEncaissee(v) && <span className="ml-2 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">{t('encaissee')}</span>}
                 </p>
                 <p className="text-xs text-petrol-500">
-                  {t('commercial')} : {v.profils?.nom || '—'}
+                  {t('commercial')} : {v.commercial?.nom || t('bureau')}
                   {v.date_echeance && (
                     <>
                       {' '}— {t('echeance')} : {formatDate(v.date_echeance)}
@@ -487,7 +487,7 @@ export default function Creances() {
                   <div>
                     <h2 className="font-semibold text-lg">{detail.vente?.clients?.nom}</h2>
                     <p className="text-xs text-petrol-500">
-                      {t('detail.venteDu', { date: formatDate(detail.vente?.created_at), commercial: detail.vente?.profils?.nom || '—' })}
+                      {t('detail.venteDu', { date: formatDate(detail.vente?.created_at), commercial: detail.vente?.commercial?.nom || t('bureau') })}
                     </p>
                   </div>
                   <button onClick={fermerDetail} className="text-petrol-400 hover:text-petrol-700 text-xl leading-none">✕</button>

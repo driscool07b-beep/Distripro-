@@ -39,23 +39,23 @@
   "noteRealiseAdmin": "已实现金额将是该时间段内公司所有销售额的总和（公司整体目标）。",
   "leBureau": "办公室",
   "noteRealiseBureau": "已实现金额将是该时间段内办公室销售额（从仓库销售、未归属于某销售代表）的总和。",
-  "modifier": "Edit",
-  "motifModification": "Reason for the change (required)",
-  "enregistrerModification": "Save change",
-  "motifSuppression": "Reason for deleting (required):",
+  "modifier": "修改",
+  "motifModification": "修改原因（必填）",
+  "enregistrerModification": "保存修改",
+  "motifSuppression": "删除原因（必填）：",
   "historique": {
-    "bouton": "History",
-    "titre": "Target history",
-    "vide": "No history.",
-    "debut": "Start",
-    "fin": "End",
-    "montant": "Target amount",
-    "quantite": "Target quantity",
-    "notes": "Notes",
+    "bouton": "历史记录",
+    "titre": "目标历史",
+    "vide": "暂无历史。",
+    "debut": "开始",
+    "fin": "结束",
+    "montant": "目标金额",
+    "quantite": "目标数量",
+    "notes": "备注",
     "actions": {
-      "creation": "Created",
-      "modification": "Changed",
-      "suppression": "Deleted"
+      "creation": "已创建",
+      "modification": "已修改",
+      "suppression": "已删除"
     }
   }
 }

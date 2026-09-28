@@ -29,7 +29,7 @@
   "sorti": "issued: {{n}}",
   "envoi": "Sending…",
   "validerRetourCloturer": "Confirm return and close",
-  "reconciliationTitre": "Issued / returned / actual sales reconciliation",
+  "reconciliationTitre": "Quick check of this issue (issued / returned / sold)",
   "produit": "Product",
   "venduImplicite": "Sold (implied)",
   "venduReel": "Sold (actual)",
@@ -49,5 +49,7 @@
     "historique": "Exchange history",
     "aucun": "No exchange recorded.",
     "par": "recorded by {{nom}}"
-  }
+  },
+  "controleRapideAide": "This quick check compares, for this issue only, what is missing at return with recorded sales. It creates no debt or entry: to handle a gap officially, prepare the reconciliation sheet.",
+  "creerFicheReconciliation": "Prepare the reconciliation sheet"
 }

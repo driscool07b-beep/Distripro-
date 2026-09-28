@@ -9,6 +9,7 @@ import TableauxResponsifs from './TableauxResponsifs'
 import MiseAJour from './MiseAJour'
 import NavigationClavier, { BoutonRetour } from './NavigationClavier'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
+import { compterReconciliationsATraiter } from '../lib/reconciliationsATraiter'
 import { ROLES_PAGES } from '../lib/accesRole'
 import SelecteurLangue from './SelecteurLangue'
 import BandeauHorsLigne from './BandeauHorsLigne'
@@ -42,6 +43,7 @@ export default function Layout() {
   const [messagesNonLus, setMessagesNonLus] = useState(0)
   const [badgeJournalCaisse, setBadgeJournalCaisse] = useState(0)
   const [badgeBanques, setBadgeBanques] = useState(0)
+  const [badgeReconciliations, setBadgeReconciliations] = useState(0)
   const location = useLocation()
 
   const peutValiderCaisse = (entreprise?.caisse_roles_validateurs || ['admin', 'manager']).includes(profil?.role)
@@ -51,6 +53,7 @@ export default function Layout() {
     if (!profil) return
     chargerBadgeMessagerie()
     chargerBadgesCaisseBanque()
+    chargerBadgeReconciliations()
 
     const canal = supabase
       .channel('badges-notifications')
@@ -58,6 +61,7 @@ export default function Layout() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes_decaissement' }, () => chargerBadgesCaisseBanque())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'caisse_transferts' }, () => chargerBadgesCaisseBanque())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'transferts_banque_caisse' }, () => chargerBadgesCaisseBanque())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reconciliations_commercial' }, () => chargerBadgeReconciliations())
       .subscribe()
 
     return () => {
@@ -69,8 +73,14 @@ export default function Layout() {
     if (profil) {
       chargerBadgeMessagerie()
       chargerBadgesCaisseBanque()
+      chargerBadgeReconciliations()
     }
   }, [location.pathname])
+
+  async function chargerBadgeReconciliations() {
+    const r = await compterReconciliationsATraiter(profil)
+    setBadgeReconciliations(r.total)
+  }
 
   async function chargerBadgeMessagerie() {
     const { data } = await supabase.rpc('mes_conversations')
@@ -257,7 +267,12 @@ export default function Layout() {
               }
             >
               <JournalIcon className="w-4 h-4 shrink-0" />
-              {t('menu.reconciliations')}
+              <span className="flex-1">{t('menu.reconciliations')}</span>
+              {badgeReconciliations > 0 && (
+                <span className="bg-red-600 text-white text-xs font-semibold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shrink-0">
+                  {badgeReconciliations > 99 ? '99+' : badgeReconciliations}
+                </span>
+              )}
             </NavLink>
           )}
           {['admin', 'manager', 'comptable'].includes(profil?.role) && (

@@ -148,5 +148,12 @@
     "notifFait": "Done on {{date}}",
     "signSalarie": "Employee signature",
     "signEmployeur": "For the employer"
-  }
+  },
+  "aTraiter": {
+    "titre": "To do",
+    "caisse": "{{n}} sheet(s) to approve (cashier) → show",
+    "comptable": "{{n}} sheet(s) to close (accountant) → show",
+    "justifier": "{{n}} sheet(s) with a gap to justify → show"
+  },
+  "tousStatuts": "All statuses"
 }
