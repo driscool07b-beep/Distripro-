@@ -64,6 +64,12 @@ export default function Commandes() {
   const [quantitesLivrees, setQuantitesLivrees] = useState({})
   const [montantSupplementaire, setMontantSupplementaire] = useState('')
   const [depotLivraison, setDepotLivraison] = useState('')
+
+  // Magasins chargés dès l'ouverture de la page : nécessaires aussi pour
+  // livrer une commande existante (pas seulement pour en créer une).
+  useEffect(() => {
+    supabase.from('depots').select('id, nom').eq('actif', true).order('nom').then(({ data }) => setDepots(data || []))
+  }, [])
   const [modePaiementLivraison, setModePaiementLivraison] = useState('cash')
   const [actionEnvoi, setActionEnvoi] = useState(false)
   const [erreurAction, setErreurAction] = useState('')
