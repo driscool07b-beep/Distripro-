@@ -765,7 +765,10 @@ export default function Ventes() {
                           onChange={(e) => modifierLigne(i, 'produit_id', e.target.value)}
                         >
                           <option value="">{t('form.produitPlaceholder')}</option>
-                          {produits.map((p) => (
+                          {produits
+                            // Un produit déjà choisi sur une autre ligne n'est plus proposé.
+                            .filter((p) => p.id === ligne.produit_id || !lignes.some((l, j) => j !== i && l.produit_id === p.id))
+                            .map((p) => (
                             <option key={p.id} value={p.id}>
                               {p.nom} {stockDisponible(p) == null
                                 ? `(${t('form.choisirSourceCourt')})`

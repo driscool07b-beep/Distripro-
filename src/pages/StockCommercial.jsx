@@ -346,7 +346,9 @@ function SortiesRetours() {
                         onChange={(e) => majLigneSortie(i, 'produit_id', e.target.value)}
                       >
                         <option value="">{t('produitPlaceholder')}</option>
-                        {produits.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
+                        {produits
+                          .filter((p) => p.id === l.produit_id || !lignesSortie.some((x, j) => j !== i && x.produit_id === p.id))
+                          .map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
                       </select>
                       <input
                         type="number"

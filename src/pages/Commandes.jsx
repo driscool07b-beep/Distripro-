@@ -610,7 +610,9 @@ export default function Commandes() {
                         onChange={(e) => majLigne(i, 'produit_id', e.target.value)}
                       >
                         <option value="">{t('form.produitPlaceholder')}</option>
-                        {produits.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
+                        {produits
+                          .filter((p) => p.id === l.produit_id || !lignes.some((x, j) => j !== i && x.produit_id === p.id))
+                          .map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
                       </select>
                       <input
                         type="number"
