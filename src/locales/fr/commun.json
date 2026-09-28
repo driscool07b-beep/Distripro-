@@ -123,7 +123,8 @@
       "erreurAutre": "Le mot de passe n'a pas pu être modifié",
       "conseilNavigateur": "Astuce : ouvrez le lien de l'email dans le même navigateur que celui où vous avez demandé la réinitialisation, et utilisez le lien le plus récent (chaque nouvelle demande annule la précédente).",
       "retourConnexion": "Retour à la connexion"
-    }
+    },
+    "compteDesactive": "Ce compte a été désactivé par votre administrateur : contactez-le pour le réactiver."
   },
   "inscription": {
     "mdpMinLength": "Le mot de passe doit contenir au moins 6 caractères.",

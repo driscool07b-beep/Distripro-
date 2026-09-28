@@ -72,6 +72,8 @@ export function AuthProvider({ children }) {
     }
 
     if (profilData.actif === false) {
+      // Compte désactivé : on déconnecte, mais en le DISANT à l'utilisateur.
+      try { sessionStorage.setItem('distribpro-compte-desactive', '1') } catch { /* ignore */ }
       await supabase.auth.signOut()
       setProfil(null)
       setEntreprise(null)

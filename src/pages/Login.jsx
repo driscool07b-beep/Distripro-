@@ -20,6 +20,13 @@ export default function Login() {
   const [emailOubli, setEmailOubli] = useState('')
   const [envoiOubli, setEnvoiOubli] = useState(false)
   const [messageOubli, setMessageOubli] = useState('')
+  const [compteDesactive] = useState(() => {
+    try {
+      const v = sessionStorage.getItem('distribpro-compte-desactive') === '1'
+      sessionStorage.removeItem('distribpro-compte-desactive')
+      return v
+    } catch { return false }
+  })
   const [codeEnvoye, setCodeEnvoye] = useState(false)
   const [code, setCode] = useState('')
   const [nouveauMdp, setNouveauMdp] = useState('')
@@ -142,9 +149,9 @@ export default function Login() {
                 />
               </div>
 
-              {erreur && (
+              {(erreur || compteDesactive) && (
                 <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-                  {erreur}
+                  {erreur || t('connexion.compteDesactive')}
                 </div>
               )}
 

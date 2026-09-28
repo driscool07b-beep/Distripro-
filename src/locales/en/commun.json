@@ -123,7 +123,8 @@
       "erreurAutre": "The password could not be changed",
       "conseilNavigateur": "Tip: open the email link in the same browser where you requested the reset, and use the most recent link (each new request cancels the previous one).",
       "retourConnexion": "Back to sign in"
-    }
+    },
+    "compteDesactive": "This account has been deactivated by your administrator: contact them to reactivate it."
   },
   "inscription": {
     "mdpMinLength": "Password must be at least 6 characters long.",

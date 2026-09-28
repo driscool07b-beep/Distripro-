@@ -123,7 +123,8 @@
       "erreurAutre": "无法修改密码",
       "conseilNavigateur": "提示：请在申请重置的同一浏览器中打开邮件链接，并使用最新的链接（每次新申请都会使之前的链接失效）。",
       "retourConnexion": "返回登录"
-    }
+    },
+    "compteDesactive": "该账户已被管理员停用：请联系管理员重新启用。"
   },
   "inscription": {
     "mdpMinLength": "密码必须至少包含6个字符。",
