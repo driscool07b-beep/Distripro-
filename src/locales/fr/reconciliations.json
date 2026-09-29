@@ -167,5 +167,37 @@
     "compte": "Ce qu'il a réellement en main, compté physiquement. À saisir ; par défaut égal au théorique.",
     "ecart": "Théorique − compté. Positif = manquant ; négatif = excédent.",
     "valeur": "Écart × prix (de vente ou de revient, selon le paramètre)."
+  },
+  "modes": {
+    "tournees": "Par tournées",
+    "dates": "Par dates"
+  },
+  "tournees": {
+    "titre": "Tournées à réconcilier (cochez-les)",
+    "aucune": "Aucune tournée non réconciliée pour ce commercial.",
+    "ligne": "Sortie du {{date}} — {{n}} produit(s), {{q}} unité(s)",
+    "statuts": {
+      "ouverte": "En cours",
+      "cloturee": "Clôturée"
+    },
+    "toutRapporte": "Tout devait être rapporté au retour : pour les tournées clôturées, le « compté » est prérempli à 0 (ce qui n'est ni vendu ni rapporté est un manquant).",
+    "aide": "Cochez une ou plusieurs tournées (y compris en cours) pour les réconcilier ensemble. La période est déduite des tournées cochées.",
+    "liees": "Tournées réconciliées"
+  },
+  "rapport": {
+    "titre": "Rapport de contrôle (automatique)",
+    "aucunEcart": "Aucun écart de stock.",
+    "manquant": "manquant de {{n}}",
+    "excedent": "excédent de {{n}}",
+    "echanges": "Échanges défectueux de la période"
+  },
+  "corrections": {
+    "renvoyer": "Renvoyer à la caisse pour correction",
+    "motifRenvoi": "Motif du renvoi (les écritures seront contre-passées) :",
+    "rectifier": "Rectifier le comptage",
+    "aideRectif": "Fiche clôturée : corrigez le « compté » dans le tableau ci-dessus, choisissez le traitement de la différence, indiquez le motif. La dette, le stock du commercial et les écritures sont ajustés ; la rectification reste tracée.",
+    "motifRectif": "Motif de la rectification (obligatoire)",
+    "enregistrerRectif": "Enregistrer la rectification",
+    "historique": "Rectifications"
   }
 }

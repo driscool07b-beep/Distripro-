@@ -167,5 +167,37 @@
     "compte": "What they actually have, physically counted.",
     "ecart": "Theoretical − counted. Positive = shortage.",
     "valeur": "Gap × price (selling or cost, per setting)."
+  },
+  "modes": {
+    "tournees": "By rounds",
+    "dates": "By dates"
+  },
+  "tournees": {
+    "titre": "Rounds to reconcile (tick them)",
+    "aucune": "No unreconciled round for this rep.",
+    "ligne": "Issue of {{date}} — {{n}} product(s), {{q}} unit(s)",
+    "statuts": {
+      "ouverte": "Ongoing",
+      "cloturee": "Closed"
+    },
+    "toutRapporte": "Everything had to be brought back: for closed rounds, 'counted' is prefilled with 0.",
+    "aide": "Tick one or more rounds (ongoing included) to reconcile them together.",
+    "liees": "Reconciled rounds"
+  },
+  "rapport": {
+    "titre": "Control report (automatic)",
+    "aucunEcart": "No stock gap.",
+    "manquant": "short {{n}}",
+    "excedent": "surplus {{n}}",
+    "echanges": "Defective exchanges in the period"
+  },
+  "corrections": {
+    "renvoyer": "Send back to cashier for correction",
+    "motifRenvoi": "Reason (entries will be reversed):",
+    "rectifier": "Correct the count",
+    "aideRectif": "Closed sheet: correct 'counted' above, choose how to treat the difference and give a reason. Debt, stock and entries are adjusted; the correction stays traced.",
+    "motifRectif": "Reason (required)",
+    "enregistrerRectif": "Save correction",
+    "historique": "Corrections"
   }
 }
