@@ -248,5 +248,17 @@
     "creerBouton": "Create and select",
     "annuler": "Cancel",
     "horsPlan": "not in the chart of accounts"
+  },
+  "comptesClients": {
+    "titre": "Customer accounts (accounting)",
+    "aide": "Each customer gets a 411 sub-account; each customer group has a main account, parent of its members' accounts.",
+    "mode": "Account assignment",
+    "auto": "Automatic (next free number)",
+    "manuel": "Manual (I enter my numbers)",
+    "racineClients": "Root for customers without group",
+    "racineGroupes": "Root for groups",
+    "exemple": "Example: single customer {{c}}0001 · group {{g}}001 · group member {{g}}001001.",
+    "attribuer": "Assign missing accounts",
+    "attribues": "{{n}} account(s) assigned."
   }
 }

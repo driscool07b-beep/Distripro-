@@ -49,7 +49,7 @@ export default function GrandLivre() {
   async function chargerGrandLivre(id) {
     setChargement(true)
     const [{ data: clientData }, { data: ventes }] = await Promise.all([
-      supabase.from('clients').select('nom, telephone, adresse, ville, limite_credit').eq('id', id).single(),
+      supabase.from('clients').select('nom, telephone, adresse, ville, limite_credit, compte_numero').eq('id', id).single(),
       supabase
         .from('ventes')
         .select('id, numero_vente, total, mode_paiement, montant_regle, statut, created_at')
@@ -182,7 +182,7 @@ export default function GrandLivre() {
           <div className="card p-4 mb-4 flex flex-wrap justify-between gap-4">
             <div>
               <p className="text-xs text-petrol-500">{entreprise?.nom} — {t('releveDeCompte')}</p>
-              <p className="font-semibold text-lg">{client.nom}</p>
+              <p className="font-semibold text-lg">{client.nom}{client.compte_numero && <span className="ms-2 text-sm font-mono text-petrol-500">{client.compte_numero}</span>}</p>
               {client.telephone && <p className="text-sm text-petrol-600">{client.telephone}</p>}
               {client.adresse && <p className="text-sm text-petrol-600">{client.adresse}{client.ville ? `, ${client.ville}` : ''}</p>}
               {periode && <p className="text-xs text-petrol-500 mt-1">{periode}</p>}

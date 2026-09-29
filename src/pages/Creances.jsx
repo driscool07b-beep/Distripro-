@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import ReglementGroupe from '../components/ReglementGroupe'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuPaiement, formatMontantPDF, symboleDevise } from '../lib/export'
@@ -14,6 +15,38 @@ import i18n from '../lib/i18n'
 export default function Creances() {
   const { t } = useTranslation('creances')
   const { entreprise, profil } = useAuth()
+  const [reglementGroupeOuvert, setReglementGroupeOuvert] = useState(false)
+  const gereComptes = ['admin', 'manager', 'comptable'].includes(profil?.role)
+
+  // Balance clients : un compte par client, regroupée par groupe (sous-totaux).
+  async function exporterBalance(format) {
+    const { data, error } = await supabase.rpc('balance_clients')
+    if (error) { alert(error.message); return }
+    const lignes = []
+    let groupeCourant = null
+    let sousTotal = null
+    const fermerGroupe = () => {
+      if (sousTotal) lignes.push({ compte: sousTotal.compte, client: `${t('balance.totalGroupe')} ${sousTotal.nom}`, facture: sousTotal.f, regle: sousTotal.r, solde: sousTotal.s })
+    }
+    ;(data || []).forEach((l) => {
+      const cleGroupe = l.groupe || null
+      if (cleGroupe !== groupeCourant) {
+        fermerGroupe()
+        groupeCourant = cleGroupe
+        sousTotal = cleGroupe ? { nom: l.groupe, compte: l.compte_groupe || '', f: 0, r: 0, s: 0 } : null
+      }
+      lignes.push({ compte: l.compte || '', client: l.client, facture: Number(l.total_facture), regle: Number(l.total_regle), solde: Number(l.solde) })
+      if (sousTotal) { sousTotal.f += Number(l.total_facture); sousTotal.r += Number(l.total_regle); sousTotal.s += Number(l.solde) }
+    })
+    fermerGroupe()
+    const colonnes = [
+      { cle: 'compte', titre: t('balance.compte') }, { cle: 'client', titre: t('balance.client') },
+      { cle: 'facture', titre: t('balance.facture') }, { cle: 'regle', titre: t('balance.regle') }, { cle: 'solde', titre: t('balance.solde') },
+    ]
+    const totalSolde = (data || []).reduce((n, l) => n + Number(l.solde), 0)
+    if (format === 'excel') exporterExcel('balance-clients', colonnes, lignes)
+    else exporterPDF('balance-clients', t('balance.titre'), formatDate(new Date()), colonnes, lignes, t('balance.solde'), formatXOF(totalSolde), entreprise)
+  }
   const [searchParams, setSearchParams] = useSearchParams()
   const filtre = searchParams.get('filtre') || 'ouvertes' // ouvertes | echues | encaissees | toutes
   const [toutesLesCreances, setToutesLesCreances] = useState([])
@@ -369,6 +402,17 @@ export default function Creances() {
           <button data-aide="creances.pdf" className="btn-secondary text-xs" onClick={exportPDF} disabled={creancesAffichees.length === 0}>
             📄 {t('pdf')}
           </button>
+          {gereComptes && (
+            <>
+              <button data-aide="creances.reglementGroupe" className="btn-primary text-xs" onClick={() => setReglementGroupeOuvert(true)}>
+                🏢 {t('groupe.bouton')}
+              </button>
+              <button data-aide="creances.balance" className="btn-secondary text-xs" onClick={() => exporterBalance('excel')}>
+                📒 {t('balance.bouton')} (Excel)
+              </button>
+              <button className="btn-secondary text-xs" onClick={() => exporterBalance('pdf')}>📒 {t('balance.bouton')} (PDF)</button>
+            </>
+          )}
           {['admin', 'manager'].includes(profil?.role) && (
             <button data-aide="creances.importer" className="btn-secondary text-xs" onClick={ouvrirModalImport}>
               📥 {t('importer')}
@@ -376,6 +420,14 @@ export default function Creances() {
           )}
         </div>
       </div>
+
+      {reglementGroupeOuvert && (
+        <ReglementGroupe
+          entreprise={entreprise}
+          onFermer={() => setReglementGroupeOuvert(false)}
+          onEnregistre={() => { setReglementGroupeOuvert(false); chargerCreances() }}
+        />
+      )}
 
       {avancesCommandes.length > 0 && (
         <div className="card p-4 mb-4 border-blue-200 bg-blue-50">

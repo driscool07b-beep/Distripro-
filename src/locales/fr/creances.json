@@ -84,5 +84,50 @@
     "enRetard": "En retard",
     "enCours": "En cours"
   },
-  "bureau": "vente de bureau"
+  "bureau": "vente de bureau",
+  "groupe": {
+    "bouton": "Règlement groupé",
+    "titre": "Règlement groupé d'un groupe de clients",
+    "aide": "Un paiement du siège réparti sur les factures impayées des membres du groupe. Chaque magasin voit sa créance diminuer ; en comptabilité, chaque client est crédité de sa part.",
+    "fermer": "Fermer",
+    "groupe": "Groupe",
+    "choisir": "— Choisir —",
+    "montantRecu": "Montant reçu",
+    "mode": "Mode de paiement",
+    "modes": {
+      "virement": "Virement bancaire",
+      "cheque": "Chèque",
+      "mobile_money": "Mobile Money",
+      "espece": "Espèces"
+    },
+    "reference": "Référence",
+    "referencePlaceholder": "N° de chèque, de virement…",
+    "banque": "Banque",
+    "factures": "Factures impayées des membres ({{n}})",
+    "repartirAuto": "Répartir automatiquement (plus anciennes d'abord)",
+    "aucuneFacture": "Aucune facture impayée pour ce groupe.",
+    "client": "Client",
+    "compte": "Compte",
+    "facture": "Facture",
+    "echeance": "Échéance",
+    "resteDu": "Reste dû",
+    "regle": "Réglé",
+    "totalReparti": "Total réparti",
+    "excedent": "Excédent de {{montant}} : il sera enregistré en avoir au crédit du client choisi.",
+    "choisirClientExcedent": "— Client qui reçoit l'excédent —",
+    "erreurDepasse": "La répartition dépasse le montant reçu.",
+    "valider": "Enregistrer le règlement groupé",
+    "recuTitre": "Reçu de règlement groupé",
+    "excedentRecu": "Excédent de {{montant}} porté en avoir au crédit de {{client}}."
+  },
+  "balance": {
+    "bouton": "Balance clients",
+    "titre": "Balance clients",
+    "compte": "Compte",
+    "client": "Client",
+    "facture": "Facturé",
+    "regle": "Réglé",
+    "solde": "Solde",
+    "totalGroupe": "Total groupe"
+  }
 }

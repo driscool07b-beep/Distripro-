@@ -59,6 +59,14 @@
         {
           "q": "Comment attribuer des clients au portefeuille d'un commercial ?",
           "r": "Clients → coche les clients voulus → 'Attribuer à…' → choisis le commercial → Appliquer. Tu peux aussi le faire dans la fiche du client ('Commercial attitré') ou au moment d'un import Excel. Le filtre en haut de la liste affiche un portefeuille précis ou les clients non attribués. Le portefeuille sert notamment à la planification des tournées."
+        },
+        {
+          "q": "Comment fonctionnent les comptes clients ?",
+          "r": "Chaque client reçoit un sous-compte du 411 (visible sous son nom et dans sa fiche). Un groupe de clients a un compte principal, parent des comptes de ses membres. Paramètres → Comptes clients : attribution automatique (numéro libre suivant, jamais un compte déjà utilisé) ou manuelle (pour reprendre vos numéros existants, aussi via la colonne « Compte client » de l'import Excel). Le bouton « Attribuer les comptes manquants » numérote les clients existants."
+        },
+        {
+          "q": "Comment enregistrer le paiement d'un siège pour plusieurs magasins ?",
+          "r": "Créances → « Règlement groupé » : choisissez le groupe, le montant reçu, le mode et la référence. L'app liste les factures impayées des membres ; « Répartir automatiquement » règle les plus anciennes d'abord (modifiable). Un règlement est créé par facture avec la même référence ; un excédent devient un avoir au crédit du client choisi. Un reçu détaillé est téléchargé. « Balance clients » exporte les soldes par compte, avec un sous-total par groupe."
         }
       ]
     },

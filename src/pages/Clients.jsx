@@ -35,7 +35,7 @@ const CLIENT_VIDE = {
 
 export default function Clients() {
   const { t } = useTranslation('clients')
-  const { profil } = useAuth()
+  const { profil, entreprise } = useAuth()
   const [clients, setClients] = useState([])
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
@@ -81,6 +81,7 @@ export default function Clients() {
   const [attributionEnCours, setAttributionEnCours] = useState(false)
   const [commercialImport, setCommercialImport] = useState('')
   const gerePortefeuilles = ['admin', 'manager'].includes(profil?.role) || profil?.responsable_tournees
+  const peutGererComptes = ['admin', 'manager', 'comptable'].includes(profil?.role)
   // Anti-fraude (contrôlé aussi côté serveur) : plafond de crédit et correction
   // d'une position GPS déjà enregistrée réservés à la direction.
   const peutModifierCredit = ['admin', 'manager'].includes(profil?.role)
@@ -160,6 +161,7 @@ export default function Clients() {
       latitude: client.latitude != null ? String(client.latitude) : '',
       longitude: client.longitude != null ? String(client.longitude) : '',
       commercial_id: client.commercial_id || '',
+      compte_numero: client.compte_numero || '',
     })
     setErreur('')
     setCaptureGps('idle')
@@ -265,7 +267,7 @@ export default function Clients() {
   }, [])
 
   async function chargerGroupes() {
-    const { data } = await supabase.from('groupes_clients').select('id, nom').order('nom')
+    const { data } = await supabase.from('groupes_clients').select('id, nom, compte_numero').order('nom')
     setGroupes(data || [])
   }
 
@@ -278,8 +280,8 @@ export default function Clients() {
 
   function telechargerModeleImport() {
     const feuille = XLSX.utils.aoa_to_sheet([
-      ['Nom', 'Téléphone', 'Email', 'Adresse', 'Ville', 'Type'],
-      ['Boutique Exemple', '0700000000', 'contact@exemple.ci', 'Rue 12, Cocody', 'Abidjan', 'Boutique'],
+      ['Nom', 'Téléphone', 'Email', 'Adresse', 'Ville', 'Type', 'Compte client (facultatif)'],
+      ['Boutique Exemple', '0700000000', 'contact@exemple.ci', 'Rue 12, Cocody', 'Abidjan', 'Boutique', '41110001'],
     ])
     const classeur = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(classeur, feuille, 'Clients')
@@ -298,7 +300,7 @@ export default function Clients() {
         const classeur = XLSX.read(event.target.result, { type: 'array' })
         const feuille = classeur.Sheets[classeur.SheetNames[0]]
         const lignes = XLSX.utils.sheet_to_json(feuille, {
-          header: ['nom', 'telephone', 'email', 'adresse', 'ville', 'type_client'],
+          header: ['nom', 'telephone', 'email', 'adresse', 'ville', 'type_client', 'compte_numero'],
           range: 1,
           defval: '',
         })
@@ -310,6 +312,7 @@ export default function Clients() {
             adresse: String(l.adresse || '').trim(),
             ville: String(l.ville || '').trim(),
             type_client: String(l.type_client || '').trim(),
+            compte_numero: String(l.compte_numero || '').replace(/[^0-9]/g, ''),
           }))
           .filter((l) => l.nom)
         setLignesImport(lignesValides)
@@ -337,6 +340,7 @@ export default function Clients() {
       type_client: l.type_client || null,
       segment: 'nouveau',
       limite_credit: 0,
+      ...(l.compte_numero && peutGererComptes ? { compte_numero: l.compte_numero } : {}),
     }))
 
     const { data, error } = await supabase.from('clients').insert(donnees).select('id')
@@ -380,7 +384,7 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, commercial_id, groupes_clients(nom)')
+      .select('id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, commercial_id, compte_numero, groupes_clients(nom, compte_numero)')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
@@ -464,6 +468,8 @@ export default function Clients() {
       longitude: formulaire.longitude ? Number(formulaire.longitude) : null,
       groupe_id: groupeIdFinal,
       ...(gerePortefeuilles ? { commercial_id: formulaire.commercial_id || null } : {}),
+      // Compte client : saisi par la direction / le comptable (sinon attribué automatiquement).
+      ...(peutGererComptes && (formulaire.compte_numero || '').trim() ? { compte_numero: formulaire.compte_numero.trim() } : {}),
     }
 
     const { error } = clientEnEdition
@@ -604,6 +610,7 @@ export default function Clients() {
                     </span>
                     <div className="min-w-0">
                     <span className="block text-petrol-900">{c.nom}</span>
+                    {c.compte_numero && <span className="block text-[11px] font-mono text-petrol-400">{c.compte_numero}{c.groupes_clients?.nom ? ` · ${c.groupes_clients.nom}` : ''}</span>}
                     {gerePortefeuilles && (
                       <span className="block text-xs font-normal text-petrol-500">
                         👤 {c.commercial_id ? nomCommercial(c.commercial_id) || '—' : t('portefeuille.nonAttribue')}
@@ -787,6 +794,21 @@ export default function Clients() {
                     <option value="inactif">{t('form.segmentInactif')}</option>
                   </select>
                 </div>
+              </div>
+              <div>
+                <label className="label">{t('form.compteClient')}</label>
+                <input
+                  className="input-field font-mono disabled:opacity-60"
+                  value={formulaire.compte_numero || ''}
+                  onChange={(e) => setFormulaire({ ...formulaire, compte_numero: e.target.value.replace(/[^0-9]/g, '') })}
+                  disabled={!peutGererComptes}
+                  placeholder={entreprise?.comptes_clients_mode === 'manuel' ? t('form.compteManuel') : t('form.compteAuto')}
+                />
+                <p className="text-[11px] text-petrol-500 mt-1">
+                  {groupeId && groupes.find((g) => g.id === groupeId)?.compte_numero
+                    ? t('form.compteGroupe', { compte: groupes.find((g) => g.id === groupeId).compte_numero })
+                    : t('form.compteAide')}
+                </p>
               </div>
               {gerePortefeuilles && (
                 <div>

@@ -248,5 +248,17 @@
     "creerBouton": "Créer et sélectionner",
     "annuler": "Annuler",
     "horsPlan": "absent du plan comptable"
+  },
+  "comptesClients": {
+    "titre": "Comptes clients (comptabilité)",
+    "aide": "Chaque client reçoit un sous-compte du 411 ; chaque groupe de clients a un compte principal, parent des comptes de ses membres. Les écritures sont passées sur le compte du client ; le groupe sert au regroupement dans la balance.",
+    "mode": "Attribution des comptes",
+    "auto": "Automatique (numéro libre suivant)",
+    "manuel": "Manuelle (je saisis mes numéros)",
+    "racineClients": "Racine des clients sans groupe",
+    "racineGroupes": "Racine des groupes",
+    "exemple": "Exemple : client isolé {{c}}0001 · groupe {{g}}001 · membre du groupe {{g}}001001. Un numéro déjà utilisé n'est jamais réattribué.",
+    "attribuer": "Attribuer les comptes manquants",
+    "attribues": "{{n}} compte(s) attribué(s)."
   }
 }

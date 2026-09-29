@@ -1367,6 +1367,7 @@ export default function Parametres() {
           </button>
         </form>
       </div>
+      {profil?.role === 'admin' && <SectionComptesClients />}
       {profil?.role === 'admin' && <SectionReconciliation />}
       {profil?.role === 'admin' && <SectionConsommationIA />}
       {profil?.role === 'admin' && <DiagnosticConnexion />}
@@ -1527,6 +1528,73 @@ function SectionReconciliation() {
         </div>
       </div>
       <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Comptes clients : attribution automatique ou manuelle, racines des comptes.
+function SectionComptesClients() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [v, setV] = useState(null)
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+  const [envoi, setEnvoi] = useState(false)
+
+  useEffect(() => {
+    if (!entreprise) return
+    setV({
+      mode: entreprise.comptes_clients_mode || 'auto',
+      clients: entreprise.compte_racine_clients || '4111',
+      groupes: entreprise.compte_racine_groupes || '4112',
+    })
+  }, [entreprise])
+  if (!v) return null
+
+  async function enregistrer() {
+    setErreur(''); setMessage('')
+    const { error } = await supabase.rpc('modifier_parametres_comptes_clients', { p_mode: v.mode, p_racine_clients: v.clients, p_racine_groupes: v.groupes })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    await rechargerProfil()
+    setMessage(t('enregistre'))
+  }
+  async function attribuer() {
+    setErreur(''); setMessage('')
+    setEnvoi(true)
+    const { data, error } = await supabase.rpc('attribuer_comptes_manquants')
+    setEnvoi(false)
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    setMessage(t('comptesClients.attribues', { n: data || 0 }))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">{t('comptesClients.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('comptesClients.aide')}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label className="label">{t('comptesClients.mode')}</label>
+          <select className="input-field" value={v.mode} onChange={(e) => setV({ ...v, mode: e.target.value })}>
+            <option value="auto">{t('comptesClients.auto')}</option>
+            <option value="manuel">{t('comptesClients.manuel')}</option>
+          </select>
+        </div>
+        <div>
+          <label className="label">{t('comptesClients.racineClients')}</label>
+          <input className="input-field font-mono" value={v.clients} onChange={(e) => setV({ ...v, clients: e.target.value.replace(/[^0-9]/g, '') })} />
+        </div>
+        <div>
+          <label className="label">{t('comptesClients.racineGroupes')}</label>
+          <input className="input-field font-mono" value={v.groupes} onChange={(e) => setV({ ...v, groupes: e.target.value.replace(/[^0-9]/g, '') })} />
+        </div>
+      </div>
+      <p className="text-[11px] text-petrol-500 mt-2">{t('comptesClients.exemple', { c: v.clients, g: v.groupes })}</p>
+      <div className="flex flex-wrap gap-2 mt-3">
+        <button className="btn-primary text-sm" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+        <button className="btn-secondary text-sm" disabled={envoi} onClick={attribuer}>{envoi ? '…' : t('comptesClients.attribuer')}</button>
+      </div>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>

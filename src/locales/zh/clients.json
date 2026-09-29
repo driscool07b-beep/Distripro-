@@ -71,7 +71,12 @@
     "pays": "国家（可选）",
     "paysPlaceholder": "例如：科特迪瓦",
     "reserveDirection": "仅管理员或经理可修改。",
-    "gpsVerrouille": "GPS 位置已记录：仅管理员或经理可更正（用于核实拜访）。"
+    "gpsVerrouille": "GPS 位置已记录：仅管理员或经理可更正（用于核实拜访）。",
+    "compteClient": "客户账户（会计）",
+    "compteAuto": "保存时自动分配",
+    "compteManuel": "输入编号（如 41110023）",
+    "compteAide": "用于该客户分录的 411 子账户。已使用的编号将被拒绝。",
+    "compteGroupe": "集团成员：其账户将为 {{compte}} 的子账户。"
   },
   "import": {
     "titre": "导入客户（Excel）",
