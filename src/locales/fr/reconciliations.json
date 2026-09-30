@@ -139,15 +139,20 @@
     "compte": "Compte d'avance",
     "retenue": "Retenue du mois",
     "resteApres": "Reste après retenue",
-    "notifTitre": "Notification de retenue sur salaire",
+    "notifTitre": "Acte de cession volontaire de salaire",
     "notifSalarie": "Salarié : {{nom}}",
     "notifMontant": "Montant à rembourser : {{montant}}",
     "notifMotif": "Origine : {{motif}}",
     "notifEcheancier": "Échéancier : {{nb}} mensualité(s) de {{mensualite}}, à compter de la paie de {{debut}}.",
-    "notifTexte": "Le salarié reconnaît devoir la somme ci-dessus, résultant d'écarts constatés lors des réconciliations de son stock et de ses encaissements, et accepte son remboursement par retenues sur salaire selon l'échéancier indiqué, dans la limite fixée par la réglementation en vigueur.",
+    "notifTexte": "Le salarié reconnaît devoir la somme ci-dessus, résultant d'écarts constatés lors des réconciliations de son stock et de ses encaissements, et consent à son remboursement par retenues sur salaire selon l'échéancier indiqué, dans la limite de la quotité cessible fixée par la réglementation. Conformément à la réglementation ivoirienne, la présente cession est souscrite devant l'inspecteur du travail ou le président du tribunal du lieu de résidence du salarié.",
     "notifFait": "Fait le {{date}}",
     "signSalarie": "Signature du salarié (précédée de « lu et approuvé »)",
-    "signEmployeur": "Pour l'employeur"
+    "signEmployeur": "Pour l'employeur",
+    "salaireReference": "Salaire de référence mensuel",
+    "aideSalaire": "Assiette : salaire brut + accessoires − impôts et prélèvements obligatoires. Confidentiel : visible seulement par l'administrateur et le comptable.",
+    "plafondQuotite": "Plafond mensuel : {{pct}} % → {{montant}}",
+    "notifQuotite": "Salaire de référence : {{salaire}} — quotité appliquée : {{pct}} %.",
+    "visaAutorite": "Visa de l'inspecteur du travail ou du président du tribunal (nom, date, signature et cachet)"
   },
   "aTraiter": {
     "titre": "À traiter",

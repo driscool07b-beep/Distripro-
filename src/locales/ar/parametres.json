@@ -231,7 +231,9 @@
     "aide_stock": "يُقيَّد دائنًا بعجز المخزون.",
     "aide_pertes": "يُقيَّد مدينًا بفرق أو دين مشطوب.",
     "aide_caisse": "يُقيَّد مدينًا بالإيداعات إذا لم يكن للخزينة حسابها الخاص.",
-    "aide_remuneration": "يُقيَّد مدينًا بالاقتطاعات من الراتب إذا سجّلها DistribPro."
+    "aide_remuneration": "يُقيَّد مدينًا بالاقتطاعات من الراتب إذا سجّلها DistribPro.",
+    "quotite": "Deduction ratio (% of reference salary)",
+    "aideQuotite": "E.g. 33%. Monthly cap = ratio × the rep's reference salary (lowest with the amount cap). Have your HR / adviser confirm the rate."
   },
   "selecteurCompte": {
     "creer": "إنشاء حساب أو حساب فرعي…",

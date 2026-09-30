@@ -231,7 +231,9 @@
     "aide_stock": "Crédité d'un manquant de stock (ex. 311000 Marchandises).",
     "aide_pertes": "Débité d'un écart passé en perte ou d'une dette abandonnée (ex. 658000).",
     "aide_caisse": "Débité des versements si la caisse n'a pas son propre compte (ex. 571100).",
-    "aide_remuneration": "Débité des retenues sur salaire, si DistribPro les comptabilise (ex. 422000)."
+    "aide_remuneration": "Débité des retenues sur salaire, si DistribPro les comptabilise (ex. 422000).",
+    "quotite": "Quotité des retenues (% du salaire de référence)",
+    "aideQuotite": "Ex. 33 %. Plafond mensuel = quotité × salaire de référence du commercial (le plus bas avec le plafond en montant). Taux à faire valider par votre RH / conseil (décret n° 2014-370 du 18 juin 2014)."
   },
   "selecteurCompte": {
     "creer": "Créer un compte ou un sous-compte…",

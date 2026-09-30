@@ -582,7 +582,8 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
   const [mouvements, setMouvements] = useState([])
   const [avances, setAvances] = useState([])
   const [retenues, setRetenues] = useState([])
-  const [forcage, setForcage] = useState(null) // { commercial_id, montant, nb, periode, motif }
+  const [forcage, setForcage] = useState(null) // { commercial_id, montant, nb, periode, motif, salaire }
+  const [salaires, setSalaires] = useState({})
   const { profil } = useAuth()
   const peutForcer = ['admin', 'comptable'].includes(profil?.role)
   const moisCourant = new Date().toISOString().slice(0, 7)
@@ -601,6 +602,9 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
     setMouvements(data || [])
     setAvances(av || [])
     setRetenues(re || [])
+    // Salaires de référence : visibles seulement par l'admin et le comptable.
+    const { data: sal } = await supabase.from('salaires_reference').select('profil_id, montant')
+    setSalaires(Object.fromEntries((sal || []).map((x) => [x.profil_id, Number(x.montant)])))
   }
   useEffect(() => { charger() }, [])
 
@@ -641,6 +645,7 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
     const { error } = await supabase.rpc('recouvrement_force', {
       p_commercial_id: forcage.commercial_id, p_montant: Number(forcage.montant), p_nb_mensualites: Number(forcage.nb),
       p_premiere_periode: forcage.periode, p_motif: forcage.motif,
+      p_salaire_reference: forcage.salaire === '' || forcage.salaire == null ? null : Number(forcage.salaire),
     })
     setEnvoi(false)
     if (error) { setErreur(traduireErreur(error.message)); return }
@@ -667,6 +672,7 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
       t('avances.notifMontant', { montant: formatXOF(a.montant) }),
       t('avances.notifMotif', { motif: a.motif }),
       t('avances.notifEcheancier', { nb: a.nb_mensualites, mensualite: formatXOF(a.mensualite), debut: a.premiere_periode }),
+      ...(salaires[a.commercial_id] ? [t('avances.notifQuotite', { salaire: formatXOF(salaires[a.commercial_id]), pct: entreprise?.quotite_retenue_pourcentage || '—' })] : []),
       '',
       t('avances.notifTexte'),
     ]
@@ -676,6 +682,7 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
     doc.text(t('avances.notifFait', { date: formatDate(new Date()) }), 14, yy)
     doc.text(`${t('avances.signSalarie')} :`, 14, yy + 14)
     doc.text(`${t('avances.signEmployeur')} :`, 120, yy + 14)
+    doc.text(doc.splitTextToSize(`${t('avances.visaAutorite')} :`, 180), 14, yy + 42)
     doc.save(`notification-retenue-${nom(a.commercial_id).replace(/\s+/g, '-')}.pdf`)
   }
 
@@ -749,7 +756,7 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
                     {peutAnnuler && <button className="btn-secondary text-sm" onClick={() => annuler(c.id)}>{t('abandonnerDette')}</button>}
                     {peutForcer && (
                       <button data-aide="reconciliations.recouvrementForce" className="btn-3d btn-3d-rouge text-sm px-3 py-2"
-                        onClick={() => setForcage({ commercial_id: c.id, montant: String(s), nb: '1', periode: moisCourant, motif: '' })}>
+                        onClick={() => setForcage({ commercial_id: c.id, montant: String(s), nb: '1', periode: moisCourant, motif: '', salaire: salaires[c.id] != null ? String(salaires[c.id]) : '' })}>
                         {t('avances.bouton')}
                       </button>
                     )}
@@ -763,6 +770,14 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
                       <div><label className="label">{t('montant')}</label><input type="number" min="0" max={s} className="input-field" value={forcage.montant} onChange={(e) => setForcage({ ...forcage, montant: e.target.value })} /></div>
                       <div><label className="label">{t('avances.nbMensualites')}</label><input type="number" min="1" max="60" className="input-field" value={forcage.nb} onChange={(e) => setForcage({ ...forcage, nb: e.target.value })} /></div>
                       <div><label className="label">{t('avances.premierMois')}</label><input type="month" className="input-field" value={forcage.periode} onChange={(e) => setForcage({ ...forcage, periode: e.target.value })} /></div>
+                    </div>
+                    <div>
+                      <label className="label">{t('avances.salaireReference')}</label>
+                      <input type="number" min="0" className="input-field" value={forcage.salaire} onChange={(e) => setForcage({ ...forcage, salaire: e.target.value })} />
+                      <p className="text-[11px] text-petrol-500 mt-1">{t('avances.aideSalaire')}</p>
+                      {entreprise?.quotite_retenue_pourcentage && Number(forcage.salaire) > 0 && (
+                        <p className="text-xs text-petrol-700 mt-1">{t('avances.plafondQuotite', { pct: entreprise.quotite_retenue_pourcentage, montant: formatXOF(Math.floor(Number(forcage.salaire) * Number(entreprise.quotite_retenue_pourcentage) / 100)) })}</p>
+                      )}
                     </div>
                     {Number(forcage.nb) > 0 && Number(forcage.montant) > 0 && (
                       <p className="text-xs">{t('avances.apercu', { mensualite: formatXOF(Math.ceil(Number(forcage.montant) / Number(forcage.nb))) })}

@@ -231,7 +231,9 @@
     "aide_stock": "Credited with a stock shortage.",
     "aide_pertes": "Debited with a written-off gap or debt.",
     "aide_caisse": "Debited with deposits if the till has no own account.",
-    "aide_remuneration": "Debited with salary deductions, if DistribPro books them."
+    "aide_remuneration": "Debited with salary deductions, if DistribPro books them.",
+    "quotite": "Deduction ratio (% of reference salary)",
+    "aideQuotite": "E.g. 33%. Monthly cap = ratio × the rep's reference salary (lowest with the amount cap). Have your HR / adviser confirm the rate."
   },
   "selecteurCompte": {
     "creer": "Create an account or sub-account…",

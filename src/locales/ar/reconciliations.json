@@ -146,15 +146,20 @@
     "compte": "حساب السلفة",
     "retenue": "اقتطاع الشهر",
     "resteApres": "المتبقي بعد الاقتطاع",
-    "notifTitre": "إشعار اقتطاع من الراتب",
+    "notifTitre": "Voluntary salary assignment deed",
     "notifSalarie": "الموظف: {{nom}}",
     "notifMontant": "المبلغ الواجب سداده: {{montant}}",
     "notifMotif": "الأصل: {{motif}}",
     "notifEcheancier": "الجدول: {{nb}} قسط بقيمة {{mensualite}}، ابتداءً من رواتب {{debut}}.",
-    "notifTexte": "يقرّ الموظف بأنه مدين بالمبلغ أعلاه الناتج عن فروقات لوحظت عند مطابقة مخزونه وتحصيلاته، ويوافق على سداده عبر اقتطاعات من راتبه وفق الجدول المذكور، في الحدود التي تحددها الأنظمة المعمول بها.",
+    "notifTexte": "The employee acknowledges owing the above amount and consents to its repayment through salary deductions per the schedule, within the assignable portion set by regulations. The assignment is signed before the labour inspector or the court president.",
     "notifFait": "حُرّر في {{date}}",
     "signSalarie": "توقيع الموظف (مسبوقًا بعبارة «قرأت وأوافق»)",
-    "signEmployeur": "عن صاحب العمل"
+    "signEmployeur": "عن صاحب العمل",
+    "salaireReference": "Monthly reference salary",
+    "aideSalaire": "Base: gross salary + allowances − taxes and compulsory deductions. Confidential: admin and accountant only.",
+    "plafondQuotite": "Monthly cap: {{pct}}% → {{montant}}",
+    "notifQuotite": "Reference salary: {{salaire}} — ratio applied: {{pct}}%.",
+    "visaAutorite": "Stamp of the labour inspector or court president (name, date, signature)"
   },
   "aideCol": {
     "produit": "Product",

@@ -1463,6 +1463,7 @@ function SectionReconciliation() {
       remuneration: entreprise.compte_remuneration_numero || '422',
       retenuesPar: entreprise.retenues_comptabilisees_par || 'paie',
       plafond: entreprise.plafond_retenue_mensuelle ?? '',
+      quotite: entreprise.quotite_retenue_pourcentage ?? '',
     })
   }, [entreprise])
 
@@ -1491,6 +1492,8 @@ function SectionReconciliation() {
       p_retenues_par: v.retenuesPar, p_plafond: v.plafond === '' ? null : Number(v.plafond),
     })
     if (error) { setErreur(traduireErreur(error.message)); return }
+    const { error: e2 } = await supabase.rpc('modifier_quotite_retenue', { p_pourcentage: v.quotite === '' ? null : Number(v.quotite) })
+    if (e2) { setErreur(traduireErreur(e2.message)); return }
     await rechargerProfil()
     setMessage(t('enregistre'))
   }
@@ -1525,6 +1528,11 @@ function SectionReconciliation() {
         <div>
           <label className="label">{t('reconciliation.plafond')}</label>
           <input type="number" min="0" className="input-field" value={v.plafond} onChange={(e) => setV({ ...v, plafond: e.target.value })} placeholder={t('reconciliation.sansPlafond')} />
+        </div>
+        <div>
+          <label className="label">{t('reconciliation.quotite')}</label>
+          <input type="number" min="0" max="100" step="0.01" className="input-field" value={v.quotite} onChange={(e) => setV({ ...v, quotite: e.target.value })} placeholder="33" />
+          <p className="text-[11px] text-petrol-500 mt-1">{t('reconciliation.aideQuotite')}</p>
         </div>
       </div>
       <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
