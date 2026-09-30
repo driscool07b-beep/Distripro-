@@ -32,7 +32,8 @@
     "banques": "البنوك",
     "planComptable": "الدليل المحاسبي",
     "notesUtilisation": "درجات الاستخدام",
-    "reconciliations": "المطابقات"
+    "reconciliations": "المطابقات",
+    "assistant": "المساعد الذكي"
   },
   "actions": {
     "annuler": "إلغاء",

@@ -32,7 +32,8 @@
     "banques": "Banks",
     "planComptable": "Chart of accounts",
     "notesUtilisation": "Usage scores",
-    "reconciliations": "Reconciliations"
+    "reconciliations": "Reconciliations",
+    "assistant": "AI assistant"
   },
   "actions": {
     "annuler": "Cancel",

@@ -30,6 +30,7 @@ import AnalyseIA from './pages/AnalyseIA'
 import StockCommercial from './pages/StockCommercial'
 import Versements from './pages/Versements'
 import Reconciliations from './pages/Reconciliations'
+import AssistantIA from './pages/AssistantIA'
 import Groupes from './pages/Groupes'
 import Inscription from './pages/Inscription'
 import CreerEntreprise from './pages/CreerEntreprise'
@@ -83,6 +84,7 @@ export default function App() {
         <Route path="plan-comptable" element={<PlanComptable />} />
         <Route path="notes-utilisation" element={<NotesUtilisation />} />
         <Route path="analyse-ia" element={<AnalyseIA />} />
+        <Route path="assistant" element={<AssistantIA />} />
         <Route path="stock-commercial" element={<StockCommercial />} />
         <Route path="versements" element={<Versements />} />
         <Route path="reconciliations" element={<Reconciliations />} />

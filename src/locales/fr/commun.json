@@ -32,7 +32,8 @@
     "banques": "Banques",
     "planComptable": "Plan comptable",
     "notesUtilisation": "Notes d'utilisation",
-    "reconciliations": "Réconciliations"
+    "reconciliations": "Réconciliations",
+    "assistant": "Assistant IA"
   },
   "actions": {
     "annuler": "Annuler",

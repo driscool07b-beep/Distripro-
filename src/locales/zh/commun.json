@@ -32,7 +32,8 @@
     "banques": "银行",
     "planComptable": "会计科目表",
     "notesUtilisation": "使用评分",
-    "reconciliations": "对账"
+    "reconciliations": "对账",
+    "assistant": "AI 助手"
   },
   "actions": {
     "annuler": "取消",
