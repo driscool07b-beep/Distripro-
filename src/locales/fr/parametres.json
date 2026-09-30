@@ -262,5 +262,20 @@
     "exemple": "Exemple : client isolé {{c}}0001 · groupe {{g}}001 · membre du groupe {{g}}001001. Un numéro déjà utilisé n'est jamais réattribué.",
     "attribuer": "Attribuer les comptes manquants",
     "attribues": "{{n}} compte(s) attribué(s)."
+  },
+  "fne": {
+    "titre": "Facture Normalisée Électronique (FNE — DGI)",
+    "aide": "Certifie vos ventes auprès de la DGI (référence officielle + QR code sur la facture). Prérequis : inscription de l'entreprise sur la plateforme FNE de la DGI, puis clé API délivrée après validation de vos spécimens de factures (onglet « Paramétrage » de votre espace FNE). Commencez en mode test.",
+    "activer": "Activer la FNE pour cette entreprise",
+    "mode": "Environnement",
+    "test": "Test (plateforme d'essai de la DGI)",
+    "production": "Production (factures réelles)",
+    "url": "Adresse de la plateforme FNE",
+    "cle": "Clé API FNE",
+    "cleEnregistree": "•••••• clé enregistrée — laissez vide pour la conserver",
+    "clePlaceholder": "Collez la clé de votre espace FNE",
+    "pointDeVente": "Point de vente (exigé par la DGI)",
+    "etablissement": "Établissement (exigé par la DGI)",
+    "parDefaut": "Case « Produire une FNE » cochée par défaut sur chaque vente"
   }
 }

@@ -76,7 +76,14 @@
     "compteAuto": "يُسند تلقائيًا عند الحفظ",
     "compteManuel": "أدخل الرقم (مثل 41110023)",
     "compteAide": "حساب فرعي من 411 لقيود هذا العميل. يُرفض الرقم المستخدم مسبقًا.",
-    "compteGroupe": "عضو في مجموعة: سيكون حسابه فرعيًا من {{compte}}."
+    "compteGroupe": "عضو في مجموعة: سيكون حسابه فرعيًا من {{compte}}.",
+    "ncc": "Customer tax number (NCC)",
+    "typeFne": "Customer type (FNE)",
+    "typeFneAuto": "Automatic (B2B if NCC, else B2C)",
+    "typeFneB2B": "B2B — company (NCC required)",
+    "typeFneB2C": "B2C — individual",
+    "typeFneB2G": "B2G — public administration",
+    "typeFneB2F": "B2F — international customer"
   },
   "import": {
     "titre": "استيراد العملاء (Excel)",

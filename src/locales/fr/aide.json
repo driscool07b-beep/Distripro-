@@ -141,6 +141,14 @@
         {
           "q": "Au-delà de quel montant de remise faut-il une autorisation ?",
           "r": "Le seuil est réglable dans Paramètres → Politique de remises. Au-delà, seuls un manager ou un admin peuvent valider la remise."
+        },
+        {
+          "q": "Comment produire une facture normalisée FNE (DGI) ?",
+          "r": "Paramètres → FNE : activez, choisissez l'environnement (commencez par Test), collez la clé API de votre espace FNE de la DGI, puis le point de vente et l'établissement. Dans chaque vente, cochez « Produire une FNE » : la vente est certifiée auprès de la DGI, et le reçu porte la référence officielle et le QR code de vérification. Décochez pour un simple reçu interne. Une vente non certifiée peut l'être plus tard (détail de la vente → « Certifier (FNE) »). Un avoir sur une vente certifiée est aussi certifié auprès de la DGI."
+        },
+        {
+          "q": "Quelles informations client faut-il pour la FNE ?",
+          "r": "Pour un client entreprise (B2B), son NCC est obligatoire : renseignez-le dans sa fiche. Sans NCC, la vente est certifiée comme vente à un particulier (B2C). Le type peut être forcé dans la fiche : B2B, B2C, B2G (administration) ou B2F (international)."
         }
       ]
     },

@@ -162,6 +162,8 @@ export default function Clients() {
       longitude: client.longitude != null ? String(client.longitude) : '',
       commercial_id: client.commercial_id || '',
       compte_numero: client.compte_numero || '',
+      ncc: client.ncc || '',
+      fne_template: client.fne_template || '',
     })
     setErreur('')
     setCaptureGps('idle')
@@ -384,7 +386,7 @@ export default function Clients() {
     setChargement(true)
     const { data, error } = await supabase
       .from('clients')
-      .select('id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, commercial_id, compte_numero, groupes_clients(nom, compte_numero)')
+      .select('id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, commercial_id, compte_numero, ncc, fne_template, groupes_clients(nom, compte_numero)')
       .order('created_at', { ascending: false })
     if (!error) setClients(data || [])
     setChargement(false)
@@ -470,6 +472,8 @@ export default function Clients() {
       ...(gerePortefeuilles ? { commercial_id: formulaire.commercial_id || null } : {}),
       // Compte client : saisi par la direction / le comptable (sinon attribué automatiquement).
       ...(peutGererComptes && (formulaire.compte_numero || '').trim() ? { compte_numero: formulaire.compte_numero.trim() } : {}),
+      ncc: (formulaire.ncc || '').trim() || null,
+      fne_template: formulaire.fne_template || null,
     }
 
     const { error } = clientEnEdition
@@ -792,6 +796,22 @@ export default function Clients() {
                     <option value="vip">{t('form.segmentVip')}</option>
                     <option value="a_relancer">{t('form.segmentARelancer')}</option>
                     <option value="inactif">{t('form.segmentInactif')}</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="label">{t('form.ncc')}</label>
+                  <input className="input-field font-mono" value={formulaire.ncc || ''} onChange={(e) => setFormulaire({ ...formulaire, ncc: e.target.value.toUpperCase() })} placeholder="ex. 1234567A" />
+                </div>
+                <div>
+                  <label className="label">{t('form.typeFne')}</label>
+                  <select className="input-field" value={formulaire.fne_template || ''} onChange={(e) => setFormulaire({ ...formulaire, fne_template: e.target.value })}>
+                    <option value="">{t('form.typeFneAuto')}</option>
+                    <option value="B2B">{t('form.typeFneB2B')}</option>
+                    <option value="B2C">{t('form.typeFneB2C')}</option>
+                    <option value="B2G">{t('form.typeFneB2G')}</option>
+                    <option value="B2F">{t('form.typeFneB2F')}</option>
                   </select>
                 </div>
               </div>

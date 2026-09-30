@@ -131,7 +131,7 @@ export function exporterPDF(nomFichier, titre, sousTitre, colonnes, lignes, tota
 /**
  * Génère un reçu/facture interne pour une vente.
  */
-export function genererRecuVente({ entreprise, vente, lignes, autresTaxes }) {
+export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
 
@@ -234,9 +234,30 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes }) {
   doc.text(texteEnLettres, 14, doc.lastAutoTable.finalY + 10)
   doc.setTextColor(0)
 
-  doc.setFontSize(8)
-  doc.setTextColor(130)
-  doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
+  const certifiee = vente.fne_statut === 'certifiee' && vente.fne_reference
+  if (certifiee) {
+    // Éléments FNE : référence DGI + QR code de vérification (lien DGI).
+    const yFne = Math.min(doc.lastAutoTable.finalY + 22, 235)
+    if (qrFne) doc.addImage(qrFne, 'PNG', 150, yFne, 42, 42)
+    doc.setFontSize(10)
+    doc.setTextColor(0)
+    doc.setFont(undefined, 'bold')
+    doc.text('Facture Normalisée Électronique (FNE)', 14, yFne + 6)
+    doc.setFont(undefined, 'normal')
+    doc.setFontSize(9)
+    doc.text(`Référence DGI : ${vente.fne_reference}`, 14, yFne + 13)
+    if (vente.fne_certifiee_at) doc.text(`Certifiée le : ${formatDateHeure(vente.fne_certifiee_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yFne + 19)
+    doc.text(doc.splitTextToSize('Authenticité vérifiable en scannant le QR code (plateforme FNE de la DGI).', 125), 14, yFne + 25)
+    if (vente.fne_avoir_reference) {
+      doc.setTextColor(180, 60, 20)
+      doc.text(`Annulée par avoir FNE : ${vente.fne_avoir_reference}`, 14, yFne + 35)
+      doc.setTextColor(0)
+    }
+  } else {
+    doc.setFontSize(8)
+    doc.setTextColor(130)
+    doc.text('Ce document tient lieu de justificatif interne — pas une facture normalisée DGI (FNE).', 14, 285)
+  }
 
   return doc
 }

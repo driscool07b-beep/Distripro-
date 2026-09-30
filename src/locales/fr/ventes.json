@@ -136,5 +136,20 @@
     "total": "Total"
   },
   "bureau": "Vente de bureau",
-  "saisiPar": "Saisie par {{nom}}"
+  "saisiPar": "Saisie par {{nom}}",
+  "fne": {
+    "produire": "Produire une FNE (facture normalisée DGI)",
+    "aideProduire": "La vente sera certifiée auprès de la DGI : référence officielle et QR code sur la facture. Décochez pour un simple reçu interne.",
+    "echecApresVente": "La vente est enregistrée, mais la certification FNE a échoué : {{message}}. Vous pourrez réessayer depuis le détail de la vente.",
+    "stickersBas": "Attention : il ne reste que {{n}} sticker(s) électronique(s) FNE. Pensez à en racheter sur la plateforme de la DGI.",
+    "echecAvoir": "L'avoir est enregistré, mais sa certification FNE a échoué : {{message}}",
+    "certifiee": "Facture certifiée FNE (DGI)",
+    "verifier": "Vérifier sur la plateforme de la DGI",
+    "avoir": "Annulée par avoir FNE : {{ref}}",
+    "erreur": "Échec de la certification FNE",
+    "nonCertifiee": "Vente non certifiée FNE (reçu interne)",
+    "certifier": "Certifier (FNE)",
+    "reessayer": "Réessayer la certification",
+    "enCours": "Certification…"
+  }
 }

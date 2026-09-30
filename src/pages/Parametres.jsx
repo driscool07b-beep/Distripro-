@@ -1367,6 +1367,7 @@ export default function Parametres() {
           </button>
         </form>
       </div>
+      {profil?.role === 'admin' && <SectionFne />}
       {profil?.role === 'admin' && <SectionComptesClients />}
       {profil?.role === 'admin' && <SectionReconciliation />}
       {profil?.role === 'admin' && <SectionConsommationIA />}
@@ -1603,6 +1604,80 @@ function SectionComptesClients() {
         <button className="btn-primary text-sm" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
         <button className="btn-secondary text-sm" disabled={envoi} onClick={attribuer}>{envoi ? '…' : t('comptesClients.attribuer')}</button>
       </div>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Facture Normalisée Électronique (DGI) : accès API de l'entreprise.
+function SectionFne() {
+  const { t } = useTranslation('parametres')
+  const [v, setV] = useState(null)
+  const [cle, setCle] = useState('')
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+
+  useEffect(() => {
+    supabase.rpc('lire_config_fne').then(({ data }) => setV({
+      actif: !!data?.actif, mode: data?.mode || 'test', base_url: data?.base_url || 'http://54.247.95.108/ws',
+      point_de_vente: data?.point_de_vente || '', etablissement: data?.etablissement || '',
+      fne_par_defaut: data?.fne_par_defaut ?? true, cle_enregistree: !!data?.cle_enregistree,
+    }))
+  }, [])
+  if (!v) return null
+
+  async function enregistrer() {
+    setErreur(''); setMessage('')
+    const { error } = await supabase.rpc('definir_config_fne', {
+      p_actif: v.actif, p_mode: v.mode, p_base_url: v.base_url, p_api_key: cle || null,
+      p_point_de_vente: v.point_de_vente, p_etablissement: v.etablissement, p_par_defaut: v.fne_par_defaut,
+    })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    setCle('')
+    setV({ ...v, cle_enregistree: v.cle_enregistree || !!cle })
+    setMessage(t('enregistre'))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">🧾 {t('fne.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('fne.aide')}</p>
+      <label className="flex items-center gap-2 text-sm mb-3">
+        <input type="checkbox" checked={v.actif} onChange={(e) => setV({ ...v, actif: e.target.checked })} />
+        {t('fne.activer')}
+      </label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="label">{t('fne.mode')}</label>
+          <select className="input-field" value={v.mode} onChange={(e) => setV({ ...v, mode: e.target.value, base_url: e.target.value === 'test' ? 'http://54.247.95.108/ws' : v.base_url })}>
+            <option value="test">{t('fne.test')}</option>
+            <option value="production">{t('fne.production')}</option>
+          </select>
+        </div>
+        <div>
+          <label className="label">{t('fne.url')}</label>
+          <input className="input-field font-mono text-xs" value={v.base_url} onChange={(e) => setV({ ...v, base_url: e.target.value })} />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="label">{t('fne.cle')}</label>
+          <input type="password" autoComplete="off" className="input-field font-mono" value={cle} onChange={(e) => setCle(e.target.value)}
+            placeholder={v.cle_enregistree ? t('fne.cleEnregistree') : t('fne.clePlaceholder')} />
+        </div>
+        <div>
+          <label className="label">{t('fne.pointDeVente')}</label>
+          <input className="input-field" value={v.point_de_vente} onChange={(e) => setV({ ...v, point_de_vente: e.target.value })} />
+        </div>
+        <div>
+          <label className="label">{t('fne.etablissement')}</label>
+          <input className="input-field" value={v.etablissement} onChange={(e) => setV({ ...v, etablissement: e.target.value })} />
+        </div>
+      </div>
+      <label className="flex items-center gap-2 text-sm mt-3">
+        <input type="checkbox" checked={v.fne_par_defaut} onChange={(e) => setV({ ...v, fne_par_defaut: e.target.checked })} />
+        {t('fne.parDefaut')}
+      </label>
+      <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>

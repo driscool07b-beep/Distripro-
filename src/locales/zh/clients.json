@@ -76,7 +76,14 @@
     "compteAuto": "保存时自动分配",
     "compteManuel": "输入编号（如 41110023）",
     "compteAide": "用于该客户分录的 411 子账户。已使用的编号将被拒绝。",
-    "compteGroupe": "集团成员：其账户将为 {{compte}} 的子账户。"
+    "compteGroupe": "集团成员：其账户将为 {{compte}} 的子账户。",
+    "ncc": "Customer tax number (NCC)",
+    "typeFne": "Customer type (FNE)",
+    "typeFneAuto": "Automatic (B2B if NCC, else B2C)",
+    "typeFneB2B": "B2B — company (NCC required)",
+    "typeFneB2C": "B2C — individual",
+    "typeFneB2G": "B2G — public administration",
+    "typeFneB2F": "B2F — international customer"
   },
   "import": {
     "titre": "导入客户（Excel）",
