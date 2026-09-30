@@ -1613,6 +1613,9 @@ function SectionComptesClients() {
 // Facture Normalisée Électronique (DGI) : accès API de l'entreprise.
 function SectionFne() {
   const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [envoiAuto, setEnvoiAuto] = useState(false)
+  useEffect(() => { setEnvoiAuto(!!entreprise?.envoi_auto_email) }, [entreprise?.envoi_auto_email])
   const [v, setV] = useState(null)
   const [cle, setCle] = useState('')
   const [message, setMessage] = useState('')
@@ -1676,6 +1679,15 @@ function SectionFne() {
       <label className="flex items-center gap-2 text-sm mt-3">
         <input type="checkbox" checked={v.fne_par_defaut} onChange={(e) => setV({ ...v, fne_par_defaut: e.target.checked })} />
         {t('fne.parDefaut')}
+      </label>
+      <label className="flex items-start gap-2 text-sm mt-3 border-t border-line pt-3">
+        <input type="checkbox" className="mt-0.5" checked={!!envoiAuto} onChange={async (e) => {
+          const actif = e.target.checked
+          setEnvoiAuto(actif)
+          const { error } = await supabase.rpc('modifier_envoi_auto_email', { p_actif: actif })
+          if (error) { setErreur(traduireErreur(error.message)); setEnvoiAuto(!actif) } else rechargerProfil()
+        }} />
+        <span>{t('fne.envoiAuto')}<span className="block text-xs text-petrol-500">{t('fne.aideEnvoiAuto')}</span></span>
       </label>
       <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}

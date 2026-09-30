@@ -109,5 +109,15 @@
   "effacerDates": "مسح التواريخ",
   "compteurTotal": "{{n}} طلب — المجموع (دون الملغاة)",
   "periode": "الفترة من {{debut}} إلى {{fin}}",
-  "imprimer": "طباعة"
+  "imprimer": "طباعة",
+  "envoi": {
+    "email": "Email",
+    "confirmerEmail": "Send the proforma to:",
+    "emailEnvoye": "Proforma sent to {{email}}.",
+    "echecEmail": "The email could not be sent: {{message}}",
+    "numeroWhatsApp": "Customer's WhatsApp number:",
+    "numeroManquant": "Customer phone number missing.",
+    "echecWhatsApp": "The document link could not be prepared: {{message}}",
+    "messageWhatsApp": "Hello {{client}}, here is your proforma {{numero}} for {{montant}}. Thank you — {{entreprise}}. Link (valid 7 days):"
+  }
 }

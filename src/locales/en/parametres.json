@@ -276,6 +276,8 @@
     "clePlaceholder": "Paste the key from your FNE space",
     "pointDeVente": "Point of sale (required by the DGI)",
     "etablissement": "Establishment (required by the DGI)",
-    "parDefaut": "'Issue an FNE' ticked by default on each sale"
+    "parDefaut": "'Issue an FNE' ticked by default on each sale",
+    "envoiAuto": "Automatically email the receipt or invoice after each sale",
+    "aideEnvoiAuto": "Only if the customer has an email address. Sent from noreply@distribpro.com, replies go to your address."
   }
 }

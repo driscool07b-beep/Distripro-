@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { envoyerParEmail, partagerWhatsApp } from '../lib/envoiDocuments'
 import { lireConfigFne, certifierVenteFne, emettreAvoirFne, qrCodeFne } from '../lib/fne'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
@@ -56,6 +57,7 @@ export default function Ventes() {
   const [configFne, setConfigFne] = useState({ actif: false })
   const [produireFne, setProduireFne] = useState(false)
   const [certificationEnCours, setCertificationEnCours] = useState(false)
+  const [envoiDocument, setEnvoiDocument] = useState(false)
   useEffect(() => { lireConfigFne().then((c) => { setConfigFne(c); setProduireFne(!!c.fne_par_defaut) }) }, [])
   const [depotId, setDepotId] = useState('')
   const [stocksParDepot, setStocksParDepot] = useState({}) // { produit_id: { depot_id: quantite } }
@@ -151,7 +153,7 @@ export default function Ventes() {
     const [{ data: vente }, { data: lignes }, { data: autresTaxes }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, montant_ht, montant_tva, montant_autres_taxes, depot_id, fne_statut, fne_reference, fne_token, fne_certifiee_at, fne_erreur, fne_avoir_reference, clients(nom, telephone, adresse, ville), profils!created_by(nom), commercial:profils!commercial_id(nom)')
+        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, montant_ht, montant_tva, montant_autres_taxes, depot_id, fne_statut, fne_reference, fne_token, fne_certifiee_at, fne_erreur, fne_avoir_reference, clients(nom, telephone, adresse, ville, email), profils!created_by(nom), commercial:profils!commercial_id(nom)')
         .eq('id', venteId)
         .single(),
       supabase
@@ -264,6 +266,46 @@ export default function Ventes() {
       reference: avoir.id.slice(0, 8),
     })
     doc.save(`avoir-${avoir.id.slice(0, 8)}.pdf`)
+  }
+
+  // Document du client : FNE si la vente est certifiée, sinon reçu interne.
+  async function documentVente(vente, lignes, autresTaxes) {
+    const qrFne = await qrCodeFne(vente.fne_token)
+    const doc = genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne })
+    const certifiee = vente.fne_statut === 'certifiee'
+    return {
+      doc,
+      nomFichier: `${certifiee ? 'facture-fne' : 'recu'}-${vente.numero_vente || vente.id.slice(0, 8)}.pdf`,
+      typeDocument: certifiee ? 'facture_fne' : 'recu',
+    }
+  }
+
+  async function envoyerEmailDetail() {
+    if (!detailVente) return
+    const d = await documentVente(detailVente.vente, detailVente.lignes, detailVente.autresTaxes)
+    const destinataire = window.prompt(t('envoi.confirmerEmail'), detailVente.vente?.clients?.email || '')
+    if (!destinataire) return
+    setEnvoiDocument(true)
+    const { error } = await envoyerParEmail({ ...d, venteId: detailVente.vente.id, destinataire })
+    setEnvoiDocument(false)
+    alert(error ? t('envoi.echecEmail', { message: error }) : t('envoi.emailEnvoye', { email: destinataire }))
+  }
+
+  async function envoyerWhatsAppDetail() {
+    if (!detailVente) return
+    const telephone = detailVente.vente?.clients?.telephone || window.prompt(t('envoi.numeroWhatsApp'), '')
+    if (!telephone) return
+    const d = await documentVente(detailVente.vente, detailVente.lignes, detailVente.autresTaxes)
+    setEnvoiDocument(true)
+    const { error } = await partagerWhatsApp({
+      ...d, telephone, venteId: detailVente.vente.id, entrepriseId: profil.entreprise_id, profilId: profil.id,
+      message: t('envoi.messageWhatsApp', {
+        client: detailVente.vente?.clients?.nom || '', numero: detailVente.vente?.numero_vente || '',
+        montant: formatXOF(detailVente.vente?.total), entreprise: entreprise?.nom || '',
+      }),
+    })
+    setEnvoiDocument(false)
+    if (error) alert(error === 'numero' ? t('envoi.numeroManquant') : t('envoi.echecWhatsApp', { message: error }))
   }
 
   async function partagerRecu() {
@@ -560,8 +602,21 @@ export default function Ventes() {
       if (erreurFne) alert(t('fne.echecApresVente', { message: erreurFne }))
       else if (fne?.avertissement_stickers != null) alert(t('fne.stickersBas', { n: fne.avertissement_stickers }))
     }
+    if (nouvelleVenteId && entreprise?.envoi_auto_email) envoyerEmailAutomatique(nouvelleVenteId)
     chargerVentes()
     if (nouvelleVenteId && (montantPayeEffectif > 0 || produireFne)) ouvrirDetailVente(nouvelleVenteId)
+  }
+
+  // Envoi automatique (sans bloquer l'écran) si le client a une adresse email.
+  async function envoyerEmailAutomatique(venteId) {
+    const [{ data: v }, { data: lignes }, { data: autres }] = await Promise.all([
+      supabase.from('ventes').select('*, clients(nom, telephone, adresse, ville, email), profils!created_by(nom), commercial:profils!commercial_id(nom)').eq('id', venteId).single(),
+      supabase.from('ventes_lignes').select('*, produits(nom)').eq('vente_id', venteId),
+      supabase.from('ventes_taxes').select('nom, taux, montant').eq('vente_id', venteId),
+    ])
+    if (!v?.clients?.email) return
+    const d = await documentVente(v, lignes || [], autres || [])
+    await envoyerParEmail({ ...d, venteId, automatique: true })
   }
 
   async function certifierMaintenant() {
@@ -1196,6 +1251,12 @@ export default function Ventes() {
                   </button>
                   <button data-aide="ventes.detail.partager" onClick={partagerRecu} className="btn-primary text-xs flex-1">
                     {t('detail.partager')}
+                  </button>
+                  <button data-aide="ventes.detail.email" onClick={envoyerEmailDetail} disabled={envoiDocument} className="btn-secondary text-xs flex-1">
+                    📧 {t('envoi.email')}
+                  </button>
+                  <button data-aide="ventes.detail.whatsapp" onClick={envoyerWhatsAppDetail} disabled={envoiDocument} className="btn-3d text-xs flex-1 px-3 py-2" style={{ background: 'linear-gradient(180deg,#4ade80,#16a34a 60%,#15803d)' }}>
+                    💬 WhatsApp
                   </button>
                   {['admin', 'manager'].includes(profil?.role) && detailVente.vente?.statut !== 'annulee' && !modeAnnulation && (
                     <button data-aide="ventes.detail.annulerVenteAvoir" onClick={() => setModeAnnulation(true)} className="text-xs text-red-600 underline w-full text-center pt-1">

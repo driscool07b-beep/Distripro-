@@ -151,5 +151,15 @@
     "certifier": "Certifier (FNE)",
     "reessayer": "Réessayer la certification",
     "enCours": "Certification…"
+  },
+  "envoi": {
+    "email": "Email",
+    "confirmerEmail": "Envoyer le document à l'adresse :",
+    "emailEnvoye": "Document envoyé à {{email}}.",
+    "echecEmail": "L'email n'a pas pu être envoyé : {{message}}",
+    "numeroWhatsApp": "Numéro WhatsApp du client :",
+    "numeroManquant": "Numéro de téléphone du client manquant.",
+    "echecWhatsApp": "Le lien du document n'a pas pu être préparé : {{message}}",
+    "messageWhatsApp": "Bonjour {{client}}, voici votre document {{numero}} d'un montant de {{montant}}. Merci pour votre confiance — {{entreprise}}. Lien (valable 7 jours) :"
   }
 }

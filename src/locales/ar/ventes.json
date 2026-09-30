@@ -151,5 +151,15 @@
     "certifier": "Certify (FNE)",
     "reessayer": "Retry certification",
     "enCours": "Certifying…"
+  },
+  "envoi": {
+    "email": "Email",
+    "confirmerEmail": "Send the document to:",
+    "emailEnvoye": "Document sent to {{email}}.",
+    "echecEmail": "The email could not be sent: {{message}}",
+    "numeroWhatsApp": "Customer's WhatsApp number:",
+    "numeroManquant": "Customer phone number missing.",
+    "echecWhatsApp": "The document link could not be prepared: {{message}}",
+    "messageWhatsApp": "Hello {{client}}, here is your document {{numero}} for {{montant}}. Thank you — {{entreprise}}. Link (valid 7 days):"
   }
 }

@@ -276,6 +276,8 @@
     "clePlaceholder": "Collez la clé de votre espace FNE",
     "pointDeVente": "Point de vente (exigé par la DGI)",
     "etablissement": "Établissement (exigé par la DGI)",
-    "parDefaut": "Case « Produire une FNE » cochée par défaut sur chaque vente"
+    "parDefaut": "Case « Produire une FNE » cochée par défaut sur chaque vente",
+    "envoiAuto": "Envoyer automatiquement le reçu ou la facture par email après chaque vente",
+    "aideEnvoiAuto": "Seulement si le client a une adresse email dans sa fiche. Envoyé depuis noreply@distribpro.com, avec votre adresse en réponse."
   }
 }
