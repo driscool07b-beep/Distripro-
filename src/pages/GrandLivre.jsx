@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { formatXOF, formatDate } from '../lib/format'
-import { exporterExcel, exporterPDF } from '../lib/export'
+import { exporterExcel, exporterPDF, genererRecuPaiement } from '../lib/export'
 import { useColonnesRedimensionnables } from '../lib/useColonnesRedimensionnables'
 
 // Grand livre client — même présentation que les grands livres de caisse et
@@ -62,7 +62,7 @@ export default function GrandLivre() {
     if (venteIds.length > 0) {
       const { data } = await supabase
         .from('reglements')
-        .select('numero, vente_id, montant, created_at')
+        .select('id, numero, vente_id, montant, created_at, auteur:profils!created_by(nom)')
         .in('vente_id', venteIds)
         .order('created_at')
       paiements = data || []
@@ -77,15 +77,16 @@ export default function GrandLivre() {
         libelle: v.mode_paiement === 'credit' ? t('venteCredit') : t('venteComptant'),
         debit: Number(v.total),
         credit: 0,
+        venteId: v.id,
       })
       // Vente au comptant : réglée sur le moment.
       if (v.mode_paiement === 'cash' && Number(v.montant_regle) > 0) {
-        lignes.push({ date: v.created_at, numero: v.numero_vente || '', libelle: t('reglementComptant'), debit: 0, credit: Number(v.montant_regle) })
+        lignes.push({ date: v.created_at, numero: v.numero_vente || '', libelle: t('reglementComptant'), debit: 0, credit: Number(v.montant_regle), venteId: v.id })
       }
       // Vente annulée par avoir : elle reste visible (traçabilité) mais ne
       // doit plus peser sur le solde du client.
       if (v.statut === 'annulee') {
-        lignes.push({ date: v.created_at, numero: v.numero_vente || '', libelle: t('annulationAvoir'), debit: 0, credit: Number(v.total) })
+        lignes.push({ date: v.created_at, numero: v.numero_vente || '', libelle: t('annulationAvoir'), debit: 0, credit: Number(v.total), venteId: v.id })
       }
     })
     paiements.forEach((p) => {
@@ -95,13 +96,38 @@ export default function GrandLivre() {
         libelle: numeroVente[p.vente_id] ? t('paiementRecuSur', { numero: numeroVente[p.vente_id] }) : t('paiementRecu'),
         debit: 0,
         credit: Number(p.montant),
+        venteId: p.vente_id,
+        reglement: p,
       })
     })
     lignes.sort((a, b) => new Date(a.date) - new Date(b.date))
 
     setClient(clientData)
+    setPieces({ ventes: Object.fromEntries((ventes || []).map((v) => [v.id, v])), paiements })
     setToutesLignes(lignes)
     setChargement(false)
+  }
+
+  // Pièce justificative d'une ligne : la facture (détail de la vente) ou,
+  // pour un encaissement, le reçu de paiement (duplicata).
+  const [pieces, setPieces] = useState({ ventes: {}, paiements: [] })
+  function ouvrirPiece(l) {
+    if (l.reglement) {
+      const v = pieces.ventes[l.reglement.vente_id]
+      const reglementsVente = pieces.paiements.filter((p) => p.vente_id === l.reglement.vente_id)
+      const totalReglements = reglementsVente.reduce((n, p) => n + Number(p.montant), 0)
+      const payeALaVente = Math.max(Number(v?.montant_regle || 0) - totalReglements, 0)
+      const cumul = reglementsVente.filter((p) => new Date(p.created_at) <= new Date(l.reglement.created_at)).reduce((n, p) => n + Number(p.montant), 0)
+      const doc = genererRecuPaiement({
+        entreprise, client, montant: Number(l.reglement.montant),
+        nouveauSolde: Math.max(Number(v?.total || 0) - payeALaVente - cumul, 0),
+        total: Number(v?.total || 0), date: l.reglement.created_at, numero: l.reglement.numero,
+        venteNumero: v?.numero_vente, receptionnePar: l.reglement.auteur?.nom || '',
+      })
+      doc.save(`${l.reglement.numero || 'recu-paiement'}.pdf`)
+      return
+    }
+    if (l.venteId) navigate(`/ventes?vente=${l.venteId}`)
   }
 
   // Filtre de période : les mouvements antérieurs forment le « solde reporté ».
@@ -224,9 +250,14 @@ export default function GrandLivre() {
                   </tr>
                 )}
                 {lignes.map((l, i) => (
-                  <tr key={i} className="border-b border-line last:border-0">
+                  <tr key={i} onDoubleClick={() => ouvrirPiece(l)} title={l.venteId ? t('ouvrirPiece') : undefined}
+                    className={`border-b border-line last:border-0 ${l.venteId ? 'cursor-pointer hover:bg-amber-50/60' : ''}`}>
                     <td className="px-3 py-2 text-petrol-600 whitespace-nowrap overflow-hidden text-ellipsis">{formatDate(l.date)}</td>
-                    <td className="px-3 py-2 whitespace-nowrap overflow-hidden text-ellipsis">{l.numero}</td>
+                    <td className="px-3 py-2 whitespace-nowrap overflow-hidden text-ellipsis">
+                      {l.venteId
+                        ? <button type="button" className="underline decoration-dotted text-petrol-800 hover:text-amber-700" onClick={() => ouvrirPiece(l)}>{l.numero || '—'}</button>
+                        : l.numero}
+                    </td>
                     <td className="px-3 py-2 overflow-hidden text-ellipsis">{l.libelle}</td>
                     <td className="px-3 py-2 text-right font-mono whitespace-nowrap">{l.debit > 0 ? formatXOF(l.debit) : '—'}</td>
                     <td className="px-3 py-2 text-right font-mono text-green-700 whitespace-nowrap">{l.credit > 0 ? formatXOF(l.credit) : '—'}</td>

@@ -548,6 +548,10 @@
         {
           "q": "Comment masquer ou réafficher la bulle de l'assistant ?",
           "r": "Dans la bulle ouverte : « Masquer la bulle ». Pour la réafficher : Apparence → Assistant IA → « Afficher la bulle de l'assistant sur tous les écrans ». L'assistant reste toujours accessible par le menu « Assistant IA ». Le bouton 🔈/🔊 active ou coupe la lecture des réponses à voix haute."
+        },
+        {
+          "q": "L'assistant peut-il ouvrir, imprimer ou envoyer une facture ?",
+          "r": "Oui. Demandez par exemple « Ouvre la facture VTE-2026-00028 » ou « Envoie la proforma de Diakité par WhatsApp » : l'assistant retrouve la pièce (dans la limite de vos droits) et affiche des boutons Ouvrir, PDF, Imprimer, Bon de livraison, WhatsApp, Email, Certifier FNE (ou Proforma pour une commande). Après une vente ou une commande dictée et validée, ces boutons apparaissent aussi directement. Dans le grand livre d'un client, un double-clic sur une ligne (ou un clic sur son numéro) ouvre la facture ou le reçu de paiement."
         }
       ]
     },

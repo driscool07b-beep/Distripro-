@@ -20,7 +20,8 @@
     "aide2": "Comment clôturer la tournée d'un commercial ?",
     "aide3": "Comment mettre mon logo sur les factures ?",
     "saisie1": "Vente à Boutique Exemple : 10 Bacca mil 350g et 5 Dêguê, payé cash",
-    "saisie2": "Commande pour Diakité Transitaire : 50 Bacca riz 350g, livraison vendredi"
+    "saisie2": "Commande pour Diakité Transitaire : 50 Bacca riz 350g, livraison vendredi",
+    "piece1": "Ouvre la dernière facture de Boutique Exemple"
   },
   "reflexion": "L'assistant consulte vos chiffres…",
   "placeholder": "Votre question…",
@@ -99,5 +100,17 @@
     "masquer": "Masquer la bulle",
     "fermer": "Fermer",
     "ouvrir": "Ouvrir l'assistant IA"
+  },
+  "pieces": {
+    "etMaintenant": "que voulez-vous faire ?",
+    "ouvrir": "Ouvrir",
+    "pdf": "PDF",
+    "imprimer": "Imprimer",
+    "bl": "Bon de livraison",
+    "whatsapp": "💬 WhatsApp",
+    "email": "📧 Email",
+    "fne": "Certifier FNE",
+    "proforma": "Proforma",
+    "grandLivre": "Grand livre"
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
@@ -144,6 +144,20 @@ export default function Ventes() {
     const id = searchParams.get('vente')
     if (id) ouvrirDetailVente(id)
   }, [])
+
+  // Action demandée par lien (assistant IA, grand livre…), exécutée une
+  // seule fois dès que le détail de la pièce est chargé.
+  const actionDemandee = useRef(searchParams.get('action'))
+  useEffect(() => {
+    const action = actionDemandee.current
+    if (!action || !detailVente?.vente || detailVente.vente.id !== searchParams.get('vente')) return
+    actionDemandee.current = null
+    const executer = {
+      pdf: telechargerRecu, imprimer: () => setTimeout(() => window.print(), 400), bl: telechargerBonLivraison,
+      whatsapp: envoyerWhatsAppDetail, email: envoyerEmailDetail, fne: certifierMaintenant,
+    }[action]
+    executer?.()
+  }, [detailVente])
 
   async function ouvrirDetailVente(venteId) {
     setVenteOuverte(venteId)

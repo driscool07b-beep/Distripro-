@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
@@ -252,6 +252,15 @@ export default function Commandes() {
     const id = parametresUrl.get('commande')
     if (id) ouvrirDetail(id)
   }, [parametresUrl])
+
+  const actionCommande = useRef(parametresUrl.get('action'))
+  useEffect(() => {
+    const action = actionCommande.current
+    if (!action || !detail?.commande || detail.commande.id !== parametresUrl.get('commande')) return
+    actionCommande.current = null
+    if (action === 'proforma') telechargerProforma()
+    else if (action === 'whatsapp' || action === 'email') envoyerProforma(action)
+  }, [detail])
 
   async function ouvrirDetail(commandeId) {
     setCommandeOuverte(commandeId)

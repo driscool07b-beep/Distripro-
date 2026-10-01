@@ -20,7 +20,8 @@
     "aide2": "كيف أُقفل جولة مندوب؟",
     "aide3": "كيف أضع شعاري على الفواتير؟",
     "saisie1": "بيع إلى Boutique Exemple: ‏10 Bacca mil 350g و5 Dêguê، مدفوع نقدًا",
-    "saisie2": "طلبية لـ Diakité Transitaire: ‏50 Bacca riz 350g، التسليم يوم الجمعة"
+    "saisie2": "طلبية لـ Diakité Transitaire: ‏50 Bacca riz 350g، التسليم يوم الجمعة",
+    "piece1": "افتح آخر فاتورة لـ Boutique Exemple"
   },
   "reflexion": "المساعد يطّلع على أرقامك…",
   "placeholder": "سؤالك…",
@@ -99,5 +100,17 @@
     "masquer": "إخفاء الفقاعة",
     "fermer": "إغلاق",
     "ouvrir": "فتح المساعد الذكي"
+  },
+  "pieces": {
+    "etMaintenant": "ماذا تريد أن تفعل؟",
+    "ouvrir": "فتح",
+    "pdf": "PDF",
+    "imprimer": "طباعة",
+    "bl": "سند التسليم",
+    "whatsapp": "💬 واتساب",
+    "email": "📧 بريد",
+    "fne": "اعتماد FNE",
+    "proforma": "فاتورة مبدئية",
+    "grandLivre": "دفتر الأستاذ"
   }
 }

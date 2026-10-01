@@ -40,6 +40,11 @@ const OUTILS = [
     input_schema: { type: 'object', properties: { texte: { type: 'string' }, client_id: { type: 'string' } }, required: ['texte'] },
   },
   {
+    name: 'trouver_pieces',
+    description: "Retrouve des pièces (vente/facture, commande, encaissement, réconciliation, client, produit) par référence (VTE-…, CMD-…, REC-…), nom de client ou téléphone, pour les ouvrir, les imprimer, les exporter en PDF, les envoyer par WhatsApp ou email, ou lancer la FNE. Des boutons d'action s'affichent alors à l'utilisateur.",
+    input_schema: { type: 'object', properties: { texte: { type: 'string', description: 'Référence ou nom à chercher' } }, required: ['texte'] },
+  },
+  {
     name: 'preparer_vente',
     description: "PRÉPARE (sans l'enregistrer) une vente que l'utilisateur validera lui-même sur une fiche de confirmation. À n'utiliser que si l'utilisateur demande clairement d'enregistrer une vente, avec un client et des produits identifiés sans ambiguïté.",
     input_schema: {
@@ -172,6 +177,8 @@ Assistant de saisie (ventes et commandes dictées, souvent par un commercial pre
 - Paiement non précisé pour une vente : considère « comptant » en espèces et dis-le dans ta réponse.
 - Une vente part du stock en main du commercial s'il est commercial ; signale un stock en main insuffisant.
 - Dès que tout est clair, appelle preparer_vente ou preparer_commande : une fiche de confirmation s'affiche à l'utilisateur, qui seul peut valider. Réponds alors en UNE phrase courte récapitulant (client, nombre d'articles, total approximatif) et invite à vérifier puis valider. Ne dis jamais que c'est déjà enregistré.
+Pièces existantes (ouvrir, imprimer, PDF, bon de livraison, WhatsApp, email, FNE, proforma) :
+- Appelle trouver_pieces avec la référence ou le nom : des boutons d'action s'affichent sous ta réponse. Tu ne peux pas envoyer ni imprimer toi-même : invite l'utilisateur à appuyer sur le bouton voulu, en une phrase courte.
 Assistance technique (questions « comment faire… ? », « pourquoi je ne peux pas… ? ») :
 - Appuie-toi UNIQUEMENT sur les extraits du guide d'utilisation ci-dessous ; donne le chemin dans les menus et les étapes, simplement.
 - Si le guide ne couvre pas la question, dis-le franchement et conseille de contacter l'administrateur de l'entreprise ou le support DistribPro ; n'invente pas de fonctionnalité.
@@ -224,6 +231,13 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
         case 'stock_commerciaux': return appel('ia_stock_commerciaux', {})
         case 'rechercher_clients': return appel('assistant_rechercher_clients', { p_texte: String(entree.texte || '') })
         case 'rechercher_produits': return appel('assistant_rechercher_produits', { p_texte: String(entree.texte || ''), p_client_id: entree.client_id || null })
+        case 'trouver_pieces': {
+          const resultats: any = await appel('recherche_globale', { p_terme: String(entree.texte || '') })
+          if (!Array.isArray(resultats)) return resultats
+          const pieces = resultats.slice(0, 5)
+          if (pieces.length) actionPreparee = { type: 'pieces', pieces }
+          return { nombre: pieces.length, pieces: pieces.map((p: any) => `${p.type} ${p.titre} — ${p.detail}`) }
+        }
         case 'preparer_vente':
         case 'preparer_commande': {
           const brouillon = await preparerBrouillon(nom === 'preparer_vente' ? 'vente' : 'commande', entree)

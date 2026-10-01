@@ -20,7 +20,8 @@
     "aide2": "如何结束销售员的行程？",
     "aide3": "如何在发票上放置我的标志？",
     "saisie1": "销售给 Boutique Exemple：10 个 Bacca mil 350g 和 5 个 Dêguê，现金付款",
-    "saisie2": "Diakité Transitaire 订单：50 个 Bacca riz 350g，周五送货"
+    "saisie2": "Diakité Transitaire 订单：50 个 Bacca riz 350g，周五送货",
+    "piece1": "打开 Boutique Exemple 的最新发票"
   },
   "reflexion": "助手正在查阅您的数据…",
   "placeholder": "您的问题…",
@@ -99,5 +100,17 @@
     "masquer": "隐藏气泡",
     "fermer": "关闭",
     "ouvrir": "打开 AI 助手"
+  },
+  "pieces": {
+    "etMaintenant": "接下来要做什么？",
+    "ouvrir": "打开",
+    "pdf": "PDF",
+    "imprimer": "打印",
+    "bl": "送货单",
+    "whatsapp": "💬 WhatsApp",
+    "email": "📧 邮件",
+    "fne": "FNE 认证",
+    "proforma": "形式发票",
+    "grandLivre": "分类账"
   }
 }

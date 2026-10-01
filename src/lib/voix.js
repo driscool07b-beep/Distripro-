@@ -8,7 +8,10 @@ const Reconnaissance = typeof window !== 'undefined' ? (window.SpeechRecognition
 export const dicteeDisponible = !!Reconnaissance
 export const lectureDisponible = typeof window !== 'undefined' && 'speechSynthesis' in window
 
-// Dictée : texte provisoire pendant qu'on parle, texte final à la fin.
+// Dictée CONTINUE : le micro reste ouvert pendant les pauses naturelles ;
+// la demande part quand on rappuie sur le micro, ou après un silence prolongé.
+const SILENCE_FIN_MS = 3500
+
 export function useDictee({ langue = 'fr', onFinal }) {
   const [ecoute, setEcoute] = useState(false)
   const [provisoire, setProvisoire] = useState('')
@@ -17,8 +20,13 @@ export function useDictee({ langue = 'fr', onFinal }) {
   const texteFinal = useRef('')
   const rappel = useRef(onFinal)
   rappel.current = onFinal
+  const minuterieSilence = useRef(null)
+  const relancerMinuterie = (delai = SILENCE_FIN_MS) => {
+    clearTimeout(minuterieSilence.current)
+    minuterieSilence.current = setTimeout(() => reco.current?.stop?.(), delai)
+  }
 
-  useEffect(() => () => reco.current?.abort?.(), [])
+  useEffect(() => () => { clearTimeout(minuterieSilence.current); reco.current?.abort?.() }, [])
 
   function demarrer() {
     if (!Reconnaissance || ecoute) return
@@ -28,7 +36,7 @@ export function useDictee({ langue = 'fr', onFinal }) {
     const r = new Reconnaissance()
     r.lang = LANGUES[langue] || 'fr-FR'
     r.interimResults = true
-    r.continuous = false
+    r.continuous = true
     r.maxAlternatives = 1
     r.onresult = (e) => {
       let fin = ''
@@ -39,11 +47,13 @@ export function useDictee({ langue = 'fr', onFinal }) {
       }
       texteFinal.current = fin
       setProvisoire((fin + ' ' + encours).trim())
+      relancerMinuterie()
     }
     r.onerror = (e) => {
       setErreur(e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'micro' : e.error === 'no-speech' ? 'silence' : 'reseau')
     }
     r.onend = () => {
+      clearTimeout(minuterieSilence.current)
       setEcoute(false)
       const texte = (texteFinal.current || '').trim()
       setProvisoire('')
@@ -51,7 +61,7 @@ export function useDictee({ langue = 'fr', onFinal }) {
     }
     reco.current = r
     setEcoute(true)
-    try { r.start() } catch { setEcoute(false) }
+    try { r.start(); relancerMinuterie(7000) } catch { setEcoute(false) }
   }
 
   function arreter() { reco.current?.stop?.() }

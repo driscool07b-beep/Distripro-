@@ -30,5 +30,6 @@
   "totalCredit": "Total crédit",
   "plafond": "Plafond de crédit",
   "annulationAvoir": "Annulation (avoir)",
-  "paiementRecuSur": "Paiement reçu — {{numero}}"
+  "paiementRecuSur": "Paiement reçu — {{numero}}",
+  "ouvrirPiece": "Double-cliquez (ou cliquez sur le numéro) pour ouvrir la pièce : facture ou reçu de paiement"
 }

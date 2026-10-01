@@ -20,7 +20,8 @@
     "aide2": "How do I close a sales rep's round?",
     "aide3": "How do I put my logo on invoices?",
     "saisie1": "Sale to Boutique Exemple: 10 Bacca mil 350g and 5 Dêguê, paid cash",
-    "saisie2": "Order for Diakité Transitaire: 50 Bacca riz 350g, delivery Friday"
+    "saisie2": "Order for Diakité Transitaire: 50 Bacca riz 350g, delivery Friday",
+    "piece1": "Open the latest invoice of Boutique Exemple"
   },
   "reflexion": "The assistant is reading your figures…",
   "placeholder": "Your question…",
@@ -99,5 +100,17 @@
     "masquer": "Hide bubble",
     "fermer": "Close",
     "ouvrir": "Open the AI assistant"
+  },
+  "pieces": {
+    "etMaintenant": "what next?",
+    "ouvrir": "Open",
+    "pdf": "PDF",
+    "imprimer": "Print",
+    "bl": "Delivery note",
+    "whatsapp": "💬 WhatsApp",
+    "email": "📧 Email",
+    "fne": "Certify FNE",
+    "proforma": "Proforma",
+    "grandLivre": "Ledger"
   }
 }

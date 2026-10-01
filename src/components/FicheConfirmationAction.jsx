@@ -4,11 +4,12 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { formatXOF } from '../lib/format'
 import { traduireErreur } from '../lib/erreurs'
+import CartePiece from './CartePiece'
 
 // Fiche de confirmation d'une vente ou d'une commande PRÉPARÉE par l'assistant.
 // Rien n'est enregistré tant que l'utilisateur n'a pas appuyé sur « Valider » ;
 // l'enregistrement passe par les mêmes fonctions et contrôles que les formulaires.
-export default function FicheConfirmationAction({ action, onTermine }) {
+export default function FicheConfirmationAction({ action, onTermine, fneActive, onNavigation }) {
   const { t } = useTranslation('assistant')
   const { profil } = useAuth()
   const estCommercial = profil?.role === 'commercial'
@@ -23,6 +24,7 @@ export default function FicheConfirmationAction({ action, onTermine }) {
   const [envoi, setEnvoi] = useState(false)
   const [erreur, setErreur] = useState('')
   const [etat, setEtat] = useState('a_valider') // a_valider | valide | annule
+  const [pieceCreee, setPieceCreee] = useState(null)
 
   const lignesValides = useMemo(() => lignes.filter((l) => Number(l.quantite) > 0), [lignes])
 
@@ -58,7 +60,7 @@ export default function FicheConfirmationAction({ action, onTermine }) {
     if (paiement === 'partiel' && !(p > 0)) { setErreur(t('fiche.montantPartiel')); return }
     setEnvoi(true)
     const lignesEnvoi = lignesValides.map((l) => ({ produit_id: l.produit_id, quantite: Number(l.quantite), prix_unitaire: Number(l.prix_unitaire) }))
-    const { error } = action.type === 'vente'
+    const { data: idCree, error } = action.type === 'vente'
       ? await supabase.rpc('creer_vente', {
           p_client_id: action.client.id,
           p_lignes: lignesEnvoi,
@@ -89,7 +91,19 @@ export default function FicheConfirmationAction({ action, onTermine }) {
     setEnvoi(false)
     if (error) { setErreur(traduireErreur(error.message)); return }
     setEtat('valide')
+    setPieceCreee(idCree ? { type: action.type, id: idCree, titre: action.client.nom, detail: formatXOF(total) } : null)
     onTermine?.(t(action.type === 'vente' ? 'fiche.venteEnregistree' : 'fiche.commandeEnregistree', { client: action.client.nom, total: formatXOF(total) }))
+  }
+
+  if (etat === 'valide' && pieceCreee) {
+    return (
+      <div className="space-y-1.5">
+        <div className="rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 px-3 py-2 text-sm">
+          ✅ {t(action.type === 'vente' ? 'fiche.venteEnregistreeCourt' : 'fiche.commandeEnregistreeCourt')} — {t('pieces.etMaintenant')}
+        </div>
+        <CartePiece piece={pieceCreee} fneActive={fneActive} onAction={onNavigation} />
+      </div>
+    )
   }
 
   if (etat !== 'a_valider') {

@@ -46,7 +46,7 @@ export default function BulleAssistant() {
             <button data-fermer onClick={() => setOuvert(false)} className="text-white/80 hover:text-white text-lg px-1" aria-label={t('bulle.fermer')}>✕</button>
           </div>
           <div className="flex-1 min-h-0">
-            <ConversationAssistant compact />
+            <ConversationAssistant compact onNavigation={() => setOuvert(false)} />
           </div>
         </div>
       )}

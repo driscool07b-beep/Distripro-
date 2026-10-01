@@ -30,5 +30,6 @@
   "totalCredit": "Total credit",
   "plafond": "Credit limit",
   "annulationAvoir": "Cancellation (credit note)",
-  "paiementRecuSur": "Payment received — {{numero}}"
+  "paiementRecuSur": "Payment received — {{numero}}",
+  "ouvrirPiece": "Double-click (or click the number) to open the document: invoice or payment receipt"
 }

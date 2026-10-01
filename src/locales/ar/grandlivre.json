@@ -30,5 +30,6 @@
   "totalCredit": "مجموع الدائن",
   "plafond": "سقف الائتمان",
   "annulationAvoir": "إلغاء (إشعار دائن)",
-  "paiementRecuSur": "دفعة مستلمة — {{numero}}"
+  "paiementRecuSur": "دفعة مستلمة — {{numero}}",
+  "ouvrirPiece": "انقر مرتين (أو على الرقم) لفتح المستند: الفاتورة أو إيصال الدفع"
 }

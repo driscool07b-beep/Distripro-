@@ -6,13 +6,15 @@ import { analyserTexte } from '../lib/exportAnalyse'
 import { extraitsGuide } from '../lib/guideAide'
 import { useDictee, dicteeDisponible, lectureDisponible, lireTexte, arreterLecture } from '../lib/voix'
 import FicheConfirmationAction from './FicheConfirmationAction'
+import CartePiece from './CartePiece'
+import { lireConfigFne } from '../lib/fne'
 
 const CLE_VOIX = 'distribpro-assistant-voix'
 
 // Conversation avec l'assistant : questions sur les chiffres, aide à
 // l'utilisation, et saisie dictée de ventes / commandes (avec fiche de
 // confirmation). Utilisée par la page « Assistant IA » et par la bulle.
-export default function ConversationAssistant({ compact = false }) {
+export default function ConversationAssistant({ compact = false, onNavigation }) {
   const { t, i18n } = useTranslation('assistant')
   const { profil } = useAuth()
   const [messages, setMessages] = useState([])
@@ -21,6 +23,8 @@ export default function ConversationAssistant({ compact = false }) {
   const [erreur, setErreur] = useState('')
   const [voixActive, setVoixActive] = useState(() => { try { return localStorage.getItem(CLE_VOIX) === '1' } catch { return false } })
   const finRef = useRef(null)
+  const [fneActive, setFneActive] = useState(false)
+  useEffect(() => { lireConfigFne().then((c) => setFneActive(!!c.actif)) }, [])
   const langue = (i18n.language || 'fr').slice(0, 2)
 
   const dictee = useDictee({ langue, onFinal: (texte) => envoyer(texte) })
@@ -31,8 +35,8 @@ export default function ConversationAssistant({ compact = false }) {
   const suggestions = profil?.role === 'gestionnaire_stock'
     ? ['stock1', 'stock2', 'aide3']
     : profil?.role === 'commercial'
-      ? ['saisie1', 'saisie2', 'com1', 'com2', 'aide2']
-      : compact ? ['saisie1', 'dir1', 'dir3', 'aide1'] : ['saisie1', 'saisie2', 'dir1', 'dir2', 'dir3', 'dir4', 'dir5', 'aide1', 'aide2', 'aide3']
+      ? ['saisie1', 'saisie2', 'piece1', 'com1', 'com2', 'aide2']
+      : compact ? ['saisie1', 'piece1', 'dir1', 'aide1'] : ['saisie1', 'saisie2', 'piece1', 'dir1', 'dir2', 'dir3', 'dir4', 'dir5', 'aide1', 'aide2', 'aide3']
 
   function basculerVoix() {
     const v = !voixActive
@@ -106,7 +110,14 @@ export default function ConversationAssistant({ compact = false }) {
                   ))}
               </div>
             )}
-            {m.action && <div className="w-full max-w-[92%]"><FicheConfirmationAction action={m.action} onTermine={finFiche} /></div>}
+            {m.action && ['vente', 'commande'].includes(m.action.type) && (
+              <div className="w-full max-w-[92%]"><FicheConfirmationAction action={m.action} onTermine={finFiche} fneActive={fneActive} onNavigation={onNavigation} /></div>
+            )}
+            {m.action?.type === 'pieces' && (
+              <div className="w-full max-w-[92%] space-y-1.5">
+                {m.action.pieces.map((p) => <CartePiece key={`${p.type}-${p.id}`} piece={p} fneActive={fneActive} onAction={onNavigation} />)}
+              </div>
+            )}
           </div>
         ))}
         {(enCours || dictee.provisoire) && (
