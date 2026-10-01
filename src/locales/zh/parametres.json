@@ -287,5 +287,14 @@
     "destinataires": "Recipients",
     "placeholder": "management@company.com",
     "aideDestinataires": "Comma-separated. Leave empty to send to all admins and managers."
+  },
+  "logo": {
+    "titre": "Company logo",
+    "aide": "Shown at the top of all your documents: invoices and FNE, receipts, delivery notes, proformas, credit notes, cash vouchers, PowerPoint reports and customer emails. Transparent PNG recommended.",
+    "enregistre": "Logo saved: it now appears on your documents.",
+    "retire": "Logo removed.",
+    "confirmerRetrait": "Remove the logo from all your documents?",
+    "envoi": "Uploading the logo…",
+    "formatInvalide": "Image not recognised: choose a PNG, JPEG or WebP file."
   }
 }

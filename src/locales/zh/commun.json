@@ -192,5 +192,15 @@
     "accueil": "仪表板",
     "aide": "显示 / 隐藏此列表",
     "fermer": "关闭"
+  },
+  "logo": {
+    "alt": "公司标志",
+    "aucun": "无标志",
+    "choisir": "选择标志",
+    "changer": "更换",
+    "retirer": "移除",
+    "facultatif": "公司标志（可选）",
+    "aideInscription": "PNG（最好透明背景）、JPEG 或 WebP。将显示在发票、收据、单据和报告上。之后可在设置中更改。",
+    "formatInvalide": "无法识别图片：请选择 PNG、JPEG 或 WebP 文件。"
   }
 }

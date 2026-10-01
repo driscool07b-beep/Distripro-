@@ -7,6 +7,8 @@ import { SYSCOHADA_DEPART } from '../lib/syscohada'
 import DiagnosticConnexion from '../components/DiagnosticConnexion'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
+import ChoixLogo from '../components/ChoixLogo'
+import { preparerLogo, televerserLogo, retirerLogo, urlLogo } from '../lib/logo'
 
 const CHAMP_VIDE = { libelle: '', type_champ: 'texte', options: '' }
 
@@ -1367,6 +1369,7 @@ export default function Parametres() {
           </button>
         </form>
       </div>
+      {profil?.role === 'admin' && <SectionLogo />}
       {profil?.role === 'admin' && <SectionRapportMensuel />}
       {profil?.role === 'admin' && <SectionFne />}
       {profil?.role === 'admin' && <SectionComptesClients />}
@@ -1731,6 +1734,49 @@ function SectionRapportMensuel() {
       <input className="input-field" value={destinataires} onChange={(e) => setDestinataires(e.target.value)} placeholder={t('rapportMensuel.placeholder')} />
       <p className="text-[11px] text-petrol-500 mt-1">{t('rapportMensuel.aideDestinataires')}</p>
       <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Logo de l'entreprise : affiché sur toute la documentation.
+function SectionLogo() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [envoi, setEnvoi] = useState(false)
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+
+  async function choisir(fichier) {
+    setErreur(''); setMessage('')
+    setEnvoi(true)
+    try {
+      const prepare = await preparerLogo(fichier)
+      const { error } = await televerserLogo(entreprise.id, prepare)
+      if (error) { setErreur(traduireErreur(error)); return }
+      await rechargerProfil()
+      setMessage(t('logo.enregistre'))
+    } catch {
+      setErreur(t('logo.formatInvalide'))
+    } finally {
+      setEnvoi(false)
+    }
+  }
+  async function retirer() {
+    if (!window.confirm(t('logo.confirmerRetrait'))) return
+    const { error } = await retirerLogo()
+    if (error) { setErreur(traduireErreur(error)); return }
+    await rechargerProfil()
+    setMessage(t('logo.retire'))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">🏷️ {t('logo.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('logo.aide')}</p>
+      <ChoixLogo apercu={urlLogo(entreprise?.logo_path)} onChoisir={choisir} onRetirer={retirer} desactive={envoi} />
+      {envoi && <p className="text-xs text-petrol-500 mt-2">{t('logo.envoi')}</p>}
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>

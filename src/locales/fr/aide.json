@@ -538,6 +538,15 @@
           "r": "Menu « Assistant IA » : posez vos questions en langage courant (« Quel est mon CA ce mois-ci par rapport au mois dernier ? », « Quels clients sont en retard de paiement ? »). L'assistant consulte vos vraies données, dans la limite de vos droits, et n'invente jamais un chiffre."
         }
       ]
+    },
+    {
+      "titre": "Paramètres",
+      "items": [
+        {
+          "q": "Comment mettre le logo de mon entreprise sur mes documents ?",
+          "r": "Paramètres → Logo de l'entreprise (administrateur) : choisissez une image PNG (idéalement à fond transparent), JPEG ou WebP. Elle est redimensionnée automatiquement et apparaît en haut de toute la documentation : factures et FNE, reçus, bons de livraison, proformas, avoirs, bons de caisse, rapports d'inventaire, rapports PowerPoint et emails envoyés aux clients. Le logo peut aussi être ajouté dès la création de l'entreprise, et changé ou retiré à tout moment."
+        }
+      ]
     }
   ]
 }

@@ -192,5 +192,15 @@
     "accueil": "Tableau de bord",
     "aide": "Afficher / masquer cette liste",
     "fermer": "Fermer"
+  },
+  "logo": {
+    "alt": "Logo de l'entreprise",
+    "aucun": "Aucun logo",
+    "choisir": "Choisir un logo",
+    "changer": "Changer",
+    "retirer": "Retirer",
+    "facultatif": "Logo de l'entreprise (facultatif)",
+    "aideInscription": "PNG (idéalement à fond transparent), JPEG ou WebP. Il figurera sur vos factures, reçus, bons et rapports. Modifiable plus tard dans les Paramètres.",
+    "formatInvalide": "Image non reconnue : choisissez un fichier PNG, JPEG ou WebP."
   }
 }

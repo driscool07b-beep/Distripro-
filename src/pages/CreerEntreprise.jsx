@@ -6,6 +6,8 @@ import { supabase } from '../lib/supabase'
 import { traduireErreur } from '../lib/erreurs'
 import SelecteurLangue from '../components/SelecteurLangue'
 import ChampMotDePasse from '../components/ChampMotDePasse'
+import ChoixLogo from '../components/ChoixLogo'
+import { preparerLogo, televerserLogo, memoriserLogoEnAttente } from '../lib/logo'
 
 export default function CreerEntreprise() {
   const { t } = useTranslation()
@@ -15,6 +17,8 @@ export default function CreerEntreprise() {
   const [email, setEmail] = useState('')
   const [motDePasse, setMotDePasse] = useState('')
   const [confirmation, setConfirmation] = useState('')
+  const [logo, setLogo] = useState(null) // logo préparé (facultatif)
+  const [erreurLogo, setErreurLogo] = useState('')
   const [erreur, setErreur] = useState('')
   const [chargement, setChargement] = useState(false)
   const [succes, setSucces] = useState(false)
@@ -55,14 +59,22 @@ export default function CreerEntreprise() {
         p_nom_entreprise: nomEntreprise.trim(),
         p_nom_admin: nomAdmin.trim(),
       })
-      setChargement(false)
       if (erreurCreation) {
+        setChargement(false)
         setErreur(`${t('commun.erreur')} : ${traduireErreur(erreurCreation.message)}`)
         return
       }
+      // Logo choisi : déposé tout de suite (un échec ne bloque pas l'inscription).
+      if (logo) {
+        const { data: p } = await supabase.from('profils').select('entreprise_id').eq('id', data.session.user.id).single()
+        if (p?.entreprise_id) await televerserLogo(p.entreprise_id, logo)
+      }
+      setChargement(false)
       return
     }
 
+    // Email à confirmer : le logo sera déposé à la première connexion.
+    if (logo) memoriserLogoEnAttente(email.trim(), logo)
     setChargement(false)
     setSucces(true)
   }
@@ -136,6 +148,16 @@ export default function CreerEntreprise() {
               onChange={(e) => setConfirmation(e.target.value)}
               autoComplete="new-password"
             />
+          </div>
+          <div>
+            <label className="label">{t('logo.facultatif')}</label>
+            <ChoixLogo
+              apercu={logo?.dataUrl}
+              onChoisir={async (f) => { setErreurLogo(''); try { setLogo(await preparerLogo(f)) } catch { setErreurLogo(t('logo.formatInvalide')) } }}
+              onRetirer={() => setLogo(null)}
+            />
+            <p className="text-[11px] text-petrol-500 mt-1">{t('logo.aideInscription')}</p>
+            {erreurLogo && <p className="text-xs text-red-600 mt-1">{erreurLogo}</p>}
           </div>
           {erreur && <p className="text-sm text-red-600">{erreur}</p>}
           <button type="submit" disabled={chargement} className="btn-primary w-full">

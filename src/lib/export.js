@@ -34,6 +34,18 @@ export function symboleDevise() {
  * continuer à écrire (la hauteur de l'en-tête varie selon les infos remplies).
  */
 export function ecrireEnTeteEntreprise(doc, entreprise) {
+  // Logo de l'entreprise (facultatif), en haut à droite, proportions respectées.
+  if (entreprise?.logo_data) {
+    try {
+      const ratio = Number(entreprise.logo_ratio) || 2
+      let largeur = 42
+      let hauteur = largeur / ratio
+      if (hauteur > 20) { hauteur = 20; largeur = hauteur * ratio }
+      const x = doc.internal.pageSize.getWidth() - 14 - largeur
+      const format = String(entreprise.logo_data).startsWith('data:image/png') ? 'PNG' : 'JPEG'
+      doc.addImage(entreprise.logo_data, format, x, 8, largeur, hauteur, undefined, 'FAST')
+    } catch { /* un logo illisible ne doit jamais bloquer un document */ }
+  }
   doc.setFontSize(16)
   doc.setTextColor(0)
   doc.text(entreprise?.nom || '', 14, 18)
