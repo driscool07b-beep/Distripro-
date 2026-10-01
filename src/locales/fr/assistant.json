@@ -21,7 +21,10 @@
     "aide3": "Comment mettre mon logo sur les factures ?",
     "saisie1": "Vente à Boutique Exemple : 10 Bacca mil 350g et 5 Dêguê, payé cash",
     "saisie2": "Commande pour Diakité Transitaire : 50 Bacca riz 350g, livraison vendredi",
-    "piece1": "Ouvre la dernière facture de Boutique Exemple"
+    "piece1": "Ouvre la dernière facture de Boutique Exemple",
+    "saisie3": "Boutique Exemple a payé 50 000 en espèces",
+    "saisie4": "Nouveau client : Supérette Les Palmiers, 07 07 12 34 56, Yopougon Sideci",
+    "saisie5": "Visite chez Eacci : gérant absent, rayon Bacca presque vide, repasser jeudi"
   },
   "reflexion": "L'assistant consulte vos chiffres…",
   "placeholder": "Votre question…",
@@ -112,5 +115,37 @@
     "fne": "Certifier FNE",
     "proforma": "Proforma",
     "grandLivre": "Grand livre"
+  },
+  "encaissement": {
+    "titre": "Encaissement à valider",
+    "du": "Dû :",
+    "reste": "Reste",
+    "echeance": "échéance",
+    "total": "Total encaissé",
+    "reference": "N° de chèque / de transaction",
+    "referenceObligatoire": "Indiquez la référence du chèque ou du virement.",
+    "depassement": "Le montant dicté ({{montant}}) dépasse ce que le client doit ({{du}}) : seul le dû est réparti.",
+    "enregistre": "✅ Encaissement de {{montant}} enregistré pour {{client}}.",
+    "enregistreCourt": "Encaissement de {{montant}} enregistré"
+  },
+  "client": {
+    "titre": "Nouveau client à valider",
+    "nom": "Nom *",
+    "telephone": "Téléphone",
+    "ville": "Ville",
+    "adresse": "Quartier / repère",
+    "type": "Type (boutique, grossiste…)",
+    "nomObligatoire": "Le nom est obligatoire.",
+    "doublons": "Clients au nom proche déjà enregistrés : {{noms}}. Vérifiez qu'il ne s'agit pas du même.",
+    "cree": "✅ Client {{nom}} créé.",
+    "creeCourt": "Client {{nom}} créé"
+  },
+  "visite": {
+    "titre": "Rapport de visite à valider",
+    "aide": "Vous pouvez compléter avec des photos depuis la tournée.",
+    "observationsObligatoires": "Indiquez vos observations.",
+    "enregistree": "✅ Rapport de visite enregistré chez {{client}}.",
+    "tournee": "Il est rattaché à votre tournée du jour.",
+    "enregistreeCourt": "Rapport de visite enregistré"
   }
 }

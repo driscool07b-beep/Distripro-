@@ -552,6 +552,10 @@
         {
           "q": "L'assistant peut-il ouvrir, imprimer ou envoyer une facture ?",
           "r": "Oui. Demandez par exemple « Ouvre la facture VTE-2026-00028 » ou « Envoie la proforma de Diakité par WhatsApp » : l'assistant retrouve la pièce (dans la limite de vos droits) et affiche des boutons Ouvrir, PDF, Imprimer, Bon de livraison, WhatsApp, Email, Certifier FNE (ou Proforma pour une commande). Après une vente ou une commande dictée et validée, ces boutons apparaissent aussi directement. Dans le grand livre d'un client, un double-clic sur une ligne (ou un clic sur son numéro) ouvre la facture ou le reçu de paiement."
+        },
+        {
+          "q": "Peut-on dicter un encaissement, un nouveau client ou un rapport de visite ?",
+          "r": "Oui, dans l'assistant (bulle ✨ ou menu Assistant IA) : « Boutique Exemple a payé 50 000 en espèces » prépare un encaissement réparti sur ses factures impayées, les plus anciennes d'abord (montants modifiables) ; « Nouveau client : Supérette Les Palmiers, 07 07 12 34 56, Yopougon » prépare la fiche du client, en signalant les clients au nom proche déjà enregistrés ; « Visite chez Eacci : gérant absent, repasser jeudi » prépare un rapport de visite, rattaché à votre tournée du jour si le client y figure. Rien n'est enregistré avant « Valider »."
         }
       ]
     },

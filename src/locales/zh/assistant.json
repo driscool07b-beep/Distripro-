@@ -21,7 +21,10 @@
     "aide3": "如何在发票上放置我的标志？",
     "saisie1": "销售给 Boutique Exemple：10 个 Bacca mil 350g 和 5 个 Dêguê，现金付款",
     "saisie2": "Diakité Transitaire 订单：50 个 Bacca riz 350g，周五送货",
-    "piece1": "打开 Boutique Exemple 的最新发票"
+    "piece1": "打开 Boutique Exemple 的最新发票",
+    "saisie3": "Boutique Exemple paid 50,000 in cash",
+    "saisie4": "New customer: Supérette Les Palmiers, 07 07 12 34 56, Yopougon Sideci",
+    "saisie5": "Visit at Eacci: manager absent, Bacca shelf almost empty, come back Thursday"
   },
   "reflexion": "助手正在查阅您的数据…",
   "placeholder": "您的问题…",
@@ -112,5 +115,37 @@
     "fne": "FNE 认证",
     "proforma": "形式发票",
     "grandLivre": "分类账"
+  },
+  "encaissement": {
+    "titre": "Payment to confirm",
+    "du": "Owed:",
+    "reste": "Balance",
+    "echeance": "due",
+    "total": "Total collected",
+    "reference": "Cheque / transaction no.",
+    "referenceObligatoire": "Enter the cheque or transfer reference.",
+    "depassement": "The amount ({{montant}}) exceeds what is owed ({{du}}): only the amount owed is allocated.",
+    "enregistre": "✅ Payment of {{montant}} recorded for {{client}}.",
+    "enregistreCourt": "Payment of {{montant}} recorded"
+  },
+  "client": {
+    "titre": "New customer to confirm",
+    "nom": "Name *",
+    "telephone": "Phone",
+    "ville": "City",
+    "adresse": "Area / landmark",
+    "type": "Type (shop, wholesaler…)",
+    "nomObligatoire": "Name is required.",
+    "doublons": "Similar customers already exist: {{noms}}. Check it is not the same.",
+    "cree": "✅ Customer {{nom}} created.",
+    "creeCourt": "Customer {{nom}} created"
+  },
+  "visite": {
+    "titre": "Visit report to confirm",
+    "aide": "You can add photos from the round.",
+    "observationsObligatoires": "Enter your observations.",
+    "enregistree": "✅ Visit report saved for {{client}}.",
+    "tournee": "It is linked to today's round.",
+    "enregistreeCourt": "Visit report saved"
   }
 }

@@ -7,6 +7,7 @@ import { extraitsGuide } from '../lib/guideAide'
 import { useDictee, dicteeDisponible, lectureDisponible, lireTexte, arreterLecture } from '../lib/voix'
 import FicheConfirmationAction from './FicheConfirmationAction'
 import CartePiece from './CartePiece'
+import FicheConfirmationAutre from './FicheConfirmationAutre'
 import { lireConfigFne } from '../lib/fne'
 
 const CLE_VOIX = 'distribpro-assistant-voix'
@@ -35,8 +36,8 @@ export default function ConversationAssistant({ compact = false, onNavigation })
   const suggestions = profil?.role === 'gestionnaire_stock'
     ? ['stock1', 'stock2', 'aide3']
     : profil?.role === 'commercial'
-      ? ['saisie1', 'saisie2', 'piece1', 'com1', 'com2', 'aide2']
-      : compact ? ['saisie1', 'piece1', 'dir1', 'aide1'] : ['saisie1', 'saisie2', 'piece1', 'dir1', 'dir2', 'dir3', 'dir4', 'dir5', 'aide1', 'aide2', 'aide3']
+      ? ['saisie1', 'saisie3', 'saisie4', 'saisie5', 'piece1', 'com2']
+      : compact ? ['saisie1', 'piece1', 'dir1', 'aide1'] : ['saisie1', 'saisie2', 'saisie3', 'saisie4', 'piece1', 'dir1', 'dir2', 'dir3', 'dir4', 'aide1', 'aide2']
 
   function basculerVoix() {
     const v = !voixActive
@@ -112,6 +113,9 @@ export default function ConversationAssistant({ compact = false, onNavigation })
             )}
             {m.action && ['vente', 'commande'].includes(m.action.type) && (
               <div className="w-full max-w-[92%]"><FicheConfirmationAction action={m.action} onTermine={finFiche} fneActive={fneActive} onNavigation={onNavigation} /></div>
+            )}
+            {m.action && ['encaissement', 'client', 'visite'].includes(m.action.type) && (
+              <div className="w-full max-w-[92%]"><FicheConfirmationAutre action={m.action} onTermine={finFiche} onNavigation={onNavigation} /></div>
             )}
             {m.action?.type === 'pieces' && (
               <div className="w-full max-w-[92%] space-y-1.5">

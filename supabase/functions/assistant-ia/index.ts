@@ -45,6 +45,43 @@ const OUTILS = [
     input_schema: { type: 'object', properties: { texte: { type: 'string', description: 'Référence ou nom à chercher' } }, required: ['texte'] },
   },
   {
+    name: 'preparer_encaissement',
+    description: "PRÉPARE (sans l'enregistrer) l'encaissement d'un paiement reçu d'un client sur ses factures impayées (les plus anciennes d'abord, ou la facture précisée). L'utilisateur valide sur une fiche.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        client_id: { type: 'string' },
+        montant: { type: 'number' },
+        mode: { type: 'string', enum: ['espece', 'mobile_money', 'cheque', 'virement'] },
+        reference: { type: 'string', description: 'N° de chèque ou de transaction si dicté' },
+        numero_facture: { type: 'string', description: 'Seulement si une facture précise est dictée (VTE-…)' },
+      },
+      required: ['client_id', 'montant'],
+    },
+  },
+  {
+    name: 'preparer_client',
+    description: "PRÉPARE (sans l'enregistrer) la création d'un nouveau client. Vérifie d'abord avec rechercher_clients qu'il n'existe pas déjà.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        nom: { type: 'string' }, telephone: { type: 'string' }, ville: { type: 'string' },
+        adresse: { type: 'string', description: 'Quartier, repère' }, type_client: { type: 'string', description: 'Boutique, supermarché, grossiste…' },
+        note: { type: 'string' },
+      },
+      required: ['nom'],
+    },
+  },
+  {
+    name: 'preparer_visite',
+    description: "PRÉPARE (sans l'enregistrer) un rapport de visite chez un client (observations, absence du gérant, prochaine action…).",
+    input_schema: {
+      type: 'object',
+      properties: { client_id: { type: 'string' }, observations: { type: 'string' } },
+      required: ['client_id', 'observations'],
+    },
+  },
+  {
     name: 'preparer_vente',
     description: "PRÉPARE (sans l'enregistrer) une vente que l'utilisateur validera lui-même sur une fiche de confirmation. À n'utiliser que si l'utilisateur demande clairement d'enregistrer une vente, avec un client et des produits identifiés sans ambiguïté.",
     input_schema: {
@@ -176,7 +213,10 @@ Assistant de saisie (ventes et commandes dictées, souvent par un commercial pre
 - Quantités : comprends les nombres dictés en lettres (« dix », « une douzaine » = 12, « un carton » seulement si le catalogue le précise, sinon demande).
 - Paiement non précisé pour une vente : considère « comptant » en espèces et dis-le dans ta réponse.
 - Une vente part du stock en main du commercial s'il est commercial ; signale un stock en main insuffisant.
-- Dès que tout est clair, appelle preparer_vente ou preparer_commande : une fiche de confirmation s'affiche à l'utilisateur, qui seul peut valider. Réponds alors en UNE phrase courte récapitulant (client, nombre d'articles, total approximatif) et invite à vérifier puis valider. Ne dis jamais que c'est déjà enregistré.
+- Encaissement dicté (« X a payé 50 000 ») : retrouve le client, puis preparer_encaissement ; la répartition sur les factures se fait automatiquement (plus anciennes d'abord). Si le montant dépasse ce qui est dû, signale-le.
+- Nouveau client dicté : vérifie d'abord avec rechercher_clients ; s'il existe déjà un client très proche, demande confirmation avant preparer_client.
+- Visite dictée (« visite chez X, le gérant était absent ») : preparer_visite avec les observations reformulées clairement.
+- Dès que tout est clair, appelle l'outil preparer_… correspondant : une fiche de confirmation s'affiche à l'utilisateur, qui seul peut valider. Réponds alors en UNE phrase courte récapitulant (client, nombre d'articles, total approximatif) et invite à vérifier puis valider. Ne dis jamais que c'est déjà enregistré.
 Pièces existantes (ouvrir, imprimer, PDF, bon de livraison, WhatsApp, email, FNE, proforma) :
 - Appelle trouver_pieces avec la référence ou le nom : des boutons d'action s'affichent sous ta réponse. Tu ne peux pas envoyer ni imprimer toi-même : invite l'utilisateur à appuyer sur le bouton voulu, en une phrase courte.
 Assistance technique (questions « comment faire… ? », « pourquoi je ne peux pas… ? ») :
@@ -237,6 +277,46 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
           const pieces = resultats.slice(0, 5)
           if (pieces.length) actionPreparee = { type: 'pieces', pieces }
           return { nombre: pieces.length, pieces: pieces.map((p: any) => `${p.type} ${p.titre} — ${p.detail}`) }
+        }
+        case 'preparer_encaissement': {
+          const { data: client } = await supabaseUtilisateur.from('clients').select('id, nom').eq('id', entree.client_id).maybeSingle()
+          if (!client) return { erreur: 'client introuvable : recherche-le d\'abord' }
+          const montant = Math.round(Number(entree.montant))
+          if (!(montant > 0)) return { erreur: 'montant invalide' }
+          const factures: any = await appel('assistant_factures_ouvertes', { p_client_id: client.id })
+          if (!Array.isArray(factures) || !factures.length) return { erreur: 'aucune facture impayée pour ce client (rien à encaisser)' }
+          const totalDu = factures.reduce((n: number, f: any) => n + Number(f.reste), 0)
+          // Répartition : la facture dictée d'abord, puis les plus anciennes.
+          const ordre = entree.numero_facture
+            ? [...factures.filter((f: any) => String(f.numero || '').toUpperCase() === String(entree.numero_facture).toUpperCase()), ...factures.filter((f: any) => String(f.numero || '').toUpperCase() !== String(entree.numero_facture).toUpperCase())]
+            : factures
+          let reste = montant
+          const repartition = ordre.map((f: any) => { const part = Math.min(Number(f.reste), Math.max(reste, 0)); reste -= part; return { ...f, part } })
+          actionPreparee = {
+            type: 'encaissement', client, montant,
+            mode: ['espece', 'mobile_money', 'cheque', 'virement'].includes(entree.mode) ? entree.mode : 'espece',
+            reference: String(entree.reference || '').slice(0, 60) || null, factures: repartition, total_du: totalDu,
+          }
+          return { statut: 'fiche affichée — en attente de validation', total_du: totalDu, montant, depassement: montant > totalDu }
+        }
+        case 'preparer_client': {
+          const nom = String(entree.nom || '').trim().slice(0, 120)
+          if (nom.length < 2) return { erreur: 'nom du client manquant' }
+          const doublons: any = await appel('assistant_rechercher_clients', { p_texte: `${nom} ${entree.telephone || ''}` })
+          actionPreparee = {
+            type: 'client', nom,
+            telephone: String(entree.telephone || '').replace(/[^0-9+ ]/g, '').trim() || null,
+            ville: String(entree.ville || '').slice(0, 80) || null, adresse: String(entree.adresse || '').slice(0, 200) || null,
+            type_client: String(entree.type_client || '').slice(0, 60) || null, note: String(entree.note || '').slice(0, 300) || null,
+            doublons: Array.isArray(doublons) ? doublons.filter((d: any) => d.score >= 2).slice(0, 3) : [],
+          }
+          return { statut: 'fiche affichée — en attente de validation', clients_proches: actionPreparee.doublons.map((d: any) => d.nom) }
+        }
+        case 'preparer_visite': {
+          const { data: client } = await supabaseUtilisateur.from('clients').select('id, nom').eq('id', entree.client_id).maybeSingle()
+          if (!client) return { erreur: 'client introuvable : recherche-le d\'abord' }
+          actionPreparee = { type: 'visite', client, observations: String(entree.observations || '').slice(0, 1500) }
+          return { statut: 'fiche affichée — en attente de validation' }
         }
         case 'preparer_vente':
         case 'preparer_commande': {

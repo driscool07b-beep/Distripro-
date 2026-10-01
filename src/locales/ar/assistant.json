@@ -21,7 +21,10 @@
     "aide3": "كيف أضع شعاري على الفواتير؟",
     "saisie1": "بيع إلى Boutique Exemple: ‏10 Bacca mil 350g و5 Dêguê، مدفوع نقدًا",
     "saisie2": "طلبية لـ Diakité Transitaire: ‏50 Bacca riz 350g، التسليم يوم الجمعة",
-    "piece1": "افتح آخر فاتورة لـ Boutique Exemple"
+    "piece1": "افتح آخر فاتورة لـ Boutique Exemple",
+    "saisie3": "Boutique Exemple paid 50,000 in cash",
+    "saisie4": "New customer: Supérette Les Palmiers, 07 07 12 34 56, Yopougon Sideci",
+    "saisie5": "Visit at Eacci: manager absent, Bacca shelf almost empty, come back Thursday"
   },
   "reflexion": "المساعد يطّلع على أرقامك…",
   "placeholder": "سؤالك…",
@@ -112,5 +115,37 @@
     "fne": "اعتماد FNE",
     "proforma": "فاتورة مبدئية",
     "grandLivre": "دفتر الأستاذ"
+  },
+  "encaissement": {
+    "titre": "Payment to confirm",
+    "du": "Owed:",
+    "reste": "Balance",
+    "echeance": "due",
+    "total": "Total collected",
+    "reference": "Cheque / transaction no.",
+    "referenceObligatoire": "Enter the cheque or transfer reference.",
+    "depassement": "The amount ({{montant}}) exceeds what is owed ({{du}}): only the amount owed is allocated.",
+    "enregistre": "✅ Payment of {{montant}} recorded for {{client}}.",
+    "enregistreCourt": "Payment of {{montant}} recorded"
+  },
+  "client": {
+    "titre": "New customer to confirm",
+    "nom": "Name *",
+    "telephone": "Phone",
+    "ville": "City",
+    "adresse": "Area / landmark",
+    "type": "Type (shop, wholesaler…)",
+    "nomObligatoire": "Name is required.",
+    "doublons": "Similar customers already exist: {{noms}}. Check it is not the same.",
+    "cree": "✅ Customer {{nom}} created.",
+    "creeCourt": "Customer {{nom}} created"
+  },
+  "visite": {
+    "titre": "Visit report to confirm",
+    "aide": "You can add photos from the round.",
+    "observationsObligatoires": "Enter your observations.",
+    "enregistree": "✅ Visit report saved for {{client}}.",
+    "tournee": "It is linked to today's round.",
+    "enregistreeCourt": "Visit report saved"
   }
 }
