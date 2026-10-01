@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
 
     const { data: profil } = await supabase.from('profils').select('id, entreprise_id, actif').eq('id', userData.user.id).single()
     if (!profil || profil.actif === false) return reponse({ error: 'Compte inactif.' }, 403)
-    const { data: entreprise } = await supabase.from('entreprises').select('nom, email, telephone').eq('id', profil.entreprise_id).single()
+    const { data: entreprise } = await supabase.from('entreprises').select('nom, email, telephone, logo_path').eq('id', profil.entreprise_id).single()
 
     // Le document doit appartenir à l'entreprise de l'utilisateur.
     let client: any = null
@@ -76,6 +76,7 @@ Deno.serve(async (req) => {
         subject: `${titre}${numero ? ` ${numero}` : ''} — ${nomEntreprise}`,
         html: `
           <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; color: #1a2e35;">
+            ${entreprise?.logo_path ? `<img src="${supabaseUrl}/storage/v1/object/public/logos-entreprises/${entreprise.logo_path}" alt="${nomEntreprise}" style="max-height: 60px; max-width: 200px; margin-bottom: 8px;">` : ''}
             <h2 style="margin-bottom: 4px;">${nomEntreprise}</h2>
             <p>Bonjour ${client?.nom || ''},</p>
             <p>${titre}${numero ? ` <strong>${numero}</strong>` : ''} est en pièce jointe (PDF).</p>
