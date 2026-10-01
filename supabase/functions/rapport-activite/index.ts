@@ -72,6 +72,16 @@ function construireRapportPptx(PptxGen, donnees, commentaires, entreprise) {
     slide.addShape(pres.shapes.OVAL, { x: x - r * 0.42, y: y - r * 0.42, w: r * 0.84, h: r * 0.84, fill: { color: C.ambre }, line: { color: C.ambre, width: 0 } })
   }
 
+  // Logo de l'entreprise (facultatif), aligné à droite dans un cadre max.
+  const ajouterLogo = (slide, droite, haut, largeurMax, hauteurMax) => {
+    if (!entreprise?.logo_data) return
+    const ratio = Number(entreprise.logo_ratio) || 2
+    let w = largeurMax
+    let h = w / ratio
+    if (h > hauteurMax) { h = hauteurMax; w = h * ratio }
+    slide.addImage({ data: entreprise.logo_data, x: droite - w, y: haut, w, h })
+  }
+
   // Gabarit des diapositives de contenu.
   const nouvelleDiapo = (titre, sousTitre) => {
     numero += 1
@@ -82,6 +92,7 @@ function construireRapportPptx(PptxGen, donnees, commentaires, entreprise) {
     if (sousTitre) slide.addText(sousTitre, { x: 0.9, y: 0.86, w: 8.2, h: 0.3, fontFace: CORPS, fontSize: 11, color: C.gris, margin: 0, isTextBox: true })
     slide.addText(`${entreprise?.nom || ''}  ·  ${periodeTexte}`, { x: 0.5, y: 5.22, w: 7.5, h: 0.25, fontFace: CORPS, fontSize: 8, color: C.gris, margin: 0, isTextBox: true })
     slide.addText(String(numero + 1), { x: 9.0, y: 5.22, w: 0.5, h: 0.25, fontFace: CORPS, fontSize: 8, color: C.gris, align: 'right', margin: 0, isTextBox: true })
+    ajouterLogo(slide, 9.5, 0.3, 1.3, 0.5)
     return slide
   }
 
@@ -120,6 +131,14 @@ function construireRapportPptx(PptxGen, donnees, commentaires, entreprise) {
     })
     points.forEach(([px, py]) => pointDeVente(slide, px, py, 0.14, 'sombre'))
     slide.addShape(pres.shapes.OVAL, { x: hub.x - 0.32, y: hub.y - 0.32, w: 0.64, h: 0.64, fill: { color: C.ambre }, line: { color: C.sable, width: 2 } })
+    if (entreprise?.logo_data) {
+      const ratio = Number(entreprise.logo_ratio) || 2
+      let w = 1.9
+      let h = w / ratio
+      if (h > 0.75) { h = 0.75; w = h * ratio }
+      slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 0.35, w: w + 0.3, h: h + 0.24, rectRadius: 0.08, fill: { color: C.blanc }, line: { color: C.blanc, width: 0 } })
+      slide.addImage({ data: entreprise.logo_data, x: 0.65, y: 0.47, w, h })
+    }
     slide.addText(entreprise?.nom || '', { x: 0.6, y: 1.25, w: 5.2, h: 0.5, fontFace: CORPS, fontSize: 16, color: C.sable, bold: true, margin: 0, isTextBox: true })
     slide.addText("Rapport d'activité commerciale", { x: 0.6, y: 1.8, w: 5.3, h: 1.3, fontFace: TITRE, fontSize: 36, bold: true, color: C.blanc, valign: 'top', margin: 0, isTextBox: true })
     slide.addText(periodeTexte.charAt(0).toUpperCase() + periodeTexte.slice(1), { x: 0.6, y: 3.25, w: 5.2, h: 0.4, fontFace: CORPS, fontSize: 16, color: C.ambre, margin: 0, isTextBox: true })
@@ -357,6 +376,39 @@ async function genererFichier(donnees: any, entreprise: any, anthropicKey: strin
   return { base64, usage }
 }
 
+// Logo de l'entreprise pour la présentation (data base64 + proportions lues
+// dans l'en-tête PNG / JPEG). Un logo absent ou illisible n'empêche rien.
+async function chargerLogo(supabaseUrl: string, chemin: string | null) {
+  if (!chemin) return {}
+  try {
+    const r = await fetch(`${supabaseUrl}/storage/v1/object/public/logos-entreprises/${chemin}`)
+    if (!r.ok) return {}
+    const octets = new Uint8Array(await r.arrayBuffer())
+    const type = r.headers.get('content-type') || (chemin.endsWith('.png') ? 'image/png' : 'image/jpeg')
+    let ratio = 2
+    if (octets[0] === 0x89 && octets[1] === 0x50) {
+      const v = new DataView(octets.buffer)
+      ratio = v.getUint32(16) / v.getUint32(20)
+    } else if (octets[0] === 0xff && octets[1] === 0xd8) {
+      for (let i = 2; i < octets.length - 9;) {
+        if (octets[i] !== 0xff) { i++; continue }
+        const marqueur = octets[i + 1]
+        const longueur = (octets[i + 2] << 8) + octets[i + 3]
+        if (marqueur >= 0xc0 && marqueur <= 0xc3) {
+          ratio = ((octets[i + 7] << 8) + octets[i + 8]) / ((octets[i + 5] << 8) + octets[i + 6])
+          break
+        }
+        i += 2 + longueur
+      }
+    }
+    let binaire = ''
+    for (let i = 0; i < octets.length; i += 0x8000) binaire += String.fromCharCode(...octets.subarray(i, i + 0x8000))
+    return { logo_data: `${type.split(';')[0]};base64,${btoa(binaire)}`, logo_ratio: ratio > 0 && isFinite(ratio) ? ratio : 2 }
+  } catch {
+    return {}
+  }
+}
+
 const nomFichier = (entreprise: any, debut: string, fin: string) =>
   `rapport-activite-${String(entreprise?.nom || 'entreprise').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${debut}-au-${fin}.pptx`
 
@@ -386,7 +438,7 @@ Deno.serve(async (req) => {
       const libelleMois = debutMois.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' })
 
       const { data: entreprises } = await supabase.from('entreprises')
-        .select('id, nom, devise, email, rapport_mensuel_destinataires').eq('rapport_mensuel_actif', true)
+        .select('id, nom, devise, email, logo_path, rapport_mensuel_destinataires').eq('rapport_mensuel_actif', true)
       const bilan: any[] = []
       for (const e of entreprises || []) {
         try {
@@ -403,7 +455,7 @@ Deno.serve(async (req) => {
 
           const { data: donnees, error } = await supabase.rpc('rapport_activite_donnees', { p_entreprise_id: e.id, p_debut: debut, p_fin: fin, p_commercial_id: null })
           if (error) throw error
-          const { base64, usage } = await genererFichier(donnees, e, anthropicKey)
+          const { base64, usage } = await genererFichier(donnees, { ...e, ...(await chargerLogo(supabaseUrl, e.logo_path)) }, anthropicKey)
           await consommation(supabase, e.id, null, usage)
           const fichier = nomFichier(e, debut, fin)
           const envoi = await fetch('https://api.resend.com/emails', {
@@ -414,6 +466,7 @@ Deno.serve(async (req) => {
               to: destinataires,
               subject: `Rapport d'activité de ${libelleMois} — ${e.nom}`,
               html: `<div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; color: #1a2e35;">
+                ${e.logo_path ? `<img src="${supabaseUrl}/storage/v1/object/public/logos-entreprises/${e.logo_path}" alt="${e.nom}" style="max-height: 60px; max-width: 200px; margin-bottom: 8px;">` : ''}
                 <h2 style="margin-bottom: 4px;">${e.nom}</h2>
                 <p>Bonjour,</p>
                 <p>Voici le <strong>rapport d'activité commerciale de ${libelleMois}</strong> (présentation PowerPoint jointe) : chiffre d'affaires et évolution, meilleurs clients et produits, performance des commerciaux, créances, stock et recommandations.</p>
@@ -446,8 +499,9 @@ Deno.serve(async (req) => {
     // Données lues AVEC LES DROITS de l'utilisateur.
     const { data: donnees, error } = await supabaseUtilisateur.rpc('rapport_activite', { p_debut: debut, p_fin: fin })
     if (error) return reponse({ error: error.message }, 400)
-    const { data: entreprise } = await supabase.from('entreprises').select('nom, devise').eq('id', profil.entreprise_id).single()
-    const { base64, usage } = await genererFichier(donnees, entreprise, profil.ia_active === false ? undefined : anthropicKey)
+    const { data: entreprise } = await supabase.from('entreprises').select('nom, devise, logo_path').eq('id', profil.entreprise_id).single()
+    const avecLogo = { ...entreprise, ...(await chargerLogo(supabaseUrl, entreprise?.logo_path)) }
+    const { base64, usage } = await genererFichier(donnees, avecLogo, profil.ia_active === false ? undefined : anthropicKey)
     await consommation(supabase, profil.entreprise_id, profil.id, usage)
     await supabase.from('rapports_activite').insert({ entreprise_id: profil.entreprise_id, periode_debut: debut, periode_fin: fin, type: 'manuel', succes: true, demande_par: profil.id })
     return reponse({ fichier: base64, nom: nomFichier(entreprise, debut, fin) })
