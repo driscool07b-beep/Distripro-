@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { analyserTexte } from '../lib/exportAnalyse'
 import RapportPowerPoint from '../components/RapportPowerPoint'
+import { extraitsGuide } from '../lib/guideAide'
 
 // Assistant conversationnel : questions en langage courant sur les chiffres
 // de l'entreprise. Les réponses s'appuient sur les vraies données, dans la
@@ -24,6 +25,7 @@ export default function AssistantIA() {
     : profil?.role === 'commercial'
       ? ['com1', 'com2', 'com3', 'com4']
       : ['dir1', 'dir2', 'dir3', 'dir4', 'dir5', 'dir6']
+  const suggestionsAide = ['aide1', 'aide2', 'aide3']
 
   async function envoyer(texte) {
     const q = (texte ?? question).trim()
@@ -33,7 +35,11 @@ export default function AssistantIA() {
     setMessages(suite)
     setQuestion('')
     setEnCours(true)
-    const { data, error } = await supabase.functions.invoke('assistant-ia', { body: { messages: suite } })
+    let page = ''
+    try { page = sessionStorage.getItem('distribpro-derniere-page') || '' } catch { /* ignore */ }
+    // Assistance technique : passages du guide proches de la question.
+    const aide = extraitsGuide(`${q} ${suite.slice(-3, -1).map((m) => m.content).join(' ')}`)
+    const { data, error } = await supabase.functions.invoke('assistant-ia', { body: { messages: suite, aide, page } })
     setEnCours(false)
     if (error) {
       let message = error.message
@@ -61,7 +67,7 @@ export default function AssistantIA() {
           <div className="card p-4">
             <p className="text-sm font-medium mb-2">{t('essayez')}</p>
             <div className="flex flex-wrap gap-2">
-              {suggestions.map((s) => (
+              {[...suggestions, ...suggestionsAide].map((s) => (
                 <button key={s} onClick={() => envoyer(t(`suggestions.${s}`))}
                   className="text-left text-sm rounded-full border border-line bg-white px-3 py-1.5 hover:border-amber-400 hover:bg-amber-50">
                   {t(`suggestions.${s}`)}

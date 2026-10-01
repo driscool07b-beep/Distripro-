@@ -186,12 +186,13 @@
   "raccourcis": {
     "titre": "Raccourcis clavier",
     "echap": "Fermer le formulaire ouvert (comme Annuler)",
-    "recherche": "Aller au champ de recherche",
+    "recherche": "Aller au champ de recherche de la page",
     "nouveau": "Nouveau… (action principale de la page)",
     "retour": "Revenir à la page précédente",
     "accueil": "Tableau de bord",
     "aide": "Afficher / masquer cette liste",
-    "fermer": "Fermer"
+    "fermer": "Fermer",
+    "rechercheGlobale": "Recherche générale (référence, client, produit…)"
   },
   "logo": {
     "alt": "Logo de l'entreprise",
@@ -202,5 +203,23 @@
     "facultatif": "Logo de l'entreprise (facultatif)",
     "aideInscription": "PNG (idéalement à fond transparent), JPEG ou WebP. Il figurera sur vos factures, reçus, bons et rapports. Modifiable plus tard dans les Paramètres.",
     "formatInvalide": "Image non reconnue : choisissez un fichier PNG, JPEG ou WebP."
+  },
+  "rechercheGlobale": {
+    "bouton": "Rechercher…",
+    "placeholder": "Référence (VTE-, CMD-, REC-, VRS-, RGP-, FNE…), client, téléphone, compte, produit…",
+    "aide": "Tapez une référence de document ou un nom (2 caractères minimum). Seuls les documents que vous avez le droit de voir apparaissent.",
+    "enCours": "Recherche…",
+    "aucun": "Aucun résultat pour « {{terme}} » parmi les documents que vous pouvez voir.",
+    "pied": "↑ ↓ pour choisir · Entrée pour ouvrir · Ctrl + K pour rouvrir",
+    "types": {
+      "vente": "Vente",
+      "commande": "Commande",
+      "encaissement": "Encaissement",
+      "versement": "Versement",
+      "reconciliation": "Réconciliation",
+      "reglement_groupe": "Règlement groupé",
+      "client": "Client",
+      "produit": "Produit"
+    }
   }
 }

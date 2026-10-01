@@ -186,12 +186,13 @@
   "raccourcis": {
     "titre": "Keyboard shortcuts",
     "echap": "Close the open form (like Cancel)",
-    "recherche": "Go to the search field",
+    "recherche": "Go to the page's search field",
     "nouveau": "New… (page's main action)",
     "retour": "Go back to the previous page",
     "accueil": "Dashboard",
     "aide": "Show / hide this list",
-    "fermer": "Close"
+    "fermer": "Close",
+    "rechercheGlobale": "Global search (reference, customer, product…)"
   },
   "logo": {
     "alt": "Company logo",
@@ -202,5 +203,23 @@
     "facultatif": "Company logo (optional)",
     "aideInscription": "PNG (ideally transparent), JPEG or WebP. It will appear on invoices, receipts, notes and reports. Can be changed later in Settings.",
     "formatInvalide": "Image not recognised: choose a PNG, JPEG or WebP file."
+  },
+  "rechercheGlobale": {
+    "bouton": "Search…",
+    "placeholder": "Reference (VTE-, CMD-, REC-, VRS-, RGP-, FNE…), customer, phone, account, product…",
+    "aide": "Type a document reference or a name (2 characters minimum). Only documents you may see are shown.",
+    "enCours": "Searching…",
+    "aucun": "No result for “{{terme}}” among the documents you can see.",
+    "pied": "↑ ↓ to choose · Enter to open · Ctrl + K to reopen",
+    "types": {
+      "vente": "Sale",
+      "commande": "Order",
+      "encaissement": "Payment",
+      "versement": "Deposit",
+      "reconciliation": "Reconciliation",
+      "reglement_groupe": "Group payment",
+      "client": "Customer",
+      "produit": "Product"
+    }
   }
 }

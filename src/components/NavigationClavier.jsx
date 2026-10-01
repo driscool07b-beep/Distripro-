@@ -69,8 +69,14 @@ export default function NavigationClavier() {
         if (bouton) { e.preventDefault(); bouton.click() }
         return
       }
-      // Ctrl+K (ou Cmd+K) : aller au champ de recherche de la page.
+      // Ctrl+K (ou Cmd+K) : recherche générale (tous les documents autorisés).
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        window.dispatchEvent(new Event('ouvrir-recherche-globale'))
+        return
+      }
+      // « / » : aller au champ de recherche de la page.
+      if (e.key === '/' && !enSaisie(e)) {
         const champ = Array.from(document.querySelectorAll('main input[type="text"], main input[type="search"], main input:not([type])'))
           .find((i) => estVisible(i) && /recherch|search|بحث|搜索/i.test(i.placeholder || ''))
         if (champ) { e.preventDefault(); champ.focus(); champ.select?.() }
@@ -98,7 +104,8 @@ export default function NavigationClavier() {
   if (!aideVisible) return null
   const raccourcis = [
     ['Échap', t('raccourcis.echap')],
-    ['Ctrl + K', t('raccourcis.recherche')],
+    ['Ctrl + K', t('raccourcis.rechercheGlobale')],
+    ['/', t('raccourcis.recherche')],
     ['Alt + N', t('raccourcis.nouveau')],
     ['Alt + R', t('raccourcis.retour')],
     ['Alt + H', t('raccourcis.accueil')],

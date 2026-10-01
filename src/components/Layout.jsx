@@ -8,6 +8,7 @@ import InfobullesAide from './InfobullesAide'
 import TableauxResponsifs from './TableauxResponsifs'
 import MiseAJour from './MiseAJour'
 import NavigationClavier, { BoutonRetour } from './NavigationClavier'
+import RechercheGlobale from './RechercheGlobale'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { compterReconciliationsATraiter } from '../lib/reconciliationsATraiter'
 import { ROLES_PAGES } from '../lib/accesRole'
@@ -40,11 +41,22 @@ export default function Layout() {
   const { t } = useTranslation()
   const { profil, entreprise, deconnexion, profilError } = useAuth()
   const [menuOuvert, setMenuOuvert] = useState(false)
+  const [rechercheOuverte, setRechercheOuverte] = useState(false)
+  useEffect(() => {
+    const ouvrir = () => setRechercheOuverte(true)
+    window.addEventListener('ouvrir-recherche-globale', ouvrir)
+    return () => window.removeEventListener('ouvrir-recherche-globale', ouvrir)
+  }, [])
   const [messagesNonLus, setMessagesNonLus] = useState(0)
   const [badgeJournalCaisse, setBadgeJournalCaisse] = useState(0)
   const [badgeBanques, setBadgeBanques] = useState(0)
   const [badgeReconciliations, setBadgeReconciliations] = useState(0)
   const location = useLocation()
+  useEffect(() => {
+    if (location.pathname !== '/assistant') {
+      try { sessionStorage.setItem('distribpro-derniere-page', location.pathname) } catch { /* ignore */ }
+    }
+  }, [location.pathname])
 
   const peutValiderCaisse = (entreprise?.caisse_roles_validateurs || ['admin', 'manager']).includes(profil?.role)
   const peutGererCaisseBanque = ['admin', 'manager', 'comptable'].includes(profil?.role)
@@ -122,6 +134,10 @@ export default function Layout() {
             <div className="font-display font-bold text-lg tracking-tight">DistribPro</div>
             <div className="text-[10px] text-white/40 font-mono">v {__VERSION_APP__}</div>
             <div className="text-xs text-white/50 mt-0.5 truncate">{entreprise?.nom || '—'}</div>
+            <button onClick={() => { setMenuOuvert(false); setRechercheOuverte(true) }}
+              className="mt-3 w-full flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 px-3 py-1.5 text-xs text-white/70">
+              <span>🔍</span><span className="flex-1 text-left">{t('rechercheGlobale.bouton')}</span><span className="hidden md:inline text-[10px] text-white/40">Ctrl K</span>
+            </button>
           </div>
           <button
             onClick={() => setMenuOuvert(false)}
@@ -458,8 +474,10 @@ export default function Layout() {
               <path d="M3 6h18M3 12h18M3 18h18" />
             </svg>
           </button>
-          <span className="font-display font-semibold">DistribPro <span className="text-[10px] font-mono font-normal text-petrol-400">v {__VERSION_APP__}</span></span>
+          <span className="font-display font-semibold flex-1">DistribPro <span className="text-[10px] font-mono font-normal text-petrol-400">v {__VERSION_APP__}</span></span>
+          <button onClick={() => setRechercheOuverte(true)} className="text-petrol-800 p-1 text-lg" aria-label={t('rechercheGlobale.bouton')}>🔍</button>
         </div>
+        <RechercheGlobale ouvert={rechercheOuverte} onFermer={() => setRechercheOuverte(false)} />
         <InfobullesAide />
         <TableauxResponsifs />
         <MiseAJour />

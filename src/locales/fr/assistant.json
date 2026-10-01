@@ -1,6 +1,6 @@
 {
   "titre": "Assistant IA",
-  "sousTitre": "Posez vos questions sur vos chiffres, en langage courant. L'assistant consulte vos vraies données (dans la limite de vos droits).",
+  "sousTitre": "Posez vos questions sur vos chiffres ou sur l'utilisation de l'application (« comment faire… ? »). L'assistant consulte vos vraies données (dans la limite de vos droits) et le guide d'utilisation.",
   "essayez": "Essayez par exemple :",
   "suggestions": {
     "dir1": "Quel est mon chiffre d'affaires ce mois-ci par rapport au mois dernier ?",
@@ -15,7 +15,10 @@
     "com4": "Quels sont mes meilleurs clients ce mois-ci ?",
     "stock1": "Quels produits sont sous le seuil d'alerte ?",
     "stock2": "Quel est le stock de chaque magasin ?",
-    "stock3": "Qu'ont en main les commerciaux ?"
+    "stock3": "Qu'ont en main les commerciaux ?",
+    "aide1": "Comment enregistrer un avoir sur une vente ?",
+    "aide2": "Comment clôturer la tournée d'un commercial ?",
+    "aide3": "Comment mettre mon logo sur les factures ?"
   },
   "reflexion": "L'assistant consulte vos chiffres…",
   "placeholder": "Votre question…",

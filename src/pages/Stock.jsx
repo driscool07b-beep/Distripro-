@@ -57,6 +57,13 @@ export default function Stock() {
   const [formulaire, setFormulaire] = useState(PRODUIT_VIDE)
   const [mouvement, setMouvement] = useState({ type: 'entree', quantite: '', raison: '', motif: '', depot_id: '', numero_lot: '', date_peremption: '', etat: 'bon', prix_achat: '' })
   const [produitDetail, setProduitDetail] = useState(null)
+  // Arrivée depuis la recherche générale (?produit=…) : ouvre le détail du produit.
+  const produitDemande = searchParams.get('produit')
+  useEffect(() => {
+    if (!produitDemande || !produits.length) return
+    const p = produits.find((x) => x.id === produitDemande)
+    if (p) setProduitDetail(p)
+  }, [produitDemande, produits])
   const [couts, setCouts] = useState({}) // produit_id -> prix de revient (rôles habilités uniquement)
   const [transfert, setTransfert] = useState({ depot_source_id: '', depot_destination_id: '', quantite: '', motif: '' })
   const [etapeAjustement, setEtapeAjustement] = useState('')

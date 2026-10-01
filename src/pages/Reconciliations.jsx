@@ -39,6 +39,8 @@ export default function Reconciliations() {
   const [aTraiter, setATraiter] = useState(null)
   const [filtreStatut, setFiltreStatut] = useState('')
   const [searchParams] = useSearchParams()
+  // Arrivée depuis la recherche générale (?fiche=…) : ouvre la fiche.
+  useEffect(() => { if (searchParams.get('fiche')) setFicheOuverte(searchParams.get('fiche')) }, [searchParams])
 
   const role = profil?.role
   const estDirection = ['admin', 'manager'].includes(role)

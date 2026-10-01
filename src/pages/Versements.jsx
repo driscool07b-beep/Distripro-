@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -10,7 +11,8 @@ import i18n from '../lib/i18n'
 export default function Versements() {
   const { t } = useTranslation('versements')
   const { profil, entreprise } = useAuth()
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+  const [parametresUrl] = useSearchParams()
+  const [date, setDate] = useState(() => /^\d{4}-\d{2}-\d{2}$/.test(parametresUrl.get('date') || '') ? parametresUrl.get('date') : new Date().toISOString().split('T')[0])
   const [chargement, setChargement] = useState(true)
   const [lignes, setLignes] = useState([])
   const [caisses, setCaisses] = useState([])

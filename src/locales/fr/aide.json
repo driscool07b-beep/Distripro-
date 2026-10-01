@@ -34,6 +34,10 @@
         {
           "q": "L'application ne démarre pas ou un envoi de fichier ne passe pas : que faire ?",
           "r": "Si l'app ne s'affiche pas, un écran d'erreur apparaît au bout de 10 secondes avec un bouton 'Réparer et recharger' : envoie d'abord une capture à l'assistance. Pour un problème d'envoi, l'admin peut lancer le 'Diagnostic de connexion' en bas de Paramètres et envoyer une capture du résultat."
+        },
+        {
+          "q": "Comment retrouver rapidement un document (vente, commande, encaissement…) ?",
+          "r": "Utilisez la recherche générale : bouton « 🔍 Rechercher… » en haut du menu (ou la loupe en haut de l'écran sur téléphone), ou le raccourci Ctrl + K. Tapez une référence (VTE-…, CMD-…, REC-…, VRS-…, RGP-…, référence FNE), un nom de client, un téléphone, un compte client ou un produit. Un clic ouvre directement le document. Vous ne voyez que les documents auxquels votre rôle donne accès : un commercial ne trouve que ses propres ventes."
         }
       ]
     },

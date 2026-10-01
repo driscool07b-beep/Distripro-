@@ -1,6 +1,6 @@
 {
   "titre": "AI assistant",
-  "sousTitre": "Ask questions about your figures in plain language. The assistant reads your real data (within your access rights).",
+  "sousTitre": "Ask about your figures or how to use the app (“how do I…?”). The assistant reads your real data (within your rights) and the user guide.",
   "essayez": "Try for example:",
   "suggestions": {
     "dir1": "What is my revenue this month compared with last month?",
@@ -15,7 +15,10 @@
     "com4": "Who are my best customers this month?",
     "stock1": "Which products are below the alert level?",
     "stock2": "What is the stock in each warehouse?",
-    "stock3": "What do the sales reps have in hand?"
+    "stock3": "What do the sales reps have in hand?",
+    "aide1": "How do I record a credit note on a sale?",
+    "aide2": "How do I close a sales rep's round?",
+    "aide3": "How do I put my logo on invoices?"
   },
   "reflexion": "The assistant is reading your figures…",
   "placeholder": "Your question…",

@@ -91,7 +91,12 @@ Deno.serve(async (req) => {
     if (profil.ia_active === false) return reponse({ error: 'Les fonctions IA sont désactivées pour votre compte.' }, 403)
     const { data: entreprise } = await supabase.from('entreprises').select('nom, devise').eq('id', profil.entreprise_id).single()
 
-    const { messages } = await req.json()
+    const { messages, aide, page } = await req.json()
+    // Assistance technique : passages du guide d'utilisation choisis par l'app.
+    const extraitsAide = (Array.isArray(aide) ? aide : []).slice(0, 8)
+      .map((a: any) => `• [${String(a.rubrique || '').slice(0, 60)}] ${String(a.question || '').slice(0, 200)}\n  ${String(a.reponse || '').slice(0, 1200)}`)
+      .join('\n')
+    const pageCourante = String(page || '').slice(0, 80)
     if (!Array.isArray(messages) || messages.length === 0) return reponse({ error: 'Aucune question.' }, 400)
     // Historique limité (les 16 derniers échanges), textes bornés.
     const historique = messages.slice(-16).map((m: any) => ({
@@ -108,7 +113,13 @@ Règles :
 - Les outils respectent les droits de l'utilisateur : si un résultat est vide pour un commercial, c'est qu'il ne voit que ses propres données.
 - Réponds dans la langue de la question, de façon concise et concrète : chiffres clés d'abord, puis une courte analyse ou une recommandation utile.
 - Montants arrondis, avec séparateur de milliers et « F CFA ». Dates au format JJ/MM/AAAA.
-- Mise en forme simple : titres courts, listes à puces, **gras** pour les chiffres clés. Pas de tableau Markdown. Pas de jargon technique (ne parle pas d'« outils » ni de base de données).`
+- Mise en forme simple : titres courts, listes à puces, **gras** pour les chiffres clés. Pas de tableau Markdown. Pas de jargon technique (ne parle pas d'« outils » ni de base de données).
+Assistance technique (questions « comment faire… ? », « pourquoi je ne peux pas… ? ») :
+- Appuie-toi UNIQUEMENT sur les extraits du guide d'utilisation ci-dessous ; donne le chemin dans les menus et les étapes, simplement.
+- Si le guide ne couvre pas la question, dis-le franchement et conseille de contacter l'administrateur de l'entreprise ou le support DistribPro ; n'invente pas de fonctionnalité.
+- Certaines actions dépendent du rôle : si l'utilisateur ne voit pas un bouton, explique que c'est peut-être réservé à un autre rôle (rôle actuel : ${profil.role}).
+${pageCourante ? `Page consultée juste avant : ${pageCourante}.` : ''}
+${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
 
     const executerOutil = async (nom: string, entree: any) => {
       const appel = async (fn: string, params: Record<string, unknown>) => {
@@ -156,7 +167,7 @@ Règles :
     await enregistrerConsommation(supabase, { entrepriseId: profil.entreprise_id, profilId: profil.id, usage: usageTotal })
     return reponse({ reponse: texteFinal || "Je n'ai pas pu formuler de réponse. Pouvez-vous reformuler la question ?" })
   } catch (e) {
-    return reponse({ error: String(e?.message || e) }, 500)
+    return reponse({ error: String((e as Error)?.message || e) }, 500)
   }
 })
 

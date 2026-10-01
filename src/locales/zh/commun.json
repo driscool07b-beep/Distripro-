@@ -186,12 +186,13 @@
   "raccourcis": {
     "titre": "键盘快捷键",
     "echap": "关闭打开的表单（同取消）",
-    "recherche": "跳到搜索框",
+    "recherche": "跳到本页搜索框",
     "nouveau": "新建…（本页主要操作）",
     "retour": "返回上一页",
     "accueil": "仪表板",
     "aide": "显示 / 隐藏此列表",
-    "fermer": "关闭"
+    "fermer": "关闭",
+    "rechercheGlobale": "全局搜索（单号、客户、产品…）"
   },
   "logo": {
     "alt": "公司标志",
@@ -202,5 +203,23 @@
     "facultatif": "公司标志（可选）",
     "aideInscription": "PNG（最好透明背景）、JPEG 或 WebP。将显示在发票、收据、单据和报告上。之后可在设置中更改。",
     "formatInvalide": "无法识别图片：请选择 PNG、JPEG 或 WebP 文件。"
+  },
+  "rechercheGlobale": {
+    "bouton": "搜索…",
+    "placeholder": "单号（VTE-、CMD-、REC-、VRS-、RGP-、FNE…）、客户、电话、账户、产品…",
+    "aide": "输入单据编号或名称（至少 2 个字符）。仅显示您有权查看的单据。",
+    "enCours": "搜索中…",
+    "aucun": "在您可查看的单据中没有找到“{{terme}}”。",
+    "pied": "↑ ↓ 选择 · 回车打开 · Ctrl + K 重新打开",
+    "types": {
+      "vente": "销售",
+      "commande": "订单",
+      "encaissement": "收款",
+      "versement": "缴款",
+      "reconciliation": "对账",
+      "reglement_groupe": "集团付款",
+      "client": "客户",
+      "produit": "产品"
+    }
   }
 }
