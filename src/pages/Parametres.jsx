@@ -1367,6 +1367,7 @@ export default function Parametres() {
           </button>
         </form>
       </div>
+      {profil?.role === 'admin' && <SectionRapportMensuel />}
       {profil?.role === 'admin' && <SectionFne />}
       {profil?.role === 'admin' && <SectionComptesClients />}
       {profil?.role === 'admin' && <SectionReconciliation />}
@@ -1689,6 +1690,46 @@ function SectionFne() {
         }} />
         <span>{t('fne.envoiAuto')}<span className="block text-xs text-petrol-500">{t('fne.aideEnvoiAuto')}</span></span>
       </label>
+      <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Rapport d'activité mensuel envoyé automatiquement par email (PowerPoint joint).
+function SectionRapportMensuel() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [actif, setActif] = useState(false)
+  const [destinataires, setDestinataires] = useState('')
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+
+  useEffect(() => {
+    setActif(!!entreprise?.rapport_mensuel_actif)
+    setDestinataires(entreprise?.rapport_mensuel_destinataires || '')
+  }, [entreprise?.rapport_mensuel_actif, entreprise?.rapport_mensuel_destinataires])
+
+  async function enregistrer() {
+    setErreur(''); setMessage('')
+    const { error } = await supabase.rpc('modifier_rapport_mensuel', { p_actif: actif, p_destinataires: destinataires })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    await rechargerProfil()
+    setMessage(t('enregistre'))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">📊 {t('rapportMensuel.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('rapportMensuel.aide')}</p>
+      <label className="flex items-center gap-2 text-sm mb-3">
+        <input type="checkbox" checked={actif} onChange={(e) => setActif(e.target.checked)} />
+        {t('rapportMensuel.activer')}
+      </label>
+      <label className="label">{t('rapportMensuel.destinataires')}</label>
+      <input className="input-field" value={destinataires} onChange={(e) => setDestinataires(e.target.value)} placeholder={t('rapportMensuel.placeholder')} />
+      <p className="text-[11px] text-petrol-500 mt-1">{t('rapportMensuel.aideDestinataires')}</p>
       <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}

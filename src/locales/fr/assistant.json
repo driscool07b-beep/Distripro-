@@ -22,5 +22,24 @@
   "envoyer": "Envoyer",
   "nouvelleConversation": "Nouvelle conversation",
   "avertissement": "Réponses générées par IA à partir de vos données : vérifiez les chiffres importants avant une décision.",
-  "iaDesactivee": "Les fonctions IA sont désactivées pour votre compte."
+  "iaDesactivee": "Les fonctions IA sont désactivées pour votre compte.",
+  "rapport": {
+    "titre": "Rapport d'activité (PowerPoint)",
+    "aide": "Présentation prête à projeter : chiffres réels, graphiques modifiables et commentaires rédigés par l'IA (synthèse, évolution, clients, produits, commerciaux, magasins, créances, stock, recommandations).",
+    "periodes": {
+      "moisDernier": "Mois dernier",
+      "mois": "Ce mois-ci",
+      "trimestreDernier": "Trimestre dernier",
+      "trimestre": "Ce trimestre",
+      "annee": "Depuis janvier",
+      "libre": "Dates libres"
+    },
+    "du": "Du",
+    "au": "Au",
+    "generer": "Générer le PowerPoint",
+    "enCours": "Préparation de la présentation…",
+    "patience": "Cela prend généralement 20 à 40 secondes (analyse des chiffres et rédaction).",
+    "periodeInvalide": "Période invalide.",
+    "echec": "La présentation n'a pas pu être générée."
+  }
 }

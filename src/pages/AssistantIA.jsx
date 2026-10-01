@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { analyserTexte } from '../lib/exportAnalyse'
+import RapportPowerPoint from '../components/RapportPowerPoint'
 
 // Assistant conversationnel : questions en langage courant sur les chiffres
 // de l'entreprise. Les réponses s'appuient sur les vraies données, dans la
@@ -51,6 +52,9 @@ export default function AssistantIA() {
     <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto flex flex-col" style={{ minHeight: 'calc(100vh - 7rem)' }}>
       <h1 className="text-xl font-bold mb-1">✨ {t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-4">{t('sousTitre')}</p>
+      {['admin', 'manager', 'comptable', 'commercial'].includes(profil?.role) && (
+        <div className="mb-4"><RapportPowerPoint /></div>
+      )}
 
       <div className="flex-1 space-y-3 mb-4">
         {messages.length === 0 && (

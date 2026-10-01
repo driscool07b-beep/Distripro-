@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { analyserTexte, exporterAnalysePDF, exporterAnalyseWord } from '../lib/exportAnalyse'
+import RapportPowerPoint from '../components/RapportPowerPoint'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 
@@ -122,6 +123,7 @@ export default function AnalyseIA() {
           )}
         </div>
 
+        <div className="mb-4"><RapportPowerPoint /></div>
         <div className="card p-5 md:p-8 min-h-[70vh]">
           {analyseAffichee ? (
             <>

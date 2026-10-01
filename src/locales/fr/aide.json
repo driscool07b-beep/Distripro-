@@ -521,6 +521,23 @@
           "r": "Réconciliations → Dettes → sur le commercial, 'Recouvrement forcé (retenue sur salaire)' (admin, comptable) : montant, nombre de mensualités, premier mois et motif. La dette est reclassée du 471 vers le 421 (avance sur salaire). Imprime la notification et fais-la signer. Chaque mois, 'État des retenues du mois' liste les montants à reporter sur les bulletins ; enregistre ensuite la retenue. Anti-doublon : par défaut, c'est la paie qui comptabilise les retenues (422/421), DistribPro n'en fait que le suivi — réglable dans Paramètres."
         }
       ]
+    },
+    {
+      "titre": "Intelligence artificielle",
+      "items": [
+        {
+          "q": "Comment obtenir un rapport d'activité en PowerPoint ?",
+          "r": "Assistant IA (ou Analyse IA) → « Rapport d'activité (PowerPoint) » : choisissez la période (mois dernier, ce mois-ci, trimestre, depuis janvier ou dates libres) puis « Générer le PowerPoint ». En 20 à 40 secondes, vous téléchargez une présentation d'environ 10 diapositives : synthèse et comparaison avec la période précédente, évolution du CA, meilleurs clients et produits, commerciaux face à leurs objectifs, répartition par magasin, créances, stock et recommandations. Les chiffres viennent de vos données ; l'IA rédige seulement les commentaires. Les graphiques sont de vrais graphiques PowerPoint, modifiables. Un commercial obtient le rapport de sa propre activité."
+        },
+        {
+          "q": "Comment recevoir le rapport chaque mois automatiquement ?",
+          "r": "Paramètres → Rapport mensuel automatique (administrateur) : activez l'envoi et indiquez les destinataires (sinon : tous les administrateurs et managers). Le 1er de chaque mois à 7 h, le rapport du mois écoulé est envoyé par email avec la présentation PowerPoint en pièce jointe."
+        },
+        {
+          "q": "Que peut faire l'assistant IA ?",
+          "r": "Menu « Assistant IA » : posez vos questions en langage courant (« Quel est mon CA ce mois-ci par rapport au mois dernier ? », « Quels clients sont en retard de paiement ? »). L'assistant consulte vos vraies données, dans la limite de vos droits, et n'invente jamais un chiffre."
+        }
+      ]
     }
   ]
 }

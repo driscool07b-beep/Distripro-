@@ -279,5 +279,13 @@
     "parDefaut": "Case « Produire une FNE » cochée par défaut sur chaque vente",
     "envoiAuto": "Envoyer automatiquement le reçu ou la facture par email après chaque vente",
     "aideEnvoiAuto": "Seulement si le client a une adresse email dans sa fiche. Envoyé depuis noreply@distribpro.com, avec votre adresse en réponse."
+  },
+  "rapportMensuel": {
+    "titre": "Rapport mensuel automatique",
+    "aide": "Le 1er de chaque mois à 7 h, le rapport d'activité du mois écoulé (présentation PowerPoint avec graphiques et analyse) est envoyé par email.",
+    "activer": "Activer l'envoi automatique du rapport mensuel",
+    "destinataires": "Destinataires",
+    "placeholder": "direction@entreprise.ci, dg@entreprise.ci",
+    "aideDestinataires": "Adresses séparées par des virgules. Laissez vide pour l'envoyer à tous les administrateurs et managers."
   }
 }

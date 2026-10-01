@@ -279,5 +279,13 @@
     "parDefaut": "'Issue an FNE' ticked by default on each sale",
     "envoiAuto": "Automatically email the receipt or invoice after each sale",
     "aideEnvoiAuto": "Only if the customer has an email address. Sent from noreply@distribpro.com, replies go to your address."
+  },
+  "rapportMensuel": {
+    "titre": "Automatic monthly report",
+    "aide": "On the 1st of each month at 7 am, last month's activity report (PowerPoint with charts and analysis) is emailed.",
+    "activer": "Enable the automatic monthly report",
+    "destinataires": "Recipients",
+    "placeholder": "management@company.com",
+    "aideDestinataires": "Comma-separated. Leave empty to send to all admins and managers."
   }
 }

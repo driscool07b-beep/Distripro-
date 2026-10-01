@@ -22,5 +22,24 @@
   "envoyer": "Send",
   "nouvelleConversation": "New conversation",
   "avertissement": "AI-generated answers from your data: check important figures before deciding.",
-  "iaDesactivee": "AI features are disabled for your account."
+  "iaDesactivee": "AI features are disabled for your account.",
+  "rapport": {
+    "titre": "Activity report (PowerPoint)",
+    "aide": "Ready-to-present deck: real figures, editable charts and AI-written commentary.",
+    "periodes": {
+      "moisDernier": "Last month",
+      "mois": "This month",
+      "trimestreDernier": "Last quarter",
+      "trimestre": "This quarter",
+      "annee": "Year to date",
+      "libre": "Custom dates"
+    },
+    "du": "From",
+    "au": "To",
+    "generer": "Generate PowerPoint",
+    "enCours": "Preparing the presentation…",
+    "patience": "This usually takes 20 to 40 seconds.",
+    "periodeInvalide": "Invalid period.",
+    "echec": "The presentation could not be generated."
+  }
 }

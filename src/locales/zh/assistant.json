@@ -22,5 +22,24 @@
   "envoyer": "发送",
   "nouvelleConversation": "新对话",
   "avertissement": "根据您的数据由 AI 生成的回答：重要决策前请核实关键数字。",
-  "iaDesactivee": "您的账户已停用 AI 功能。"
+  "iaDesactivee": "您的账户已停用 AI 功能。",
+  "rapport": {
+    "titre": "业务报告（PowerPoint）",
+    "aide": "可直接演示：真实数据、可编辑图表及 AI 撰写的点评。",
+    "periodes": {
+      "moisDernier": "上月",
+      "mois": "本月",
+      "trimestreDernier": "上季度",
+      "trimestre": "本季度",
+      "annee": "今年以来",
+      "libre": "自定义日期"
+    },
+    "du": "从",
+    "au": "至",
+    "generer": "生成 PowerPoint",
+    "enCours": "正在准备演示文稿…",
+    "patience": "通常需要 20 至 40 秒。",
+    "periodeInvalide": "期间无效。",
+    "echec": "无法生成演示文稿。"
+  }
 }
