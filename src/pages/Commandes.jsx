@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { envoyerParEmail, partagerWhatsApp } from '../lib/envoiDocuments'
 import { formatXOF as formatMontantEnvoi } from '../lib/format'
@@ -245,6 +245,13 @@ export default function Commandes() {
     setModalOuvert(false)
     chargerCommandes()
   }
+
+  // Arrivée depuis une autre page (?commande=…) : ouvre directement la commande.
+  const [parametresUrl] = useSearchParams()
+  useEffect(() => {
+    const id = parametresUrl.get('commande')
+    if (id) ouvrirDetail(id)
+  }, [parametresUrl])
 
   async function ouvrirDetail(commandeId) {
     setCommandeOuverte(commandeId)

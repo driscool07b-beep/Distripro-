@@ -129,5 +129,12 @@
     "regle": "Réglé",
     "solde": "Solde",
     "totalGroupe": "Total groupe"
+  },
+  "ouvrirCommande": "Ouvrir la commande",
+  "voirCommande": "Voir la commande",
+  "statutsCommande": {
+    "brouillon": "Brouillon",
+    "confirmee": "Confirmée",
+    "en_preparation": "En préparation"
   }
 }

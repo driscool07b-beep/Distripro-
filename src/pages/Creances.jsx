@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import ReglementGroupe from '../components/ReglementGroupe'
@@ -91,7 +91,7 @@ export default function Creances() {
     // c'est un crédit en attente en faveur du client.
     let requete = supabase
       .from('commandes')
-      .select('id, montant_ttc, montant_paye, statut, created_at, clients(nom, telephone)')
+      .select('id, numero, montant_ttc, montant_paye, statut, created_at, clients(nom, telephone)')
       .in('statut', ['brouillon', 'confirmee', 'en_preparation'])
       .gt('montant_paye', 0)
       .order('created_at', { ascending: false })
@@ -439,13 +439,19 @@ export default function Creances() {
           </p>
           <div className="space-y-1.5">
             {avancesCommandes.map((c) => (
-              <div key={c.id} className="flex items-center justify-between bg-white rounded-lg border border-blue-200 px-3 py-2 text-sm">
+              <Link key={c.id} to={`/commandes?commande=${c.id}`} title={t('ouvrirCommande')}
+                className="flex items-center justify-between gap-2 bg-white rounded-lg border border-blue-200 px-3 py-2 text-sm hover:border-blue-400 hover:bg-blue-50/50">
                 <div>
                   <p className="font-medium">{c.clients?.nom || '—'}</p>
-                  <p className="text-xs text-petrol-500 capitalize">{c.statut.replace('_', ' ')}</p>
+                  <p className="text-xs text-petrol-500">
+                    {c.numero ? `${c.numero} · ` : ''}{t(`statutsCommande.${c.statut}`, { defaultValue: c.statut.replace('_', ' ') })}
+                  </p>
                 </div>
-                <span className="font-mono text-blue-700">{formatXOF(c.montant_paye)} / {formatXOF(c.montant_ttc)}</span>
-              </div>
+                <span className="flex items-center gap-2">
+                  <span className="font-mono text-blue-700">{formatXOF(c.montant_paye)} / {formatXOF(c.montant_ttc)}</span>
+                  <span className="text-blue-600 text-xs underline whitespace-nowrap">{t('voirCommande')} →</span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>

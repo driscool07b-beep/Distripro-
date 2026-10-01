@@ -128,5 +128,12 @@
     "regle": "Paid",
     "solde": "Balance",
     "totalGroupe": "Group total"
+  },
+  "ouvrirCommande": "Open the order",
+  "voirCommande": "View order",
+  "statutsCommande": {
+    "brouillon": "Draft",
+    "confirmee": "Confirmed",
+    "en_preparation": "In preparation"
   }
 }

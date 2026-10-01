@@ -128,5 +128,12 @@
     "regle": "Paid",
     "solde": "Balance",
     "totalGroupe": "Group total"
+  },
+  "ouvrirCommande": "打开订单",
+  "voirCommande": "查看订单",
+  "statutsCommande": {
+    "brouillon": "草稿",
+    "confirmee": "已确认",
+    "en_preparation": "备货中"
   }
 }

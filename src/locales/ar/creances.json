@@ -128,5 +128,12 @@
     "regle": "Paid",
     "solde": "Balance",
     "totalGroupe": "Group total"
+  },
+  "ouvrirCommande": "فتح الطلبية",
+  "voirCommande": "عرض الطلبية",
+  "statutsCommande": {
+    "brouillon": "مسودة",
+    "confirmee": "مؤكدة",
+    "en_preparation": "قيد التحضير"
   }
 }
