@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
+import { chargerLogoDocuments, deposerLogoEnAttente } from '../lib/logo'
 import i18n from '../lib/i18n'
 import { definirDevise } from '../lib/format'
 import { appliquerApparence } from '../lib/apparence'
@@ -101,6 +102,19 @@ export function AuthProvider({ children }) {
     }
     setEntreprise(entrepriseData)
     definirDevise(entrepriseData.devise)
+
+    // Logo choisi à l'inscription (email à confirmer) : déposé maintenant.
+    let cheminLogo = entrepriseData.logo_path
+    if (!cheminLogo) {
+      const { data: sessionData } = await supabase.auth.getSession()
+      cheminLogo = await deposerLogoEnAttente(sessionData?.session?.user?.email, entrepriseData, profilData.role)
+    }
+    // Logo prêt pour les documents (PDF) : chargé une fois, en arrière-plan.
+    if (cheminLogo) {
+      chargerLogoDocuments(cheminLogo).then((logo) => {
+        if (logo) setEntreprise((e) => (e && e.id === entrepriseData.id ? { ...e, logo_path: cheminLogo, logo_data: logo.dataUrl, logo_ratio: logo.ratio } : e))
+      })
+    }
   }
 
   useEffect(() => {

@@ -32,7 +32,8 @@
     "banques": "Banks",
     "planComptable": "Chart of accounts",
     "notesUtilisation": "Usage scores",
-    "reconciliations": "Reconciliations"
+    "reconciliations": "Reconciliations",
+    "assistant": "AI assistant"
   },
   "actions": {
     "annuler": "Cancel",
@@ -191,5 +192,15 @@
     "accueil": "Dashboard",
     "aide": "Show / hide this list",
     "fermer": "Close"
+  },
+  "logo": {
+    "alt": "Company logo",
+    "aucun": "No logo",
+    "choisir": "Choose a logo",
+    "changer": "Change",
+    "retirer": "Remove",
+    "facultatif": "Company logo (optional)",
+    "aideInscription": "PNG (ideally transparent), JPEG or WebP. It will appear on invoices, receipts, notes and reports. Can be changed later in Settings.",
+    "formatInvalide": "Image not recognised: choose a PNG, JPEG or WebP file."
   }
 }

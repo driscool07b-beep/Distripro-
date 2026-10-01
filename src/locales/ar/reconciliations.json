@@ -146,15 +146,20 @@
     "compte": "حساب السلفة",
     "retenue": "اقتطاع الشهر",
     "resteApres": "المتبقي بعد الاقتطاع",
-    "notifTitre": "إشعار اقتطاع من الراتب",
+    "notifTitre": "Voluntary salary assignment deed",
     "notifSalarie": "الموظف: {{nom}}",
     "notifMontant": "المبلغ الواجب سداده: {{montant}}",
     "notifMotif": "الأصل: {{motif}}",
     "notifEcheancier": "الجدول: {{nb}} قسط بقيمة {{mensualite}}، ابتداءً من رواتب {{debut}}.",
-    "notifTexte": "يقرّ الموظف بأنه مدين بالمبلغ أعلاه الناتج عن فروقات لوحظت عند مطابقة مخزونه وتحصيلاته، ويوافق على سداده عبر اقتطاعات من راتبه وفق الجدول المذكور، في الحدود التي تحددها الأنظمة المعمول بها.",
+    "notifTexte": "The employee acknowledges owing the above amount and consents to its repayment through salary deductions per the schedule, within the assignable portion set by regulations. The assignment is signed before the labour inspector or the court president.",
     "notifFait": "حُرّر في {{date}}",
     "signSalarie": "توقيع الموظف (مسبوقًا بعبارة «قرأت وأوافق»)",
-    "signEmployeur": "عن صاحب العمل"
+    "signEmployeur": "عن صاحب العمل",
+    "salaireReference": "Monthly reference salary",
+    "aideSalaire": "Base: gross salary + allowances − taxes and compulsory deductions. Confidential: admin and accountant only.",
+    "plafondQuotite": "Monthly cap: {{pct}}% → {{montant}}",
+    "notifQuotite": "Reference salary: {{salaire}} — ratio applied: {{pct}}%.",
+    "visaAutorite": "Stamp of the labour inspector or court president (name, date, signature)"
   },
   "aideCol": {
     "produit": "Product",
@@ -167,5 +172,37 @@
     "compte": "What they actually have, physically counted.",
     "ecart": "Theoretical − counted. Positive = shortage.",
     "valeur": "Gap × price (selling or cost, per setting)."
+  },
+  "modes": {
+    "tournees": "حسب الجولات",
+    "dates": "حسب التواريخ"
+  },
+  "tournees": {
+    "titre": "الجولات المراد مطابقتها (حدّدها)",
+    "aucune": "لا توجد جولات غير مطابقة لهذا المندوب.",
+    "ligne": "إخراج {{date}} — {{n}} منتج، {{q}} وحدة",
+    "statuts": {
+      "ouverte": "جارية",
+      "cloturee": "مُقفلة"
+    },
+    "toutRapporte": "كان يجب إرجاع كل شيء: في الجولات المُقفلة يُملأ «المعدود» بـ 0 (ما لم يُبع ولم يُرجع فهو عجز).",
+    "aide": "حدّد جولة أو أكثر (بما فيها الجارية) لمطابقتها معًا. تُستنتج الفترة من الجولات المحددة.",
+    "liees": "الجولات المطابقة"
+  },
+  "rapport": {
+    "titre": "تقرير المراقبة (تلقائي)",
+    "aucunEcart": "لا يوجد فرق في المخزون.",
+    "manquant": "عجز {{n}}",
+    "excedent": "فائض {{n}}",
+    "echanges": "استبدالات المعيب في الفترة"
+  },
+  "corrections": {
+    "renvoyer": "إعادة إلى الخزينة للتصحيح",
+    "motifRenvoi": "سبب الإعادة (ستُعكس القيود):",
+    "rectifier": "تصحيح الجرد",
+    "aideRectif": "ورقة مُقفلة: صحّح «المعدود» أعلاه، واختر معالجة الفرق، واذكر السبب. تُعدَّل الديون والمخزون والقيود ويبقى التصحيح مسجلًا.",
+    "motifRectif": "سبب التصحيح (إلزامي)",
+    "enregistrerRectif": "حفظ التصحيح",
+    "historique": "التصحيحات"
   }
 }

@@ -71,7 +71,19 @@
     "pays": "Pays (optionnel)",
     "paysPlaceholder": "Ex. Côte d'Ivoire",
     "reserveDirection": "Modifiable uniquement par un administrateur ou un manager.",
-    "gpsVerrouille": "Position GPS déjà enregistrée : seul un administrateur ou un manager peut la corriger (elle sert à vérifier les visites)."
+    "gpsVerrouille": "Position GPS déjà enregistrée : seul un administrateur ou un manager peut la corriger (elle sert à vérifier les visites).",
+    "compteClient": "Compte client (comptabilité)",
+    "compteAuto": "Attribué automatiquement à l'enregistrement",
+    "compteManuel": "Saisissez le numéro (ex. 41110023)",
+    "compteAide": "Sous-compte du 411 utilisé pour les écritures de ce client. Un numéro déjà attribué est refusé.",
+    "compteGroupe": "Membre du groupe : son compte sera un sous-compte de {{compte}}.",
+    "ncc": "NCC du client (numéro de compte contribuable)",
+    "typeFne": "Type de client (FNE)",
+    "typeFneAuto": "Automatique (B2B si NCC, sinon B2C)",
+    "typeFneB2B": "B2B — entreprise (NCC obligatoire)",
+    "typeFneB2C": "B2C — particulier",
+    "typeFneB2G": "B2G — administration publique",
+    "typeFneB2F": "B2F — client à l'international"
   },
   "import": {
     "titre": "Importer des clients (Excel)",

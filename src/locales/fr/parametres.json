@@ -231,7 +231,9 @@
     "aide_stock": "Crédité d'un manquant de stock (ex. 311000 Marchandises).",
     "aide_pertes": "Débité d'un écart passé en perte ou d'une dette abandonnée (ex. 658000).",
     "aide_caisse": "Débité des versements si la caisse n'a pas son propre compte (ex. 571100).",
-    "aide_remuneration": "Débité des retenues sur salaire, si DistribPro les comptabilise (ex. 422000)."
+    "aide_remuneration": "Débité des retenues sur salaire, si DistribPro les comptabilise (ex. 422000).",
+    "quotite": "Quotité des retenues (% du salaire de référence)",
+    "aideQuotite": "Ex. 33 %. Plafond mensuel = quotité × salaire de référence du commercial (le plus bas avec le plafond en montant). Taux à faire valider par votre RH / conseil (décret n° 2014-370 du 18 juin 2014)."
   },
   "selecteurCompte": {
     "creer": "Créer un compte ou un sous-compte…",
@@ -248,5 +250,51 @@
     "creerBouton": "Créer et sélectionner",
     "annuler": "Annuler",
     "horsPlan": "absent du plan comptable"
+  },
+  "comptesClients": {
+    "titre": "Comptes clients (comptabilité)",
+    "aide": "Chaque client reçoit un sous-compte du 411 ; chaque groupe de clients a un compte principal, parent des comptes de ses membres. Les écritures sont passées sur le compte du client ; le groupe sert au regroupement dans la balance.",
+    "mode": "Attribution des comptes",
+    "auto": "Automatique (numéro libre suivant)",
+    "manuel": "Manuelle (je saisis mes numéros)",
+    "racineClients": "Racine des clients sans groupe",
+    "racineGroupes": "Racine des groupes",
+    "exemple": "Exemple : client isolé {{c}}0001 · groupe {{g}}001 · membre du groupe {{g}}001001. Un numéro déjà utilisé n'est jamais réattribué.",
+    "attribuer": "Attribuer les comptes manquants",
+    "attribues": "{{n}} compte(s) attribué(s)."
+  },
+  "fne": {
+    "titre": "Facture Normalisée Électronique (FNE — DGI)",
+    "aide": "Certifie vos ventes auprès de la DGI (référence officielle + QR code sur la facture). Prérequis : inscription de l'entreprise sur la plateforme FNE de la DGI, puis clé API délivrée après validation de vos spécimens de factures (onglet « Paramétrage » de votre espace FNE). Commencez en mode test.",
+    "activer": "Activer la FNE pour cette entreprise",
+    "mode": "Environnement",
+    "test": "Test (plateforme d'essai de la DGI)",
+    "production": "Production (factures réelles)",
+    "url": "Adresse de la plateforme FNE",
+    "cle": "Clé API FNE",
+    "cleEnregistree": "•••••• clé enregistrée — laissez vide pour la conserver",
+    "clePlaceholder": "Collez la clé de votre espace FNE",
+    "pointDeVente": "Point de vente (exigé par la DGI)",
+    "etablissement": "Établissement (exigé par la DGI)",
+    "parDefaut": "Case « Produire une FNE » cochée par défaut sur chaque vente",
+    "envoiAuto": "Envoyer automatiquement le reçu ou la facture par email après chaque vente",
+    "aideEnvoiAuto": "Seulement si le client a une adresse email dans sa fiche. Envoyé depuis noreply@distribpro.com, avec votre adresse en réponse."
+  },
+  "rapportMensuel": {
+    "titre": "Rapport mensuel automatique",
+    "aide": "Le 1er de chaque mois à 7 h, le rapport d'activité du mois écoulé (présentation PowerPoint avec graphiques et analyse) est envoyé par email.",
+    "activer": "Activer l'envoi automatique du rapport mensuel",
+    "destinataires": "Destinataires",
+    "placeholder": "direction@entreprise.ci, dg@entreprise.ci",
+    "aideDestinataires": "Adresses séparées par des virgules. Laissez vide pour l'envoyer à tous les administrateurs et managers."
+  },
+  "logo": {
+    "titre": "Logo de l'entreprise",
+    "aide": "Affiché en haut de toute votre documentation : factures et FNE, reçus, bons de livraison, proformas, avoirs, bons de caisse, rapports PowerPoint et emails envoyés aux clients. PNG à fond transparent recommandé.",
+    "enregistre": "Logo enregistré : il figure désormais sur vos documents.",
+    "retire": "Logo retiré.",
+    "confirmerRetrait": "Retirer le logo de tous vos documents ?",
+    "envoi": "Envoi du logo…",
+    "formatInvalide": "Image non reconnue : choisissez un fichier PNG, JPEG ou WebP."
   }
 }

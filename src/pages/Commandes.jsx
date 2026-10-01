@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { envoyerParEmail, partagerWhatsApp } from '../lib/envoiDocuments'
+import { formatXOF as formatMontantEnvoi } from '../lib/format'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererFactureProforma, symboleDevise } from '../lib/export'
@@ -255,7 +257,7 @@ export default function Commandes() {
     const [{ data: commande }, { data: lignesData }, { data: historique }] = await Promise.all([
       supabase
         .from('commandes')
-        .select('id, numero, statut, mode_paiement, montant_ht, montant_tva, montant_ttc, montant_paye, date_livraison_souhaitee, notes, bon_commande_client_path, bon_commande_client_reference, created_at, vente_id, clients(nom, telephone, adresse), profils!commercial_id(nom)')
+        .select('id, numero, statut, mode_paiement, montant_ht, montant_tva, montant_ttc, montant_paye, date_livraison_souhaitee, notes, bon_commande_client_path, bon_commande_client_reference, created_at, vente_id, clients(nom, telephone, adresse, email), profils!commercial_id(nom)')
         .eq('id', commandeId)
         .single(),
       supabase.from('lignes_commande').select('id, produit_id, quantite, prix_unitaire, montant_ligne, quantite_livree, produits(nom)').eq('commande_id', commandeId),
@@ -287,6 +289,30 @@ export default function Commandes() {
     if (!detail) return
     const doc = genererFactureProforma({ entreprise, commande: detail.commande, lignes: detail.lignes })
     doc.save(`${detail.commande?.numero || 'proforma'}.pdf`)
+  }
+
+  async function envoyerProforma(canal) {
+    if (!detail) return
+    const doc = genererFactureProforma({ entreprise, commande: detail.commande, lignes: detail.lignes })
+    const nomFichier = `proforma-${detail.commande?.numero || commandeOuverte.slice(0, 8)}.pdf`
+    if (canal === 'email') {
+      const destinataire = window.prompt(t('envoi.confirmerEmail'), detail.commande?.clients?.email || '')
+      if (!destinataire) return
+      const { error } = await envoyerParEmail({ doc, nomFichier, typeDocument: 'proforma', commandeId: commandeOuverte, destinataire })
+      alert(error ? t('envoi.echecEmail', { message: error }) : t('envoi.emailEnvoye', { email: destinataire }))
+    } else {
+      const telephone = detail.commande?.clients?.telephone || window.prompt(t('envoi.numeroWhatsApp'), '')
+      if (!telephone) return
+      const { error } = await partagerWhatsApp({
+        doc, nomFichier, telephone, typeDocument: 'proforma', commandeId: commandeOuverte,
+        entrepriseId: profil.entreprise_id, profilId: profil.id,
+        message: t('envoi.messageWhatsApp', {
+          client: detail.commande?.clients?.nom || '', numero: detail.commande?.numero || '',
+          montant: formatMontantEnvoi(detail.commande?.montant_ttc || 0), entreprise: entreprise?.nom || '',
+        }),
+      })
+      if (error) alert(error === 'numero' ? t('envoi.numeroManquant') : t('envoi.echecWhatsApp', { message: error }))
+    }
   }
 
   async function enregistrerReferenceBonCommande() {
@@ -849,6 +875,8 @@ export default function Commandes() {
                   <button data-aide="commandes.detail.facturePropforma" onClick={telechargerProforma} className="btn-secondary text-sm">
                     {t('detail.facturePropforma')}
                   </button>
+                  <button onClick={() => envoyerProforma('email')} className="btn-secondary text-sm">📧 {t('envoi.email')}</button>
+                  <button onClick={() => envoyerProforma('whatsapp')} className="btn-3d text-sm px-3 py-2" style={{ background: 'linear-gradient(180deg,#4ade80,#16a34a 60%,#15803d)' }}>💬 WhatsApp</button>
 
                   {detail.commande?.statut === 'livree' && detail.commande?.vente_id && (
                     <Link data-aide="commandes.detail.voirFacture" to={`/ventes?vente=${detail.commande.vente_id}`} className="btn-primary text-sm">

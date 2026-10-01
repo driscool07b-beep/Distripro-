@@ -136,5 +136,30 @@
     "total": "المجموع"
   },
   "bureau": "بيع من المكتب",
-  "saisiPar": "أدخلها {{nom}}"
+  "saisiPar": "أدخلها {{nom}}",
+  "fne": {
+    "produire": "Issue an FNE (DGI standardised invoice)",
+    "aideProduire": "The sale is certified by the DGI: official reference and QR code on the invoice. Untick for an internal receipt.",
+    "echecApresVente": "The sale is saved but FNE certification failed: {{message}}. Retry from the sale details.",
+    "stickersBas": "Warning: only {{n}} FNE electronic sticker(s) left.",
+    "echecAvoir": "The credit note is saved but its FNE certification failed: {{message}}",
+    "certifiee": "FNE-certified invoice (DGI)",
+    "verifier": "Verify on the DGI platform",
+    "avoir": "Cancelled by FNE credit note: {{ref}}",
+    "erreur": "FNE certification failed",
+    "nonCertifiee": "Not FNE-certified (internal receipt)",
+    "certifier": "Certify (FNE)",
+    "reessayer": "Retry certification",
+    "enCours": "Certifying…"
+  },
+  "envoi": {
+    "email": "Email",
+    "confirmerEmail": "Send the document to:",
+    "emailEnvoye": "Document sent to {{email}}.",
+    "echecEmail": "The email could not be sent: {{message}}",
+    "numeroWhatsApp": "Customer's WhatsApp number:",
+    "numeroManquant": "Customer phone number missing.",
+    "echecWhatsApp": "The document link could not be prepared: {{message}}",
+    "messageWhatsApp": "Hello {{client}}, here is your document {{numero}} for {{montant}}. Thank you — {{entreprise}}. Link (valid 7 days):"
+  }
 }

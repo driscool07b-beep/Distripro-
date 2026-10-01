@@ -1,0 +1,45 @@
+{
+  "titre": "AI assistant",
+  "sousTitre": "Ask questions about your figures in plain language. The assistant reads your real data (within your access rights).",
+  "essayez": "Try for example:",
+  "suggestions": {
+    "dir1": "What is my revenue this month compared with last month?",
+    "dir2": "Who are my top 5 customers since the start of the year?",
+    "dir3": "Which customers have overdue invoices?",
+    "dir4": "Which products are out of stock or below the alert level?",
+    "dir5": "Rank my sales reps by revenue this month.",
+    "dir6": "Which products sell best this quarter?",
+    "com1": "How much did I sell this week?",
+    "com2": "Which of my customers owe me money?",
+    "com3": "What stock do I have in hand?",
+    "com4": "Who are my best customers this month?",
+    "stock1": "Which products are below the alert level?",
+    "stock2": "What is the stock in each warehouse?",
+    "stock3": "What do the sales reps have in hand?"
+  },
+  "reflexion": "The assistant is reading your figures…",
+  "placeholder": "Your question…",
+  "envoyer": "Send",
+  "nouvelleConversation": "New conversation",
+  "avertissement": "AI-generated answers from your data: check important figures before deciding.",
+  "iaDesactivee": "AI features are disabled for your account.",
+  "rapport": {
+    "titre": "Activity report (PowerPoint)",
+    "aide": "Ready-to-present deck: real figures, editable charts and AI-written commentary.",
+    "periodes": {
+      "moisDernier": "Last month",
+      "mois": "This month",
+      "trimestreDernier": "Last quarter",
+      "trimestre": "This quarter",
+      "annee": "Year to date",
+      "libre": "Custom dates"
+    },
+    "du": "From",
+    "au": "To",
+    "generer": "Generate PowerPoint",
+    "enCours": "Preparing the presentation…",
+    "patience": "This usually takes 20 to 40 seconds.",
+    "periodeInvalide": "Invalid period.",
+    "echec": "The presentation could not be generated."
+  }
+}

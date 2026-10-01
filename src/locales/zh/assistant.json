@@ -1,0 +1,45 @@
+{
+  "titre": "AI 助手",
+  "sousTitre": "用日常语言询问您的数据。助手会读取您的真实数据（在您的权限范围内）。",
+  "essayez": "例如：",
+  "suggestions": {
+    "dir1": "本月营业额与上月相比如何？",
+    "dir2": "今年以来我的前 5 名客户是谁？",
+    "dir3": "哪些客户有逾期发票？",
+    "dir4": "哪些产品缺货或低于预警线？",
+    "dir5": "按本月营业额给销售员排名。",
+    "dir6": "本季度哪些产品卖得最好？",
+    "com1": "我本周卖了多少？",
+    "com2": "哪些客户欠我钱？",
+    "com3": "我手上有多少库存？",
+    "com4": "本月我最好的客户是谁？",
+    "stock1": "哪些产品低于预警线？",
+    "stock2": "每个仓库的库存是多少？",
+    "stock3": "销售员手上有什么？"
+  },
+  "reflexion": "助手正在查阅您的数据…",
+  "placeholder": "您的问题…",
+  "envoyer": "发送",
+  "nouvelleConversation": "新对话",
+  "avertissement": "根据您的数据由 AI 生成的回答：重要决策前请核实关键数字。",
+  "iaDesactivee": "您的账户已停用 AI 功能。",
+  "rapport": {
+    "titre": "业务报告（PowerPoint）",
+    "aide": "可直接演示：真实数据、可编辑图表及 AI 撰写的点评。",
+    "periodes": {
+      "moisDernier": "上月",
+      "mois": "本月",
+      "trimestreDernier": "上季度",
+      "trimestre": "本季度",
+      "annee": "今年以来",
+      "libre": "自定义日期"
+    },
+    "du": "从",
+    "au": "至",
+    "generer": "生成 PowerPoint",
+    "enCours": "正在准备演示文稿…",
+    "patience": "通常需要 20 至 40 秒。",
+    "periodeInvalide": "期间无效。",
+    "echec": "无法生成演示文稿。"
+  }
+}

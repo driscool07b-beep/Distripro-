@@ -70,15 +70,28 @@ export default function Reconciliations() {
   // Arrivée depuis le contrôle d'une sortie : fiche pré-remplie.
   useEffect(() => {
     const c = searchParams.get('commercial')
-    if (c) setNouvelle({ commercial_id: c, date_debut: searchParams.get('du') || aujourdhui(), date_fin: searchParams.get('au') || aujourdhui() })
+    if (c) setNouvelle({ mode: 'tournees', toutRapporte: true, commercial_id: c, date_debut: searchParams.get('du') || aujourdhui(), date_fin: searchParams.get('au') || aujourdhui() })
   }, [])
+
+  const [tournees, setTournees] = useState([])
+  useEffect(() => {
+    if (!nouvelle?.commercial_id || nouvelle.mode !== 'tournees') { setTournees([]); return }
+    supabase.rpc('tournees_a_reconcilier', { p_commercial_id: nouvelle.commercial_id }).then(({ data }) => {
+      setTournees(data || [])
+      setNouvelle((n) => ({ ...n, sorties: (data || []).map((x) => x.id) }))
+    })
+  }, [nouvelle?.commercial_id, nouvelle?.mode])
 
   async function creerFiche() {
     setErreur('')
     setEnvoi(true)
-    const { data, error } = await supabase.rpc('preparer_reconciliation', {
-      p_commercial_id: nouvelle.commercial_id, p_date_debut: nouvelle.date_debut, p_date_fin: nouvelle.date_fin,
-    })
+    const { data, error } = nouvelle.mode === 'tournees'
+      ? await supabase.rpc('preparer_reconciliation_tournees', {
+          p_commercial_id: nouvelle.commercial_id, p_sortie_ids: nouvelle.sorties || [], p_tout_rapporte: nouvelle.toutRapporte !== false,
+        })
+      : await supabase.rpc('preparer_reconciliation', {
+          p_commercial_id: nouvelle.commercial_id, p_date_debut: nouvelle.date_debut, p_date_fin: nouvelle.date_fin,
+        })
     setEnvoi(false)
     if (error) { setErreur(traduireErreur(error.message)); return }
     setNouvelle(null)
@@ -145,7 +158,7 @@ export default function Reconciliations() {
             <div className="flex-1" />
             {peutPreparer && (
               <button data-aide="reconciliations.nouvelle" className="btn-primary text-sm"
-                onClick={() => { setErreur(''); setNouvelle({ commercial_id: '', date_debut: aujourdhui(), date_fin: aujourdhui() }) }}>
+                onClick={() => { setErreur(''); setNouvelle({ mode: 'tournees', toutRapporte: true, commercial_id: '', date_debut: aujourdhui(), date_fin: aujourdhui() }) }}>
                 {t('nouvelle')}
               </button>
             )}
@@ -154,7 +167,15 @@ export default function Reconciliations() {
           {nouvelle && (
             <div className="card p-4 mb-4 space-y-3">
               <p className="font-semibold">{t('nouvelleTitre')}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex gap-2">
+                {['tournees', 'dates'].map((m) => (
+                  <button key={m} type="button" onClick={() => setNouvelle({ ...nouvelle, mode: m })}
+                    className={`px-3 py-1.5 rounded-full text-xs border ${nouvelle.mode === m ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'}`}>
+                    {t(`modes.${m}`)}
+                  </button>
+                ))}
+              </div>
+              <div className={`grid grid-cols-1 gap-3 ${nouvelle.mode === 'dates' ? 'sm:grid-cols-3' : ''}`}>
                 <div>
                   <label className="label">{t('commercial')}</label>
                   <select className="input-field" value={nouvelle.commercial_id} onChange={(e) => setNouvelle({ ...nouvelle, commercial_id: e.target.value })}>
@@ -162,6 +183,7 @@ export default function Reconciliations() {
                     {commerciaux.filter((c) => c.actif !== false).map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
                   </select>
                 </div>
+                {nouvelle.mode === 'dates' && <>
                 <div>
                   <label className="label">{t('du')}</label>
                   <input type="date" className="input-field" value={nouvelle.date_debut} onChange={(e) => setNouvelle({ ...nouvelle, date_debut: e.target.value })} />
@@ -170,11 +192,29 @@ export default function Reconciliations() {
                   <label className="label">{t('au')}</label>
                   <input type="date" className="input-field" value={nouvelle.date_fin} max={aujourdhui()} onChange={(e) => setNouvelle({ ...nouvelle, date_fin: e.target.value })} />
                 </div>
+                </>}
               </div>
-              <p className="text-xs text-petrol-500">{t('nouvelleAide')}</p>
+              {nouvelle.mode === 'tournees' && nouvelle.commercial_id && (
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-petrol-700">{t('tournees.titre')}</p>
+                  {tournees.length === 0 ? <p className="text-xs text-petrol-400">{t('tournees.aucune')}</p> : tournees.map((tr) => (
+                    <label key={tr.id} className="flex items-center gap-2 text-sm border border-line rounded-lg px-3 py-2">
+                      <input type="checkbox" checked={(nouvelle.sorties || []).includes(tr.id)}
+                        onChange={(e) => setNouvelle({ ...nouvelle, sorties: e.target.checked ? [...(nouvelle.sorties || []), tr.id] : (nouvelle.sorties || []).filter((x) => x !== tr.id) })} />
+                      <span className="flex-1">{t('tournees.ligne', { date: formatDate(tr.date_sortie), n: tr.nb_produits, q: tr.quantite_sortie })}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${tr.statut === 'cloturee' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-800'}`}>{t(`tournees.statuts.${tr.statut}`)}</span>
+                    </label>
+                  ))}
+                  <label className="flex items-start gap-2 text-xs text-petrol-700">
+                    <input type="checkbox" className="mt-0.5" checked={nouvelle.toutRapporte !== false} onChange={(e) => setNouvelle({ ...nouvelle, toutRapporte: e.target.checked })} />
+                    <span>{t('tournees.toutRapporte')}</span>
+                  </label>
+                </div>
+              )}
+              <p className="text-xs text-petrol-500">{nouvelle.mode === 'tournees' ? t('tournees.aide') : t('nouvelleAide')}</p>
               {erreur && <p className="text-sm text-red-600">{erreur}</p>}
               <div className="flex gap-2">
-                <button className="btn-primary text-sm" disabled={envoi || !nouvelle.commercial_id} onClick={creerFiche}>{envoi ? t('calcul') : t('preparer')}</button>
+                <button className="btn-primary text-sm" disabled={envoi || !nouvelle.commercial_id || (nouvelle.mode === 'tournees' && !(nouvelle.sorties || []).length)} onClick={creerFiche}>{envoi ? t('calcul') : t('preparer')}</button>
                 <button className="btn-secondary text-sm" onClick={() => setNouvelle(null)}>{t('annuler')}</button>
               </div>
             </div>
@@ -227,6 +267,10 @@ function FicheReconciliation({ id, nomMembre, peutPreparer, estComptable, estDir
   const [commentaire, setCommentaire] = useState('')
   const [erreur, setErreur] = useState('')
   const [envoi, setEnvoi] = useState(false)
+  const [tourneesLiees, setTourneesLiees] = useState([])
+  const [echanges, setEchanges] = useState([])
+  const [rectifications, setRectifications] = useState([])
+  const [rectif, setRectif] = useState(null) // { traitement, motif }
 
   async function charger() {
     const { data: f } = await supabase.from('reconciliations_commercial').select('*').eq('id', id).single()
@@ -239,6 +283,15 @@ function FicheReconciliation({ id, nomMembre, peutPreparer, estComptable, estDir
       const { data: v } = await supabase.from('versements_caisse').select('numero, montant, date_versement, nature, caisses(nom)')
         .eq('commercial_id', f.commercial_id).gte('date_versement', f.date_debut).lte('date_versement', f.date_fin).order('date_versement')
       setVersements(v || [])
+      const [{ data: ts }, { data: ech }, { data: rc }] = await Promise.all([
+        supabase.from('reconciliation_sorties').select('sorties_stock(id, date_sortie, statut)').eq('reconciliation_id', id),
+        supabase.from('echanges_defectueux').select('quantite, motif, created_at, produits(nom)').eq('commercial_id', f.commercial_id)
+          .gte('created_at', `${f.date_debut}T00:00:00`).lte('created_at', `${f.date_fin}T23:59:59`),
+        supabase.from('reconciliation_rectifications').select('*, produits(nom), auteur:profils!effectue_par(nom)').eq('reconciliation_id', id).order('created_at'),
+      ])
+      setTourneesLiees((ts || []).map((x) => x.sorties_stock).filter(Boolean))
+      setEchanges(ech || [])
+      setRectifications(rc || [])
     }
   }
   useEffect(() => { charger() }, [id])
@@ -339,7 +392,7 @@ function FicheReconciliation({ id, nomMembre, peutPreparer, estComptable, estDir
                   <td className="px-2 py-2 text-right font-mono">{l.autres}</td>
                   <td className="px-2 py-2 text-right font-mono font-semibold">{l.stock_theorique}</td>
                   <td className="px-2 py-2 text-right">
-                    {brouillon && peutPreparer ? (
+                    {(brouillon && peutPreparer) || rectif ? (
                       <input type="number" min="0" className="input-field !py-1 !px-2 w-20 text-right" value={comptes[l.produit_id] ?? ''}
                         onChange={(e) => setComptes({ ...comptes, [l.produit_id]: e.target.value })} />
                     ) : <span className="font-mono">{l.stock_compte}</span>}
@@ -352,7 +405,10 @@ function FicheReconciliation({ id, nomMembre, peutPreparer, estComptable, estDir
             </tbody>
           </table>
         </div>
-        {brouillon && peutPreparer && comptageModifie && (
+        {tourneesLiees.length > 0 && (
+          <p className="text-xs text-petrol-600 mt-3">🚚 {t('tournees.liees')} : {tourneesLiees.map((x) => formatDate(x.date_sortie)).join(', ')}</p>
+        )}
+        {brouillon && peutPreparer && comptageModifie && !rectif && (
           <button className="btn-primary text-sm mt-3" disabled={envoi}
             onClick={() => action('saisir_comptage_reconciliation', { p_id: id, p_lignes: lignes.map((l) => ({ produit_id: l.produit_id, stock_compte: Number(comptes[l.produit_id] || 0) })) })}>
             {t('enregistrerComptage')}
@@ -388,6 +444,20 @@ function FicheReconciliation({ id, nomMembre, peutPreparer, estComptable, estDir
 
         <div className="card p-4">
           <h2 className="font-semibold mb-3">📝 {t('justification')}</h2>
+          <div className="rounded-lg bg-canvas p-3 mb-3 text-xs space-y-1">
+            <p className="font-medium text-petrol-700">{t('rapport.titre')}</p>
+            {lignes.filter((l) => l.ecart !== 0).length === 0
+              ? <p className="text-emerald-700">{t('rapport.aucunEcart')}</p>
+              : lignes.filter((l) => l.ecart !== 0).map((l) => (
+                <p key={l.id} className={l.ecart > 0 ? 'text-red-700' : 'text-sky-700'}>
+                  {l.produits?.nom} : {l.ecart > 0 ? t('rapport.manquant', { n: l.ecart }) : t('rapport.excedent', { n: -l.ecart })} ({formatXOF(l.valeur_ecart)})
+                </p>
+              ))}
+            {Number(fiche.ecart_argent) !== 0 && <p className={fiche.ecart_argent > 0 ? 'text-red-700' : 'text-sky-700'}>{t('ecartArgent')} : {formatXOF(fiche.ecart_argent)}</p>}
+            {echanges.length > 0 && (
+              <p className="text-petrol-600">{t('rapport.echanges')} : {echanges.map((e) => `${e.produits?.nom} × ${e.quantite} (${e.motif})`).join(' · ')}</p>
+            )}
+          </div>
           {peutJustifier ? (
             <>
               <textarea rows={4} className="input-field" value={justification} onChange={(e) => setJustification(e.target.value)} placeholder={t('justificationPlaceholder')} />
@@ -451,6 +521,50 @@ function FicheReconciliation({ id, nomMembre, peutPreparer, estComptable, estDir
           </div>
         )}
 
+        {fiche.statut === 'validee_caisse' && estComptable && (
+          <button className="btn-secondary text-sm mt-3" disabled={envoi}
+            onClick={() => { const motif = window.prompt(t('corrections.motifRenvoi')); if (motif) action('renvoyer_reconciliation_caisse', { p_id: id, p_motif: motif }) }}>
+            ↩️ {t('corrections.renvoyer')}
+          </button>
+        )}
+
+        {fiche.statut === 'validee' && estComptable && !rectif && (
+          <button className="btn-secondary text-sm mb-3" onClick={() => setRectif({ traitement: fiche.decision_manquant || 'dette', motif: '' })}>
+            ✏️ {t('corrections.rectifier')}
+          </button>
+        )}
+        {rectif && (
+          <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 mb-3 space-y-2">
+            <p className="text-sm">{t('corrections.aideRectif')}</p>
+            <select className="input-field sm:max-w-md" value={rectif.traitement} onChange={(e) => setRectif({ ...rectif, traitement: e.target.value })}>
+              <option value="dette">{t('decisions.dette')}</option>
+              <option value="perte">{t('decisions.perte')}</option>
+            </select>
+            <input className="input-field" value={rectif.motif} onChange={(e) => setRectif({ ...rectif, motif: e.target.value })} placeholder={t('corrections.motifRectif')} />
+            <div className="flex gap-2">
+              <button className="btn-primary text-sm" disabled={envoi || rectif.motif.trim().length < 3 || !comptageModifie}
+                onClick={async () => {
+                  const ok = await action('rectifier_reconciliation', {
+                    p_id: id, p_traitement: rectif.traitement, p_motif: rectif.motif,
+                    p_lignes: lignes.map((l) => ({ produit_id: l.produit_id, stock_compte: Number(comptes[l.produit_id] || 0) })),
+                  })
+                  if (ok) setRectif(null)
+                }}>{t('corrections.enregistrerRectif')}</button>
+              <button className="btn-secondary text-sm" onClick={() => { setRectif(null); setComptes(Object.fromEntries(lignes.map((x) => [x.produit_id, String(x.stock_compte)]))) }}>{t('annuler')}</button>
+            </div>
+          </div>
+        )}
+        {rectifications.length > 0 && (
+          <div className="text-xs space-y-1 mb-3">
+            <p className="font-medium text-petrol-700">{t('corrections.historique')}</p>
+            {rectifications.map((r) => (
+              <p key={r.id} className="text-petrol-600">
+                {formatDate(r.created_at)} — {r.produits?.nom} : {r.ancien_compte} → {r.nouveau_compte} ({formatXOF(r.delta_valeur)}, {t(`decisions.${r.traitement}`)}) — {r.auteur?.nom} — « {r.motif} »
+              </p>
+            ))}
+          </div>
+        )}
+
         {fiche.statut === 'validee' && (
           <p className="text-sm">
             {fiche.montant_dette > 0 ? <span className="text-red-700 font-medium">{t('detteCree', { montant: formatXOF(fiche.montant_dette) })}</span> : <span className="text-emerald-700">{t('aucuneDette')}</span>}
@@ -468,7 +582,8 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
   const [mouvements, setMouvements] = useState([])
   const [avances, setAvances] = useState([])
   const [retenues, setRetenues] = useState([])
-  const [forcage, setForcage] = useState(null) // { commercial_id, montant, nb, periode, motif }
+  const [forcage, setForcage] = useState(null) // { commercial_id, montant, nb, periode, motif, salaire }
+  const [salaires, setSalaires] = useState({})
   const { profil } = useAuth()
   const peutForcer = ['admin', 'comptable'].includes(profil?.role)
   const moisCourant = new Date().toISOString().slice(0, 7)
@@ -487,6 +602,9 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
     setMouvements(data || [])
     setAvances(av || [])
     setRetenues(re || [])
+    // Salaires de référence : visibles seulement par l'admin et le comptable.
+    const { data: sal } = await supabase.from('salaires_reference').select('profil_id, montant')
+    setSalaires(Object.fromEntries((sal || []).map((x) => [x.profil_id, Number(x.montant)])))
   }
   useEffect(() => { charger() }, [])
 
@@ -527,6 +645,7 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
     const { error } = await supabase.rpc('recouvrement_force', {
       p_commercial_id: forcage.commercial_id, p_montant: Number(forcage.montant), p_nb_mensualites: Number(forcage.nb),
       p_premiere_periode: forcage.periode, p_motif: forcage.motif,
+      p_salaire_reference: forcage.salaire === '' || forcage.salaire == null ? null : Number(forcage.salaire),
     })
     setEnvoi(false)
     if (error) { setErreur(traduireErreur(error.message)); return }
@@ -553,6 +672,7 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
       t('avances.notifMontant', { montant: formatXOF(a.montant) }),
       t('avances.notifMotif', { motif: a.motif }),
       t('avances.notifEcheancier', { nb: a.nb_mensualites, mensualite: formatXOF(a.mensualite), debut: a.premiere_periode }),
+      ...(salaires[a.commercial_id] ? [t('avances.notifQuotite', { salaire: formatXOF(salaires[a.commercial_id]), pct: entreprise?.quotite_retenue_pourcentage || '—' })] : []),
       '',
       t('avances.notifTexte'),
     ]
@@ -562,6 +682,7 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
     doc.text(t('avances.notifFait', { date: formatDate(new Date()) }), 14, yy)
     doc.text(`${t('avances.signSalarie')} :`, 14, yy + 14)
     doc.text(`${t('avances.signEmployeur')} :`, 120, yy + 14)
+    doc.text(doc.splitTextToSize(`${t('avances.visaAutorite')} :`, 180), 14, yy + 42)
     doc.save(`notification-retenue-${nom(a.commercial_id).replace(/\s+/g, '-')}.pdf`)
   }
 
@@ -635,7 +756,7 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
                     {peutAnnuler && <button className="btn-secondary text-sm" onClick={() => annuler(c.id)}>{t('abandonnerDette')}</button>}
                     {peutForcer && (
                       <button data-aide="reconciliations.recouvrementForce" className="btn-3d btn-3d-rouge text-sm px-3 py-2"
-                        onClick={() => setForcage({ commercial_id: c.id, montant: String(s), nb: '1', periode: moisCourant, motif: '' })}>
+                        onClick={() => setForcage({ commercial_id: c.id, montant: String(s), nb: '1', periode: moisCourant, motif: '', salaire: salaires[c.id] != null ? String(salaires[c.id]) : '' })}>
                         {t('avances.bouton')}
                       </button>
                     )}
@@ -649,6 +770,14 @@ function DettesCommerciaux({ entreprise, commerciaux, caisses, peutEncaisser, pe
                       <div><label className="label">{t('montant')}</label><input type="number" min="0" max={s} className="input-field" value={forcage.montant} onChange={(e) => setForcage({ ...forcage, montant: e.target.value })} /></div>
                       <div><label className="label">{t('avances.nbMensualites')}</label><input type="number" min="1" max="60" className="input-field" value={forcage.nb} onChange={(e) => setForcage({ ...forcage, nb: e.target.value })} /></div>
                       <div><label className="label">{t('avances.premierMois')}</label><input type="month" className="input-field" value={forcage.periode} onChange={(e) => setForcage({ ...forcage, periode: e.target.value })} /></div>
+                    </div>
+                    <div>
+                      <label className="label">{t('avances.salaireReference')}</label>
+                      <input type="number" min="0" className="input-field" value={forcage.salaire} onChange={(e) => setForcage({ ...forcage, salaire: e.target.value })} />
+                      <p className="text-[11px] text-petrol-500 mt-1">{t('avances.aideSalaire')}</p>
+                      {entreprise?.quotite_retenue_pourcentage && Number(forcage.salaire) > 0 && (
+                        <p className="text-xs text-petrol-700 mt-1">{t('avances.plafondQuotite', { pct: entreprise.quotite_retenue_pourcentage, montant: formatXOF(Math.floor(Number(forcage.salaire) * Number(entreprise.quotite_retenue_pourcentage) / 100)) })}</p>
+                      )}
                     </div>
                     {Number(forcage.nb) > 0 && Number(forcage.montant) > 0 && (
                       <p className="text-xs">{t('avances.apercu', { mensualite: formatXOF(Math.ceil(Number(forcage.montant) / Number(forcage.nb))) })}

@@ -1,0 +1,45 @@
+{
+  "titre": "Assistant IA",
+  "sousTitre": "Posez vos questions sur vos chiffres, en langage courant. L'assistant consulte vos vraies données (dans la limite de vos droits).",
+  "essayez": "Essayez par exemple :",
+  "suggestions": {
+    "dir1": "Quel est mon chiffre d'affaires ce mois-ci par rapport au mois dernier ?",
+    "dir2": "Quels sont mes 5 meilleurs clients depuis le début de l'année ?",
+    "dir3": "Quels clients ont des factures en retard de paiement ?",
+    "dir4": "Quels produits sont en rupture ou sous le seuil d'alerte ?",
+    "dir5": "Classe mes commerciaux par chiffre d'affaires ce mois-ci.",
+    "dir6": "Quels produits se vendent le mieux ce trimestre ?",
+    "com1": "Combien ai-je vendu cette semaine ?",
+    "com2": "Quels sont mes clients qui me doivent de l'argent ?",
+    "com3": "Qu'est-ce que j'ai en stock en main ?",
+    "com4": "Quels sont mes meilleurs clients ce mois-ci ?",
+    "stock1": "Quels produits sont sous le seuil d'alerte ?",
+    "stock2": "Quel est le stock de chaque magasin ?",
+    "stock3": "Qu'ont en main les commerciaux ?"
+  },
+  "reflexion": "L'assistant consulte vos chiffres…",
+  "placeholder": "Votre question…",
+  "envoyer": "Envoyer",
+  "nouvelleConversation": "Nouvelle conversation",
+  "avertissement": "Réponses générées par IA à partir de vos données : vérifiez les chiffres importants avant une décision.",
+  "iaDesactivee": "Les fonctions IA sont désactivées pour votre compte.",
+  "rapport": {
+    "titre": "Rapport d'activité (PowerPoint)",
+    "aide": "Présentation prête à projeter : chiffres réels, graphiques modifiables et commentaires rédigés par l'IA (synthèse, évolution, clients, produits, commerciaux, magasins, créances, stock, recommandations).",
+    "periodes": {
+      "moisDernier": "Mois dernier",
+      "mois": "Ce mois-ci",
+      "trimestreDernier": "Trimestre dernier",
+      "trimestre": "Ce trimestre",
+      "annee": "Depuis janvier",
+      "libre": "Dates libres"
+    },
+    "du": "Du",
+    "au": "Au",
+    "generer": "Générer le PowerPoint",
+    "enCours": "Préparation de la présentation…",
+    "patience": "Cela prend généralement 20 à 40 secondes (analyse des chiffres et rédaction).",
+    "periodeInvalide": "Période invalide.",
+    "echec": "La présentation n'a pas pu être générée."
+  }
+}

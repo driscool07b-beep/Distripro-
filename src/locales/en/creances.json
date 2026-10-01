@@ -83,5 +83,50 @@
     "enRetard": "Overdue",
     "enCours": "Current"
   },
-  "bureau": "office sale"
+  "bureau": "office sale",
+  "groupe": {
+    "bouton": "Group payment",
+    "titre": "Group payment for a customer group",
+    "aide": "One head-office payment spread over the unpaid invoices of the group members.",
+    "fermer": "Close",
+    "groupe": "Group",
+    "choisir": "— Choose —",
+    "montantRecu": "Amount received",
+    "mode": "Payment method",
+    "modes": {
+      "virement": "Bank transfer",
+      "cheque": "Cheque",
+      "mobile_money": "Mobile Money",
+      "espece": "Cash"
+    },
+    "reference": "Reference",
+    "referencePlaceholder": "Cheque or transfer no.",
+    "banque": "Bank",
+    "factures": "Unpaid member invoices ({{n}})",
+    "repartirAuto": "Spread automatically (oldest first)",
+    "aucuneFacture": "No unpaid invoice for this group.",
+    "client": "Customer",
+    "compte": "Account",
+    "facture": "Invoice",
+    "echeance": "Due date",
+    "resteDu": "Balance due",
+    "regle": "Paid",
+    "totalReparti": "Total allocated",
+    "excedent": "Surplus of {{montant}}: recorded as credit for the chosen customer.",
+    "choisirClientExcedent": "— Customer receiving the surplus —",
+    "erreurDepasse": "Allocation exceeds the amount received.",
+    "valider": "Save group payment",
+    "recuTitre": "Group payment receipt",
+    "excedentRecu": "Surplus of {{montant}} credited to {{client}}."
+  },
+  "balance": {
+    "bouton": "Customer balance",
+    "titre": "Customer balance",
+    "compte": "Account",
+    "client": "Customer",
+    "facture": "Invoiced",
+    "regle": "Paid",
+    "solde": "Balance",
+    "totalGroupe": "Group total"
+  }
 }

@@ -139,15 +139,20 @@
     "compte": "Advance account",
     "retenue": "Deduction",
     "resteApres": "Left after",
-    "notifTitre": "Salary deduction notice",
+    "notifTitre": "Voluntary salary assignment deed",
     "notifSalarie": "Employee: {{nom}}",
     "notifMontant": "Amount to repay: {{montant}}",
     "notifMotif": "Origin: {{motif}}",
     "notifEcheancier": "Schedule: {{nb}} instalment(s) of {{mensualite}}, from the {{debut}} payroll.",
-    "notifTexte": "The employee acknowledges owing the above amount and agrees to repay it through salary deductions per the schedule, within the limits set by applicable regulations.",
+    "notifTexte": "The employee acknowledges owing the above amount and consents to its repayment through salary deductions per the schedule, within the assignable portion set by regulations. The assignment is signed before the labour inspector or the court president.",
     "notifFait": "Done on {{date}}",
     "signSalarie": "Employee signature",
-    "signEmployeur": "For the employer"
+    "signEmployeur": "For the employer",
+    "salaireReference": "Monthly reference salary",
+    "aideSalaire": "Base: gross salary + allowances − taxes and compulsory deductions. Confidential: admin and accountant only.",
+    "plafondQuotite": "Monthly cap: {{pct}}% → {{montant}}",
+    "notifQuotite": "Reference salary: {{salaire}} — ratio applied: {{pct}}%.",
+    "visaAutorite": "Stamp of the labour inspector or court president (name, date, signature)"
   },
   "aTraiter": {
     "titre": "To do",
@@ -167,5 +172,37 @@
     "compte": "What they actually have, physically counted.",
     "ecart": "Theoretical − counted. Positive = shortage.",
     "valeur": "Gap × price (selling or cost, per setting)."
+  },
+  "modes": {
+    "tournees": "By rounds",
+    "dates": "By dates"
+  },
+  "tournees": {
+    "titre": "Rounds to reconcile (tick them)",
+    "aucune": "No unreconciled round for this rep.",
+    "ligne": "Issue of {{date}} — {{n}} product(s), {{q}} unit(s)",
+    "statuts": {
+      "ouverte": "Ongoing",
+      "cloturee": "Closed"
+    },
+    "toutRapporte": "Everything had to be brought back: for closed rounds, 'counted' is prefilled with 0.",
+    "aide": "Tick one or more rounds (ongoing included) to reconcile them together.",
+    "liees": "Reconciled rounds"
+  },
+  "rapport": {
+    "titre": "Control report (automatic)",
+    "aucunEcart": "No stock gap.",
+    "manquant": "short {{n}}",
+    "excedent": "surplus {{n}}",
+    "echanges": "Defective exchanges in the period"
+  },
+  "corrections": {
+    "renvoyer": "Send back to cashier for correction",
+    "motifRenvoi": "Reason (entries will be reversed):",
+    "rectifier": "Correct the count",
+    "aideRectif": "Closed sheet: correct 'counted' above, choose how to treat the difference and give a reason. Debt, stock and entries are adjusted; the correction stays traced.",
+    "motifRectif": "Reason (required)",
+    "enregistrerRectif": "Save correction",
+    "historique": "Corrections"
   }
 }

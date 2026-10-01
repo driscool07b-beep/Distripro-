@@ -109,5 +109,15 @@
   "effacerDates": "Clear dates",
   "compteurTotal": "{{n}} order(s) — total (excl. cancelled)",
   "periode": "Period {{debut}} to {{fin}}",
-  "imprimer": "Print"
+  "imprimer": "Print",
+  "envoi": {
+    "email": "Email",
+    "confirmerEmail": "Send the proforma to:",
+    "emailEnvoye": "Proforma sent to {{email}}.",
+    "echecEmail": "The email could not be sent: {{message}}",
+    "numeroWhatsApp": "Customer's WhatsApp number:",
+    "numeroManquant": "Customer phone number missing.",
+    "echecWhatsApp": "The document link could not be prepared: {{message}}",
+    "messageWhatsApp": "Hello {{client}}, here is your proforma {{numero}} for {{montant}}. Thank you — {{entreprise}}. Link (valid 7 days):"
+  }
 }

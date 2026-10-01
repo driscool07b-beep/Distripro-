@@ -231,7 +231,9 @@
     "aide_stock": "贷记库存短缺。",
     "aide_pertes": "借记核销的差额或债务。",
     "aide_caisse": "若现金柜无独立账户，借记存入款项。",
-    "aide_remuneration": "若由 DistribPro 记账，借记工资扣款。"
+    "aide_remuneration": "若由 DistribPro 记账，借记工资扣款。",
+    "quotite": "Deduction ratio (% of reference salary)",
+    "aideQuotite": "E.g. 33%. Monthly cap = ratio × the rep's reference salary (lowest with the amount cap). Have your HR / adviser confirm the rate."
   },
   "selecteurCompte": {
     "creer": "创建账户或子账户…",
@@ -248,5 +250,51 @@
     "creerBouton": "创建并选择",
     "annuler": "取消",
     "horsPlan": "不在会计科目表中"
+  },
+  "comptesClients": {
+    "titre": "Customer accounts (accounting)",
+    "aide": "Each customer gets a 411 sub-account; each customer group has a main account, parent of its members' accounts.",
+    "mode": "Account assignment",
+    "auto": "Automatic (next free number)",
+    "manuel": "Manual (I enter my numbers)",
+    "racineClients": "Root for customers without group",
+    "racineGroupes": "Root for groups",
+    "exemple": "Example: single customer {{c}}0001 · group {{g}}001 · group member {{g}}001001.",
+    "attribuer": "Assign missing accounts",
+    "attribues": "{{n}} account(s) assigned."
+  },
+  "fne": {
+    "titre": "Standardised electronic invoice (FNE — DGI)",
+    "aide": "Certifies your sales with the DGI (official reference + QR code). Requires registering on the DGI FNE platform and an API key issued after validation. Start in test mode.",
+    "activer": "Enable FNE for this company",
+    "mode": "Environment",
+    "test": "Test (DGI test platform)",
+    "production": "Production (real invoices)",
+    "url": "FNE platform address",
+    "cle": "FNE API key",
+    "cleEnregistree": "•••••• key saved — leave empty to keep it",
+    "clePlaceholder": "Paste the key from your FNE space",
+    "pointDeVente": "Point of sale (required by the DGI)",
+    "etablissement": "Establishment (required by the DGI)",
+    "parDefaut": "'Issue an FNE' ticked by default on each sale",
+    "envoiAuto": "Automatically email the receipt or invoice after each sale",
+    "aideEnvoiAuto": "Only if the customer has an email address. Sent from noreply@distribpro.com, replies go to your address."
+  },
+  "rapportMensuel": {
+    "titre": "Automatic monthly report",
+    "aide": "On the 1st of each month at 7 am, last month's activity report (PowerPoint with charts and analysis) is emailed.",
+    "activer": "Enable the automatic monthly report",
+    "destinataires": "Recipients",
+    "placeholder": "management@company.com",
+    "aideDestinataires": "Comma-separated. Leave empty to send to all admins and managers."
+  },
+  "logo": {
+    "titre": "Company logo",
+    "aide": "Shown at the top of all your documents: invoices and FNE, receipts, delivery notes, proformas, credit notes, cash vouchers, PowerPoint reports and customer emails. Transparent PNG recommended.",
+    "enregistre": "Logo saved: it now appears on your documents.",
+    "retire": "Logo removed.",
+    "confirmerRetrait": "Remove the logo from all your documents?",
+    "envoi": "Uploading the logo…",
+    "formatInvalide": "Image not recognised: choose a PNG, JPEG or WebP file."
   }
 }

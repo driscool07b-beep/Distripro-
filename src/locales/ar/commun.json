@@ -32,7 +32,8 @@
     "banques": "البنوك",
     "planComptable": "الدليل المحاسبي",
     "notesUtilisation": "درجات الاستخدام",
-    "reconciliations": "المطابقات"
+    "reconciliations": "المطابقات",
+    "assistant": "المساعد الذكي"
   },
   "actions": {
     "annuler": "إلغاء",
@@ -191,5 +192,15 @@
     "accueil": "لوحة التحكم",
     "aide": "إظهار / إخفاء هذه القائمة",
     "fermer": "إغلاق"
+  },
+  "logo": {
+    "alt": "شعار الشركة",
+    "aucun": "لا يوجد شعار",
+    "choisir": "اختيار شعار",
+    "changer": "تغيير",
+    "retirer": "إزالة",
+    "facultatif": "شعار الشركة (اختياري)",
+    "aideInscription": "PNG (يفضّل بخلفية شفافة) أو JPEG أو WebP. سيظهر على الفواتير والإيصالات والسندات والتقارير. يمكن تغييره لاحقًا من الإعدادات.",
+    "formatInvalide": "صورة غير معروفة: اختر ملف PNG أو JPEG أو WebP."
   }
 }

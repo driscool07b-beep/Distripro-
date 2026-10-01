@@ -7,6 +7,8 @@ import { SYSCOHADA_DEPART } from '../lib/syscohada'
 import DiagnosticConnexion from '../components/DiagnosticConnexion'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
+import ChoixLogo from '../components/ChoixLogo'
+import { preparerLogo, televerserLogo, retirerLogo, urlLogo } from '../lib/logo'
 
 const CHAMP_VIDE = { libelle: '', type_champ: 'texte', options: '' }
 
@@ -1367,6 +1369,10 @@ export default function Parametres() {
           </button>
         </form>
       </div>
+      {profil?.role === 'admin' && <SectionLogo />}
+      {profil?.role === 'admin' && <SectionRapportMensuel />}
+      {profil?.role === 'admin' && <SectionFne />}
+      {profil?.role === 'admin' && <SectionComptesClients />}
       {profil?.role === 'admin' && <SectionReconciliation />}
       {profil?.role === 'admin' && <SectionConsommationIA />}
       {profil?.role === 'admin' && <DiagnosticConnexion />}
@@ -1462,6 +1468,7 @@ function SectionReconciliation() {
       remuneration: entreprise.compte_remuneration_numero || '422',
       retenuesPar: entreprise.retenues_comptabilisees_par || 'paie',
       plafond: entreprise.plafond_retenue_mensuelle ?? '',
+      quotite: entreprise.quotite_retenue_pourcentage ?? '',
     })
   }, [entreprise])
 
@@ -1490,6 +1497,8 @@ function SectionReconciliation() {
       p_retenues_par: v.retenuesPar, p_plafond: v.plafond === '' ? null : Number(v.plafond),
     })
     if (error) { setErreur(traduireErreur(error.message)); return }
+    const { error: e2 } = await supabase.rpc('modifier_quotite_retenue', { p_pourcentage: v.quotite === '' ? null : Number(v.quotite) })
+    if (e2) { setErreur(traduireErreur(e2.message)); return }
     await rechargerProfil()
     setMessage(t('enregistre'))
   }
@@ -1525,8 +1534,249 @@ function SectionReconciliation() {
           <label className="label">{t('reconciliation.plafond')}</label>
           <input type="number" min="0" className="input-field" value={v.plafond} onChange={(e) => setV({ ...v, plafond: e.target.value })} placeholder={t('reconciliation.sansPlafond')} />
         </div>
+        <div>
+          <label className="label">{t('reconciliation.quotite')}</label>
+          <input type="number" min="0" max="100" step="0.01" className="input-field" value={v.quotite} onChange={(e) => setV({ ...v, quotite: e.target.value })} placeholder="33" />
+          <p className="text-[11px] text-petrol-500 mt-1">{t('reconciliation.aideQuotite')}</p>
+        </div>
       </div>
       <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Comptes clients : attribution automatique ou manuelle, racines des comptes.
+function SectionComptesClients() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [v, setV] = useState(null)
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+  const [envoi, setEnvoi] = useState(false)
+
+  useEffect(() => {
+    if (!entreprise) return
+    setV({
+      mode: entreprise.comptes_clients_mode || 'auto',
+      clients: entreprise.compte_racine_clients || '4111',
+      groupes: entreprise.compte_racine_groupes || '4112',
+    })
+  }, [entreprise])
+  if (!v) return null
+
+  async function enregistrer() {
+    setErreur(''); setMessage('')
+    const { error } = await supabase.rpc('modifier_parametres_comptes_clients', { p_mode: v.mode, p_racine_clients: v.clients, p_racine_groupes: v.groupes })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    await rechargerProfil()
+    setMessage(t('enregistre'))
+  }
+  async function attribuer() {
+    setErreur(''); setMessage('')
+    setEnvoi(true)
+    const { data, error } = await supabase.rpc('attribuer_comptes_manquants')
+    setEnvoi(false)
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    setMessage(t('comptesClients.attribues', { n: data || 0 }))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">{t('comptesClients.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('comptesClients.aide')}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label className="label">{t('comptesClients.mode')}</label>
+          <select className="input-field" value={v.mode} onChange={(e) => setV({ ...v, mode: e.target.value })}>
+            <option value="auto">{t('comptesClients.auto')}</option>
+            <option value="manuel">{t('comptesClients.manuel')}</option>
+          </select>
+        </div>
+        <div>
+          <label className="label">{t('comptesClients.racineClients')}</label>
+          <input className="input-field font-mono" value={v.clients} onChange={(e) => setV({ ...v, clients: e.target.value.replace(/[^0-9]/g, '') })} />
+        </div>
+        <div>
+          <label className="label">{t('comptesClients.racineGroupes')}</label>
+          <input className="input-field font-mono" value={v.groupes} onChange={(e) => setV({ ...v, groupes: e.target.value.replace(/[^0-9]/g, '') })} />
+        </div>
+      </div>
+      <p className="text-[11px] text-petrol-500 mt-2">{t('comptesClients.exemple', { c: v.clients, g: v.groupes })}</p>
+      <div className="flex flex-wrap gap-2 mt-3">
+        <button className="btn-primary text-sm" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+        <button className="btn-secondary text-sm" disabled={envoi} onClick={attribuer}>{envoi ? '…' : t('comptesClients.attribuer')}</button>
+      </div>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Facture Normalisée Électronique (DGI) : accès API de l'entreprise.
+function SectionFne() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [envoiAuto, setEnvoiAuto] = useState(false)
+  useEffect(() => { setEnvoiAuto(!!entreprise?.envoi_auto_email) }, [entreprise?.envoi_auto_email])
+  const [v, setV] = useState(null)
+  const [cle, setCle] = useState('')
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+
+  useEffect(() => {
+    supabase.rpc('lire_config_fne').then(({ data }) => setV({
+      actif: !!data?.actif, mode: data?.mode || 'test', base_url: data?.base_url || 'http://54.247.95.108/ws',
+      point_de_vente: data?.point_de_vente || '', etablissement: data?.etablissement || '',
+      fne_par_defaut: data?.fne_par_defaut ?? true, cle_enregistree: !!data?.cle_enregistree,
+    }))
+  }, [])
+  if (!v) return null
+
+  async function enregistrer() {
+    setErreur(''); setMessage('')
+    const { error } = await supabase.rpc('definir_config_fne', {
+      p_actif: v.actif, p_mode: v.mode, p_base_url: v.base_url, p_api_key: cle || null,
+      p_point_de_vente: v.point_de_vente, p_etablissement: v.etablissement, p_par_defaut: v.fne_par_defaut,
+    })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    setCle('')
+    setV({ ...v, cle_enregistree: v.cle_enregistree || !!cle })
+    setMessage(t('enregistre'))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">🧾 {t('fne.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('fne.aide')}</p>
+      <label className="flex items-center gap-2 text-sm mb-3">
+        <input type="checkbox" checked={v.actif} onChange={(e) => setV({ ...v, actif: e.target.checked })} />
+        {t('fne.activer')}
+      </label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="label">{t('fne.mode')}</label>
+          <select className="input-field" value={v.mode} onChange={(e) => setV({ ...v, mode: e.target.value, base_url: e.target.value === 'test' ? 'http://54.247.95.108/ws' : v.base_url })}>
+            <option value="test">{t('fne.test')}</option>
+            <option value="production">{t('fne.production')}</option>
+          </select>
+        </div>
+        <div>
+          <label className="label">{t('fne.url')}</label>
+          <input className="input-field font-mono text-xs" value={v.base_url} onChange={(e) => setV({ ...v, base_url: e.target.value })} />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="label">{t('fne.cle')}</label>
+          <input type="password" autoComplete="off" className="input-field font-mono" value={cle} onChange={(e) => setCle(e.target.value)}
+            placeholder={v.cle_enregistree ? t('fne.cleEnregistree') : t('fne.clePlaceholder')} />
+        </div>
+        <div>
+          <label className="label">{t('fne.pointDeVente')}</label>
+          <input className="input-field" value={v.point_de_vente} onChange={(e) => setV({ ...v, point_de_vente: e.target.value })} />
+        </div>
+        <div>
+          <label className="label">{t('fne.etablissement')}</label>
+          <input className="input-field" value={v.etablissement} onChange={(e) => setV({ ...v, etablissement: e.target.value })} />
+        </div>
+      </div>
+      <label className="flex items-center gap-2 text-sm mt-3">
+        <input type="checkbox" checked={v.fne_par_defaut} onChange={(e) => setV({ ...v, fne_par_defaut: e.target.checked })} />
+        {t('fne.parDefaut')}
+      </label>
+      <label className="flex items-start gap-2 text-sm mt-3 border-t border-line pt-3">
+        <input type="checkbox" className="mt-0.5" checked={!!envoiAuto} onChange={async (e) => {
+          const actif = e.target.checked
+          setEnvoiAuto(actif)
+          const { error } = await supabase.rpc('modifier_envoi_auto_email', { p_actif: actif })
+          if (error) { setErreur(traduireErreur(error.message)); setEnvoiAuto(!actif) } else rechargerProfil()
+        }} />
+        <span>{t('fne.envoiAuto')}<span className="block text-xs text-petrol-500">{t('fne.aideEnvoiAuto')}</span></span>
+      </label>
+      <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Rapport d'activité mensuel envoyé automatiquement par email (PowerPoint joint).
+function SectionRapportMensuel() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [actif, setActif] = useState(false)
+  const [destinataires, setDestinataires] = useState('')
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+
+  useEffect(() => {
+    setActif(!!entreprise?.rapport_mensuel_actif)
+    setDestinataires(entreprise?.rapport_mensuel_destinataires || '')
+  }, [entreprise?.rapport_mensuel_actif, entreprise?.rapport_mensuel_destinataires])
+
+  async function enregistrer() {
+    setErreur(''); setMessage('')
+    const { error } = await supabase.rpc('modifier_rapport_mensuel', { p_actif: actif, p_destinataires: destinataires })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    await rechargerProfil()
+    setMessage(t('enregistre'))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">📊 {t('rapportMensuel.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('rapportMensuel.aide')}</p>
+      <label className="flex items-center gap-2 text-sm mb-3">
+        <input type="checkbox" checked={actif} onChange={(e) => setActif(e.target.checked)} />
+        {t('rapportMensuel.activer')}
+      </label>
+      <label className="label">{t('rapportMensuel.destinataires')}</label>
+      <input className="input-field" value={destinataires} onChange={(e) => setDestinataires(e.target.value)} placeholder={t('rapportMensuel.placeholder')} />
+      <p className="text-[11px] text-petrol-500 mt-1">{t('rapportMensuel.aideDestinataires')}</p>
+      <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Logo de l'entreprise : affiché sur toute la documentation.
+function SectionLogo() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [envoi, setEnvoi] = useState(false)
+  const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+
+  async function choisir(fichier) {
+    setErreur(''); setMessage('')
+    setEnvoi(true)
+    try {
+      const prepare = await preparerLogo(fichier)
+      const { error } = await televerserLogo(entreprise.id, prepare)
+      if (error) { setErreur(traduireErreur(error)); return }
+      await rechargerProfil()
+      setMessage(t('logo.enregistre'))
+    } catch {
+      setErreur(t('logo.formatInvalide'))
+    } finally {
+      setEnvoi(false)
+    }
+  }
+  async function retirer() {
+    if (!window.confirm(t('logo.confirmerRetrait'))) return
+    const { error } = await retirerLogo()
+    if (error) { setErreur(traduireErreur(error)); return }
+    await rechargerProfil()
+    setMessage(t('logo.retire'))
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">🏷️ {t('logo.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('logo.aide')}</p>
+      <ChoixLogo apercu={urlLogo(entreprise?.logo_path)} onChoisir={choisir} onRetirer={retirer} desactive={envoi} />
+      {envoi && <p className="text-xs text-petrol-500 mt-2">{t('logo.envoi')}</p>}
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>

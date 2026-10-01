@@ -146,15 +146,20 @@
     "compte": "预支账户",
     "retenue": "本月扣款",
     "resteApres": "扣款后余额",
-    "notifTitre": "工资扣款通知",
+    "notifTitre": "Voluntary salary assignment deed",
     "notifSalarie": "员工：{{nom}}",
     "notifMontant": "应还金额：{{montant}}",
     "notifMotif": "来源：{{motif}}",
     "notifEcheancier": "还款计划：{{nb}} 期，每期 {{mensualite}}，自 {{debut}} 工资起。",
-    "notifTexte": "员工确认欠付上述金额（源于其库存及收款对账中发现的差异），并同意按上述计划以工资扣款方式偿还，扣款以现行法规规定的限额为准。",
+    "notifTexte": "The employee acknowledges owing the above amount and consents to its repayment through salary deductions per the schedule, within the assignable portion set by regulations. The assignment is signed before the labour inspector or the court president.",
     "notifFait": "日期：{{date}}",
     "signSalarie": "员工签字（注明“已阅读并同意”）",
-    "signEmployeur": "雇主代表"
+    "signEmployeur": "雇主代表",
+    "salaireReference": "Monthly reference salary",
+    "aideSalaire": "Base: gross salary + allowances − taxes and compulsory deductions. Confidential: admin and accountant only.",
+    "plafondQuotite": "Monthly cap: {{pct}}% → {{montant}}",
+    "notifQuotite": "Reference salary: {{salaire}} — ratio applied: {{pct}}%.",
+    "visaAutorite": "Stamp of the labour inspector or court president (name, date, signature)"
   },
   "aideCol": {
     "produit": "Product",
@@ -167,5 +172,37 @@
     "compte": "What they actually have, physically counted.",
     "ecart": "Theoretical − counted. Positive = shortage.",
     "valeur": "Gap × price (selling or cost, per setting)."
+  },
+  "modes": {
+    "tournees": "按行程",
+    "dates": "按日期"
+  },
+  "tournees": {
+    "titre": "待对账行程（请勾选）",
+    "aucune": "该销售员没有未对账的行程。",
+    "ligne": "{{date}} 出库 — {{n}} 个产品，{{q}} 件",
+    "statuts": {
+      "ouverte": "进行中",
+      "cloturee": "已关闭"
+    },
+    "toutRapporte": "应全部退回：已关闭的行程“盘点”预填为 0（未售出也未退回的即为短缺）。",
+    "aide": "勾选一个或多个行程（含进行中）一并对账。期间由所选行程确定。",
+    "liees": "已对账行程"
+  },
+  "rapport": {
+    "titre": "核对报告（自动）",
+    "aucunEcart": "无库存差异。",
+    "manquant": "短缺 {{n}}",
+    "excedent": "盈余 {{n}}",
+    "echanges": "本期次品调换"
+  },
+  "corrections": {
+    "renvoyer": "退回现金柜更正",
+    "motifRenvoi": "退回原因（分录将被冲销）：",
+    "rectifier": "更正盘点",
+    "aideRectif": "对账单已关闭：请在上表更正“盘点”，选择差额处理方式并填写原因。债务、库存和分录将相应调整，更正记录可追溯。",
+    "motifRectif": "更正原因（必填）",
+    "enregistrerRectif": "保存更正",
+    "historique": "更正记录"
   }
 }
