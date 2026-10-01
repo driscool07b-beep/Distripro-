@@ -9,6 +9,7 @@ import TableauxResponsifs from './TableauxResponsifs'
 import MiseAJour from './MiseAJour'
 import NavigationClavier, { BoutonRetour } from './NavigationClavier'
 import RechercheGlobale from './RechercheGlobale'
+import BulleAssistant from './BulleAssistant'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { compterReconciliationsATraiter } from '../lib/reconciliationsATraiter'
 import { ROLES_PAGES } from '../lib/accesRole'
@@ -478,6 +479,7 @@ export default function Layout() {
           <button onClick={() => setRechercheOuverte(true)} className="text-petrol-800 p-1 text-lg" aria-label={t('rechercheGlobale.bouton')}>🔍</button>
         </div>
         <RechercheGlobale ouvert={rechercheOuverte} onFermer={() => setRechercheOuverte(false)} />
+        <BulleAssistant />
         <InfobullesAide />
         <TableauxResponsifs />
         <MiseAJour />

@@ -18,7 +18,58 @@ const reponse = (corps: unknown, status = 200) =>
 
 const MODELE = 'claude-sonnet-5'
 
+const SCHEMA_LIGNES = {
+  type: 'array',
+  description: 'Articles : identifiants trouvés par rechercher_produits et quantités dictées.',
+  items: {
+    type: 'object',
+    properties: { produit_id: { type: 'string' }, quantite: { type: 'integer', minimum: 1 } },
+    required: ['produit_id', 'quantite'],
+  },
+}
+
 const OUTILS = [
+  {
+    name: 'rechercher_clients',
+    description: "Retrouve un client à partir d'un nom ou d'un téléphone dicté (tolère accents et fautes). À appeler avant toute préparation de vente ou de commande.",
+    input_schema: { type: 'object', properties: { texte: { type: 'string' } }, required: ['texte'] },
+  },
+  {
+    name: 'rechercher_produits',
+    description: "Retrouve un produit du catalogue à partir d'un nom dicté (ex. « bacca mil 350 »), avec le prix applicable au client et le stock (en main pour un commercial, et en magasin).",
+    input_schema: { type: 'object', properties: { texte: { type: 'string' }, client_id: { type: 'string' } }, required: ['texte'] },
+  },
+  {
+    name: 'preparer_vente',
+    description: "PRÉPARE (sans l'enregistrer) une vente que l'utilisateur validera lui-même sur une fiche de confirmation. À n'utiliser que si l'utilisateur demande clairement d'enregistrer une vente, avec un client et des produits identifiés sans ambiguïté.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        client_id: { type: 'string' },
+        lignes: SCHEMA_LIGNES,
+        paiement: { type: 'string', enum: ['comptant', 'credit', 'partiel'], description: 'comptant = payé en totalité ; credit = rien payé ; partiel = acompte' },
+        mode_reglement: { type: 'string', enum: ['espece', 'mobile_money', 'cheque', 'virement'] },
+        montant_paye: { type: 'number', description: 'Seulement pour un paiement partiel' },
+        note: { type: 'string' },
+      },
+      required: ['client_id', 'lignes', 'paiement'],
+    },
+  },
+  {
+    name: 'preparer_commande',
+    description: "PRÉPARE (sans l'enregistrer) une commande client à livrer plus tard, que l'utilisateur validera sur une fiche de confirmation.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        client_id: { type: 'string' },
+        lignes: SCHEMA_LIGNES,
+        date_livraison: { type: 'string', description: 'AAAA-MM-JJ si une date est dictée' },
+        acompte: { type: 'number' },
+        note: { type: 'string' },
+      },
+      required: ['client_id', 'lignes'],
+    },
+  },
   {
     name: 'indicateurs',
     description: "Indicateurs clés du moment : date du jour, CA du jour et du mois, CA du mois précédent, créances totales et échues, nombre de produits en alerte de stock.",
@@ -114,12 +165,51 @@ Règles :
 - Réponds dans la langue de la question, de façon concise et concrète : chiffres clés d'abord, puis une courte analyse ou une recommandation utile.
 - Montants arrondis, avec séparateur de milliers et « F CFA ». Dates au format JJ/MM/AAAA.
 - Mise en forme simple : titres courts, listes à puces, **gras** pour les chiffres clés. Pas de tableau Markdown. Pas de jargon technique (ne parle pas d'« outils » ni de base de données).
+Assistant de saisie (ventes et commandes dictées, souvent par un commercial pressé sur le terrain) :
+- Retrouve TOUJOURS le client puis chaque produit avec les outils de recherche ; n'invente jamais un identifiant.
+- Si un client ou un produit est ambigu (plusieurs résultats proches) ou introuvable, pose UNE question courte en proposant les choix ; ne prépare rien.
+- Quantités : comprends les nombres dictés en lettres (« dix », « une douzaine » = 12, « un carton » seulement si le catalogue le précise, sinon demande).
+- Paiement non précisé pour une vente : considère « comptant » en espèces et dis-le dans ta réponse.
+- Une vente part du stock en main du commercial s'il est commercial ; signale un stock en main insuffisant.
+- Dès que tout est clair, appelle preparer_vente ou preparer_commande : une fiche de confirmation s'affiche à l'utilisateur, qui seul peut valider. Réponds alors en UNE phrase courte récapitulant (client, nombre d'articles, total approximatif) et invite à vérifier puis valider. Ne dis jamais que c'est déjà enregistré.
 Assistance technique (questions « comment faire… ? », « pourquoi je ne peux pas… ? ») :
 - Appuie-toi UNIQUEMENT sur les extraits du guide d'utilisation ci-dessous ; donne le chemin dans les menus et les étapes, simplement.
 - Si le guide ne couvre pas la question, dis-le franchement et conseille de contacter l'administrateur de l'entreprise ou le support DistribPro ; n'invente pas de fonctionnalité.
 - Certaines actions dépendent du rôle : si l'utilisateur ne voit pas un bouton, explique que c'est peut-être réservé à un autre rôle (rôle actuel : ${profil.role}).
 ${pageCourante ? `Page consultée juste avant : ${pageCourante}.` : ''}
 ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
+
+    // Brouillon de vente / commande : contrôlé ici (client et produits de
+    // l'entreprise, quantités), enrichi des noms et prix ; JAMAIS enregistré.
+    let actionPreparee: any = null
+    const preparerBrouillon = async (type: string, e: any) => {
+      const lignesDemandees = (Array.isArray(e.lignes) ? e.lignes : [])
+        .map((l: any) => ({ produit_id: String(l.produit_id || ''), quantite: Math.round(Number(l.quantite)) }))
+        .filter((l: any) => l.produit_id && l.quantite > 0)
+      if (!lignesDemandees.length) return { erreur: 'aucun article valide' }
+      const { data: client } = await supabaseUtilisateur.from('clients').select('id, nom').eq('id', e.client_id).maybeSingle()
+      if (!client) return { erreur: 'client introuvable : recherche-le d\'abord' }
+      const ids = [...new Set(lignesDemandees.map((l: any) => l.produit_id))]
+      const { data: produits } = await supabaseUtilisateur.from('produits').select('id, nom, prix_vente').in('id', ids)
+      const { data: tarifs } = await supabaseUtilisateur.from('tarifs_client').select('produit_id, prix_negocie').eq('client_id', client.id).in('produit_id', ids)
+      const prixClient = Object.fromEntries((tarifs || []).map((t: any) => [t.produit_id, Number(t.prix_negocie)]))
+      const lignes = []
+      for (const l of lignesDemandees) {
+        const p = (produits || []).find((x: any) => x.id === l.produit_id)
+        if (!p) return { erreur: `produit introuvable (${l.produit_id}) : recherche-le d'abord` }
+        lignes.push({ produit_id: p.id, nom: p.nom, quantite: l.quantite, prix_unitaire: prixClient[p.id] ?? Number(p.prix_vente) })
+      }
+      const totalHT = lignes.reduce((s, l) => s + l.quantite * l.prix_unitaire, 0)
+      return {
+        type, client: { id: client.id, nom: client.nom }, lignes,
+        paiement: type === 'vente' ? (['comptant', 'credit', 'partiel'].includes(e.paiement) ? e.paiement : 'comptant') : null,
+        mode_reglement: ['espece', 'mobile_money', 'cheque', 'virement'].includes(e.mode_reglement) ? e.mode_reglement : 'espece',
+        montant_paye: Number(e.montant_paye || e.acompte || 0) || null,
+        date_livraison: /^\d{4}-\d{2}-\d{2}$/.test(e.date_livraison || '') ? e.date_livraison : null,
+        note: String(e.note || '').slice(0, 300) || null,
+        resume: `${client.nom} — ${lignes.length} article(s) — environ ${Math.round(totalHT)} F CFA HT`,
+      }
+    }
 
     const executerOutil = async (nom: string, entree: any) => {
       const appel = async (fn: string, params: Record<string, unknown>) => {
@@ -132,6 +222,15 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
         case 'creances': return appel('ia_creances', { p_seulement_echues: !!entree.seulement_echues, p_limite: entree.limite || 20 })
         case 'stock': return appel('ia_stock', { p_alertes_seulement: !!entree.alertes_seulement, p_magasin: entree.magasin || null })
         case 'stock_commerciaux': return appel('ia_stock_commerciaux', {})
+        case 'rechercher_clients': return appel('assistant_rechercher_clients', { p_texte: String(entree.texte || '') })
+        case 'rechercher_produits': return appel('assistant_rechercher_produits', { p_texte: String(entree.texte || ''), p_client_id: entree.client_id || null })
+        case 'preparer_vente':
+        case 'preparer_commande': {
+          const brouillon = await preparerBrouillon(nom === 'preparer_vente' ? 'vente' : 'commande', entree)
+          if (brouillon.erreur) return brouillon
+          actionPreparee = brouillon
+          return { statut: 'fiche de confirmation affichée — en attente de validation par l\'utilisateur', resume: brouillon.resume }
+        }
         default: return { erreur: 'outil inconnu' }
       }
     }
@@ -139,7 +238,7 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
     const conversation: any[] = [...historique]
     const usageTotal = { input_tokens: 0, output_tokens: 0 }
     let texteFinal = ''
-    for (let tour = 0; tour < 6; tour++) {
+    for (let tour = 0; tour < 8; tour++) {
       const r = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
@@ -165,7 +264,10 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
     }
 
     await enregistrerConsommation(supabase, { entrepriseId: profil.entreprise_id, profilId: profil.id, usage: usageTotal })
-    return reponse({ reponse: texteFinal || "Je n'ai pas pu formuler de réponse. Pouvez-vous reformuler la question ?" })
+    return reponse({
+      reponse: texteFinal || "Je n'ai pas pu formuler de réponse. Pouvez-vous reformuler la question ?",
+      action: actionPreparee,
+    })
   } catch (e) {
     return reponse({ error: String((e as Error)?.message || e) }, 500)
   }

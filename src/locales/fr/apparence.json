@@ -44,5 +44,10 @@
     "envoi": "Envoi…",
     "retirer": "Retirer la photo",
     "erreur": "La photo n'a pas pu être enregistrée"
+  },
+  "bulle": {
+    "titre": "Assistant IA",
+    "afficher": "Afficher la bulle de l'assistant sur tous les écrans",
+    "aide": "La bulle ✨ en bas à droite donne accès à l'assistant (chiffres, aide, saisie dictée de ventes et commandes) depuis n'importe quelle page. Réglage propre à cet appareil ; l'assistant reste toujours accessible par le menu."
   }
 }

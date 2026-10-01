@@ -18,7 +18,9 @@
     "stock3": "Qu'ont en main les commerciaux ?",
     "aide1": "Comment enregistrer un avoir sur une vente ?",
     "aide2": "Comment clôturer la tournée d'un commercial ?",
-    "aide3": "Comment mettre mon logo sur les factures ?"
+    "aide3": "Comment mettre mon logo sur les factures ?",
+    "saisie1": "Vente à Boutique Exemple : 10 Bacca mil 350g et 5 Dêguê, payé cash",
+    "saisie2": "Commande pour Diakité Transitaire : 50 Bacca riz 350g, livraison vendredi"
   },
   "reflexion": "L'assistant consulte vos chiffres…",
   "placeholder": "Votre question…",
@@ -44,5 +46,58 @@
     "patience": "Cela prend généralement 20 à 40 secondes (analyse des chiffres et rédaction).",
     "periodeInvalide": "Période invalide.",
     "echec": "La présentation n'a pas pu être générée."
+  },
+  "voix": {
+    "astuce": "Appuyez sur le micro et dictez, par exemple : « Vente à Boutique Exemple, dix Bacca mil 350, payé cash ». Une fiche s'affiche : vous vérifiez, puis vous validez.",
+    "parler": "Dicter",
+    "arreter": "Arrêter la dictée",
+    "ecoute": "Je vous écoute…",
+    "activer": "Lire les réponses à voix haute",
+    "couper": "Couper la voix",
+    "microRefuse": "Micro refusé : autorisez le micro pour ce site dans le navigateur.",
+    "silence": "Je n'ai rien entendu. Appuyez sur le micro et parlez distinctement.",
+    "erreur": "La dictée a échoué (connexion ?). Vous pouvez taper votre demande."
+  },
+  "fiche": {
+    "venteAValider": "Vente à valider",
+    "commandeAValider": "Commande à valider",
+    "nonEnregistree": "Pas encore enregistrée",
+    "client": "Client",
+    "retirer": "Retirer",
+    "ht": "HT",
+    "taxes": "taxes",
+    "total": "Total TTC",
+    "comptant": "Payé comptant",
+    "partiel": "Payé en partie",
+    "credit": "À crédit",
+    "modes": {
+      "espece": "Espèces",
+      "mobile_money": "Mobile Money",
+      "cheque": "Chèque",
+      "virement": "Virement"
+    },
+    "montantPaye": "Montant payé maintenant",
+    "magasin": "— Magasin d'où part la marchandise —",
+    "stockTerrain": "Depuis votre stock en main",
+    "livraison": "Livraison souhaitée",
+    "acompte": "Acompte reçu",
+    "annuler": "Annuler",
+    "valider": "Valider",
+    "aucunArticle": "Aucun article.",
+    "choisirMagasin": "Choisissez le magasin.",
+    "montantPartiel": "Indiquez le montant payé.",
+    "noteAssistant": "Saisie par l'assistant IA (dictée)",
+    "venteEnregistree": "✅ Vente enregistrée pour {{client}} ({{total}}).",
+    "commandeEnregistree": "✅ Commande enregistrée pour {{client}} ({{total}}).",
+    "venteEnregistreeCourt": "Vente enregistrée",
+    "commandeEnregistreeCourt": "Commande enregistrée",
+    "annulee": "Saisie annulée — rien n'a été enregistré"
+  },
+  "bulle": {
+    "titre": "Assistant IA",
+    "sousTitre": "Chiffres, aide, saisie dictée",
+    "masquer": "Masquer la bulle",
+    "fermer": "Fermer",
+    "ouvrir": "Ouvrir l'assistant IA"
   }
 }

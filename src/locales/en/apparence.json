@@ -44,5 +44,10 @@
     "envoi": "Uploading…",
     "retirer": "Remove photo",
     "erreur": "The photo could not be saved"
+  },
+  "bulle": {
+    "titre": "AI assistant",
+    "afficher": "Show the assistant bubble on every screen",
+    "aide": "The ✨ bubble at the bottom right opens the assistant from any page. Setting specific to this device; the assistant remains in the menu."
   }
 }

@@ -18,7 +18,9 @@
     "stock3": "What do the sales reps have in hand?",
     "aide1": "How do I record a credit note on a sale?",
     "aide2": "How do I close a sales rep's round?",
-    "aide3": "How do I put my logo on invoices?"
+    "aide3": "How do I put my logo on invoices?",
+    "saisie1": "Sale to Boutique Exemple: 10 Bacca mil 350g and 5 Dêguê, paid cash",
+    "saisie2": "Order for Diakité Transitaire: 50 Bacca riz 350g, delivery Friday"
   },
   "reflexion": "The assistant is reading your figures…",
   "placeholder": "Your question…",
@@ -44,5 +46,58 @@
     "patience": "This usually takes 20 to 40 seconds.",
     "periodeInvalide": "Invalid period.",
     "echec": "The presentation could not be generated."
+  },
+  "voix": {
+    "astuce": "Tap the mic and dictate, e.g. “Sale to Boutique Exemple, ten Bacca mil 350, paid cash”. A card appears: check it, then confirm.",
+    "parler": "Dictate",
+    "arreter": "Stop dictation",
+    "ecoute": "Listening…",
+    "activer": "Read answers aloud",
+    "couper": "Mute",
+    "microRefuse": "Microphone blocked: allow it for this site in your browser.",
+    "silence": "I didn't hear anything. Tap the mic and speak clearly.",
+    "erreur": "Dictation failed (connection?). You can type your request."
+  },
+  "fiche": {
+    "venteAValider": "Sale to confirm",
+    "commandeAValider": "Order to confirm",
+    "nonEnregistree": "Not saved yet",
+    "client": "Customer",
+    "retirer": "Remove",
+    "ht": "Excl. tax",
+    "taxes": "taxes",
+    "total": "Total",
+    "comptant": "Paid in full",
+    "partiel": "Partly paid",
+    "credit": "On credit",
+    "modes": {
+      "espece": "Cash",
+      "mobile_money": "Mobile Money",
+      "cheque": "Cheque",
+      "virement": "Transfer"
+    },
+    "montantPaye": "Amount paid now",
+    "magasin": "— Warehouse the goods leave from —",
+    "stockTerrain": "From your stock in hand",
+    "livraison": "Requested delivery",
+    "acompte": "Deposit received",
+    "annuler": "Cancel",
+    "valider": "Confirm",
+    "aucunArticle": "No item.",
+    "choisirMagasin": "Choose the warehouse.",
+    "montantPartiel": "Enter the amount paid.",
+    "noteAssistant": "Entered by the AI assistant (dictation)",
+    "venteEnregistree": "✅ Sale saved for {{client}} ({{total}}).",
+    "commandeEnregistree": "✅ Order saved for {{client}} ({{total}}).",
+    "venteEnregistreeCourt": "Sale saved",
+    "commandeEnregistreeCourt": "Order saved",
+    "annulee": "Cancelled — nothing was saved"
+  },
+  "bulle": {
+    "titre": "AI assistant",
+    "sousTitre": "Figures, help, dictation",
+    "masquer": "Hide bubble",
+    "fermer": "Close",
+    "ouvrir": "Open the AI assistant"
   }
 }

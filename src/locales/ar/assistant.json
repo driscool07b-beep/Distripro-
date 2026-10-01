@@ -18,7 +18,9 @@
     "stock3": "ماذا بحوزة المندوبين؟",
     "aide1": "كيف أسجّل إشعارًا دائنًا على عملية بيع؟",
     "aide2": "كيف أُقفل جولة مندوب؟",
-    "aide3": "كيف أضع شعاري على الفواتير؟"
+    "aide3": "كيف أضع شعاري على الفواتير؟",
+    "saisie1": "بيع إلى Boutique Exemple: ‏10 Bacca mil 350g و5 Dêguê، مدفوع نقدًا",
+    "saisie2": "طلبية لـ Diakité Transitaire: ‏50 Bacca riz 350g، التسليم يوم الجمعة"
   },
   "reflexion": "المساعد يطّلع على أرقامك…",
   "placeholder": "سؤالك…",
@@ -44,5 +46,58 @@
     "patience": "يستغرق ذلك عادةً من 20 إلى 40 ثانية.",
     "periodeInvalide": "فترة غير صالحة.",
     "echec": "تعذّر إنشاء العرض."
+  },
+  "voix": {
+    "astuce": "اضغط على الميكروفون وأملِ طلبك، ثم تحقّق من البطاقة وأكّدها.",
+    "parler": "إملاء",
+    "arreter": "إيقاف الإملاء",
+    "ecoute": "أستمع إليك…",
+    "activer": "قراءة الإجابات بصوت عالٍ",
+    "couper": "كتم الصوت",
+    "microRefuse": "الميكروفون مرفوض: اسمح به لهذا الموقع في المتصفح.",
+    "silence": "لم أسمع شيئًا. اضغط على الميكروفون وتحدث بوضوح.",
+    "erreur": "فشل الإملاء (الاتصال؟). يمكنك كتابة طلبك."
+  },
+  "fiche": {
+    "venteAValider": "Sale to confirm",
+    "commandeAValider": "Order to confirm",
+    "nonEnregistree": "Not saved yet",
+    "client": "Customer",
+    "retirer": "Remove",
+    "ht": "Excl. tax",
+    "taxes": "taxes",
+    "total": "Total",
+    "comptant": "Paid in full",
+    "partiel": "Partly paid",
+    "credit": "On credit",
+    "modes": {
+      "espece": "Cash",
+      "mobile_money": "Mobile Money",
+      "cheque": "Cheque",
+      "virement": "Transfer"
+    },
+    "montantPaye": "Amount paid now",
+    "magasin": "— Warehouse the goods leave from —",
+    "stockTerrain": "From your stock in hand",
+    "livraison": "Requested delivery",
+    "acompte": "Deposit received",
+    "annuler": "Cancel",
+    "valider": "Confirm",
+    "aucunArticle": "No item.",
+    "choisirMagasin": "Choose the warehouse.",
+    "montantPartiel": "Enter the amount paid.",
+    "noteAssistant": "Entered by the AI assistant (dictation)",
+    "venteEnregistree": "✅ Sale saved for {{client}} ({{total}}).",
+    "commandeEnregistree": "✅ Order saved for {{client}} ({{total}}).",
+    "venteEnregistreeCourt": "Sale saved",
+    "commandeEnregistreeCourt": "Order saved",
+    "annulee": "Cancelled — nothing was saved"
+  },
+  "bulle": {
+    "titre": "المساعد الذكي",
+    "sousTitre": "أرقام، مساعدة، إملاء",
+    "masquer": "إخفاء الفقاعة",
+    "fermer": "إغلاق",
+    "ouvrir": "فتح المساعد الذكي"
   }
 }

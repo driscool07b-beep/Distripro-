@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CLE_BULLE, bulleMasquee } from '../components/BulleAssistant'
 import { supabase } from '../lib/supabase'
 import Avatar, { preparerPhotoProfil } from '../components/Avatar'
 import { infobullesActives, definirInfobulles } from '../components/InfobullesAide'
@@ -108,6 +109,8 @@ export default function Apparence() {
     <div className="p-4 max-w-xl mx-auto">
       <h1 className="text-xl font-bold mb-1">{t('titre')}</h1>
       <p className="text-sm text-petrol-500 mb-6">{t('sousTitre')}</p>
+
+      <ReglageBulle />
 
       <div className="card p-4 mb-4">
         <h2 className="font-semibold mb-1">{t('couleurs.titre')}</h2>
@@ -230,6 +233,28 @@ export default function Apparence() {
         {enregistrement ? t('enregistrement') : t('enregistrer')}
       </button>
       {confirmation && <p className="text-sm text-green-600 mt-2 text-center">{t('enregistre')}</p>}
+    </div>
+  )
+}
+
+// Affichage de la bulle de l'assistant IA (réglage propre à cet appareil).
+function ReglageBulle() {
+  const { t } = useTranslation('apparence')
+  const { profil } = useAuth()
+  const [visible, setVisible] = useState(() => !bulleMasquee())
+  if (profil?.ia_active === false) return null
+  return (
+    <div className="card p-4 mb-4">
+      <h2 className="font-semibold mb-1">✨ {t('bulle.titre')}</h2>
+      <label className="flex items-start gap-2 text-sm">
+        <input type="checkbox" className="mt-0.5" checked={visible} onChange={(e) => {
+          const v = e.target.checked
+          setVisible(v)
+          try { localStorage.setItem(CLE_BULLE, v ? 'visible' : 'masquee') } catch { /* ignore */ }
+          window.dispatchEvent(new Event('distribpro-bulle-changee'))
+        }} />
+        <span>{t('bulle.afficher')}<span className="block text-xs text-petrol-500">{t('bulle.aide')}</span></span>
+      </label>
     </div>
   )
 }

@@ -540,6 +540,14 @@
         {
           "q": "Que peut faire l'assistant IA ?",
           "r": "Menu « Assistant IA » : posez vos questions en langage courant (« Quel est mon CA ce mois-ci par rapport au mois dernier ? », « Quels clients sont en retard de paiement ? »). L'assistant consulte vos vraies données, dans la limite de vos droits, et n'invente jamais un chiffre."
+        },
+        {
+          "q": "Comment enregistrer une vente ou une commande en la dictant ?",
+          "r": "Ouvrez l'assistant (bulle ✨ en bas à droite, ou menu Assistant IA), appuyez sur le micro 🎤 et dictez, par exemple : « Vente à Boutique Exemple, dix Bacca mil 350 et cinq Dêguê, payé cash » ou « Commande pour Diakité Transitaire, cinquante Bacca riz 350, livraison vendredi ». L'assistant retrouve le client et les produits, applique le tarif du client et prépare une fiche : rien n'est enregistré tant que vous n'avez pas appuyé sur « Valider ». Vous pouvez corriger les quantités, retirer un article, changer le mode de paiement. En cas de doute (deux clients au nom proche), l'assistant vous pose la question. Un commercial vend depuis son stock en main. La dictée fonctionne au mieux avec Chrome et une connexion Internet ; vous pouvez aussi taper votre demande."
+        },
+        {
+          "q": "Comment masquer ou réafficher la bulle de l'assistant ?",
+          "r": "Dans la bulle ouverte : « Masquer la bulle ». Pour la réafficher : Apparence → Assistant IA → « Afficher la bulle de l'assistant sur tous les écrans ». L'assistant reste toujours accessible par le menu « Assistant IA ». Le bouton 🔈/🔊 active ou coupe la lecture des réponses à voix haute."
         }
       ]
     },

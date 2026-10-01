@@ -18,7 +18,9 @@
     "stock3": "销售员手上有什么？",
     "aide1": "如何为销售开具红字发票？",
     "aide2": "如何结束销售员的行程？",
-    "aide3": "如何在发票上放置我的标志？"
+    "aide3": "如何在发票上放置我的标志？",
+    "saisie1": "销售给 Boutique Exemple：10 个 Bacca mil 350g 和 5 个 Dêguê，现金付款",
+    "saisie2": "Diakité Transitaire 订单：50 个 Bacca riz 350g，周五送货"
   },
   "reflexion": "助手正在查阅您的数据…",
   "placeholder": "您的问题…",
@@ -44,5 +46,58 @@
     "patience": "通常需要 20 至 40 秒。",
     "periodeInvalide": "期间无效。",
     "echec": "无法生成演示文稿。"
+  },
+  "voix": {
+    "astuce": "点击麦克风口述需求，然后核对卡片并确认。",
+    "parler": "口述",
+    "arreter": "停止口述",
+    "ecoute": "正在聆听…",
+    "activer": "朗读回答",
+    "couper": "静音",
+    "microRefuse": "麦克风被拒绝：请在浏览器中允许本网站使用麦克风。",
+    "silence": "没有听到声音。请点击麦克风并清楚说话。",
+    "erreur": "口述失败（网络？）。您可以输入文字。"
+  },
+  "fiche": {
+    "venteAValider": "Sale to confirm",
+    "commandeAValider": "Order to confirm",
+    "nonEnregistree": "Not saved yet",
+    "client": "Customer",
+    "retirer": "Remove",
+    "ht": "Excl. tax",
+    "taxes": "taxes",
+    "total": "Total",
+    "comptant": "Paid in full",
+    "partiel": "Partly paid",
+    "credit": "On credit",
+    "modes": {
+      "espece": "Cash",
+      "mobile_money": "Mobile Money",
+      "cheque": "Cheque",
+      "virement": "Transfer"
+    },
+    "montantPaye": "Amount paid now",
+    "magasin": "— Warehouse the goods leave from —",
+    "stockTerrain": "From your stock in hand",
+    "livraison": "Requested delivery",
+    "acompte": "Deposit received",
+    "annuler": "Cancel",
+    "valider": "Confirm",
+    "aucunArticle": "No item.",
+    "choisirMagasin": "Choose the warehouse.",
+    "montantPartiel": "Enter the amount paid.",
+    "noteAssistant": "Entered by the AI assistant (dictation)",
+    "venteEnregistree": "✅ Sale saved for {{client}} ({{total}}).",
+    "commandeEnregistree": "✅ Order saved for {{client}} ({{total}}).",
+    "venteEnregistreeCourt": "Sale saved",
+    "commandeEnregistreeCourt": "Order saved",
+    "annulee": "Cancelled — nothing was saved"
+  },
+  "bulle": {
+    "titre": "AI 助手",
+    "sousTitre": "数据、帮助、口述录入",
+    "masquer": "隐藏气泡",
+    "fermer": "关闭",
+    "ouvrir": "打开 AI 助手"
   }
 }
