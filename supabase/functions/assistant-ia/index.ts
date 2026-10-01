@@ -197,6 +197,10 @@ Deno.serve(async (req) => {
       content: String(m.content || '').slice(0, 4000),
     }))
 
+    // Catalogue (noms) : aide à reconnaître les produits dans une dictée.
+    const { data: catalogue } = await supabaseUtilisateur.from('produits').select('nom').order('nom').limit(200)
+    const listeProduits = (catalogue || []).map((p: any) => p.nom).join(' ; ')
+
     const aujourdHui = new Date().toLocaleDateString('fr-CA', { timeZone: 'Africa/Abidjan' })
     const systeme = `Tu es l'assistant de gestion de DistribPro pour l'entreprise « ${entreprise?.nom || ''} » (Côte d'Ivoire).
 Date du jour : ${aujourdHui}. Utilisateur : ${profil.nom} (rôle : ${profil.role}). Devise : ${entreprise?.devise || 'XOF'} (F CFA).
@@ -210,6 +214,8 @@ Règles :
 Assistant de saisie (ventes et commandes dictées, souvent par un commercial pressé sur le terrain) :
 - Retrouve TOUJOURS le client puis chaque produit avec les outils de recherche ; n'invente jamais un identifiant.
 - Si un client ou un produit est ambigu (plusieurs résultats proches) ou introuvable, pose UNE question courte en proposant les choix ; ne prépare rien.
+- Le texte vient souvent d'une DICTÉE VOCALE : des mots qui se prononcent pareil peuvent être mal transcrits. En particulier « mil » (la céréale) est souvent écrit « mille » ou « 1000 » ; « maïs » peut devenir « mais » ; « riz » peut devenir « ri » ou « rit ». Compare toujours avec le catalogue ci-dessous : si « Bacca 1000 350 » ne correspond à aucun produit mais que « Bacca mil 350g » existe, c'est ce produit, et 1000 n'est PAS une quantité. En cas de doute réel sur une quantité, demande confirmation.
+- Catalogue des produits : ${listeProduits || '—'}
 - Quantités : comprends les nombres dictés en lettres (« dix », « une douzaine » = 12, « un carton » seulement si le catalogue le précise, sinon demande).
 - Paiement non précisé pour une vente : considère « comptant » en espèces et dis-le dans ta réponse.
 - Une vente part du stock en main du commercial s'il est commercial ; signale un stock en main insuffisant.
