@@ -23,7 +23,7 @@
   "soldeBas": "Solde bas : pensez à recharger vos unités IA.",
   "conso30j": "Consommation sur 30 jours",
   "payerTitre": "Payer ou changer de formule, recharger des unités IA",
-  "payerTexte": "Le paiement en ligne (Mobile Money et carte) arrive bientôt. En attendant, contactez DistribPro pour régler votre abonnement ou acheter des unités IA : votre compte est mis à jour dès réception.",
+  "payerTexte": "Paiement sécurisé par CinetPay : Mobile Money (Orange, MTN, Moov, Wave) ou carte bancaire. Votre abonnement ou vos unités sont activés automatiquement dès la confirmation du paiement.",
   "mois": "mois",
   "ouAnnuel": "ou {{prix}} / an (-20 %)",
   "jusquA": "Jusqu'à {{n}} commerciaux",
@@ -43,5 +43,40 @@
     "rapport_activite": "Rapport PowerPoint",
     "analyse_ia": "Analyse IA",
     "planification_tournees": "Planification des tournées"
+  },
+  "cycleCourt": {
+    "mensuel": "Mensuel",
+    "annuel": "Annuel (-20 %)"
+  },
+  "an": "an",
+  "actuelle": "actuelle",
+  "choisir": "Choisir et payer",
+  "renouveler": "Renouveler",
+  "packsTitre": "Recharger des unités IA",
+  "unites": "unités",
+  "bonus": "{{n}} unités offertes",
+  "acheter": "Acheter",
+  "reservePaiement": "Le paiement est réservé à l'administrateur et au comptable.",
+  "securite": "Vous êtes redirigé vers la page de paiement sécurisée de CinetPay ; DistribPro ne voit jamais vos informations bancaires.",
+  "paiementImpossible": "Le paiement n'a pas pu être lancé.",
+  "retour": {
+    "reussi": "✅ Paiement confirmé : {{objet}} activé. Merci !",
+    "en_attente": "⏳ Paiement en cours de confirmation auprès de l'opérateur… (cette page se met à jour automatiquement)",
+    "echoue": "❌ Le paiement n'a pas abouti. Aucun montant n'a été débité ; vous pouvez réessayer."
+  },
+  "objets": {
+    "abonnement": "votre abonnement",
+    "unites": "vos unités IA"
+  },
+  "recu": {
+    "bouton": "Reçu",
+    "titre": "Reçu de paiement — abonnement DistribPro",
+    "client": "Client",
+    "date": "Date",
+    "objet": "Objet",
+    "periode": "Période",
+    "moyen": "Moyen de paiement",
+    "montant": "Montant",
+    "mention": "Reçu émis par DistribPro. Conservez-le comme justificatif de votre abonnement."
   }
 }

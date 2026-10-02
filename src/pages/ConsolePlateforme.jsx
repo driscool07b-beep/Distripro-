@@ -92,7 +92,11 @@ function FicheEntreprise({ e, formules, onFermer, onMaj }) {
   const [ia, setIa] = useState({ unites: '', type: 'achat', montant: '', motif: '' })
   const [msg, setMsg] = useState({})
 
-  const charger = () => supabase.rpc('plateforme_fiche_entreprise', { p_entreprise_id: e.id }).then(({ data }) => setFiche(data))
+  const [enLigne, setEnLigne] = useState([])
+  const charger = () => {
+    supabase.rpc('plateforme_fiche_entreprise', { p_entreprise_id: e.id }).then(({ data }) => setFiche(data))
+    supabase.rpc('plateforme_paiements_en_ligne', { p_entreprise_id: e.id }).then(({ data }) => setEnLigne(data || []))
+  }
   useEffect(() => { charger() }, [e.id])
 
   // Fin de période proposée selon le cycle.
@@ -235,6 +239,18 @@ function FicheEntreprise({ e, formules, onFermer, onMaj }) {
         </section>
 
         <section className="card p-3">
+          <h3 className="font-semibold text-sm mb-2">Paiements en ligne (CinetPay)</h3>
+          <div className="text-xs space-y-0.5">
+            {enLigne.length === 0 ? <p className="text-petrol-400">Aucun paiement en ligne.</p> : enLigne.map((p) => (
+              <p key={p.id} className="flex justify-between gap-2 border-b border-line py-0.5">
+                <span>{formatDateHeure(p.created_at)} · {p.objet === 'unites' ? `pack ${p.pack_code} (${nb(p.unites)} u.)` : `${p.plan_code} ${p.cycle}`} · {p.moyen || '—'} · <span className={p.statut === 'reussi' ? 'text-emerald-700' : p.statut === 'initie' ? 'text-sky-700' : 'text-red-700'}>{p.statut}</span></span>
+                <span className="font-mono">{formatXOF(p.montant)}</span>
+              </p>
+            ))}
+          </div>
+        </section>
+
+        <section className="card p-3">
           <h3 className="font-semibold text-sm mb-2">Historique des interventions</h3>
           <div className="text-xs space-y-1">
             {(fiche?.journal || []).length === 0 ? <p className="text-petrol-400">Aucune intervention.</p> : fiche.journal.map((j, i) => (
@@ -365,6 +381,13 @@ function UnitesIA() {
     const { error } = await supabase.rpc('plateforme_modifier_parametre', { p_cle: p.cle, p_valeur: Number(p.v) })
     setMsg({ [p.cle]: error ? { erreur: traduireErreur(error.message) } : { ok: 'Enregistré.' } })
   }
+  const [packs, setPacks] = useState([])
+  useEffect(() => { supabase.from('ia_packs').select('*').order('ordre').then(({ data }) => setPacks(data || [])) }, [])
+  async function enregistrerPack(p) {
+    const { error } = await supabase.rpc('plateforme_modifier_pack', { p_code: p.code, p_nom: p.nom, p_unites: Number(p.unites), p_prix: Number(p.prix), p_actif: p.actif })
+    setMsg({ [`pack-${p.code}`]: error ? { erreur: traduireErreur(error.message) } : { ok: 'Enregistré.' } })
+  }
+  const majPack = (code, cle, v) => setPacks(packs.map((p) => (p.code === code ? { ...p, [cle]: v } : p)))
   const taux = Number(params.find((p) => p.cle === 'taux_usd_fcfa')?.v || 620)
   const coef = Number(params.find((p) => p.cle === 'coefficient_marge_ia')?.v || 3)
   return (
@@ -384,6 +407,20 @@ function UnitesIA() {
               <button className="btn-primary text-xs" onClick={() => enregistrer(p)}>OK</button>
             </div>
             <Message {...(msg[p.cle] || {})} />
+          </div>
+        ))}
+      </div>
+      <h3 className="text-sm font-semibold pt-2">Packs proposés aux clients (paiement en ligne)</h3>
+      <div className="grid md:grid-cols-3 gap-3">
+        {packs.map((p) => (
+          <div key={p.code} className="card p-3 space-y-1.5">
+            <p className="text-[11px] uppercase text-petrol-500">{p.code}</p>
+            <input className="input-field !py-1.5 text-sm" value={p.nom} onChange={(x) => majPack(p.code, 'nom', x.target.value)} />
+            <label className="text-xs block">Unités<input type="number" className="input-field !py-1.5 text-sm" value={p.unites} onChange={(x) => majPack(p.code, 'unites', x.target.value)} /></label>
+            <label className="text-xs block">Prix (F CFA, multiple de 5)<input type="number" step="5" className="input-field !py-1.5 text-sm" value={p.prix} onChange={(x) => majPack(p.code, 'prix', x.target.value)} /></label>
+            <label className="text-xs flex items-center gap-2"><input type="checkbox" checked={p.actif} onChange={(x) => majPack(p.code, 'actif', x.target.checked)} /> Proposé</label>
+            <button className="btn-primary text-xs" onClick={() => enregistrerPack(p)}>Enregistrer</button>
+            <Message {...(msg[`pack-${p.code}`] || {})} />
           </div>
         ))}
       </div>

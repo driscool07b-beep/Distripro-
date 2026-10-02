@@ -23,7 +23,7 @@
   "soldeBas": "Low balance: remember to top up your AI units.",
   "conso30j": "Usage over 30 days",
   "payerTitre": "Pay, change plan or top up AI units",
-  "payerTexte": "Online payment (Mobile Money and card) is coming soon. Meanwhile, contact DistribPro to pay or buy AI units: your account is updated on receipt.",
+  "payerTexte": "Secure payment by CinetPay: Mobile Money or card. Your subscription or units are activated automatically once payment is confirmed.",
   "mois": "month",
   "ouAnnuel": "or {{prix}} / year (-20%)",
   "jusquA": "Up to {{n}} sales reps",
@@ -43,5 +43,40 @@
     "rapport_activite": "PowerPoint report",
     "analyse_ia": "AI analysis",
     "planification_tournees": "Round planning"
+  },
+  "cycleCourt": {
+    "mensuel": "Monthly",
+    "annuel": "Annual (-20%)"
+  },
+  "an": "year",
+  "actuelle": "current",
+  "choisir": "Choose and pay",
+  "renouveler": "Renew",
+  "packsTitre": "Top up AI units",
+  "unites": "units",
+  "bonus": "{{n}} free units",
+  "acheter": "Buy",
+  "reservePaiement": "Payment is reserved to the administrator and accountant.",
+  "securite": "You are redirected to CinetPay's secure payment page; DistribPro never sees your banking details.",
+  "paiementImpossible": "The payment could not be started.",
+  "retour": {
+    "reussi": "✅ Payment confirmed: {{objet}} activated. Thank you!",
+    "en_attente": "⏳ Payment being confirmed by the operator… (this page updates automatically)",
+    "echoue": "❌ The payment did not go through. Nothing was charged; you can try again."
+  },
+  "objets": {
+    "abonnement": "your subscription",
+    "unites": "your AI units"
+  },
+  "recu": {
+    "bouton": "Receipt",
+    "titre": "Payment receipt — DistribPro subscription",
+    "client": "Customer",
+    "date": "Date",
+    "objet": "Item",
+    "periode": "Period",
+    "moyen": "Payment method",
+    "montant": "Amount",
+    "mention": "Receipt issued by DistribPro. Keep it as proof of your subscription."
   }
 }
