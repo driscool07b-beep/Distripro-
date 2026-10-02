@@ -30,6 +30,8 @@ const MOTIFS = [
 
 export function traduireErreur(message) {
   if (!message) return 'Erreur inconnue.'
+  // Préfixe technique retiré : le message français qui le suit est déjà clair.
+  message = String(message).replace(/^.*?quota_commerciaux_atteint:\s*/i, '')
   for (const [motif, traduction] of MOTIFS) {
     if (motif.test(message)) return traduction
   }

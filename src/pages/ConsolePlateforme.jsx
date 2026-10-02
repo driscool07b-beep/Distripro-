@@ -11,7 +11,7 @@ import { traduireErreur } from '../lib/erreurs'
 
 const ONGLETS = [
   ['bord', '📊 Tableau de bord'], ['entreprises', '🏢 Entreprises'], ['formules', '💳 Formules'],
-  ['ia', '✨ Unités IA'], ['annonces', '📣 Annonces'], ['journal', '📜 Journal'],
+  ['ia', '⚙️ Paramètres'], ['annonces', '📣 Annonces'], ['journal', '📜 Journal'],
 ]
 const STATUTS = { actif: ['Actif', 'bg-emerald-100 text-emerald-800'], essai: ['Essai', 'bg-sky-100 text-sky-800'], suspendu: ['Suspendu', 'bg-red-100 text-red-700'] }
 const aujourdhui = () => new Date().toISOString().slice(0, 10)
@@ -93,6 +93,8 @@ function FicheEntreprise({ e, formules, onFermer, onMaj }) {
   const [msg, setMsg] = useState({})
 
   const [enLigne, setEnLigne] = useState([])
+  const [lectureSeule, setLectureSeule] = useState(null)
+  useEffect(() => { supabase.rpc('plateforme_lecture_seule_etat', { p_entreprise_id: e.id }).then(({ data }) => setLectureSeule(!!data)) }, [e.id])
   const charger = () => {
     supabase.rpc('plateforme_fiche_entreprise', { p_entreprise_id: e.id }).then(({ data }) => setFiche(data))
     supabase.rpc('plateforme_paiements_en_ligne', { p_entreprise_id: e.id }).then(({ data }) => setEnLigne(data || []))
@@ -164,6 +166,17 @@ function FicheEntreprise({ e, formules, onFermer, onMaj }) {
               : <button className="text-xs text-emerald-700 underline" onClick={() => setAbo({ ...abo, statut: 'actif', motif: abo.motif || 'Réactivation' })}>Préparer une réactivation</button>}
           </div>
           <Message {...(msg.abo || {})} />
+          <div className="flex flex-wrap items-center gap-2 border-t border-line pt-2">
+            <span className="text-xs">Lecture seule : <strong className={lectureSeule ? 'text-red-700' : 'text-emerald-700'}>{lectureSeule == null ? '…' : lectureSeule ? 'active' : 'non'}</strong></span>
+            <button className="btn-secondary text-xs" onClick={async () => {
+              const motif = window.prompt(lectureSeule ? 'Motif de la levée de la lecture seule :' : 'Motif de la mise en lecture seule :')
+              if (!motif) return
+              const { error } = await supabase.rpc('plateforme_lecture_seule', { p_entreprise_id: e.id, p_active: !lectureSeule, p_motif: motif })
+              if (error) { setMsg({ abo: { erreur: traduireErreur(error.message) } }); return }
+              setLectureSeule(!lectureSeule)
+              charger()
+            }}>{lectureSeule ? 'Lever la lecture seule' : 'Mettre en lecture seule'}</button>
+          </div>
         </section>
 
         <section className="card p-3 space-y-2">
@@ -396,6 +409,10 @@ function UnitesIA() {
         <p><strong>Principe :</strong> 1 unité IA = 1 F CFA de valeur pour le client. Chaque appel d'IA débite le porte-monnaie de l'entreprise : coût réel (USD) × taux de change × coefficient de marge.</p>
         <p className="text-petrol-600">Exemple : une question à l'assistant coûtant 0,01 $ débite {Math.ceil(0.01 * taux * coef)} unités ({Math.ceil(0.01 * taux * coef)} F CFA), pour un coût réel d'environ {Math.round(0.01 * taux)} F CFA.</p>
         <p className="text-petrol-600">À zéro, l'IA est bloquée pour l'entreprise (le rapport PowerPoint est alors produit sans commentaires).</p>
+      </div>
+      <div className="card p-3 text-sm space-y-1">
+        <p><strong>Impayés et rappels :</strong> chaque jour à 8 h, les rappels sont envoyés aux administrateurs (fin d'essai et échéance à J-7, J-3, J-1 ; impayé à J+1, J+7, J+14 ; unités IA basses ou épuisées).</p>
+        <p className="text-petrol-600">Si <em>lecture_seule_auto</em> = 1 : lecture seule après <em>jours_grace</em> jours d'impayé ou d'essai expiré. Si <em>suspension_auto</em> = 1 : suspension après <em>jours_avant_suspension</em> jours. Les deux sont désactivées (0) par défaut. Levée automatique dès le paiement.</p>
       </div>
       <div className="grid md:grid-cols-2 gap-3">
         {params.map((p) => (

@@ -11,6 +11,7 @@ import NavigationClavier, { BoutonRetour } from './NavigationClavier'
 import RechercheGlobale from './RechercheGlobale'
 import BulleAssistant from './BulleAssistant'
 import BandeauAnnonces from './BandeauAnnonces'
+import BandeauAbonnement from './BandeauAbonnement'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { compterReconciliationsATraiter } from '../lib/reconciliationsATraiter'
 import { ROLES_PAGES } from '../lib/accesRole'
@@ -525,6 +526,7 @@ export default function Layout() {
             </div>
           )}
           <BandeauHorsLigne />
+          <BandeauAbonnement />
           <BandeauAnnonces />
           <Outlet />
         </main>

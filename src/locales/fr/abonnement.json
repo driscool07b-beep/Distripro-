@@ -78,5 +78,15 @@
     "moyen": "Moyen de paiement",
     "montant": "Montant",
     "mention": "Reçu émis par DistribPro. Conservez-le comme justificatif de votre abonnement."
+  },
+  "bandeau": {
+    "lien": "Mon abonnement",
+    "lectureSeule": "Votre espace est en lecture seule : l'abonnement est à régulariser. Vos données sont conservées ; tout redevient modifiable dès le paiement.",
+    "lectureSeuleMembre": "L'espace de votre entreprise est temporairement en lecture seule (abonnement à régulariser par votre administrateur).",
+    "essaiExpire": "Votre période d'essai est terminée : choisissez une formule pour continuer à utiliser DistribPro.",
+    "essaiAujourdhui": "Votre période d'essai se termine aujourd'hui.",
+    "essaiBientot_one": "Votre période d'essai se termine dans {{count}} jour.",
+    "essaiBientot_other": "Votre période d'essai se termine dans {{count}} jours.",
+    "iaEpuisee": "Vos unités IA sont épuisées : l'assistant et les fonctions IA sont en pause."
   }
 }

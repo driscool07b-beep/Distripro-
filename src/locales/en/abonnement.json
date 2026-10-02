@@ -78,5 +78,15 @@
     "moyen": "Payment method",
     "montant": "Amount",
     "mention": "Receipt issued by DistribPro. Keep it as proof of your subscription."
+  },
+  "bandeau": {
+    "lien": "My subscription",
+    "lectureSeule": "Your workspace is read-only: the subscription needs to be settled. Your data is kept; everything is editable again once paid.",
+    "lectureSeuleMembre": "Your company's workspace is temporarily read-only (subscription to be settled by your administrator).",
+    "essaiExpire": "Your trial has ended: choose a plan to keep using DistribPro.",
+    "essaiAujourdhui": "Your trial ends today.",
+    "essaiBientot_one": "Your trial ends in {{count}} day.",
+    "essaiBientot_other": "Your trial ends in {{count}} days.",
+    "iaEpuisee": "Your AI units are exhausted: the assistant and AI features are paused."
   }
 }

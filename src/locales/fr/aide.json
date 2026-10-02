@@ -569,6 +569,10 @@
         {
           "q": "Où voir mon abonnement et mes unités IA ?",
           "r": "Menu « Mon abonnement » (administrateur, manager, comptable) : votre formule, la fin de l'essai ou la prochaine échéance, le nombre de commerciaux autorisés, le solde de vos unités IA (1 unité = 1 F CFA, décomptée à chaque utilisation de l'IA : assistant, rapport PowerPoint, analyse, planification des tournées), l'historique et vos paiements. À zéro, les fonctions IA sont bloquées jusqu'à la recharge. Pour payer : choisissez Mensuel ou Annuel, puis « Choisir et payer » sur la formule voulue ; pour les unités IA, « Acheter » sur un pack. Le paiement se fait sur la page sécurisée de CinetPay (Mobile Money ou carte), et votre abonnement ou vos unités sont activés automatiquement dès la confirmation. Un reçu PDF est disponible pour chaque paiement réussi. Le paiement est réservé à l'administrateur et au comptable."
+        },
+        {
+          "q": "Que se passe-t-il à la fin de l'essai ou en cas d'impayé ?",
+          "r": "Vous recevez des rappels par email (fin d'essai et échéance à 7, 3 et 1 jour ; puis après l'échéance), et un bandeau s'affiche dans l'app. Sans régularisation, votre espace peut passer en lecture seule (consultation possible, aucune modification), puis être suspendu. Vos données sont toujours conservées, et tout redevient modifiable dès le paiement, depuis « Mon abonnement ». Le nombre de commerciaux actifs est limité par votre formule : pour en ajouter, passez à la formule supérieure."
         }
       ]
     }
