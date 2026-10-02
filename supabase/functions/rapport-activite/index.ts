@@ -369,7 +369,12 @@ async function consommation(supabase: any, entrepriseId: string, profilId: strin
   } catch (_) { /* jamais bloquant */ }
 }
 
-async function genererFichier(donnees: any, entreprise: any, anthropicKey: string | undefined) {
+async function genererFichier(donnees: any, entreprise: any, anthropicKey: string | undefined, supabase?: any, entrepriseId?: string) {
+  // Porte-monnaie d'unités IA épuisé : rapport produit sans les commentaires de l'IA.
+  if (supabase && entrepriseId) {
+    const { data: soldeIa } = await supabase.rpc('ia_solde_disponible', { p_entreprise_id: entrepriseId })
+    if (soldeIa != null && Number(soldeIa) <= 0) anthropicKey = undefined
+  }
   const { commentaires, usage } = await rediger(donnees, entreprise, anthropicKey)
   const pres = construireRapportPptx(PptxGen, donnees, commentaires, entreprise)
   const base64 = await pres.write({ outputType: 'base64' }) as string
@@ -455,7 +460,7 @@ Deno.serve(async (req) => {
 
           const { data: donnees, error } = await supabase.rpc('rapport_activite_donnees', { p_entreprise_id: e.id, p_debut: debut, p_fin: fin, p_commercial_id: null })
           if (error) throw error
-          const { base64, usage } = await genererFichier(donnees, { ...e, ...(await chargerLogo(supabaseUrl, e.logo_path)) }, anthropicKey)
+          const { base64, usage } = await genererFichier(donnees, { ...e, ...(await chargerLogo(supabaseUrl, e.logo_path)) }, anthropicKey, supabase, e.id)
           await consommation(supabase, e.id, null, usage)
           const fichier = nomFichier(e, debut, fin)
           const envoi = await fetch('https://api.resend.com/emails', {
@@ -501,7 +506,7 @@ Deno.serve(async (req) => {
     if (error) return reponse({ error: error.message }, 400)
     const { data: entreprise } = await supabase.from('entreprises').select('nom, devise, logo_path').eq('id', profil.entreprise_id).single()
     const avecLogo = { ...entreprise, ...(await chargerLogo(supabaseUrl, entreprise?.logo_path)) }
-    const { base64, usage } = await genererFichier(donnees, avecLogo, profil.ia_active === false ? undefined : anthropicKey)
+    const { base64, usage } = await genererFichier(donnees, avecLogo, profil.ia_active === false ? undefined : anthropicKey, supabase, profil.entreprise_id)
     await consommation(supabase, profil.entreprise_id, profil.id, usage)
     await supabase.from('rapports_activite').insert({ entreprise_id: profil.entreprise_id, periode_debut: debut, periode_fin: fin, type: 'manuel', succes: true, demande_par: profil.id })
     return reponse({ fichier: base64, nom: nomFichier(entreprise, debut, fin) })

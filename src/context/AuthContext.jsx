@@ -11,6 +11,7 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [profil, setProfil] = useState(null) // { id, nom, role, entreprise_id }
   const [entreprise, setEntreprise] = useState(null) // { id, nom, plan, statut }
+  const [estSuperAdmin, setEstSuperAdmin] = useState(null) // promoteur de la plateforme
   const [loading, setLoading] = useState(true)
   const [profilError, setProfilError] = useState('')
 
@@ -102,6 +103,7 @@ export function AuthProvider({ children }) {
     }
     setEntreprise(entrepriseData)
     definirDevise(entrepriseData.devise)
+    supabase.rpc('est_super_admin').then(({ data }) => setEstSuperAdmin(!!data))
 
     // Logo choisi à l'inscription (email à confirmer) : déposé maintenant.
     let cheminLogo = entrepriseData.logo_path
@@ -176,6 +178,7 @@ export function AuthProvider({ children }) {
     inscription,
     deconnexion,
     estConnecte: !!session,
+    estSuperAdmin,
     rechargerProfil: () => session?.user && chargerProfil(session.user.id),
   }
 

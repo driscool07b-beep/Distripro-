@@ -1,0 +1,47 @@
+{
+  "chargement": "Loading…",
+  "titre": "My subscription",
+  "sousTitre": "Your DistribPro plan, AI units and payments.",
+  "formule": "Plan",
+  "statuts": {
+    "actif": "Active subscription",
+    "essai": "Trial period",
+    "suspendu": "Subscription suspended"
+  },
+  "cycles": {
+    "mensuel": "monthly billing",
+    "annuel": "annual billing"
+  },
+  "finEssai": "Trial ends on {{date}}",
+  "essaiTermine": "Your trial ended on {{date}}: choose a plan to continue.",
+  "echeance": "Next due date: {{date}}",
+  "commerciaux": "Sales reps: {{n}} / {{max}}",
+  "quotaDepasse": "You exceed your plan's sales-rep limit: upgrade to the next plan.",
+  "unitesIa": "AI units",
+  "uniteValeur": "1 unit = 1 F CFA · deducted on each AI use",
+  "iaBloquee": "Balance exhausted: AI features are blocked. Top up to continue.",
+  "soldeBas": "Low balance: remember to top up your AI units.",
+  "conso30j": "Usage over 30 days",
+  "payerTitre": "Pay, change plan or top up AI units",
+  "payerTexte": "Online payment (Mobile Money and card) is coming soon. Meanwhile, contact DistribPro to pay or buy AI units: your account is updated on receipt.",
+  "mois": "month",
+  "ouAnnuel": "or {{prix}} / year (-20%)",
+  "jusquA": "Up to {{n}} sales reps",
+  "contact": "Contact: contact@distribpro.com",
+  "mouvementsIa": "AI unit history",
+  "paiements": "Subscription payments",
+  "aucunPaiement": "No payment recorded.",
+  "types": {
+    "achat": "Purchase",
+    "offert": "Free",
+    "consommation": "Usage",
+    "ajustement": "Adjustment",
+    "remboursement": "Refund"
+  },
+  "fonctions": {
+    "assistant_ia": "Assistant",
+    "rapport_activite": "PowerPoint report",
+    "analyse_ia": "AI analysis",
+    "planification_tournees": "Round planning"
+  }
+}

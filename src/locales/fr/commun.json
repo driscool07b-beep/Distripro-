@@ -33,7 +33,9 @@
     "planComptable": "Plan comptable",
     "notesUtilisation": "Notes d'utilisation",
     "reconciliations": "Réconciliations",
-    "assistant": "Assistant IA"
+    "assistant": "Assistant IA",
+    "abonnement": "Mon abonnement",
+    "plateforme": "Console plateforme"
   },
   "actions": {
     "annuler": "Annuler",

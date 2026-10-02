@@ -33,7 +33,9 @@
     "planComptable": "会计科目表",
     "notesUtilisation": "使用评分",
     "reconciliations": "对账",
-    "assistant": "AI 助手"
+    "assistant": "AI 助手",
+    "abonnement": "我的订阅",
+    "plateforme": "平台控制台"
   },
   "actions": {
     "annuler": "取消",

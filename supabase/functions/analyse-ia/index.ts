@@ -50,6 +50,9 @@ Deno.serve(async (req) => {
     }
 
     const entrepriseId = profil.entreprise_id
+    // Porte-monnaie d'unités IA : pas d'appel à l'IA si le solde est épuisé.
+    const { data: soldeIa } = await supabase.rpc('ia_solde_disponible', { p_entreprise_id: entrepriseId })
+    if (soldeIa != null && Number(soldeIa) <= 0) return reponseErreur("Crédit IA épuisé : rechargez vos unités IA (Paramètres → Mon abonnement) pour continuer à utiliser l'IA.", 402)
     const { data: entreprise } = await supabase.from('entreprises').select('nom').eq('id', entrepriseId).single()
 
     const maintenant = new Date()

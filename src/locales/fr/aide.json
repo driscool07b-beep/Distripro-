@@ -565,6 +565,10 @@
         {
           "q": "Comment mettre le logo de mon entreprise sur mes documents ?",
           "r": "Paramètres → Logo de l'entreprise (administrateur) : choisissez une image PNG (idéalement à fond transparent), JPEG ou WebP. Elle est redimensionnée automatiquement et apparaît en haut de toute la documentation : factures et FNE, reçus, bons de livraison, proformas, avoirs, bons de caisse, rapports d'inventaire, rapports PowerPoint et emails envoyés aux clients. Le logo peut aussi être ajouté dès la création de l'entreprise, et changé ou retiré à tout moment."
+        },
+        {
+          "q": "Où voir mon abonnement et mes unités IA ?",
+          "r": "Menu « Mon abonnement » (administrateur, manager, comptable) : votre formule, la fin de l'essai ou la prochaine échéance, le nombre de commerciaux autorisés, le solde de vos unités IA (1 unité = 1 F CFA, décomptée à chaque utilisation de l'IA : assistant, rapport PowerPoint, analyse, planification des tournées), l'historique et vos paiements. À zéro, les fonctions IA sont bloquées jusqu'à la recharge. Pour payer ou recharger, contactez DistribPro en attendant le paiement en ligne."
         }
       ]
     }

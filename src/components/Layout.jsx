@@ -10,6 +10,7 @@ import MiseAJour from './MiseAJour'
 import NavigationClavier, { BoutonRetour } from './NavigationClavier'
 import RechercheGlobale from './RechercheGlobale'
 import BulleAssistant from './BulleAssistant'
+import BandeauAnnonces from './BandeauAnnonces'
 import { compterEnAttenteParCaisse } from '../lib/caisseEnAttente'
 import { compterReconciliationsATraiter } from '../lib/reconciliationsATraiter'
 import { ROLES_PAGES } from '../lib/accesRole'
@@ -40,7 +41,7 @@ function navItems(t) {
 
 export default function Layout() {
   const { t } = useTranslation()
-  const { profil, entreprise, deconnexion, profilError } = useAuth()
+  const { profil, entreprise, deconnexion, profilError, estSuperAdmin } = useAuth()
   const [menuOuvert, setMenuOuvert] = useState(false)
   const [rechercheOuverte, setRechercheOuverte] = useState(false)
   useEffect(() => {
@@ -398,6 +399,38 @@ export default function Layout() {
               {t('menu.equipe')}
             </NavLink>
           )}
+          {['admin', 'manager', 'comptable'].includes(profil?.role) && (
+            <NavLink
+              to="/abonnement"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <span className="w-4 text-center shrink-0">💳</span>
+              {t('menu.abonnement')}
+            </NavLink>
+          )}
+          {estSuperAdmin && (
+            <NavLink
+              to="/plateforme"
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-500 text-petrol-950'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`
+              }
+            >
+              <span className="w-4 text-center shrink-0">🛰️</span>
+              {t('menu.plateforme')}
+            </NavLink>
+          )}
           {profil?.role === 'admin' && (
             <NavLink
               to="/parametres"
@@ -492,6 +525,7 @@ export default function Layout() {
             </div>
           )}
           <BandeauHorsLigne />
+          <BandeauAnnonces />
           <Outlet />
         </main>
       </div>

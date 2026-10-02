@@ -33,7 +33,9 @@
     "planComptable": "الدليل المحاسبي",
     "notesUtilisation": "درجات الاستخدام",
     "reconciliations": "المطابقات",
-    "assistant": "المساعد الذكي"
+    "assistant": "المساعد الذكي",
+    "abonnement": "اشتراكي",
+    "plateforme": "لوحة المنصة"
   },
   "actions": {
     "annuler": "إلغاء",

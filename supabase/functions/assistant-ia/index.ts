@@ -182,6 +182,9 @@ Deno.serve(async (req) => {
       .select('id, nom, role, entreprise_id, ia_active, actif').eq('id', userData.user.id).single()
     if (!profil || profil.actif === false) return reponse({ error: 'Compte inactif.' }, 403)
     if (profil.ia_active === false) return reponse({ error: 'Les fonctions IA sont désactivées pour votre compte.' }, 403)
+    // Porte-monnaie d'unités IA : pas d'appel à l'IA si le solde est épuisé.
+    const { data: soldeIa } = await supabase.rpc('ia_solde_disponible', { p_entreprise_id: profil.entreprise_id })
+    if (soldeIa != null && Number(soldeIa) <= 0) return reponse({ error: "Crédit IA épuisé : rechargez vos unités IA (Paramètres → Mon abonnement) pour continuer à utiliser l'IA." }, 402)
     const { data: entreprise } = await supabase.from('entreprises').select('nom, devise').eq('id', profil.entreprise_id).single()
 
     const { messages, aide, page } = await req.json()

@@ -33,7 +33,9 @@
     "planComptable": "Chart of accounts",
     "notesUtilisation": "Usage scores",
     "reconciliations": "Reconciliations",
-    "assistant": "AI assistant"
+    "assistant": "AI assistant",
+    "abonnement": "My subscription",
+    "plateforme": "Platform console"
   },
   "actions": {
     "annuler": "Cancel",

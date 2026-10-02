@@ -1,0 +1,47 @@
+{
+  "chargement": "Chargement…",
+  "titre": "Mon abonnement",
+  "sousTitre": "Votre formule DistribPro, vos unités IA et vos paiements.",
+  "formule": "Formule",
+  "statuts": {
+    "actif": "Abonnement actif",
+    "essai": "Période d'essai",
+    "suspendu": "Abonnement suspendu"
+  },
+  "cycles": {
+    "mensuel": "paiement mensuel",
+    "annuel": "paiement annuel"
+  },
+  "finEssai": "Fin de l'essai le {{date}}",
+  "essaiTermine": "Votre essai est terminé depuis le {{date}} : choisissez une formule pour continuer.",
+  "echeance": "Prochaine échéance : {{date}}",
+  "commerciaux": "Commerciaux : {{n}} / {{max}}",
+  "quotaDepasse": "Vous dépassez le nombre de commerciaux de votre formule : passez à la formule supérieure.",
+  "unitesIa": "Unités IA",
+  "uniteValeur": "1 unité = 1 F CFA · décomptées à chaque utilisation de l'IA",
+  "iaBloquee": "Solde épuisé : les fonctions IA sont bloquées. Rechargez vos unités pour continuer.",
+  "soldeBas": "Solde bas : pensez à recharger vos unités IA.",
+  "conso30j": "Consommation sur 30 jours",
+  "payerTitre": "Payer ou changer de formule, recharger des unités IA",
+  "payerTexte": "Le paiement en ligne (Mobile Money et carte) arrive bientôt. En attendant, contactez DistribPro pour régler votre abonnement ou acheter des unités IA : votre compte est mis à jour dès réception.",
+  "mois": "mois",
+  "ouAnnuel": "ou {{prix}} / an (-20 %)",
+  "jusquA": "Jusqu'à {{n}} commerciaux",
+  "contact": "Contact : contact@distribpro.com",
+  "mouvementsIa": "Historique des unités IA",
+  "paiements": "Paiements d'abonnement",
+  "aucunPaiement": "Aucun paiement enregistré.",
+  "types": {
+    "achat": "Achat",
+    "offert": "Offert",
+    "consommation": "Utilisation",
+    "ajustement": "Ajustement",
+    "remboursement": "Remboursement"
+  },
+  "fonctions": {
+    "assistant_ia": "Assistant",
+    "rapport_activite": "Rapport PowerPoint",
+    "analyse_ia": "Analyse IA",
+    "planification_tournees": "Planification des tournées"
+  }
+}
