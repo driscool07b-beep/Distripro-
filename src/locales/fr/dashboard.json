@@ -112,5 +112,48 @@
     "produitsEnAlerte": "Produits en alerte",
     "aucunProduitSeuil": "Aucun produit sous le seuil d'alerte."
   },
-  "rupture": "Rupture"
+  "rupture": "Rupture",
+  "premiersPas": {
+    "titre": "Premiers pas avec DistribPro",
+    "sousTitre": "{{faites}} étape(s) sur {{total}} — suivez le guide pour être opérationnel pendant votre essai.",
+    "masquer": "Masquer ce guide",
+    "etapes": {
+      "infos": {
+        "titre": "Renseigner votre entreprise",
+        "aide": "Adresse, téléphone, NCC, RCCM (Paramètres)"
+      },
+      "logo": {
+        "titre": "Ajouter votre logo",
+        "aide": "Il figurera sur vos factures et reçus"
+      },
+      "magasin": {
+        "titre": "Créer votre magasin",
+        "aide": "Votre dépôt ou point de vente"
+      },
+      "produits": {
+        "titre": "Créer vos produits",
+        "aide": "Un par un ou par import Excel"
+      },
+      "stock": {
+        "titre": "Saisir votre stock de départ",
+        "aide": "Quantités disponibles par magasin"
+      },
+      "clients": {
+        "titre": "Ajouter vos clients",
+        "aide": "Un par un ou par import Excel"
+      },
+      "equipe": {
+        "titre": "Inviter votre équipe",
+        "aide": "Commerciaux, comptable, gestionnaire de stock"
+      },
+      "vente": {
+        "titre": "Enregistrer une première vente",
+        "aide": "Reçu imprimable et envoi WhatsApp"
+      },
+      "assistant": {
+        "titre": "Essayer l'assistant IA",
+        "aide": "Dictez « Vente à… » ou posez une question"
+      }
+    }
+  }
 }

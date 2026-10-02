@@ -112,5 +112,48 @@
     "produitsEnAlerte": "警报产品",
     "aucunProduitSeuil": "没有产品低于警报阈值。"
   },
-  "rupture": "缺货"
+  "rupture": "缺货",
+  "premiersPas": {
+    "titre": "Getting started with DistribPro",
+    "sousTitre": "{{faites}} of {{total}} steps — follow the guide to be up and running during your trial.",
+    "masquer": "Hide this guide",
+    "etapes": {
+      "infos": {
+        "titre": "Fill in your company details",
+        "aide": "Address, phone, tax number (Settings)"
+      },
+      "logo": {
+        "titre": "Add your logo",
+        "aide": "It will appear on invoices and receipts"
+      },
+      "magasin": {
+        "titre": "Create your warehouse",
+        "aide": "Your depot or shop"
+      },
+      "produits": {
+        "titre": "Create your products",
+        "aide": "One by one or via Excel import"
+      },
+      "stock": {
+        "titre": "Enter your opening stock",
+        "aide": "Quantities per warehouse"
+      },
+      "clients": {
+        "titre": "Add your customers",
+        "aide": "One by one or via Excel import"
+      },
+      "equipe": {
+        "titre": "Invite your team",
+        "aide": "Sales reps, accountant, stock manager"
+      },
+      "vente": {
+        "titre": "Record a first sale",
+        "aide": "Printable receipt and WhatsApp sending"
+      },
+      "assistant": {
+        "titre": "Try the AI assistant",
+        "aide": "Dictate “Sale to…” or ask a question"
+      }
+    }
+  }
 }

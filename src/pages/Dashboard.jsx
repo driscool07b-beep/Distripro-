@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import PremiersPas from '../components/PremiersPas'
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -289,6 +290,8 @@ function DashboardEntreprise() {
         <h1 className="text-2xl font-semibold">{t('bonjour', { prenom: profil?.nom?.split(' ')[0] || '' })}</h1>
         <p className="text-sm text-petrol-700 mt-1">{t('entreprise.sousTitre')}</p>
       </header>
+
+      {['admin', 'manager'].includes(profil?.role) && <PremiersPas />}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
         <CarteKpi label={t('entreprise.ventesJour')} valeur={formatXOF(kpi.caJour)} accent to="/ventes?periode=jour" />
