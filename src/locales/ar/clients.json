@@ -77,13 +77,13 @@
     "compteManuel": "أدخل الرقم (مثل 41110023)",
     "compteAide": "حساب فرعي من 411 لقيود هذا العميل. يُرفض الرقم المستخدم مسبقًا.",
     "compteGroupe": "عضو في مجموعة: سيكون حسابه فرعيًا من {{compte}}.",
-    "ncc": "Customer tax number (NCC)",
-    "typeFne": "Customer type (FNE)",
-    "typeFneAuto": "Automatic (B2B if NCC, else B2C)",
-    "typeFneB2B": "B2B — company (NCC required)",
-    "typeFneB2C": "B2C — individual",
-    "typeFneB2G": "B2G — public administration",
-    "typeFneB2F": "B2F — international customer"
+    "ncc": "الرقم الضريبي للعميل (NCC)",
+    "typeFne": "نوع العميل (FNE)",
+    "typeFneAuto": "تلقائي (B2B إن وُجد NCC، وإلا B2C)",
+    "typeFneB2B": "B2B — شركة (NCC إلزامي)",
+    "typeFneB2C": "B2C — فرد",
+    "typeFneB2G": "B2G — إدارة عمومية",
+    "typeFneB2F": "B2F — عميل دولي"
   },
   "import": {
     "titre": "استيراد العملاء (Excel)",

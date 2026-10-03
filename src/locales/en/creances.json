@@ -55,7 +55,8 @@
     "banqueNonPrecisee": "Not specified",
     "referencePaiementLabel": "Cheque number / reference (optional)",
     "referenceChequePlaceholder": "Cheque no.",
-    "referenceVirementPlaceholder": "Transfer reference"
+    "referenceVirementPlaceholder": "Transfer reference",
+    "paiementRecu": "Payment"
   },
   "import": {
     "titre": "Import receivable balances",

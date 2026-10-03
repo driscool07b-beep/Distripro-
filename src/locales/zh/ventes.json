@@ -138,28 +138,28 @@
   "bureau": "办公室销售",
   "saisiPar": "录入人 {{nom}}",
   "fne": {
-    "produire": "Issue an FNE (DGI standardised invoice)",
-    "aideProduire": "The sale is certified by the DGI: official reference and QR code on the invoice. Untick for an internal receipt.",
-    "echecApresVente": "The sale is saved but FNE certification failed: {{message}}. Retry from the sale details.",
-    "stickersBas": "Warning: only {{n}} FNE electronic sticker(s) left.",
-    "echecAvoir": "The credit note is saved but its FNE certification failed: {{message}}",
-    "certifiee": "FNE-certified invoice (DGI)",
-    "verifier": "Verify on the DGI platform",
-    "avoir": "Cancelled by FNE credit note: {{ref}}",
-    "erreur": "FNE certification failed",
-    "nonCertifiee": "Not FNE-certified (internal receipt)",
-    "certifier": "Certify (FNE)",
-    "reessayer": "Retry certification",
-    "enCours": "Certifying…"
+    "produire": "开具 FNE（税务总局标准发票）",
+    "aideProduire": "销售将由税务总局认证：发票上有官方编号和二维码。取消勾选则为内部收据。",
+    "echecApresVente": "销售已保存，但 FNE 认证失败：{{message}}。请在销售详情中重试。",
+    "stickersBas": "注意：FNE 电子贴纸仅剩 {{n}} 张。",
+    "echecAvoir": "红字发票已保存，但 FNE 认证失败：{{message}}",
+    "certifiee": "已通过 FNE 认证的发票（税务总局）",
+    "verifier": "在税务总局平台核验",
+    "avoir": "已由 FNE 红字发票取消：{{ref}}",
+    "erreur": "FNE 认证失败",
+    "nonCertifiee": "未经 FNE 认证（内部收据）",
+    "certifier": "认证（FNE）",
+    "reessayer": "重试认证",
+    "enCours": "认证中…"
   },
   "envoi": {
     "email": "Email",
-    "confirmerEmail": "Send the document to:",
-    "emailEnvoye": "Document sent to {{email}}.",
-    "echecEmail": "The email could not be sent: {{message}}",
-    "numeroWhatsApp": "Customer's WhatsApp number:",
-    "numeroManquant": "Customer phone number missing.",
-    "echecWhatsApp": "The document link could not be prepared: {{message}}",
-    "messageWhatsApp": "Hello {{client}}, here is your document {{numero}} for {{montant}}. Thank you — {{entreprise}}. Link (valid 7 days):"
+    "confirmerEmail": "将单据发送至：",
+    "emailEnvoye": "单据已发送至 {{email}}。",
+    "echecEmail": "邮件发送失败：{{message}}",
+    "numeroWhatsApp": "客户的 WhatsApp 号码：",
+    "numeroManquant": "缺少客户电话号码。",
+    "echecWhatsApp": "无法生成单据链接：{{message}}",
+    "messageWhatsApp": "您好 {{client}}，这是您的单据 {{numero}}，金额 {{montant}}。感谢您的信任——{{entreprise}}。链接（7 天内有效）："
   }
 }

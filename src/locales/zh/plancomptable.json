@@ -1,0 +1,31 @@
+{
+  "titre": "会计科目表",
+  "sousTitre": "用于将资金分录导出到您的会计软件（Sage Saari、Ciel Compta…）——可加载 SYSCOHADA 初始科目表并与会计确认，或直接导入您自己的科目表。",
+  "accesRefuse": "此页面仅限管理层、经理和会计访问。",
+  "chargement": "加载中…",
+  "nouveauCompte": "+ 新增科目",
+  "chargerSyscohada": "加载 SYSCOHADA 初始科目表",
+  "confirmerSyscohada": "加载一组常用 SYSCOHADA 科目作为起点？之后可修改或添加。",
+  "importerFichier": "导入文件",
+  "telechargerModele": "下载模板",
+  "rechercherPlaceholder": "搜索科目号或名称…",
+  "aucunCompte": "尚未登记任何科目。",
+  "supprimer": "删除",
+  "confirmerSuppression": "从科目表中删除此科目？",
+  "numeroCompte": "科目号",
+  "libelleCompte": "科目名称",
+  "annuler": "取消",
+  "enregistrer": "保存",
+  "enCours": "保存中…",
+  "lignesImportees": "已导入或更新 {{n}} 个科目。",
+  "modele": {
+    "numeroCompte": "科目号",
+    "libelle": "科目名称"
+  },
+  "erreurs": {
+    "erreur": "错误",
+    "champsRequis": "科目号和名称为必填项。",
+    "aucuneLigne": "该文件中没有可用的行——请检查是否符合模板。",
+    "fichierIllisible": "无法读取该文件——请确认是 Excel 文件（.xlsx）。"
+  }
+}

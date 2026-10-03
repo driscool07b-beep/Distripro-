@@ -1,0 +1,16 @@
+{
+  "titre": "使用评分",
+  "sousTitre": "每月满分 100 分，依据外勤出勤、完整的拜访报告和缴款纪律——根据已记录的数据自动计算，不使用 AI，便于在有异议时解释。",
+  "accesRefuse": "此页面仅限管理层和经理访问。",
+  "chargement": "加载中…",
+  "mois": "月份",
+  "calculerLeMois": "计算本月评分",
+  "calculEnCours": "计算中…",
+  "exporterPdf": "导出 PDF",
+  "erreur": "错误",
+  "aucuneNote": "本月尚未计算评分——请点击“计算本月评分”。",
+  "assiduite": "出勤",
+  "rapports": "报告",
+  "versements": "缴款",
+  "nonApplicable": "不适用"
+}

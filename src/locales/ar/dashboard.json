@@ -114,45 +114,45 @@
   },
   "rupture": "نفاد",
   "premiersPas": {
-    "titre": "Getting started with DistribPro",
-    "sousTitre": "{{faites}} of {{total}} steps — follow the guide to be up and running during your trial.",
-    "masquer": "Hide this guide",
+    "titre": "الخطوات الأولى مع DistribPro",
+    "sousTitre": "{{faites}} من {{total}} خطوات — اتبع الدليل لتكون جاهزًا للعمل خلال الفترة التجريبية.",
+    "masquer": "إخفاء هذا الدليل",
     "etapes": {
       "infos": {
-        "titre": "Fill in your company details",
-        "aide": "Address, phone, tax number (Settings)"
+        "titre": "أدخل بيانات شركتك",
+        "aide": "العنوان، الهاتف، الرقم الضريبي (الإعدادات)"
       },
       "logo": {
-        "titre": "Add your logo",
-        "aide": "It will appear on invoices and receipts"
+        "titre": "أضف شعارك",
+        "aide": "سيظهر على فواتيرك وإيصالاتك"
       },
       "magasin": {
-        "titre": "Create your warehouse",
-        "aide": "Your depot or shop"
+        "titre": "أنشئ مخزنك",
+        "aide": "مستودعك أو نقطة البيع"
       },
       "produits": {
-        "titre": "Create your products",
-        "aide": "One by one or via Excel import"
+        "titre": "أنشئ منتجاتك",
+        "aide": "واحدًا تلو الآخر أو عبر استيراد Excel"
       },
       "stock": {
-        "titre": "Enter your opening stock",
-        "aide": "Quantities per warehouse"
+        "titre": "أدخل مخزونك الابتدائي",
+        "aide": "الكميات المتوفرة في كل مخزن"
       },
       "clients": {
-        "titre": "Add your customers",
-        "aide": "One by one or via Excel import"
+        "titre": "أضف عملاءك",
+        "aide": "واحدًا تلو الآخر أو عبر استيراد Excel"
       },
       "equipe": {
-        "titre": "Invite your team",
-        "aide": "Sales reps, accountant, stock manager"
+        "titre": "ادعُ فريقك",
+        "aide": "المندوبون، المحاسب، مسؤول المخزون"
       },
       "vente": {
-        "titre": "Record a first sale",
-        "aide": "Printable receipt and WhatsApp sending"
+        "titre": "سجّل أول عملية بيع",
+        "aide": "إيصال قابل للطباعة وإرسال عبر واتساب"
       },
       "assistant": {
-        "titre": "Try the AI assistant",
-        "aide": "Dictate “Sale to…” or ask a question"
+        "titre": "جرّب المساعد الذكي",
+        "aide": "أملِ «بيع إلى…» أو اطرح سؤالًا"
       }
     }
   }

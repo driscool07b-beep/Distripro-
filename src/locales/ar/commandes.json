@@ -112,12 +112,12 @@
   "imprimer": "طباعة",
   "envoi": {
     "email": "Email",
-    "confirmerEmail": "Send the proforma to:",
-    "emailEnvoye": "Proforma sent to {{email}}.",
-    "echecEmail": "The email could not be sent: {{message}}",
-    "numeroWhatsApp": "Customer's WhatsApp number:",
-    "numeroManquant": "Customer phone number missing.",
-    "echecWhatsApp": "The document link could not be prepared: {{message}}",
-    "messageWhatsApp": "Hello {{client}}, here is your proforma {{numero}} for {{montant}}. Thank you — {{entreprise}}. Link (valid 7 days):"
+    "confirmerEmail": "إرسال الفاتورة المبدئية إلى العنوان:",
+    "emailEnvoye": "تم إرسال الفاتورة المبدئية إلى {{email}}.",
+    "echecEmail": "تعذّر إرسال البريد: {{message}}",
+    "numeroWhatsApp": "رقم واتساب العميل:",
+    "numeroManquant": "رقم هاتف العميل غير موجود.",
+    "echecWhatsApp": "تعذّر تجهيز رابط المستند: {{message}}",
+    "messageWhatsApp": "مرحبًا {{client}}، إليك فاتورتك المبدئية {{numero}} بمبلغ {{montant}}. شكرًا لثقتك — {{entreprise}}. الرابط (صالح 7 أيام):"
   }
 }

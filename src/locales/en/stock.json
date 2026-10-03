@@ -50,7 +50,9 @@
     "tauxTva": "VAT rate (%)",
     "tauxTvaPlaceholder": "E.g. 18",
     "erreurTauxTva": "Enter the VAT rate.",
-    "erreurNomPrix": "Name and unit price are required."
+    "erreurNomPrix": "Name and unit price are required.",
+    "codeBarre": "Barcode (optional)",
+    "codeBarrePlaceholder": "Scan or enter the code"
   },
   "mouvement": {
     "titre": "Adjust stock",
@@ -83,7 +85,11 @@
     "erreurPlusieursDepots": "Multiple warehouses exist — this selection feature is coming soon, contact an administrator.",
     "etat": "Condition of goods",
     "prixAchat": "Unit purchase price",
-    "aideEndommage": "Goods will be stored in a 'damaged' batch, sold last and shown in the stock detail."
+    "aideEndommage": "Goods will be stored in a 'damaged' batch, sold last and shown in the stock detail.",
+    "numeroLot": "Batch number",
+    "numeroLotPlaceholder": "As printed by the manufacturer",
+    "datePeremption": "Expiry date",
+    "erreurNumeroLotObligatoire": "The batch number is required for your company."
   },
   "transfert": {
     "titre": "Transfer between warehouses",
@@ -216,5 +222,24 @@
     "sourceEntree": "entry of {{q}}",
     "sourceManuel": "set manually",
     "moyen": "average"
-  }
+  },
+  "lots": {
+    "bouton": "Batches",
+    "titre": "Batch traceability",
+    "rechercherPlaceholder": "Batch number…",
+    "rechercher": "Search",
+    "aucunLotTrouve": "No batch found with this number.",
+    "depot": "Warehouse",
+    "peremption": "Expiry",
+    "restant": "Remaining",
+    "livreA": "Delivered to {{n}} customer(s)",
+    "aucuneLivraison": "No delivery recorded for this batch yet.",
+    "aSurveillerTitre": "Batches to sell first",
+    "aSurveillerAide": "Sorted from most to least urgent (expiring within 30 days) — to be shipped before any other batch (FIFO).",
+    "aucunLotASurveiller": "No batch close to expiry for now.",
+    "perime": "expired {{j}} day(s) ago",
+    "expireDans": "expires in {{j}} day(s) ({{date}})"
+  },
+  "annuler": "Cancel",
+  "chargement": "Loading…"
 }

@@ -77,13 +77,13 @@
     "compteManuel": "输入编号（如 41110023）",
     "compteAide": "用于该客户分录的 411 子账户。已使用的编号将被拒绝。",
     "compteGroupe": "集团成员：其账户将为 {{compte}} 的子账户。",
-    "ncc": "Customer tax number (NCC)",
-    "typeFne": "Customer type (FNE)",
-    "typeFneAuto": "Automatic (B2B if NCC, else B2C)",
-    "typeFneB2B": "B2B — company (NCC required)",
-    "typeFneB2C": "B2C — individual",
-    "typeFneB2G": "B2G — public administration",
-    "typeFneB2F": "B2F — international customer"
+    "ncc": "客户税号（NCC）",
+    "typeFne": "客户类型（FNE）",
+    "typeFneAuto": "自动（有 NCC 为 B2B，否则为 B2C）",
+    "typeFneB2B": "B2B — 企业（须有 NCC）",
+    "typeFneB2C": "B2C — 个人",
+    "typeFneB2G": "B2G — 公共机构",
+    "typeFneB2F": "B2F — 国际客户"
   },
   "import": {
     "titre": "导入客户（Excel）",

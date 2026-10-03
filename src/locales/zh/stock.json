@@ -50,7 +50,9 @@
     "tauxTva": "税率（%）",
     "tauxTvaPlaceholder": "例如：18",
     "erreurTauxTva": "请输入税率。",
-    "erreurNomPrix": "名称和单价为必填项。"
+    "erreurNomPrix": "名称和单价为必填项。",
+    "codeBarre": "条形码（可选）",
+    "codeBarrePlaceholder": "扫描或输入条码"
   },
   "mouvement": {
     "titre": "调整库存",
@@ -83,7 +85,11 @@
     "erreurPlusieursDepots": "存在多个仓库 — 该选择功能即将推出，请联系管理员。",
     "etat": "货物状态",
     "prixAchat": "单位采购价",
-    "aideEndommage": "货物将记入“损坏”批次，最后销售，并显示在库存详情中。"
+    "aideEndommage": "货物将记入“损坏”批次，最后销售，并显示在库存详情中。",
+    "numeroLot": "批号",
+    "numeroLotPlaceholder": "按生产商标注填写",
+    "datePeremption": "保质期",
+    "erreurNumeroLotObligatoire": "贵公司要求必须填写批号。"
   },
   "transfert": {
     "titre": "仓库间调拨",
@@ -216,5 +222,24 @@
     "sourceEntree": "入库 {{q}}",
     "sourceManuel": "手动设置",
     "moyen": "平均"
-  }
+  },
+  "lots": {
+    "bouton": "批次",
+    "titre": "批次追溯",
+    "rechercherPlaceholder": "批号…",
+    "rechercher": "搜索",
+    "aucunLotTrouve": "未找到该批号。",
+    "depot": "仓库",
+    "peremption": "保质期",
+    "restant": "剩余",
+    "livreA": "已交付给 {{n}} 位客户",
+    "aucuneLivraison": "该批次暂无交付记录。",
+    "aSurveillerTitre": "应优先出货的批次",
+    "aSurveillerAide": "按紧急程度排序（30 天内到期）——应先于其他批次出货（先进先出）。",
+    "aucunLotASurveiller": "目前没有临近到期的批次。",
+    "perime": "已过期 {{j}} 天",
+    "expireDans": "{{j}} 天后到期（{{date}}）"
+  },
+  "annuler": "取消",
+  "chargement": "加载中…"
 }

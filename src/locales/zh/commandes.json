@@ -112,12 +112,12 @@
   "imprimer": "打印",
   "envoi": {
     "email": "Email",
-    "confirmerEmail": "Send the proforma to:",
-    "emailEnvoye": "Proforma sent to {{email}}.",
-    "echecEmail": "The email could not be sent: {{message}}",
-    "numeroWhatsApp": "Customer's WhatsApp number:",
-    "numeroManquant": "Customer phone number missing.",
-    "echecWhatsApp": "The document link could not be prepared: {{message}}",
-    "messageWhatsApp": "Hello {{client}}, here is your proforma {{numero}} for {{montant}}. Thank you — {{entreprise}}. Link (valid 7 days):"
+    "confirmerEmail": "将形式发票发送至：",
+    "emailEnvoye": "形式发票已发送至 {{email}}。",
+    "echecEmail": "邮件发送失败：{{message}}",
+    "numeroWhatsApp": "客户的 WhatsApp 号码：",
+    "numeroManquant": "缺少客户电话号码。",
+    "echecWhatsApp": "无法生成单据链接：{{message}}",
+    "messageWhatsApp": "您好 {{client}}，这是您的形式发票 {{numero}}，金额 {{montant}}。感谢您的信任——{{entreprise}}。链接（7 天内有效）："
   }
 }

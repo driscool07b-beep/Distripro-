@@ -114,45 +114,45 @@
   },
   "rupture": "缺货",
   "premiersPas": {
-    "titre": "Getting started with DistribPro",
-    "sousTitre": "{{faites}} of {{total}} steps — follow the guide to be up and running during your trial.",
-    "masquer": "Hide this guide",
+    "titre": "DistribPro 入门",
+    "sousTitre": "已完成 {{faites}} / {{total}} 步——按照指南在试用期内快速上手。",
+    "masquer": "隐藏此指南",
     "etapes": {
       "infos": {
-        "titre": "Fill in your company details",
-        "aide": "Address, phone, tax number (Settings)"
+        "titre": "填写公司信息",
+        "aide": "地址、电话、税号（设置）"
       },
       "logo": {
-        "titre": "Add your logo",
-        "aide": "It will appear on invoices and receipts"
+        "titre": "添加您的标志",
+        "aide": "将显示在发票和收据上"
       },
       "magasin": {
-        "titre": "Create your warehouse",
-        "aide": "Your depot or shop"
+        "titre": "创建您的仓库",
+        "aide": "您的仓库或门店"
       },
       "produits": {
-        "titre": "Create your products",
-        "aide": "One by one or via Excel import"
+        "titre": "创建您的产品",
+        "aide": "逐个创建或通过 Excel 导入"
       },
       "stock": {
-        "titre": "Enter your opening stock",
-        "aide": "Quantities per warehouse"
+        "titre": "录入期初库存",
+        "aide": "各仓库的现有数量"
       },
       "clients": {
-        "titre": "Add your customers",
-        "aide": "One by one or via Excel import"
+        "titre": "添加您的客户",
+        "aide": "逐个添加或通过 Excel 导入"
       },
       "equipe": {
-        "titre": "Invite your team",
-        "aide": "Sales reps, accountant, stock manager"
+        "titre": "邀请您的团队",
+        "aide": "销售员、会计、库存管理员"
       },
       "vente": {
-        "titre": "Record a first sale",
-        "aide": "Printable receipt and WhatsApp sending"
+        "titre": "登记第一笔销售",
+        "aide": "可打印收据并通过 WhatsApp 发送"
       },
       "assistant": {
-        "titre": "Try the AI assistant",
-        "aide": "Dictate “Sale to…” or ask a question"
+        "titre": "试用 AI 助手",
+        "aide": "口述“销售给……”或提出问题"
       }
     }
   }

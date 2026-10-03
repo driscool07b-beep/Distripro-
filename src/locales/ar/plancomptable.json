@@ -1,0 +1,31 @@
+{
+  "titre": "دليل الحسابات",
+  "sousTitre": "يُستخدم لتصدير قيود الخزينة إلى برنامج المحاسبة (Sage Saari، Ciel Compta…) — حمّل دليل SYSCOHADA الأولي لاعتماده مع محاسبك، أو استورد دليلك الخاص.",
+  "accesRefuse": "هذه الصفحة مخصصة للإدارة والمديرين والمحاسبة.",
+  "chargement": "جارٍ التحميل…",
+  "nouveauCompte": "+ حساب جديد",
+  "chargerSyscohada": "تحميل دليل SYSCOHADA الأولي",
+  "confirmerSyscohada": "تحميل مجموعة من حسابات SYSCOHADA الشائعة كنقطة انطلاق؟ يمكنك تعديلها أو إضافة غيرها لاحقًا.",
+  "importerFichier": "استيراد ملف",
+  "telechargerModele": "تنزيل النموذج",
+  "rechercherPlaceholder": "ابحث عن رقم أو بيان…",
+  "aucunCompte": "لا توجد حسابات مسجلة بعد.",
+  "supprimer": "حذف",
+  "confirmerSuppression": "حذف هذا الحساب من دليل الحسابات؟",
+  "numeroCompte": "رقم الحساب",
+  "libelleCompte": "البيان",
+  "annuler": "إلغاء",
+  "enregistrer": "حفظ",
+  "enCours": "جارٍ الحفظ…",
+  "lignesImportees": "تم استيراد أو تحديث {{n}} حسابًا.",
+  "modele": {
+    "numeroCompte": "رقم الحساب",
+    "libelle": "البيان"
+  },
+  "erreurs": {
+    "erreur": "خطأ",
+    "champsRequis": "رقم الحساب والبيان مطلوبان.",
+    "aucuneLigne": "لم يُعثر على أي سطر صالح في هذا الملف — تحقق من مطابقته للنموذج.",
+    "fichierIllisible": "تعذّرت قراءة هذا الملف — تحقق من أنه ملف Excel ‏(.xlsx)."
+  }
+}

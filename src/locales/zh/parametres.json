@@ -232,8 +232,8 @@
     "aide_pertes": "借记核销的差额或债务。",
     "aide_caisse": "若现金柜无独立账户，借记存入款项。",
     "aide_remuneration": "若由 DistribPro 记账，借记工资扣款。",
-    "quotite": "Deduction ratio (% of reference salary)",
-    "aideQuotite": "E.g. 33%. Monthly cap = ratio × the rep's reference salary (lowest with the amount cap). Have your HR / adviser confirm the rate."
+    "quotite": "扣款比例（参考工资的百分比）",
+    "aideQuotite": "例如 33%。每月上限 = 比例 × 销售员的参考工资（与金额上限取较低者）。请由人事或顾问确认比例。"
   },
   "selecteurCompte": {
     "creer": "创建账户或子账户…",
@@ -252,49 +252,49 @@
     "horsPlan": "不在会计科目表中"
   },
   "comptesClients": {
-    "titre": "Customer accounts (accounting)",
-    "aide": "Each customer gets a 411 sub-account; each customer group has a main account, parent of its members' accounts.",
-    "mode": "Account assignment",
-    "auto": "Automatic (next free number)",
-    "manuel": "Manual (I enter my numbers)",
-    "racineClients": "Root for customers without group",
-    "racineGroupes": "Root for groups",
-    "exemple": "Example: single customer {{c}}0001 · group {{g}}001 · group member {{g}}001001.",
-    "attribuer": "Assign missing accounts",
-    "attribues": "{{n}} account(s) assigned."
+    "titre": "客户账户（会计）",
+    "aide": "每个客户有一个 411 子账户；每个客户集团有一个主账户，作为其成员账户的上级。",
+    "mode": "账户分配",
+    "auto": "自动（下一个可用编号）",
+    "manuel": "手动（自行输入编号）",
+    "racineClients": "无集团客户的根科目",
+    "racineGroupes": "集团根科目",
+    "exemple": "示例：单独客户 {{c}}0001 · 集团 {{g}}001 · 集团成员 {{g}}001001。",
+    "attribuer": "分配缺失的账户",
+    "attribues": "已分配 {{n}} 个账户。"
   },
   "fne": {
-    "titre": "Standardised electronic invoice (FNE — DGI)",
-    "aide": "Certifies your sales with the DGI (official reference + QR code). Requires registering on the DGI FNE platform and an API key issued after validation. Start in test mode.",
-    "activer": "Enable FNE for this company",
-    "mode": "Environment",
-    "test": "Test (DGI test platform)",
-    "production": "Production (real invoices)",
-    "url": "FNE platform address",
-    "cle": "FNE API key",
-    "cleEnregistree": "•••••• key saved — leave empty to keep it",
-    "clePlaceholder": "Paste the key from your FNE space",
-    "pointDeVente": "Point of sale (required by the DGI)",
-    "etablissement": "Establishment (required by the DGI)",
-    "parDefaut": "'Issue an FNE' ticked by default on each sale",
-    "envoiAuto": "Automatically email the receipt or invoice after each sale",
-    "aideEnvoiAuto": "Only if the customer has an email address. Sent from noreply@distribpro.com, replies go to your address."
+    "titre": "标准电子发票（FNE — 税务总局）",
+    "aide": "在税务总局认证您的销售（官方编号 + 二维码）。需在 FNE 平台注册，并在审核通过后获取 API 密钥。请先使用测试模式。",
+    "activer": "为本公司启用 FNE",
+    "mode": "环境",
+    "test": "测试（税务总局测试平台）",
+    "production": "正式（真实发票）",
+    "url": "FNE 平台地址",
+    "cle": "FNE API 密钥",
+    "cleEnregistree": "•••••• 密钥已保存——留空即保留",
+    "clePlaceholder": "粘贴您 FNE 账户中的密钥",
+    "pointDeVente": "销售点（税务总局要求）",
+    "etablissement": "营业机构（税务总局要求）",
+    "parDefaut": "每笔销售默认勾选“开具 FNE”",
+    "envoiAuto": "每笔销售后自动通过邮件发送收据或发票",
+    "aideEnvoiAuto": "仅当客户有电子邮箱时发送。发件人为 noreply@distribpro.com，回复将发到您的邮箱。"
   },
   "rapportMensuel": {
-    "titre": "Automatic monthly report",
-    "aide": "On the 1st of each month at 7 am, last month's activity report (PowerPoint with charts and analysis) is emailed.",
-    "activer": "Enable the automatic monthly report",
-    "destinataires": "Recipients",
+    "titre": "自动月度报告",
+    "aide": "每月 1 日上午 7 点，通过邮件发送上月业务报告（含图表和分析的 PowerPoint）。",
+    "activer": "启用月度报告自动发送",
+    "destinataires": "收件人",
     "placeholder": "management@company.com",
-    "aideDestinataires": "Comma-separated. Leave empty to send to all admins and managers."
+    "aideDestinataires": "多个地址用逗号分隔。留空则发送给所有管理员和经理。"
   },
   "logo": {
-    "titre": "Company logo",
-    "aide": "Shown at the top of all your documents: invoices and FNE, receipts, delivery notes, proformas, credit notes, cash vouchers, PowerPoint reports and customer emails. Transparent PNG recommended.",
-    "enregistre": "Logo saved: it now appears on your documents.",
-    "retire": "Logo removed.",
-    "confirmerRetrait": "Remove the logo from all your documents?",
-    "envoi": "Uploading the logo…",
-    "formatInvalide": "Image not recognised: choose a PNG, JPEG or WebP file."
+    "titre": "公司标志",
+    "aide": "显示在您所有单据的顶部：发票和 FNE、收据、送货单、形式发票、红字发票、现金单据、PowerPoint 报告和客户邮件。建议使用透明背景的 PNG。",
+    "enregistre": "标志已保存：现已显示在您的单据上。",
+    "retire": "标志已移除。",
+    "confirmerRetrait": "从所有单据中移除标志？",
+    "envoi": "正在上传标志…",
+    "formatInvalide": "无法识别图片：请选择 PNG、JPEG 或 WebP 文件。"
   }
 }

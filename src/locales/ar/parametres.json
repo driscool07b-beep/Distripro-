@@ -232,8 +232,8 @@
     "aide_pertes": "يُقيَّد مدينًا بفرق أو دين مشطوب.",
     "aide_caisse": "يُقيَّد مدينًا بالإيداعات إذا لم يكن للخزينة حسابها الخاص.",
     "aide_remuneration": "يُقيَّد مدينًا بالاقتطاعات من الراتب إذا سجّلها DistribPro.",
-    "quotite": "Deduction ratio (% of reference salary)",
-    "aideQuotite": "E.g. 33%. Monthly cap = ratio × the rep's reference salary (lowest with the amount cap). Have your HR / adviser confirm the rate."
+    "quotite": "نسبة الاقتطاع (% من الراتب المرجعي)",
+    "aideQuotite": "مثال 33%. السقف الشهري = النسبة × الراتب المرجعي للمندوب (الأقل مع سقف المبلغ). اطلب من الموارد البشرية أو مستشارك تأكيد النسبة."
   },
   "selecteurCompte": {
     "creer": "إنشاء حساب أو حساب فرعي…",
@@ -252,49 +252,49 @@
     "horsPlan": "غير موجود في دليل الحسابات"
   },
   "comptesClients": {
-    "titre": "Customer accounts (accounting)",
-    "aide": "Each customer gets a 411 sub-account; each customer group has a main account, parent of its members' accounts.",
-    "mode": "Account assignment",
-    "auto": "Automatic (next free number)",
-    "manuel": "Manual (I enter my numbers)",
-    "racineClients": "Root for customers without group",
-    "racineGroupes": "Root for groups",
-    "exemple": "Example: single customer {{c}}0001 · group {{g}}001 · group member {{g}}001001.",
-    "attribuer": "Assign missing accounts",
-    "attribues": "{{n}} account(s) assigned."
+    "titre": "حسابات العملاء (المحاسبة)",
+    "aide": "يحصل كل عميل على حساب فرعي من 411؛ ولكل مجموعة عملاء حساب رئيسي هو أصل حسابات أعضائها.",
+    "mode": "إسناد الحسابات",
+    "auto": "تلقائي (الرقم الحر التالي)",
+    "manuel": "يدوي (أدخل أرقامي بنفسي)",
+    "racineClients": "جذر حسابات العملاء دون مجموعة",
+    "racineGroupes": "جذر حسابات المجموعات",
+    "exemple": "مثال: عميل منفرد {{c}}0001 · مجموعة {{g}}001 · عضو في المجموعة {{g}}001001.",
+    "attribuer": "إسناد الحسابات الناقصة",
+    "attribues": "تم إسناد {{n}} حسابًا."
   },
   "fne": {
-    "titre": "Standardised electronic invoice (FNE — DGI)",
-    "aide": "Certifies your sales with the DGI (official reference + QR code). Requires registering on the DGI FNE platform and an API key issued after validation. Start in test mode.",
-    "activer": "Enable FNE for this company",
-    "mode": "Environment",
-    "test": "Test (DGI test platform)",
-    "production": "Production (real invoices)",
-    "url": "FNE platform address",
-    "cle": "FNE API key",
-    "cleEnregistree": "•••••• key saved — leave empty to keep it",
-    "clePlaceholder": "Paste the key from your FNE space",
-    "pointDeVente": "Point of sale (required by the DGI)",
-    "etablissement": "Establishment (required by the DGI)",
-    "parDefaut": "'Issue an FNE' ticked by default on each sale",
-    "envoiAuto": "Automatically email the receipt or invoice after each sale",
-    "aideEnvoiAuto": "Only if the customer has an email address. Sent from noreply@distribpro.com, replies go to your address."
+    "titre": "الفاتورة الإلكترونية المعيارية (FNE — المديرية العامة للضرائب)",
+    "aide": "يعتمد مبيعاتك لدى المديرية العامة للضرائب (مرجع رسمي + رمز QR). يتطلب التسجيل في منصة FNE ومفتاح API يُمنح بعد المصادقة. ابدأ بوضع الاختبار.",
+    "activer": "تفعيل FNE لهذه الشركة",
+    "mode": "البيئة",
+    "test": "اختبار (منصة الاختبار)",
+    "production": "إنتاج (فواتير حقيقية)",
+    "url": "عنوان منصة FNE",
+    "cle": "مفتاح API الخاص بـ FNE",
+    "cleEnregistree": "•••••• تم حفظ المفتاح — اتركه فارغًا للإبقاء عليه",
+    "clePlaceholder": "الصق المفتاح من فضاء FNE الخاص بك",
+    "pointDeVente": "نقطة البيع (مطلوبة من المديرية)",
+    "etablissement": "المؤسسة (مطلوبة من المديرية)",
+    "parDefaut": "خانة «إصدار FNE» مفعّلة افتراضيًا في كل عملية بيع",
+    "envoiAuto": "إرسال الإيصال أو الفاتورة تلقائيًا بالبريد بعد كل عملية بيع",
+    "aideEnvoiAuto": "فقط إذا كان للعميل عنوان بريد إلكتروني. يُرسل من noreply@distribpro.com، والردود تصل إلى عنوانك."
   },
   "rapportMensuel": {
-    "titre": "Automatic monthly report",
-    "aide": "On the 1st of each month at 7 am, last month's activity report (PowerPoint with charts and analysis) is emailed.",
-    "activer": "Enable the automatic monthly report",
-    "destinataires": "Recipients",
-    "placeholder": "management@company.com",
-    "aideDestinataires": "Comma-separated. Leave empty to send to all admins and managers."
+    "titre": "التقرير الشهري التلقائي",
+    "aide": "في اليوم الأول من كل شهر الساعة 7 صباحًا، يُرسل بالبريد تقرير نشاط الشهر الماضي (عرض باوربوينت مع رسوم بيانية وتحليل).",
+    "activer": "تفعيل الإرسال التلقائي للتقرير الشهري",
+    "destinataires": "المستلمون",
+    "placeholder": "direction@entreprise.ci",
+    "aideDestinataires": "عناوين مفصولة بفواصل. اتركه فارغًا للإرسال إلى جميع المسؤولين والمديرين."
   },
   "logo": {
-    "titre": "Company logo",
-    "aide": "Shown at the top of all your documents: invoices and FNE, receipts, delivery notes, proformas, credit notes, cash vouchers, PowerPoint reports and customer emails. Transparent PNG recommended.",
-    "enregistre": "Logo saved: it now appears on your documents.",
-    "retire": "Logo removed.",
-    "confirmerRetrait": "Remove the logo from all your documents?",
-    "envoi": "Uploading the logo…",
-    "formatInvalide": "Image not recognised: choose a PNG, JPEG or WebP file."
+    "titre": "شعار الشركة",
+    "aide": "يظهر أعلى جميع مستنداتك: الفواتير وFNE، الإيصالات، سندات التسليم، الفواتير المبدئية، الإشعارات الدائنة، سندات الصندوق، تقارير باوربوينت ورسائل العملاء. يُنصح بصورة PNG بخلفية شفافة.",
+    "enregistre": "تم حفظ الشعار: يظهر الآن على مستنداتك.",
+    "retire": "تمت إزالة الشعار.",
+    "confirmerRetrait": "إزالة الشعار من جميع مستنداتك؟",
+    "envoi": "جارٍ رفع الشعار…",
+    "formatInvalide": "صورة غير معروفة: اختر ملف PNG أو JPEG أو WebP."
   }
 }

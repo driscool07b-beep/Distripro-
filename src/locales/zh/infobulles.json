@@ -8,6 +8,146 @@
     "imprimer": "打印此文档。",
     "receptionner": "确认收货：金额或货物将计入目的地。",
     "historique": "显示修改历史。",
-    "filtrer": "应用所选筛选条件。"
+    "filtrer": "应用所选筛选条件。",
+    "retour": "返回上一页（快捷键：Alt + R）。"
+  },
+  "clients": {
+    "nouveauClient": "创建客户档案。如果您在客户现场，会自动获取 GPS 位置。",
+    "portefeuille": {
+      "appliquer": "将勾选的客户分配到所选销售员的客户组合。"
+    },
+    "table": {
+      "modifier": "编辑档案：联系方式、GPS、照片、价格、负责销售员。",
+      "creditTitle": "该客户有余额：点击办理退款。"
+    }
+  },
+  "commandes": {
+    "nouvelleCommande": "登记稍后交货的客户订单。",
+    "detail": {
+      "confirmer": "确认订单：订单转入仓库备货。",
+      "demarrerPreparation": "通知仓库订单正在备货。",
+      "enregistrerLivraison": "确认交货：生成销售并扣减库存。",
+      "annulerCommande": "取消订单（保留在历史记录中）。",
+      "facturePropforma": "生成形式发票，在交货前发送。",
+      "voirFacture": "打开此次交货生成的销售：收据或发票、送货单、打印和分享。"
+    },
+    "form": {
+      "ajouterArticle": "在订单中添加一行产品。"
+    }
+  },
+  "ventes": {
+    "nouvelleVente": "登记销售：扣减库存；如为赊账，则生成应收款。",
+    "detail": {
+      "annulerVenteAvoir": "以红字发票取消销售：库存恢复，销售记录保留可追溯。",
+      "bonLivraison": "生成送货单供客户签字。",
+      "partager": "将发票发送给客户（WhatsApp、电子邮件…）。",
+      "telechargerAvoir": "下载红字发票。"
+    },
+    "form": {
+      "ajouterArticle": "在销售中添加一行产品。"
+    }
+  },
+  "stock": {
+    "nouveauProduit": "在目录中创建产品（价格、类别、预警线）。",
+    "inventaire": {
+      "bouton": "开始实地盘点：您清点，应用计算差异。"
+    },
+    "lots": {
+      "bouton": "管理批次和保质期。"
+    },
+    "table": {
+      "ajusterStock": "登记库存入库或出库及其原因。",
+      "transfererDepots": "将货物从一个仓库调到另一个仓库。",
+      "historique": "显示该产品的价格历史。",
+      "detail": "打开库存明细：按仓库、批次、日期、接收人、状态、成本和毛利。"
+    },
+    "retirerFiltre": "重新显示全部产品。"
+  },
+  "journalcaisse": {
+    "nouvelleDemande": "申请付款：需先审批，再支付。",
+    "retourFonds": "登记退回现金柜的款项（预支余额）。",
+    "transfert": "将款项转到其他现金柜或银行。",
+    "approvisionnement": "登记存入现金柜的款项。",
+    "versBanque": "将现金柜的钱存入银行。",
+    "versAutreCaisse": "将款项转到另一个现金柜。",
+    "inventaire": {
+      "nouveau": "清点纸币和硬币：应用与理论余额进行比对。"
+    },
+    "refuser": "说明理由后拒绝该申请。",
+    "corriger": "通过可追溯的冲销分录更正记录。"
+  },
+  "banques": {
+    "nouvelleBanque": "添加公司银行账户。",
+    "nouveauTransfert": "在银行和现金柜之间转账。",
+    "nouveauDecaissement": "登记从银行支出的款项。"
+  },
+  "tournees": {
+    "nouvelleTournee": "安排拜访路线，可手动或借助 AI。",
+    "creerTourneeOptimisee": "创建行程：按最短路线计算拜访顺序。",
+    "ia": {
+      "proposer": "AI 选择要拜访的客户，并在期间内分配拜访。",
+      "creerTournees": "创建建议计划中的全部行程。",
+      "retirer": "将此客户从计划中移除。"
+    },
+    "detail": {
+      "marquerVisitee": "确认拜访（核验 GPS）并打开拜访报告。",
+      "meGuider": "开始导航到下一位客户。",
+      "retirer": "将此客户从行程中移除。"
+    },
+    "validation": {
+      "approuver": "批准行程：销售员可以开始拜访。",
+      "refuser": "拒绝行程：行程被删除，销售员可另行提交。"
+    },
+    "ajouter": "将客户添加到此行程。"
+  },
+  "utilisateurs": {
+    "inviterCollaborateur": "为团队成员创建账户并发送邀请。",
+    "regenererPin": "为该成员生成新的临时 PIN 码。",
+    "reinitialiserMdp": "生成成员必须修改的临时密码。",
+    "annulerInvitation": "取消尚未接受的邀请。"
+  },
+  "messagerie": {
+    "nouveauCanal": "创建群聊（例如整个销售团队）。",
+    "nouvelleConversation": "与同事开始私聊。"
+  },
+  "mouvementsstock": {
+    "joindreJustificatif": "为此变动附加照片或文件（出库单、发票…）。",
+    "voirJustificatif": "打开此变动的附件。",
+    "remplacer": "替换误传的文件。旧文件连同原因保留以供审计。",
+    "envoyer": "上传文件。照片会自动压缩以加快速度。",
+    "regulariser": "为变动补传缺失的文件。审计中会保留“事后补传”标记。"
+  },
+  "objectifs": {
+    "nouvelObjectif": "设定期间内的销售目标（金额或数量）。",
+    "unePersonne": "针对销售员或团队负责人的目标。",
+    "uneZone": "针对某个地理区域的目标。",
+    "leBureau": "针对办公室销售的目标。",
+    "modifier": "修改目标的期间、金额或备注。原因和旧值保留在历史中。",
+    "historiqueBouton": "显示谁在何时创建或修改了此目标，以及修改内容。"
+  },
+  "depots": {
+    "nouveauDepot": "添加仓库及其负责人。",
+    "voirStock": "打开按此仓库筛选的产品与库存。"
+  },
+  "creances": {
+    "soldeReporte": "登记使用 DistribPro 之前的客户欠款。"
+  },
+  "stockcommercial": {
+    "nouvelleSortie": "将货物交给销售员进行外勤销售。"
+  },
+  "versements": {
+    "enregistrer": "登记销售员上缴的款项。"
+  },
+  "plancomptable": {
+    "nouveauCompte": "在科目表中添加科目。"
+  },
+  "notesutilisation": {
+    "exporterPdf": "将使用评分导出为 PDF。"
+  },
+  "analyseia": {
+    "export": {
+      "pdf": "将此分析下载为带公司抬头的 PDF，可直接打印或分享。",
+      "word": "将此分析下载为可编辑的 Word 文档（.docx）。"
+    }
   }
 }

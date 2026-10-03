@@ -1,0 +1,16 @@
+{
+  "titre": "Usage scores",
+  "sousTitre": "Monthly score out of 100 based on field attendance, complete visit reports and deposit discipline — calculated automatically from recorded data, without AI, so it can be explained if challenged.",
+  "accesRefuse": "This page is reserved for administration and managers.",
+  "chargement": "Loading…",
+  "mois": "Month",
+  "calculerLeMois": "Calculate this month's scores",
+  "calculEnCours": "Calculating…",
+  "exporterPdf": "Export to PDF",
+  "erreur": "Error",
+  "aucuneNote": "No score calculated for this month — click 'Calculate this month's scores'.",
+  "assiduite": "Attendance",
+  "rapports": "Reports",
+  "versements": "Deposits",
+  "nonApplicable": "n/a"
+}

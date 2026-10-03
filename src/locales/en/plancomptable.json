@@ -1,0 +1,31 @@
+{
+  "titre": "Chart of accounts",
+  "sousTitre": "Used to export cash and bank entries to your accounting software (Sage Saari, Ciel Compta…) — load the starter SYSCOHADA chart to validate with your accountant, or import your own chart.",
+  "accesRefuse": "This page is reserved for administration, managers and accounting.",
+  "chargement": "Loading…",
+  "nouveauCompte": "+ New account",
+  "chargerSyscohada": "Load the starter SYSCOHADA chart",
+  "confirmerSyscohada": "Load a set of common SYSCOHADA accounts as a starting point? You can edit or add accounts afterwards.",
+  "importerFichier": "Import a file",
+  "telechargerModele": "Download the template",
+  "rechercherPlaceholder": "Search a number or a description…",
+  "aucunCompte": "No account recorded yet.",
+  "supprimer": "Delete",
+  "confirmerSuppression": "Delete this account from the chart of accounts?",
+  "numeroCompte": "Account number",
+  "libelleCompte": "Description",
+  "annuler": "Cancel",
+  "enregistrer": "Save",
+  "enCours": "Saving…",
+  "lignesImportees": "{{n}} account(s) imported or updated.",
+  "modele": {
+    "numeroCompte": "Account number",
+    "libelle": "Description"
+  },
+  "erreurs": {
+    "erreur": "Error",
+    "champsRequis": "The account number and description are required.",
+    "aucuneLigne": "No usable line found in this file — check that it follows the template.",
+    "fichierIllisible": "Cannot read this file — check that it is an Excel file (.xlsx)."
+  }
+}
