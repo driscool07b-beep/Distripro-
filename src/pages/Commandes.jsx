@@ -173,7 +173,7 @@ export default function Commandes() {
     setCaptureGps('idle')
     const [{ data: c }, { data: p }, { data: com }, { data: dep }] = await Promise.all([
       supabase.from('clients').select('id, nom').order('nom'),
-      supabase.from('produits').select('id, nom, prix_vente').order('nom'),
+      supabase.from('produits').select('id, nom, reference, prix_vente').order('nom'),
       supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom'),
       supabase.from('depots').select('id, nom').eq('actif', true).order('nom'),
     ])
@@ -276,7 +276,7 @@ export default function Commandes() {
         .select('id, numero, statut, mode_paiement, montant_ht, montant_tva, montant_ttc, montant_paye, date_livraison_souhaitee, notes, bon_commande_client_path, bon_commande_client_reference, created_at, vente_id, clients(nom, telephone, adresse, email), profils!commercial_id(nom)')
         .eq('id', commandeId)
         .single(),
-      supabase.from('lignes_commande').select('id, produit_id, quantite, prix_unitaire, montant_ligne, quantite_livree, produits(nom)').eq('commande_id', commandeId),
+      supabase.from('lignes_commande').select('id, produit_id, quantite, prix_unitaire, montant_ligne, quantite_livree, produits(nom, reference, unite)').eq('commande_id', commandeId),
       supabase.from('commande_historique').select('ancien_statut, nouveau_statut, note, created_at, profils(nom)').eq('commande_id', commandeId).order('created_at'),
     ])
 
@@ -654,7 +654,7 @@ export default function Commandes() {
                         <option value="">{t('form.produitPlaceholder')}</option>
                         {produits
                           .filter((p) => p.id === l.produit_id || !lignes.some((x, j) => j !== i && x.produit_id === p.id))
-                          .map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
+                          .map((p) => <option key={p.id} value={p.id}>{p.reference ? `${p.reference} — ` : ''}{p.nom}</option>)}
                       </select>
                       <input
                         type="number"

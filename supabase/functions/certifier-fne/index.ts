@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
 
     const [{ data: entreprise }, { data: lignes }, { data: taxes }] = await Promise.all([
       supabase.from('entreprises').select('assujetti_tva').eq('id', profil.entreprise_id).single(),
-      supabase.from('ventes_lignes').select('id, quantite, prix_unitaire, taux_tva, produits(nom)').eq('vente_id', vente_id).order('id'),
+      supabase.from('ventes_lignes').select('id, quantite, prix_unitaire, taux_tva, produits(nom, reference, unite)').eq('vente_id', vente_id).order('id'),
       supabase.from('taxes_entreprise').select('nom, taux').eq('entreprise_id', profil.entreprise_id).eq('actif', true),
     ])
     const client = vente.clients || {}
@@ -131,6 +131,9 @@ Deno.serve(async (req) => {
       establishment: config.etablissement,
       commercialMessage: vente.numero_vente ? `Vente ${vente.numero_vente}` : undefined,
       items: (lignes || []).map((l) => ({
+        // Référence (code article) et unité de mesure : champs prévus par la DGI.
+        ...(l.produits?.reference ? { reference: l.produits.reference } : {}),
+        ...(l.produits?.unite ? { measurementUnit: l.produits.unite } : {}),
         description: l.produits?.nom || 'Article',
         quantity: Number(l.quantite),
         amount: Number(l.prix_unitaire),

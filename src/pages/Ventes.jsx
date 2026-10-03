@@ -172,7 +172,7 @@ export default function Ventes() {
         .single(),
       supabase
         .from('ventes_lignes')
-        .select('quantite, prix_unitaire, sous_total, taux_tva, montant_tva, produits(nom)')
+        .select('quantite, prix_unitaire, sous_total, taux_tva, montant_tva, produits(nom, reference, unite)')
         .eq('vente_id', venteId),
       supabase
         .from('ventes_taxes')
@@ -364,7 +364,7 @@ export default function Ventes() {
 
     const [{ data: c }, { data: p }, { data: com }, { data: d }] = await Promise.all([
       supabase.from('clients').select('id, nom').order('nom'),
-      supabase.from('produits').select('id, nom, prix_vente, stocks(quantite, depot_id)').order('nom'),
+      supabase.from('produits').select('id, nom, reference, prix_vente, stocks(quantite, depot_id)').order('nom'),
       supabase.from('profils').select('id, nom').eq('role', 'commercial').order('nom'),
       supabase.from('depots').select('id, nom').eq('actif', true).order('nom'),
     ])
@@ -625,7 +625,7 @@ export default function Ventes() {
   async function envoyerEmailAutomatique(venteId) {
     const [{ data: v }, { data: lignes }, { data: autres }] = await Promise.all([
       supabase.from('ventes').select('*, clients(nom, telephone, adresse, ville, email), profils!created_by(nom), commercial:profils!commercial_id(nom)').eq('id', venteId).single(),
-      supabase.from('ventes_lignes').select('*, produits(nom)').eq('vente_id', venteId),
+      supabase.from('ventes_lignes').select('*, produits(nom, reference, unite)').eq('vente_id', venteId),
       supabase.from('ventes_taxes').select('nom, taux, montant').eq('vente_id', venteId),
     ])
     if (!v?.clients?.email) return
@@ -868,7 +868,7 @@ export default function Ventes() {
                             .filter((p) => p.id === ligne.produit_id || !lignes.some((l, j) => j !== i && l.produit_id === p.id))
                             .map((p) => (
                             <option key={p.id} value={p.id}>
-                              {p.nom} {stockDisponible(p) == null
+                              {p.reference ? `${p.reference} — ` : ''}{p.nom} {stockDisponible(p) == null
                                 ? `(${t('form.choisirSourceCourt')})`
                                 : `(${profil?.role === 'commercial' || sourceStock === 'commercial' ? t('form.enMain') : t('form.stock')}: ${stockDisponible(p)})`}
                             </option>

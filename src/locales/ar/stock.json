@@ -52,7 +52,12 @@
     "erreurTauxTva": "أدخل نسبة الضريبة.",
     "erreurNomPrix": "الاسم وسعر الوحدة مطلوبان.",
     "codeBarre": "الرمز الشريطي (اختياري)",
-    "codeBarrePlaceholder": "امسح الرمز أو أدخله"
+    "codeBarrePlaceholder": "امسح الرمز أو أدخله",
+    "reference": "المرجع (رمز الصنف)",
+    "referencePlaceholder": "مثال P0001",
+    "proposerReference": "اقتراح المرجع الحر التالي",
+    "unite": "الوحدة",
+    "unitePlaceholder": "مثال: كيس، كرتونة"
   },
   "mouvement": {
     "titre": "تعديل المخزون",

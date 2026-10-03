@@ -52,7 +52,12 @@
     "erreurTauxTva": "Enter the VAT rate.",
     "erreurNomPrix": "Name and unit price are required.",
     "codeBarre": "Barcode (optional)",
-    "codeBarrePlaceholder": "Scan or enter the code"
+    "codeBarrePlaceholder": "Scan or enter the code",
+    "reference": "Reference (item code)",
+    "referencePlaceholder": "e.g. P0001",
+    "proposerReference": "Suggest the next free reference",
+    "unite": "Unit",
+    "unitePlaceholder": "e.g. bag, carton"
   },
   "mouvement": {
     "titre": "Adjust stock",

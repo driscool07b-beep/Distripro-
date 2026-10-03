@@ -52,7 +52,12 @@
     "erreurTauxTva": "请输入税率。",
     "erreurNomPrix": "名称和单价为必填项。",
     "codeBarre": "条形码（可选）",
-    "codeBarrePlaceholder": "扫描或输入条码"
+    "codeBarrePlaceholder": "扫描或输入条码",
+    "reference": "参考号（商品编码）",
+    "referencePlaceholder": "例如 P0001",
+    "proposerReference": "建议下一个可用参考号",
+    "unite": "单位",
+    "unitePlaceholder": "例如 袋、箱"
   },
   "mouvement": {
     "titre": "调整库存",

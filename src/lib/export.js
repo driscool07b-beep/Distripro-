@@ -33,6 +33,12 @@ export function symboleDevise() {
  * haut d'un document PDF. Retourne la position Y à partir de laquelle
  * continuer à écrire (la hauteur de l'en-tête varie selon les infos remplies).
  */
+// Désignation d'un article sur les documents : référence (code article) en tête.
+export function designationProduit(produit) {
+  if (!produit) return ''
+  return [produit.reference, produit.nom].filter(Boolean).join(' — ')
+}
+
 export function ecrireEnTeteEntreprise(doc, entreprise) {
   // Logo de l'entreprise (facultatif), en haut à droite, proportions respectées.
   if (entreprise?.logo_data) {
@@ -173,7 +179,7 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
     startY: yInfo + 20,
     head: [['Produit', 'Qté', `PU (${symboleDevise()})`, `Sous-total (${symboleDevise()})`]],
     body: lignes.map((l) => [
-      l.produits?.nom || '',
+      designationProduit(l.produits),
       String(l.quantite),
       formatMontantPDF(l.prix_unitaire),
       formatMontantPDF(l.sous_total),
@@ -313,7 +319,7 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
       startY: y,
       head: [['Produit', 'Qté', `PU (${symboleDevise()})`, `Sous-total (${symboleDevise()})`]],
       body: lignes.map((l) => [
-        l.produits?.nom || '',
+        designationProduit(l.produits),
         String(l.quantite),
         formatMontantPDF(l.prix_unitaire),
         formatMontantPDF(l.sous_total),
@@ -430,7 +436,7 @@ export function genererBonLivraison({ entreprise, vente, lignes }) {
   autoTable(doc, {
     startY: yInfo + 20,
     head: [['Produit', 'Quantité livrée']],
-    body: lignes.map((l) => [l.produits?.nom || '', String(l.quantite)]),
+    body: lignes.map((l) => [designationProduit(l.produits), String(l.quantite)]),
     styles: { fontSize: 9 },
     headStyles: { fillColor: [10, 31, 38] },
     columnStyles: { 1: { halign: 'right' } },
@@ -480,7 +486,7 @@ export function genererFactureProforma({ entreprise, commande, lignes }) {
     startY: yInfo + 16,
     head: [['Produit', 'Qté', `PU (${symboleDevise()})`, `Sous-total (${symboleDevise()})`]],
     body: lignes.map((l) => [
-      l.produits?.nom || '',
+      designationProduit(l.produits),
       String(l.quantite),
       formatMontantPDF(l.prix_unitaire),
       formatMontantPDF(l.quantite * l.prix_unitaire),
@@ -707,7 +713,7 @@ export function genererRapportInventaireStock({ entreprise, inventaire }) {
   doc.text(`Contrôlé par : ${inventaire.controleur?.nom || '—'}`, 14, yInfo + 14)
 
   const lignes = (inventaire.lignes || []).map((l) => [
-    l.produits?.nom || '—',
+    designationProduit(l.produits) || '—',
     formatNombre(l.quantite_theorique),
     formatNombre(l.quantite_comptee),
     (Number(l.ecart) > 0 ? '+' : '') + formatNombre(l.ecart),

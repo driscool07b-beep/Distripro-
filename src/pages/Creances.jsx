@@ -187,7 +187,7 @@ export default function Creances() {
         .select('id, numero_vente, total, montant_regle, date_echeance, created_at, solde_report, notes, clients(nom, telephone, adresse), profils!created_by(nom), commercial:profils!commercial_id(nom)')
         .eq('id', venteId)
         .single(),
-      supabase.from('ventes_lignes').select('quantite, prix_unitaire, sous_total, produits(nom)').eq('vente_id', venteId),
+      supabase.from('ventes_lignes').select('quantite, prix_unitaire, sous_total, produits(nom, reference, unite)').eq('vente_id', venteId),
       supabase
         .from('reglements')
         .select('montant, mode, created_at, commercial:profils!commercial_id(nom), enregistre_par:profils!created_by(nom)')

@@ -52,7 +52,12 @@
     "erreurTauxTva": "Indiquez le taux de TVA.",
     "erreurNomPrix": "Le nom et le prix unitaire sont requis.",
     "codeBarre": "Code-barres (optionnel)",
-    "codeBarrePlaceholder": "Scanner ou saisir le code"
+    "codeBarrePlaceholder": "Scanner ou saisir le code",
+    "reference": "Référence (code article)",
+    "referencePlaceholder": "ex. P0001",
+    "proposerReference": "Proposer la prochaine référence libre",
+    "unite": "Unité",
+    "unitePlaceholder": "ex. sachet, carton"
   },
   "mouvement": {
     "titre": "Ajuster le stock",

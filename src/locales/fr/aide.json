@@ -124,6 +124,10 @@
         {
           "q": "Comment suivre mes marges ?",
           "r": "Saisis le prix d'achat unitaire lors d'une entrée en stock (facultatif) ou fixe-le dans le détail du produit : le prix de revient est tenu au coût moyen pondéré (CMUP). Les colonnes Prix de revient et Marge brute, et le résumé du stock (coût, prix de revient moyen, marge moyenne) s'affichent pour la direction et le comptable ; jamais pour les commerciaux."
+        },
+        {
+          "q": "Comment utiliser la référence (code article) des produits ?",
+          "r": "Dans la fiche produit, renseignez la « Référence (code article) », par exemple P0001, ou cliquez sur ✨ pour obtenir la prochaine référence libre ; indiquez aussi l'unité (sachet, carton, kg…). Une référence ne peut servir qu'à un seul produit. Elle apparaît dans la liste des produits, dans les formulaires de vente et de commande, et en tête de la désignation sur les factures, reçus, bons de livraison, proformas et avoirs ; elle est aussi transmise avec l'unité à la plateforme FNE. La recherche (de la page et générale) et l'assistant IA retrouvent un produit par sa référence. À l'import Excel, deux colonnes facultatives permettent de reprendre vos références existantes."
         }
       ]
     },

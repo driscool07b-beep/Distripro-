@@ -10,7 +10,8 @@ import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
 
-const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '', code_barre: '' }
+const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '', code_barre: '', reference: '', unite: '' }
+const UNITES = ['unité', 'sachet', 'paquet', 'boîte', 'bouteille', 'carton', 'sac', 'kg', 'g', 'litre', 'pot']
 
 export default function Stock() {
   const { t } = useTranslation('stock')
@@ -99,7 +100,7 @@ export default function Stock() {
     setChargement(true)
     const { data, error } = await supabase
       .from('produits')
-      .select('id, nom, categorie, prix_vente, seuil_alerte, created_at, tva_applicable, taux_tva, stocks(quantite, depot_id)')
+      .select('id, nom, reference, unite, categorie, prix_vente, seuil_alerte, created_at, tva_applicable, taux_tva, stocks(quantite, depot_id)')
       .order('created_at', { ascending: false })
     if (['admin', 'manager', 'comptable', 'gestionnaire_stock'].includes(profil?.role)) {
       supabase.from('produits_couts').select('produit_id, prix_achat_moyen').then(({ data: c }) => {
@@ -142,6 +143,7 @@ export default function Stock() {
     setEnregistrement(true)
 
     let error
+    let produitId = produitEnEdition?.id || null
     if (produitEnEdition) {
       const resultat = await supabase.rpc('modifier_produit', {
         p_produit_id: produitEnEdition.id,
@@ -166,6 +168,12 @@ export default function Stock() {
         p_code_barre: formulaire.code_barre?.trim() || null,
       })
       error = resultat.error
+      if (!error) produitId = resultat.data
+    }
+    // Référence (code article) et unité : enregistrées à part, avec contrôle d'unicité.
+    if (!error && produitId) {
+      const r = await supabase.rpc('definir_reference_produit', { p_produit_id: produitId, p_reference: formulaire.reference || null, p_unite: formulaire.unite || null })
+      error = r.error
     }
 
     setEnregistrement(false)
@@ -191,6 +199,8 @@ export default function Stock() {
       tva_applicable: produit.tva_applicable || false,
       taux_tva: produit.taux_tva != null ? String(produit.taux_tva) : '',
       code_barre: produit.code_barre || '',
+      reference: produit.reference || '',
+      unite: produit.unite || '',
     })
     setErreur('')
     setModalProduit(true)
@@ -295,8 +305,8 @@ export default function Stock() {
 
   function telechargerModeleImport() {
     const feuille = XLSX.utils.aoa_to_sheet([
-      ['Nom', 'Catégorie', 'Prix de vente', 'Seuil alerte', 'Stock initial'],
-      ['Produit Exemple 500g', 'Céréales', 1000, 10, 50],
+      ['Nom', 'Catégorie', 'Prix de vente', 'Seuil alerte', 'Stock initial', 'Référence (facultatif)', 'Unité (facultatif)'],
+      ['Produit Exemple 500g', 'Céréales', 1000, 10, 50, 'P0001', 'sachet'],
     ])
     const classeur = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(classeur, feuille, 'Produits')
@@ -315,7 +325,7 @@ export default function Stock() {
         const classeur = XLSX.read(event.target.result, { type: 'array' })
         const feuille = classeur.Sheets[classeur.SheetNames[0]]
         const lignes = XLSX.utils.sheet_to_json(feuille, {
-          header: ['nom', 'categorie', 'prix_vente', 'seuil_alerte', 'quantite_initiale'],
+          header: ['nom', 'categorie', 'prix_vente', 'seuil_alerte', 'quantite_initiale', 'reference', 'unite'],
           range: 1,
           defval: '',
         })
@@ -323,6 +333,8 @@ export default function Stock() {
           .map((l) => ({
             nom: String(l.nom || '').trim(),
             categorie: String(l.categorie || '').trim(),
+            reference: String(l.reference || '').trim().toUpperCase(),
+            unite: String(l.unite || '').trim(),
             prix_vente: Number(l.prix_vente) || 0,
             seuil_alerte: Number(l.seuil_alerte) || 0,
             quantite_initiale: Number(l.quantite_initiale) || 0,
@@ -346,14 +358,18 @@ export default function Stock() {
 
     for (let i = 0; i < lignesImport.length; i++) {
       const l = lignesImport[i]
-      const { error } = await supabase.rpc('creer_produit', {
+      const { data: idCree, error } = await supabase.rpc('creer_produit', {
         p_nom: l.nom,
         p_categorie: l.categorie || null,
         p_prix_vente: l.prix_vente,
         p_seuil_alerte: l.seuil_alerte,
         p_quantite_initiale: l.quantite_initiale,
       })
-      if (error) echecs.push(`${l.nom} : ${traduireErreur(error.message)}`)
+      let erreurRef = null
+      if (!error && idCree && (l.reference || l.unite)) {
+        erreurRef = (await supabase.rpc('definir_reference_produit', { p_produit_id: idCree, p_reference: l.reference || null, p_unite: l.unite || null })).error
+      }
+      if (error || erreurRef) echecs.push(`${l.nom} : ${traduireErreur((error || erreurRef).message)}`)
       else reussis++
       setProgressionImport(i + 1)
     }
@@ -591,7 +607,7 @@ export default function Stock() {
     : produits
   const depotFiltre = tousLesDepots.find((d) => d.id === filtreDepot)
   const produitsFiltres = produitsVue
-    .filter((p) => p.nom.toLowerCase().includes(recherche.toLowerCase()))
+    .filter((p) => `${p.nom} ${p.reference || ''}`.toLowerCase().includes(recherche.toLowerCase()))
     .filter((p) => !filtreAlertes || p.quantite <= (p.seuil_alerte ?? 0))
   const nbAlertes = produitsVue.filter((p) => p.quantite <= (p.seuil_alerte ?? 0)).length
   const valeurTotaleStock = produitsVue.reduce((s, p) => s + p.quantite * (p.prix_vente || 0), 0)
@@ -773,6 +789,7 @@ export default function Stock() {
                       <button type="button" data-aide="stock.table.detail" onClick={() => setProduitDetail(produitComplet(p))} className="text-left hover:underline decoration-amber-500 underline-offset-4">
                         {p.nom} <span className="text-amber-600 text-xs">›</span>
                       </button>
+                      {(p.reference || p.unite) && <span className="block text-[11px] font-mono font-normal text-petrol-400">{[p.reference, p.unite].filter(Boolean).join(' · ')}</span>}
                     </td>
                     <td className="px-4 py-3 text-petrol-700">{p.categorie || '—'}</td>
                     <td className="px-4 py-3 font-mono text-petrol-700">{formatXOF(p.prix_vente)}</td>
@@ -855,6 +872,26 @@ export default function Stock() {
                   onChange={(e) => setFormulaire({ ...formulaire, categorie: e.target.value })}
                   placeholder={t('formProduit.categoriePlaceholder')}
                 />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label">{t('formProduit.reference')}</label>
+                  <div className="flex gap-1">
+                    <input className="input-field font-mono uppercase" value={formulaire.reference} maxLength={40}
+                      onChange={(e) => setFormulaire({ ...formulaire, reference: e.target.value.toUpperCase().replace(/[^A-Z0-9._/-]/g, '') })}
+                      placeholder={t('formProduit.referencePlaceholder')} />
+                    <button type="button" className="btn-secondary text-xs px-2 shrink-0" title={t('formProduit.proposerReference')}
+                      onClick={async () => { const { data } = await supabase.rpc('prochaine_reference_produit'); if (data) setFormulaire((f) => ({ ...f, reference: data })) }}>
+                      ✨
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="label">{t('formProduit.unite')}</label>
+                  <input className="input-field" list="unites-produit" value={formulaire.unite} maxLength={20}
+                    onChange={(e) => setFormulaire({ ...formulaire, unite: e.target.value })} placeholder={t('formProduit.unitePlaceholder')} />
+                  <datalist id="unites-produit">{UNITES.map((u) => <option key={u} value={u} />)}</datalist>
+                </div>
               </div>
               <div>
                 <label className="label">{t('formProduit.codeBarre')}</label>
