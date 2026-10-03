@@ -223,5 +223,13 @@
       "client": "客户",
       "produit": "产品"
     }
+  },
+  "legal": {
+    "jAccepte": "我接受",
+    "cgu": "使用条款",
+    "et": "和",
+    "confidentialite": "隐私政策",
+    "accepterObligatoire": "请接受使用条款和隐私政策。",
+    "mentions": "法律声明"
   }
 }

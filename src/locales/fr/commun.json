@@ -223,5 +223,13 @@
       "client": "Client",
       "produit": "Produit"
     }
+  },
+  "legal": {
+    "jAccepte": "J'accepte les",
+    "cgu": "conditions générales d'utilisation",
+    "et": "et la",
+    "confidentialite": "politique de confidentialité",
+    "accepterObligatoire": "Veuillez accepter les conditions d'utilisation et la politique de confidentialité.",
+    "mentions": "Mentions légales"
   }
 }

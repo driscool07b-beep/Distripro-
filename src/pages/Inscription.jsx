@@ -14,6 +14,7 @@ export default function Inscription() {
   const [email, setEmail] = useState(emailPredefini)
   const [motDePasse, setMotDePasse] = useState('')
   const [confirmation, setConfirmation] = useState('')
+  const [cguAcceptees, setCguAcceptees] = useState(false)
   const [erreur, setErreur] = useState('')
   const [chargement, setChargement] = useState(false)
   const [succes, setSucces] = useState(false)
@@ -30,6 +31,10 @@ export default function Inscription() {
     }
     if (motDePasse !== confirmation) {
       setErreur(t('inscription.mdpMismatch'))
+      return
+    }
+    if (!cguAcceptees) {
+      setErreur(t('legal.accepterObligatoire'))
       return
     }
 
@@ -102,6 +107,12 @@ export default function Inscription() {
               autoComplete="new-password"
             />
           </div>
+          <label className="flex items-start gap-2 text-xs text-petrol-700">
+            <input type="checkbox" className="mt-0.5" checked={cguAcceptees} onChange={(e) => setCguAcceptees(e.target.checked)} />
+            <span>
+              {t('legal.jAccepte')} <Link to="/legal/cgu" target="_blank" className="underline">{t('legal.cgu')}</Link> {t('legal.et')} <Link to="/legal/confidentialite" target="_blank" className="underline">{t('legal.confidentialite')}</Link>.
+            </span>
+          </label>
           {erreur && <p className="text-sm text-red-600">{erreur}</p>}
           <button type="submit" disabled={chargement} className="btn-primary w-full">
             {chargement ? t('inscription.enCours') : t('inscription.creerMonCompte')}

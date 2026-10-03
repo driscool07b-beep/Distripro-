@@ -31,6 +31,7 @@ import StockCommercial from './pages/StockCommercial'
 import Versements from './pages/Versements'
 import Reconciliations from './pages/Reconciliations'
 import AssistantIA from './pages/AssistantIA'
+import PagesLegales from './pages/PagesLegales'
 import ConsolePlateforme from './pages/ConsolePlateforme'
 import MonAbonnement from './pages/MonAbonnement'
 import Groupes from './pages/Groupes'
@@ -57,6 +58,7 @@ export default function App() {
       <Route path="/reinitialiser-mot-de-passe" element={<ReinitialiserMotDePasse />} />
       <Route path="/inscription" element={<Inscription />} />
       <Route path="/creer-entreprise" element={<CreerEntreprise />} />
+      <Route path="/legal/:document" element={<PagesLegales />} />
 
       <Route
         path="/"

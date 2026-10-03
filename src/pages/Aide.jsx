@@ -77,6 +77,11 @@ export default function Aide() {
       )}
 
       <p className="text-xs text-petrol-400 text-center mt-6">{t('contact')}</p>
+      <p className="text-xs text-petrol-500 text-center mt-8 space-x-3">
+        <a href="/legal/cgu" className="underline">{t('commun:legal.cgu')}</a>
+        <a href="/legal/confidentialite" className="underline">{t('commun:legal.confidentialite')}</a>
+        <a href="/legal/mentions" className="underline">{t('commun:legal.mentions')}</a>
+      </p>
     </div>
   )
 }

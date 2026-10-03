@@ -223,5 +223,13 @@
       "client": "Customer",
       "produit": "Product"
     }
+  },
+  "legal": {
+    "jAccepte": "I accept the",
+    "cgu": "terms of use",
+    "et": "and the",
+    "confidentialite": "privacy policy",
+    "accepterObligatoire": "Please accept the terms of use and the privacy policy.",
+    "mentions": "Legal notice"
   }
 }

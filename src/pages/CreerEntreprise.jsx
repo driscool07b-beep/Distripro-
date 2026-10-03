@@ -17,6 +17,7 @@ export default function CreerEntreprise() {
   const [email, setEmail] = useState('')
   const [motDePasse, setMotDePasse] = useState('')
   const [confirmation, setConfirmation] = useState('')
+  const [cguAcceptees, setCguAcceptees] = useState(false)
   const [logo, setLogo] = useState(null) // logo préparé (facultatif)
   const [erreurLogo, setErreurLogo] = useState('')
   const [erreur, setErreur] = useState('')
@@ -39,6 +40,10 @@ export default function CreerEntreprise() {
     }
     if (motDePasse !== confirmation) {
       setErreur(t('inscription.mdpMismatch'))
+      return
+    }
+    if (!cguAcceptees) {
+      setErreur(t('legal.accepterObligatoire'))
       return
     }
 
@@ -159,6 +164,12 @@ export default function CreerEntreprise() {
             <p className="text-[11px] text-petrol-500 mt-1">{t('logo.aideInscription')}</p>
             {erreurLogo && <p className="text-xs text-red-600 mt-1">{erreurLogo}</p>}
           </div>
+          <label className="flex items-start gap-2 text-xs text-petrol-700">
+            <input type="checkbox" className="mt-0.5" checked={cguAcceptees} onChange={(e) => setCguAcceptees(e.target.checked)} />
+            <span>
+              {t('legal.jAccepte')} <Link to="/legal/cgu" target="_blank" className="underline">{t('legal.cgu')}</Link> {t('legal.et')} <Link to="/legal/confidentialite" target="_blank" className="underline">{t('legal.confidentialite')}</Link>.
+            </span>
+          </label>
           {erreur && <p className="text-sm text-red-600">{erreur}</p>}
           <button type="submit" disabled={chargement} className="btn-primary w-full">
             {chargement ? t('creerEntreprise.enCours') : t('creerEntreprise.creerMonEntreprise')}

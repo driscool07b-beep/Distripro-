@@ -231,6 +231,11 @@ export default function Login() {
             {t('connexion.nouvelleEntreprise')}{' '}
             <Link to="/creer-entreprise" className="underline text-white">{t('connexion.creerEspace')}</Link>
           </p>
+          <p className="text-center text-[11px] text-white/60 mt-4 drop-shadow-sm space-x-3">
+            <Link to="/legal/cgu" className="underline">{t('legal.cgu')}</Link>
+            <Link to="/legal/confidentialite" className="underline">{t('legal.confidentialite')}</Link>
+            <Link to="/legal/mentions" className="underline">{t('legal.mentions')}</Link>
+          </p>
         </div>
       </div>
     </div>
