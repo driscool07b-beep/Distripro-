@@ -8,6 +8,7 @@ import { useDictee, dicteeDisponible, lectureDisponible, lireTexte, arreterLectu
 import FicheConfirmationAction from './FicheConfirmationAction'
 import CartePiece from './CartePiece'
 import FicheConfirmationAutre from './FicheConfirmationAutre'
+import FicheConfirmationStock from './FicheConfirmationStock'
 import { lireConfigFne } from '../lib/fne'
 
 const CLE_VOIX = 'distribpro-assistant-voix'
@@ -34,7 +35,7 @@ export default function ConversationAssistant({ compact = false, onNavigation })
   useEffect(() => () => arreterLecture(), [])
 
   const suggestions = profil?.role === 'gestionnaire_stock'
-    ? ['stock1', 'stock2', 'aide3']
+    ? ['mag1', 'mag2', 'mag3', 'mag4', 'mag5', 'stock1']
     : profil?.role === 'commercial'
       ? ['saisie1', 'saisie3', 'saisie4', 'saisie5', 'piece1', 'com2']
       : compact ? ['saisie1', 'piece1', 'dir1', 'aide1'] : ['saisie1', 'saisie2', 'saisie3', 'saisie4', 'piece1', 'dir1', 'dir2', 'dir3', 'dir4', 'aide1', 'aide2']
@@ -116,6 +117,9 @@ export default function ConversationAssistant({ compact = false, onNavigation })
             )}
             {m.action && ['encaissement', 'client', 'visite'].includes(m.action.type) && (
               <div className="w-full max-w-[92%]"><FicheConfirmationAutre action={m.action} onTermine={finFiche} onNavigation={onNavigation} /></div>
+            )}
+            {m.action && ['reception', 'sortie', 'transfert', 'commande_preparer', 'commande_livrer'].includes(m.action.type) && (
+              <div className="w-full max-w-[92%]"><FicheConfirmationStock action={m.action} onTermine={finFiche} onNavigation={onNavigation} /></div>
             )}
             {m.action?.type === 'pieces' && (
               <div className="w-full max-w-[92%] space-y-1.5">

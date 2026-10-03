@@ -24,7 +24,12 @@
     "piece1": "Ouvre la dernière facture de Boutique Exemple",
     "saisie3": "Boutique Exemple a payé 50 000 en espèces",
     "saisie4": "Nouveau client : Supérette Les Palmiers, 07 07 12 34 56, Yopougon Sideci",
-    "saisie5": "Visite chez Eacci : gérant absent, rayon Bacca presque vide, repasser jeudi"
+    "saisie5": "Visite chez Eacci : gérant absent, rayon Bacca presque vide, repasser jeudi",
+    "mag1": "Quelles commandes dois-je préparer aujourd'hui ?",
+    "mag2": "Réception de 200 Bacca mil 350g au dépôt principal, lot L2510, périme le 30/03/2027",
+    "mag3": "Sortie pour Commercial delta : 50 Bacca mil 350 et 20 Dêguê",
+    "mag4": "Transfère 30 Bacca mil 350 du dépôt principal vers Yopougon",
+    "mag5": "Livre la commande CMD-2026-00004, il manque 10 Bacca riz"
   },
   "reflexion": "L'assistant consulte vos chiffres…",
   "placeholder": "Votre question…",
@@ -147,5 +152,33 @@
     "enregistree": "✅ Rapport de visite enregistré chez {{client}}.",
     "tournee": "Il est rattaché à votre tournée du jour.",
     "enregistreeCourt": "Rapport de visite enregistré"
+  },
+  "stock": {
+    "titres": {
+      "reception": "Réception à valider",
+      "sortie": "Sortie vers un commercial à valider",
+      "transfert": "Transfert à valider",
+      "commande_preparer": "Passer la commande en préparation",
+      "commande_livrer": "Livraison de commande à valider"
+    },
+    "ok": {
+      "reception": "Réception enregistrée : le stock est mis à jour.",
+      "sortie": "Sortie enregistrée : la marchandise est dans le stock du commercial.",
+      "transfert": "Transfert envoyé : à réceptionner par le magasin de destination.",
+      "commande_preparer": "Commande passée en préparation.",
+      "commande_livrer": "Livraison enregistrée : la vente est créée et le stock déduit."
+    },
+    "commande": "cmd.",
+    "dispo": "dispo",
+    "lot": "N° de lot",
+    "peremption": "Date de péremption",
+    "prixAchat": "Prix d'achat",
+    "endommage": "Marchandise arrivée endommagée",
+    "justificatif": "Photo du bon de livraison fournisseur",
+    "justificatifObligatoire": "Votre entreprise exige un justificatif : prenez en photo le bon du fournisseur.",
+    "lotObligatoire": "Votre entreprise exige le numéro de lot pour chaque article.",
+    "choisirMagasin": "Choisissez le magasin d'où part la marchandise.",
+    "aPreparer": "À préparer",
+    "aideLivraison": "Corrigez les quantités réellement livrées en cas de rupture : la vente est créée sur ces quantités."
   }
 }

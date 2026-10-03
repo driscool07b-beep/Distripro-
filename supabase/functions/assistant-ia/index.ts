@@ -82,6 +82,59 @@ const OUTILS = [
     },
   },
   {
+    name: 'rechercher_depots',
+    description: 'Liste les magasins / dépôts de l\'entreprise (identifiants et noms). À appeler pour identifier un magasin dicté.',
+    input_schema: { type: 'object', properties: {}, required: [] },
+  },
+  {
+    name: 'rechercher_commerciaux',
+    description: 'Liste les commerciaux actifs (identifiants et noms), pour une sortie de stock.',
+    input_schema: { type: 'object', properties: {}, required: [] },
+  },
+  {
+    name: 'commandes_a_traiter',
+    description: "Commandes clients à traiter par le magasin (confirmées ou en préparation), les plus urgentes d'abord, avec leurs articles et quantités commandées.",
+    input_schema: { type: 'object', properties: { numero: { type: 'string', description: 'Numéro précis (CMD-…), facultatif' } }, required: [] },
+  },
+  {
+    name: 'preparer_reception',
+    description: "PRÉPARE (sans l'enregistrer) une réception de marchandise (entrée en stock) dans un magasin, avec lot et péremption si dictés. L'utilisateur valide sur une fiche (photo du bon fournisseur si exigée).",
+    input_schema: {
+      type: 'object',
+      properties: {
+        depot_id: { type: 'string' },
+        lignes: { type: 'array', items: { type: 'object', properties: {
+          produit_id: { type: 'string' }, quantite: { type: 'integer', minimum: 1 },
+          numero_lot: { type: 'string' }, date_peremption: { type: 'string', description: 'AAAA-MM-JJ' }, prix_achat: { type: 'number' },
+        }, required: ['produit_id', 'quantite'] } },
+        fournisseur: { type: 'string' }, endommage: { type: 'boolean', description: 'true si la marchandise arrive abîmée' },
+      },
+      required: ['depot_id', 'lignes'],
+    },
+  },
+  {
+    name: 'preparer_sortie_commercial',
+    description: "PRÉPARE (sans l'enregistrer) une sortie de stock d'un magasin vers un commercial (marchandise pour sa tournée).",
+    input_schema: { type: 'object', properties: { commercial_id: { type: 'string' }, depot_id: { type: 'string' }, lignes: SCHEMA_LIGNES }, required: ['commercial_id', 'depot_id', 'lignes'] },
+  },
+  {
+    name: 'preparer_transfert',
+    description: "PRÉPARE (sans l'enregistrer) un transfert de marchandise entre deux magasins.",
+    input_schema: { type: 'object', properties: { depot_source_id: { type: 'string' }, depot_destination_id: { type: 'string' }, lignes: SCHEMA_LIGNES, motif: { type: 'string' } }, required: ['depot_source_id', 'depot_destination_id', 'lignes'] },
+  },
+  {
+    name: 'preparer_traitement_commande',
+    description: "PRÉPARE (sans l'enregistrer) le traitement d'une commande : 'preparer' (la passer en préparation) ou 'livrer' (livraison, quantités livrées éventuellement inférieures en cas de rupture).",
+    input_schema: {
+      type: 'object',
+      properties: {
+        commande_id: { type: 'string' }, action: { type: 'string', enum: ['preparer', 'livrer'] }, depot_id: { type: 'string' },
+        manquants: { type: 'array', description: 'Seulement les articles livrés en quantité inférieure', items: { type: 'object', properties: { produit_id: { type: 'string' }, quantite_livree: { type: 'integer', minimum: 0 } }, required: ['produit_id', 'quantite_livree'] } },
+      },
+      required: ['commande_id', 'action'],
+    },
+  },
+  {
     name: 'preparer_vente',
     description: "PRÉPARE (sans l'enregistrer) une vente que l'utilisateur validera lui-même sur une fiche de confirmation. À n'utiliser que si l'utilisateur demande clairement d'enregistrer une vente, avec un client et des produits identifiés sans ambiguïté.",
     input_schema: {
@@ -226,6 +279,12 @@ Assistant de saisie (ventes et commandes dictées, souvent par un commercial pre
 - Nouveau client dicté : vérifie d'abord avec rechercher_clients ; s'il existe déjà un client très proche, demande confirmation avant preparer_client.
 - Visite dictée (« visite chez X, le gérant était absent ») : preparer_visite avec les observations reformulées clairement.
 - Dès que tout est clair, appelle l'outil preparer_… correspondant : une fiche de confirmation s'affiche à l'utilisateur, qui seul peut valider. Réponds alors en UNE phrase courte récapitulant (client, nombre d'articles, total approximatif) et invite à vérifier puis valider. Ne dis jamais que c'est déjà enregistré.
+Assistant du magasin (gestionnaire de stock) :
+- Réception (« réception de 200 Bacca mil au dépôt principal, lot L2510, périme le 30/03/2027 ») : identifie le magasin (rechercher_depots) et les produits, puis preparer_reception. Si un seul magasin existe, utilise-le.
+- Sortie vers un commercial : rechercher_commerciaux + rechercher_depots + produits, puis preparer_sortie_commercial.
+- Transfert entre magasins : preparer_transfert (source et destination).
+- Commandes : commandes_a_traiter pour lister ou retrouver une commande (par numéro ou client) ; preparer_traitement_commande avec action 'preparer' ou 'livrer' ; pour une livraison incomplète, indique seulement les articles manquants dans « manquants ».
+- Signale toujours un stock insuffisant ; ne prépare jamais un mouvement avec un magasin ou un produit incertain.
 Pièces existantes (ouvrir, imprimer, PDF, bon de livraison, WhatsApp, email, FNE, proforma) :
 - Appelle trouver_pieces avec la référence ou le nom : des boutons d'action s'affichent sous ta réponse. Tu ne peux pas envoyer ni imprimer toi-même : invite l'utilisateur à appuyer sur le bouton voulu, en une phrase courte.
 Assistance technique (questions « comment faire… ? », « pourquoi je ne peux pas… ? ») :
@@ -267,6 +326,52 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
       }
     }
 
+    // Brouillons de mouvements de stock (réception, sortie, transfert) :
+    // contrôlés ici (magasins, commercial, produits), enrichis du stock
+    // disponible ; jamais enregistrés.
+    const preparerMouvementStock = async (outil: string, e: any) => {
+      const lignesDemandees = (Array.isArray(e.lignes) ? e.lignes : [])
+        .map((l: any) => ({ ...l, produit_id: String(l.produit_id || ''), quantite: Math.round(Number(l.quantite)) }))
+        .filter((l: any) => l.produit_id && l.quantite > 0)
+      if (!lignesDemandees.length) return { erreur: 'aucun article valide' }
+      const { data: depots } = await supabaseUtilisateur.from('depots').select('id, nom').eq('actif', true)
+      const depot = (id: string) => (depots || []).find((d: any) => d.id === id)
+      const source = depot(outil === 'preparer_transfert' ? e.depot_source_id : e.depot_id)
+      if (!source) return { erreur: 'magasin introuvable : utilise rechercher_depots' }
+      const destination = outil === 'preparer_transfert' ? depot(e.depot_destination_id) : null
+      if (outil === 'preparer_transfert' && (!destination || destination.id === source.id)) return { erreur: 'magasin de destination invalide' }
+      let commercial = null
+      if (outil === 'preparer_sortie_commercial') {
+        const { data } = await supabaseUtilisateur.from('profils').select('id, nom').eq('id', e.commercial_id).eq('role', 'commercial').maybeSingle()
+        if (!data) return { erreur: 'commercial introuvable : utilise rechercher_commerciaux' }
+        commercial = data
+      }
+      const ids = [...new Set(lignesDemandees.map((l: any) => l.produit_id))]
+      const { data: produits } = await supabaseUtilisateur.from('produits').select('id, nom, reference').in('id', ids)
+      const { data: stocks } = await supabaseUtilisateur.from('stocks').select('produit_id, quantite').eq('depot_id', source.id).in('produit_id', ids)
+      const disponible = Object.fromEntries((stocks || []).map((x: any) => [x.produit_id, Number(x.quantite)]))
+      const lignes = []
+      const alertes = []
+      for (const l of lignesDemandees) {
+        const p = (produits || []).find((x: any) => x.id === l.produit_id)
+        if (!p) return { erreur: `produit introuvable (${l.produit_id}) : recherche-le d'abord` }
+        const stock = disponible[p.id] ?? 0
+        if (outil !== 'preparer_reception' && l.quantite > stock) alertes.push(`${p.nom} : ${l.quantite} demandés, ${stock} disponibles à ${source.nom}`)
+        lignes.push({
+          produit_id: p.id, nom: p.nom, reference: p.reference, quantite: l.quantite, stock,
+          numero_lot: String(l.numero_lot || '').slice(0, 60) || null,
+          date_peremption: /^\d{4}-\d{2}-\d{2}$/.test(l.date_peremption || '') ? l.date_peremption : null,
+          prix_achat: Number(l.prix_achat) > 0 ? Number(l.prix_achat) : null,
+        })
+      }
+      const type = outil === 'preparer_reception' ? 'reception' : outil === 'preparer_sortie_commercial' ? 'sortie' : 'transfert'
+      return {
+        type, depot: source, destination, commercial, lignes, alertes,
+        fournisseur: String(e.fournisseur || e.motif || '').slice(0, 120) || null, endommage: !!e.endommage,
+        resume: `${type} — ${source.nom}${destination ? ' → ' + destination.nom : ''}${commercial ? ' → ' + commercial.nom : ''} — ${lignes.length} article(s)`,
+      }
+    }
+
     const executerOutil = async (nom: string, entree: any) => {
       const appel = async (fn: string, params: Record<string, unknown>) => {
         const { data, error } = await supabaseUtilisateur.rpc(fn, params)
@@ -280,6 +385,52 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
         case 'stock_commerciaux': return appel('ia_stock_commerciaux', {})
         case 'rechercher_clients': return appel('assistant_rechercher_clients', { p_texte: String(entree.texte || '') })
         case 'rechercher_produits': return appel('assistant_rechercher_produits', { p_texte: String(entree.texte || ''), p_client_id: entree.client_id || null })
+        case 'rechercher_depots': {
+          const { data } = await supabaseUtilisateur.from('depots').select('id, nom').eq('actif', true).order('nom')
+          return data || []
+        }
+        case 'rechercher_commerciaux': {
+          const { data } = await supabaseUtilisateur.from('profils').select('id, nom').eq('role', 'commercial').neq('actif', false).order('nom')
+          return data || []
+        }
+        case 'commandes_a_traiter': {
+          let q = supabaseUtilisateur.from('commandes')
+            .select('id, numero, statut, date_livraison_souhaitee, created_at, clients(nom), lignes_commande(produit_id, quantite, produits(nom, reference))')
+            .in('statut', ['confirmee', 'en_preparation']).order('date_livraison_souhaitee', { ascending: true, nullsFirst: false }).limit(15)
+          if (entree.numero) q = q.ilike('numero', `%${String(entree.numero).trim()}%`)
+          const { data, error } = await q
+          if (error) return { erreur: error.message }
+          return (data || []).map((c: any) => ({
+            id: c.id, numero: c.numero, statut: c.statut, client: c.clients?.nom, livraison_souhaitee: c.date_livraison_souhaitee,
+            articles: (c.lignes_commande || []).map((l: any) => `${l.produits?.nom} × ${l.quantite}`),
+          }))
+        }
+        case 'preparer_reception':
+        case 'preparer_sortie_commercial':
+        case 'preparer_transfert': {
+          const brouillon = await preparerMouvementStock(nom, entree)
+          if (brouillon.erreur) return brouillon
+          actionPreparee = brouillon
+          return { statut: 'fiche affichée — en attente de validation', resume: brouillon.resume, alertes: brouillon.alertes }
+        }
+        case 'preparer_traitement_commande': {
+          const { data: c } = await supabaseUtilisateur.from('commandes')
+            .select('id, numero, statut, mode_paiement, clients(nom), lignes_commande(produit_id, quantite, produits(nom, reference))').eq('id', entree.commande_id).maybeSingle()
+          if (!c) return { erreur: 'commande introuvable : utilise commandes_a_traiter' }
+          if (!['confirmee', 'en_preparation'].includes(c.statut)) return { erreur: `commande au statut « ${c.statut} » : rien à préparer ni à livrer` }
+          const manquants = Object.fromEntries((entree.manquants || []).map((m: any) => [m.produit_id, Math.max(0, Math.round(Number(m.quantite_livree)))]))
+          const { data: depots } = await supabaseUtilisateur.from('depots').select('id, nom').eq('actif', true)
+          const depot = (depots || []).find((d: any) => d.id === entree.depot_id) || ((depots || []).length === 1 ? depots![0] : null)
+          actionPreparee = {
+            type: entree.action === 'livrer' ? 'commande_livrer' : 'commande_preparer',
+            commande: { id: c.id, numero: c.numero, statut: c.statut, client: (c as any).clients?.nom, mode_paiement: c.mode_paiement },
+            depot, lignes: (c.lignes_commande || []).map((l: any) => ({
+              produit_id: l.produit_id, nom: l.produits?.nom, reference: l.produits?.reference, commande: Number(l.quantite),
+              quantite: manquants[l.produit_id] ?? Number(l.quantite),
+            })),
+          }
+          return { statut: 'fiche affichée — en attente de validation', commande: c.numero }
+        }
         case 'trouver_pieces': {
           const resultats: any = await appel('recherche_globale', { p_terme: String(entree.texte || '') })
           if (!Array.isArray(resultats)) return resultats

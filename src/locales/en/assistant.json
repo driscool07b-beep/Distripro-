@@ -24,7 +24,12 @@
     "piece1": "Open the latest invoice of Boutique Exemple",
     "saisie3": "Boutique Exemple paid 50,000 in cash",
     "saisie4": "New customer: Supérette Les Palmiers, 07 07 12 34 56, Yopougon Sideci",
-    "saisie5": "Visit at Eacci: manager absent, Bacca shelf almost empty, come back Thursday"
+    "saisie5": "Visit at Eacci: manager absent, Bacca shelf almost empty, come back Thursday",
+    "mag1": "Which orders should I prepare today?",
+    "mag2": "Receipt of 200 Bacca mil 350g at the main warehouse, batch L2510, expires 30/03/2027",
+    "mag3": "Issue to Commercial delta: 50 Bacca mil 350 and 20 Dêguê",
+    "mag4": "Transfer 30 Bacca mil 350 from the main warehouse to Yopougon",
+    "mag5": "Deliver order CMD-2026-00004, 10 Bacca riz missing"
   },
   "reflexion": "The assistant is reading your figures…",
   "placeholder": "Your question…",
@@ -147,5 +152,33 @@
     "enregistree": "✅ Visit report saved for {{client}}.",
     "tournee": "It is linked to today's round.",
     "enregistreeCourt": "Visit report saved"
+  },
+  "stock": {
+    "titres": {
+      "reception": "Receipt to confirm",
+      "sortie": "Issue to a sales rep to confirm",
+      "transfert": "Transfer to confirm",
+      "commande_preparer": "Move the order to preparation",
+      "commande_livrer": "Order delivery to confirm"
+    },
+    "ok": {
+      "reception": "Receipt saved: stock updated.",
+      "sortie": "Issue saved: goods are in the rep's stock.",
+      "transfert": "Transfer sent: to be received by the destination warehouse.",
+      "commande_preparer": "Order moved to preparation.",
+      "commande_livrer": "Delivery saved: the sale is created and stock deducted."
+    },
+    "commande": "ord.",
+    "dispo": "avail.",
+    "lot": "Batch no.",
+    "peremption": "Expiry date",
+    "prixAchat": "Purchase price",
+    "endommage": "Goods arrived damaged",
+    "justificatif": "Photo of the supplier delivery note",
+    "justificatifObligatoire": "Your company requires a supporting document: take a photo of the supplier note.",
+    "lotObligatoire": "Your company requires a batch number for each item.",
+    "choisirMagasin": "Choose the warehouse the goods leave from.",
+    "aPreparer": "To prepare",
+    "aideLivraison": "Correct the quantities actually delivered in case of shortage: the sale is created on these quantities."
   }
 }

@@ -24,7 +24,12 @@
     "piece1": "打开 Boutique Exemple 的最新发票",
     "saisie3": "Boutique Exemple 现金支付了 50 000",
     "saisie4": "新客户：Supérette Les Palmiers，07 07 12 34 56，Yopougon Sideci",
-    "saisie5": "拜访 Eacci：店长不在，Bacca 货架几乎空了，周四再来"
+    "saisie5": "拜访 Eacci：店长不在，Bacca 货架几乎空了，周四再来",
+    "mag1": "今天我需要备哪些订单？",
+    "mag2": "主仓库收货 200 个 Bacca mil 350g，批号 L2510，2027/03/30 到期",
+    "mag3": "给 Commercial delta 出库：50 个 Bacca mil 350 和 20 个 Dêguê",
+    "mag4": "从主仓库调 30 个 Bacca mil 350 到 Yopougon",
+    "mag5": "交付订单 CMD-2026-00004，缺 10 个 Bacca riz"
   },
   "reflexion": "助手正在查阅您的数据…",
   "placeholder": "您的问题…",
@@ -147,5 +152,33 @@
     "enregistree": "✅ 已保存 {{client}} 的拜访报告。",
     "tournee": "已关联到您今天的行程。",
     "enregistreeCourt": "拜访报告已保存"
+  },
+  "stock": {
+    "titres": {
+      "reception": "待确认的收货",
+      "sortie": "待确认的销售员出库",
+      "transfert": "待确认的调拨",
+      "commande_preparer": "将订单转入备货",
+      "commande_livrer": "待确认的订单交付"
+    },
+    "ok": {
+      "reception": "收货已登记：库存已更新。",
+      "sortie": "出库已登记：货物已进入销售员库存。",
+      "transfert": "调拨已发出：待目的仓库接收。",
+      "commande_preparer": "订单已转入备货。",
+      "commande_livrer": "交付已登记：已生成销售并扣减库存。"
+    },
+    "commande": "订",
+    "dispo": "可用",
+    "lot": "批号",
+    "peremption": "到期日",
+    "prixAchat": "进价",
+    "endommage": "货物到达时已损坏",
+    "justificatif": "供应商送货单照片",
+    "justificatifObligatoire": "贵公司要求提供凭证：请拍摄供应商送货单。",
+    "lotObligatoire": "贵公司要求每个商品填写批号。",
+    "choisirMagasin": "请选择出货仓库。",
+    "aPreparer": "待备货",
+    "aideLivraison": "如有缺货，请更正实际交付数量：销售将按这些数量生成。"
   }
 }
