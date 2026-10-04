@@ -1,60 +1,76 @@
 {
   "titre": "Help",
-  "rechercher": "Search help…",
-  "aucunResultat": "No results for this search.",
-  "contact": "Can't find the answer to your question? Write to your administrator or via internal Messaging.",
+  "rechercher": "Search the help…",
+  "aucunResultat": "No result for this search.",
+  "contact": "Can't find the answer? Write to your administrator or use the internal Messaging.",
   "categories": [
     {
       "titre": "Getting started",
       "items": [
         {
-          "q": "How do I log in?",
-          "r": "Use the email and password your administrator gave you. If you were invited, you must first create your account via the invitation link received by email, using exactly the same email address you were invited on."
+          "q": "How do I sign in?",
+          "r": "Use the email and password your administrator gave you. If you were invited, first create your account through the invitation link received by email, using exactly the same email address you were invited with."
         },
         {
           "q": "I forgot my password, how do I recover it?",
-          "r": "On the login screen, click 'Forgot password?', enter your email — if an account exists, you'll receive a link to choose a new password (check your spam folder too). If that's not enough, an administrator can also reset your password from Team."
+          "r": "On the sign-in screen, tap 'Forgot password?' and enter your email: if an account exists, you will receive a code (and a link) to choose a new password (also check your spam). An administrator can also reset your password from Team."
         },
         {
-          "q": "What are the different roles and what do they give access to?",
-          "r": "Admin: full access, including Settings and Billing. Manager: nearly everything except a few sensitive settings. Sales rep: sales, routes, their own clients and the stock they carry. Accountant: sales, receivables, deposits, cash journal. Stock manager: products, movements, transfers. Collection agent: receivables only. Any user can also be given extended or read-only access, configurable by an admin in Team."
+          "q": "What are the roles and what do they give access to?",
+          "r": "Admin: full access, including Settings and billing. Manager: almost everything except some sensitive settings. Sales rep: sales, rounds, own customers and stock in hand. Accountant: sales, receivables, deposits, cash journal. Stock manager: products, movements, transfers. Collection agent: receivables only. A user can also be given extended or read-only access by an admin in Team."
         },
         {
-          "q": "How do I change the app's language?",
-          "r": "The language selector is at the bottom of the side menu (or in the menu on mobile). French, English, Arabic (with adapted right-to-left layout) and Chinese are available."
+          "q": "How do I change the app language?",
+          "r": "The language selector is at the bottom of the side menu (or in the menu on mobile). French, English, Arabic (with right-to-left layout) and Chinese are available."
         },
         {
           "q": "How do I install the app on my phone?",
-          "r": "Open the app in your phone's browser, then choose 'Add to Home Screen' (Android/Chrome) or 'Add to Home Screen' from the share menu (iPhone/Safari). It will then open like a real app, and keep working for sales/visits even without network."
+          "r": "Open the app in your phone's browser, then choose 'Add to Home screen' (Android/Chrome) or 'Add to Home Screen' (iPhone/Safari, in the share menu). It then opens like a real app and keeps working for sales and visits without network."
         },
         {
           "q": "A 'New version available' banner appears: what should I do?",
-          "r": "Save what you are typing, then tap 'Update'. The version shown next to 'DistribPro' lets you check the device is up to date."
+          "r": "Finish and save what you are entering, then tap 'Update'. The version shown next to 'DistribPro' (top) lets you check that the device is up to date."
+        },
+        {
+          "q": "The app doesn't start or a file upload fails: what should I do?",
+          "r": "If the app doesn't display, an error screen appears after 10 seconds with a 'Repair and reload' button: first send a screenshot to support. For an upload problem, the admin can run the 'Connection diagnostic' at the bottom of Settings and send a screenshot of the result."
+        },
+        {
+          "q": "How do I quickly find a document (sale, order, payment…)?",
+          "r": "Use the global search: the « 🔍 Search… » button at the top of the menu (or the magnifier at the top of the screen on phone), or the Ctrl + K shortcut. Type a reference (VTE-…, CMD-…, REC-…, VRS-…, RGP-…, FNE reference), a customer name, a phone number, a customer account or a product. One click opens the document. You only see documents your role gives access to: a sales rep only finds their own sales."
         }
       ]
     },
     {
-      "titre": "Clients",
+      "titre": "Customers",
       "items": [
         {
-          "q": "How do I create a client?",
-          "r": "Clients → '+ New client'. Only the name is required. You can also capture their GPS position automatically (useful for the map and directions), set a credit limit, negotiated prices per product, and a photo of their storefront."
+          "q": "How do I create a customer?",
+          "r": "Customers → '+ New customer'. Only the name is required. You can also capture their GPS position automatically (useful for the map and routes), set a credit limit, negotiated prices per product, and a photo of their shopfront."
         },
         {
-          "q": "What are client groups for?",
-          "r": "To group several outlets of the same chain (a store chain, for example) to get a unified delivery summary, rather than tracking each store separately."
+          "q": "What are customer groups for?",
+          "r": "To bring together several outlets of the same brand (a chain of shops, for example) to get a unified delivery summary, rather than following each shop separately."
         },
         {
-          "q": "How does client credit work?",
-          "r": "If you set a credit limit on a client's record, their sales can be partially paid, with the rest added to their receivables. A refund of an overpayment (an advance on a cancelled order, for example) appears as an available credit, usable on their next sale."
+          "q": "How does customer credit work?",
+          "r": "If you set a credit limit on the customer record, their sales can be partly paid, the rest adding to their receivables. A refund of an overpayment (deposit on a cancelled order, for example) appears as available credit, usable on their next sale."
         },
         {
-          "q": "How do I import several clients at once?",
-          "r": "Clients → 'Import' → download the Excel template, fill it in keeping the column order, then re-import it."
+          "q": "How do I import several customers at once?",
+          "r": "Customers → 'Import' → download the Excel template, fill it in keeping the column order, then import it back."
         },
         {
           "q": "How do I assign customers to a sales rep's portfolio?",
-          "r": "Customers → check customers → 'Assign to…' → choose the rep → Apply. Also possible in the customer record or during Excel import. Portfolios are used for route planning."
+          "r": "Customers → tick the customers → 'Assign to…' → choose the rep → Apply. You can also do it in the customer record ('Assigned rep') or during an Excel import. The filter at the top of the list shows a given portfolio or unassigned customers. The portfolio is used in particular for round planning."
+        },
+        {
+          "q": "How do customer accounts work?",
+          "r": "Each customer gets a 411 sub-account (shown under their name and in their record). A customer group has a main account, parent of its members' accounts. Settings → Customer accounts: automatic assignment (next free number, never an account already in use) or manual (to keep your existing numbers, also through the « Customer account » column of the Excel import). The « Assign missing accounts » button numbers existing customers."
+        },
+        {
+          "q": "How do I record a head office's payment for several shops?",
+          "r": "Receivables → « Group payment »: choose the group, the amount received, the method and the reference. The app lists the members' unpaid invoices; « Spread automatically » settles the oldest first (editable). One payment is created per invoice with the same reference; any surplus becomes a credit for the chosen customer. A detailed receipt is downloaded. « Customer balance » exports balances per account, with a subtotal per group."
         }
       ]
     },
@@ -63,31 +79,55 @@
       "items": [
         {
           "q": "How do I adjust a product's stock (in or out)?",
-          "r": "Products & Stock → on the product, 'Adjust stock' → choose In or Out, quantity, warehouse and reason. Attach the supporting document (photo or PDF) in this form. The file is uploaded first: if it fails, stock is NOT changed. If your company made the document mandatory (Settings), the server refuses the adjustment without it."
+          "r": "Products & Stock → on the product, 'Adjust stock' → choose In or Out, the quantity, the warehouse and the reason. Attach the supporting document (photo or PDF: delivery note, issue slip, breakage photo…) directly in this form. The file is sent first: if it fails, the stock is NOT changed and a message appears. If your company made the document mandatory (Settings), the adjustment is refused without it — a server-side check that cannot be bypassed."
         },
         {
           "q": "What's the difference between 'adjust stock' and 'transfer between warehouses'?",
-          "r": "An adjustment changes the total quantity (e.g. breakage, inventory count). A transfer moves stock from one warehouse to another without changing the total quantity — stock leaves the source warehouse immediately, and only arrives at the destination once its manager confirms receipt."
+          "r": "An adjustment changes the total quantity (e.g. breakage, stock count). A transfer moves stock from one warehouse to another without changing the total — stock leaves the source warehouse immediately, and only arrives in the destination once its manager confirms receipt."
         },
         {
-          "q": "How do I locate a product at my clients?",
-          "r": "'Locate a product' menu — combines recent visit reports and latest deliveries to show which clients have recently had a product, useful when a client calls asking where to find it."
+          "q": "How do I locate a product at my customers?",
+          "r": "Menu 'Locate a product' — combines recent visit reports and latest deliveries to show which customers recently had a product, useful when a customer calls to know where to find it."
         },
         {
-          "q": "Where can I see a product's price history?",
-          "r": "Stock → on the product's row → 'History' — shows every price change, with the date."
+          "q": "Where do I see a product's price history?",
+          "r": "Stock → on the product line → 'History' — shows each price change with its date."
+        },
+        {
+          "q": "How do I do a physical stock count?",
+          "r": "Stock → 'Stock count' → choose the warehouse → enter the quantity actually counted for each product (leave blank products not recounted). Differences automatically adjust the theoretical stock, and a PDF report is generated and downloaded."
+        },
+        {
+          "q": "How do I add a barcode to a product?",
+          "r": "When creating or editing a product, 'Barcode' field — scan it with a reader (it types the digits like a keyboard) or enter it by hand."
+        },
+        {
+          "q": "How does batch traceability work?",
+          "r": "At each stock entry, enter the batch number (as printed by the manufacturer) and its expiry date. On sale, the system automatically consumes the batch closest to expiry first (FIFO) — the sales rep has nothing to do. Stock → 'Batches' shows batches to sell first, and lets you search a batch number to instantly find all customers delivered from it — essential for a product recall."
         },
         {
           "q": "Where do I find supporting documents for an audit?",
-          "r": "Stock log: each movement shows '📎 View supporting document' with who uploaded it and when, or 'No supporting document'. The 'With / Without document' filter spots unjustified movements. Accountants have read access."
+          "r": "Stock journal: each movement shows '📎 View document' with who uploaded it and when, or 'No document'. The 'With / Without document' filter spots unsupported movements at once. The accountant has read access."
         },
         {
           "q": "I attached the wrong file: how do I fix it?",
-          "r": "Stock log → 'Replace' → pick the right file and enter the reason. The old file is never deleted (anti-fraud rule): it stays in 'History' with who replaced it, when and why."
+          "r": "Stock journal → on the movement, 'Replace' → choose the right file and enter the reason (required). The old file is never deleted (anti-fraud rule): it stays viewable in 'History', with who replaced it, when and why."
         },
         {
-          "q": "A movement was saved without a document: how do I regularise it?",
-          "r": "Stock log → 'Regularise (attach document)'. Admins and managers only. The document is marked 'added later' so an auditor sees it was not provided at the time. Sale-related exits need no document."
+          "q": "A movement was recorded without a document: how do I regularise it?",
+          "r": "Stock journal → 'Regularise (attach document)'. Reserved for admin and manager. The document is then marked 'added later' (added more than 10 minutes after the movement): an auditor immediately sees it was not provided at the time. Stock outflows linked to a sale need no document: the sale serves as one."
+        },
+        {
+          "q": "How do I see a product's stock details?",
+          "r": "Products & Stock → click the product name: breakdown by warehouse, batches (quantities, entry date, expiry, received by, condition good / damaged), cost and margin (management and accountant)."
+        },
+        {
+          "q": "How do I track my margins?",
+          "r": "Enter the unit purchase price on a stock entry (optional) or set it in the product details: the cost price is kept at weighted average cost (WAC). The Cost price and Gross margin columns, and the stock summary (cost, average cost price, average margin) are shown to management and the accountant; never to sales reps."
+        },
+        {
+          "q": "How do I use the product reference (item code)?",
+          "r": "In the product record, fill in the « Reference (item code) », e.g. P0001, or click ✨ to get the next free reference; also enter the unit (bag, carton, kg…). A reference can only be used by one product. It appears in the product list, in sale and order forms, and at the start of the description on invoices, receipts, delivery notes, proformas and credit notes; it is also sent with the unit to the FNE platform. Search (page and global) and the AI assistant find a product by its reference. In the Excel import, two optional columns let you keep your existing references."
         }
       ]
     },
@@ -96,19 +136,27 @@
       "items": [
         {
           "q": "How do I create a sale?",
-          "r": "Sales → '+ New sale'. Choose the client, add products, specify the payment method. If the client has available credit, you can apply it to reduce the amount due."
+          "r": "Sales → '+ New sale'. Choose the customer, add the products and the payment method. If the customer has available credit, you can apply it to reduce the amount to pay."
         },
         {
-          "q": "Can a sales rep sell from their own stock, without going through a warehouse?",
-          "r": "Yes — by indicating the sale is made by the sales rep themselves (rather than an 'office sale'), stock is deducted from what they're carrying, without going through a warehouse. This is also the mode that works offline."
+          "q": "Can a sales rep sell from their own stock, without going through the warehouse?",
+          "r": "Yes — by indicating that the sale is made by the rep themselves (rather than an 'office sale'), the stock is deducted from what they carry, without going through a warehouse. This is also the mode that works offline."
         },
         {
           "q": "How do I cancel a sale?",
-          "r": "Open the sale's detail → 'Cancel this sale'. A reason is required. This generates a credit note and returns the stock to its original warehouse."
+          "r": "Open the sale details → 'Cancel this sale'. A reason is required. It generates a credit note (accounting refund) and returns the stock to the original warehouse."
         },
         {
-          "q": "Above what discount amount is approval required?",
-          "r": "The threshold is set in Settings → Discount policy. Beyond it, only a manager or admin can approve the discount."
+          "q": "Above what discount amount is approval needed?",
+          "r": "The threshold is set in Settings → Discount policy. Above it, only a manager or an admin can approve the discount."
+        },
+        {
+          "q": "How do I issue a standardised electronic invoice (FNE, DGI)?",
+          "r": "Settings → FNE: enable it, choose the environment (start with Test), paste the API key from your DGI FNE space, then the point of sale and establishment. In each sale, tick « Issue an FNE »: the sale is certified by the DGI, and the receipt carries the official reference and the verification QR code. Untick for a simple internal receipt. An uncertified sale can be certified later (sale details → « Certify (FNE) »). A credit note on a certified sale is also certified by the DGI."
+        },
+        {
+          "q": "What customer information is needed for the FNE?",
+          "r": "For a business customer (B2B), their tax number (NCC) is required: enter it in their record. Without an NCC, the sale is certified as a sale to an individual (B2C). The type can be forced in the record: B2B, B2C, B2G (government) or B2F (international)."
         }
       ]
     },
@@ -116,12 +164,12 @@
       "titre": "Orders",
       "items": [
         {
-          "q": "What is an order's lifecycle?",
-          "r": "Draft → Confirmed → Being prepared → Delivered (or Cancelled at any point before delivery). Each step is recorded with the date and the person who performed it."
+          "q": "What is an order's life cycle?",
+          "r": "Draft → Confirmed → In preparation → Delivered (or Cancelled at any time before delivery). Each step is recorded with the date and the person who performed it."
         },
         {
-          "q": "What happens if I can only deliver part of the order?",
-          "r": "At delivery time, enter the quantity actually delivered per product — the gap versus the ordered quantity is visible and kept on record, useful for analyzing recurring shortages (see Analytics)."
+          "q": "What if I can only deliver part of the order?",
+          "r": "At delivery, enter the quantity actually delivered per product — the difference with the ordered quantity is visible and kept, useful to analyse recurring stock-outs (see Analytics)."
         },
         {
           "q": "How do I plan production from pending orders?",
@@ -130,31 +178,35 @@
       ]
     },
     {
-      "titre": "Routes & visits",
+      "titre": "Rounds & visits",
       "items": [
         {
-          "q": "How do I create a route for a sales rep?",
-          "r": "Routes → '+ New route' → choose the date and the clients to visit. The route is automatically optimized (shortest path)."
+          "q": "How do I create a round for a sales rep?",
+          "r": "Rounds → '+ New round' → choose the rep and the date. Only customers in their portfolio appear. Manually: tick the customers, the visit order is optimised automatically. With AI: see the next question."
         },
         {
-          "q": "How do I confirm a visit at a client?",
-          "r": "From the route's detail, 'Mark as visited' — the phone's GPS position is checked against the client's, to confirm the visit actually took place on site."
+          "q": "How do I confirm a visit at a customer?",
+          "r": "From the round details, 'Mark as visited' — the phone's GPS position is checked against the customer's to confirm the visit really took place on site."
         },
         {
           "q": "What exactly is the visit report?",
-          "r": "After confirming a visit, a form lets you record the stock situation at the client (shelf and back-stock), photos, the presence of competitor products, and any custom question your company defined in Settings."
+          "r": "After confirming a visit, a form lets you record the stock at the customer (shelf and back store), photos, competing products, and any custom question set by your company in Settings."
         },
         {
           "q": "Does it work without network?",
-          "r": "Yes, for a sales rep: creating a sale (from their own stock), confirming a visit, submitting a report, and recording a payment received on a receivable all work offline — collection also works offline for a collection agent. Everything syncs automatically once the connection returns. A banner at the top of the app shows the number of pending actions."
+          "r": "Yes, for a sales rep: creating a sale (from their own stock), confirming a visit, sending a report, and recording a payment on a receivable all work offline — collection also works offline for a collection agent. Everything syncs automatically when the connection returns. A banner at the top of the app shows the number of pending actions."
         },
         {
-          "q": "How do I plan routes with AI?",
-          "r": "In the new route form, '✨ AI planning': choose the period (1 day to 1 month), target visits per day and optional instructions. AI picks who to visit and how often, with the reason for each choice, and spreads visits day by day grouping nearby customers. Remove any customer, then 'Create the N routes'."
+          "q": "How do I plan rounds with AI?",
+          "r": "In the new round form, '✨ AI planning' block: choose the period (1 day to 1 month), the target visits per day, and add instructions if needed (e.g. 'priority to receivables'). The AI chooses who to visit and how often (low stock, overdue receivables, customers not visited…) giving the reason for each choice; visits are spread day by day grouping nearby customers. Remove unwanted customers, then 'Create the N rounds'."
         },
         {
-          "q": "Why can't a past route be changed?",
-          "r": "A route whose date has passed is closed: view only, with a summary and unvisited customers marked '❌ Not visited'. Only exception: a visit made offline can still be validated until the end of the next day, while the phone syncs. Past routes are in 'Archive'."
+          "q": "Can a sales rep schedule their own round?",
+          "r": "Yes, only their own. If the option 'Approval of rounds scheduled by a sales rep' is enabled (Settings), their round must be approved by a manager before they can confirm visits."
+        },
+        {
+          "q": "Why can a past round no longer be changed?",
+          "r": "A round whose date has passed is closed: read only, with a summary (visits done / planned) and unvisited customers marked '❌ Not visited'. Anti-fraud: no customer can be added or removed afterwards. Only tolerance: a visit made offline can still be confirmed until the end of the next day, while the phone syncs. Past rounds are kept in 'Archives'."
         }
       ]
     },
@@ -162,16 +214,16 @@
       "titre": "Receivables",
       "items": [
         {
-          "q": "How do I see what a client still owes?",
-          "r": "Receivables lists all credit sales not yet fully paid, with the due date. Overdue receivables are highlighted."
+          "q": "How do I see what a customer still owes?",
+          "r": "Receivables lists all credit sales not fully paid, with the due date. Overdue receivables are highlighted."
         },
         {
-          "q": "How do I record a payment received from a client?",
-          "r": "Open the relevant receivable → 'Record a payment' → enter the amount and payment method. You can also specify which sales rep collected it in the field."
+          "q": "How do I record a payment received from a customer?",
+          "r": "Open the receivable → 'Record a payment' → enter the amount and the payment method. You can also specify which sales rep collected it in the field."
         },
         {
-          "q": "How do I import existing client balances (before using DistribPro)?",
-          "r": "Receivables → 'Import' — client names must exactly match clients already created in the app."
+          "q": "How do I import existing customer balances (from before DistribPro)?",
+          "r": "Receivables → 'Import' — customer names must exactly match customers already created in the app."
         }
       ]
     },
@@ -179,16 +231,16 @@
       "titre": "Deposits",
       "items": [
         {
-          "q": "What are 'cash registers' for?",
-          "r": "A cash register represents a physical collection point (e.g. the main office) where sales reps hand over the cash from sales and receivable collections they took in the field."
+          "q": "What are 'cash desks' for?",
+          "r": "A cash desk is a physical collection point (e.g. the main office) where sales reps hand over the money from cash sales and receivable collections they took in the field."
         },
         {
-          "q": "How does a sales rep deposit their cash?",
-          "r": "'My deposits' page — enter the amount they're depositing and to which register. A PDF deposit receipt is generated."
+          "q": "How does a sales rep deposit their money?",
+          "r": "'My deposits' page — enter the amount deposited and in which cash desk. A PDF deposit receipt is generated."
         },
         {
-          "q": "Where can I see what each sales rep still needs to deposit?",
-          "r": "Deposits page (accounting/admin) — calculates, for each sales rep, the total due (cash sales + collections) minus what they've already deposited today."
+          "q": "Where do I see what each sales rep still has to deposit?",
+          "r": "Deposits page (accounting/admin) — calculates for each rep the total due (cash sales + collections) minus what they have already deposited today."
         }
       ]
     },
@@ -196,40 +248,89 @@
       "titre": "Cash journal",
       "items": [
         {
-          "q": "How does a disbursement request (cash outflow) work?",
-          "r": "'+ New request' → description, amount, and optionally a supporting document and the beneficiary's name. Depending on the configured threshold, it's either auto-approved or held pending an approver."
+          "q": "How does a payment-out request work?",
+          "r": "'+ New request' → description, amount, and optionally a supporting document and the beneficiary's name. Depending on the configured threshold, it is either auto-approved or waits for an approver."
         },
         {
-          "q": "Who can approve a cash outflow, and how?",
-          "r": "The roles allowed to approve are set in Settings → Cash journal. The approver can grant the full amount or reduce it based on available cash, line by line — they see the current balance and the projected balance live before deciding."
+          "q": "Who can approve a payment out, and how?",
+          "r": "The roles allowed to approve are set in Settings → Cash journal. The approver can grant the full amount or reduce it according to available cash, line by line — they see the current balance and the projected balance live before deciding."
         },
         {
-          "q": "Once approved, how do I actually pay the request?",
-          "r": "'Pay amount' button on the approved request — this records the outflow entry and automatically downloads a cash voucher PDF, with the amount spelled out in words and a signature space for the beneficiary."
+          "q": "Once approved, how is the request actually paid?",
+          "r": "'Pay amount' button on the approved request — it records the outflow and automatically downloads a PDF cash voucher, with the amount written in words and a signature space for the beneficiary."
         },
         {
-          "q": "How does a cash inflow work?",
-          "r": "'+ Cash inflow' is used to record money entering the register that doesn't come from a sale — a bank transfer, a loan, or another source. It increases the available balance."
+          "q": "How does a cash top-up work?",
+          "r": "'+ Top-up' records money entering the cash desk that does not come from a sale — a bank withdrawal, a loan or another source. It increases the available balance."
         },
         {
-          "q": "How do I transfer money from one register to another, or to the bank?",
-          "r": "'+ Transfer' — choose the destination register (the amount leaves the source register immediately, and is only credited to the destination once receipt is confirmed, just like a stock transfer) or 'To a bank' if the money is leaving the system."
+          "q": "How do I transfer money from one cash desk to another, or to the bank?",
+          "r": "'+ Transfer' — choose the destination cash desk (the amount leaves the source immediately and is only credited to the destination after receipt is confirmed, as for a stock transfer) or 'To a bank' if the money leaves the system."
         },
         {
-          "q": "What is a fund return?",
-          "r": "Useful when a payment already made needs to be partially refunded — a purchase cancelled after payment, or an overpayment returned. '+ Fund return', optionally linked to the original disbursement."
+          "q": "What is a funds return?",
+          "r": "Useful when a payment already made must be partly returned — a purchase cancelled after payment, or an overpayment given back. '+ Funds return', optionally linked to the original payment."
         },
         {
           "q": "What is the Ledger?",
-          "r": "The page's second tab — a classic accounting view combining all transactions (deposits, cash inflows, paid disbursements, transfers, returns) with a running balance recalculated line by line, filterable by period."
+          "r": "Second tab of the page — a classic accounting view combining all movements (deposits, top-ups, paid outflows, transfers, returns) with a running balance recalculated line by line, filterable by period."
         },
         {
           "q": "Can a cashier cancel or correct their own request?",
-          "r": "Yes, as long as it's still 'pending' (not yet processed by an approver) — 'Edit' and 'Cancel my request' buttons appear on their own requests."
+          "r": "Yes, as long as it is still 'pending' (not yet handled by an approver) — 'Correct' and 'Cancel my request' buttons are shown on their own requests."
         },
         {
-          "q": "Why am I asked for a code before I can approve?",
-          "r": "If an approval code (PIN) has been set up for your account, the approval section locks after 1 minute of inactivity, to prevent a session left open from letting someone else approve on your behalf. If you forget it, an admin can regenerate your code from Team."
+          "q": "Why does a code ask me to sign in again before approving?",
+          "r": "If an approval code (PIN) has been set for your account, the approval section locks after 1 minute of inactivity, so that a session left open cannot let someone else approve in your place. If forgotten, an admin can regenerate your code from Team."
+        },
+        {
+          "q": "Do I get a notification for payments out?",
+          "r": "Yes — when someone creates a payment-out request, the people allowed to approve (per the setting in Settings) receive a push notification. And when a request is approved or refused, the original requester is notified. Requires notifications to be enabled (Appearance → Notifications)."
+        },
+        {
+          "q": "The menu shows a red badge on Cash journal or Banks: what does it mean?",
+          "r": "Same principle as the Messaging badge — the number shows everything waiting for your action: payments out to approve, approved payments to pay, and incoming transfers to confirm (between cash desks, or from/to a bank). Visible from any page, updated automatically."
+        },
+        {
+          "q": "How do I regularise a difference found in a cash count?",
+          "r": "'Regularise this difference' button on the count concerned — reserved for authorised roles (set in Settings → Cash difference regularisation, admin). It automatically generates the correcting entry in the Ledger, bearing the name of the person regularising. Once done, it cannot be redone for the same count."
+        },
+        {
+          "q": "How do I restrict who can actually pay a payment out?",
+          "r": "Settings → assign a manager to each cash desk (drop-down under the cash desk name). Once assigned, only that person can pay an approved payment on that cash desk — other admins/managers/accountants see a message instead of the button. Optional: without an assigned manager, the usual behaviour (any authorised role can pay) applies."
+        },
+        {
+          "q": "How do I trace the steps of a payment out (who requested, approved, paid)?",
+          "r": "Cash journal → Requests tab → History section — each payment out shows the 3 steps with exact date and time: requested by X, approved by Y, paid by Z."
+        }
+      ]
+    },
+    {
+      "titre": "Banks",
+      "items": [
+        {
+          "q": "How do I create a bank account?",
+          "r": "Banks → '+ New bank' — name, account number (RIB), account title. A company can have several accounts in different banks."
+        },
+        {
+          "q": "How is a customer payment by cheque or transfer linked to a bank?",
+          "r": "In Receivables, when recording a payment by 'Cheque' or 'Transfer', an optional field lets you specify the bank it is deposited in — useful for tracking and reconciliation."
+        },
+        {
+          "q": "How do I transfer money between a cash desk and a bank?",
+          "r": "Cash desk to bank: from the Cash journal, '+ Transfer' → 'To a bank'. Bank to cash desk: from Banks → Transfers tab. In all cases, the amount leaves the source immediately, and the receipt confirmation (in the Cash journal for a destination cash desk, in Banks for a destination bank) represents the moment the deposit or withdrawal was actually made at the counter — not a confirmation from the bank itself."
+        },
+        {
+          "q": "How does bank reconciliation work?",
+          "r": "Banks → Reconciliation tab — choose the bank and the period, upload the bank statement in Excel (template provided in the app). The system automatically compares (by identical amount) the statement with our recorded movements, and highlights what does not match on both sides — an uncashed cheque, unrecorded bank fees, etc."
+        },
+        {
+          "q": "How do I count a cash desk?",
+          "r": "Cash journal → Count tab → '+ New count' — enter the amount actually counted in the cash desk. It is automatically compared with the theoretical (book) balance, the difference is highlighted, and a PDF report with signature spaces is generated."
+        },
+        {
+          "q": "How do I trace a cheque number or a transfer reference?",
+          "r": "Three cases: a customer payment by cheque/transfer (in Receivables, 'Cheque number / reference' field); a bank withdrawal to top up a cash desk (Banks → Transfers, bank reference field); a cheque issued to pay a supplier (Banks → Transfers → '+ Payment out' — direct movement with beneficiary, method, reference and optional document). All these references appear in the bank Ledger, in a dedicated column."
         }
       ]
     },
@@ -238,19 +339,27 @@
       "items": [
         {
           "q": "How do I set a sales target?",
-          "r": "Targets → '+ New target' — for a sales rep, a team leader, leadership, or the office (sales made from the warehouse, not attributed to a sales rep), over a given period, in amount and/or quantity of a specific product."
+          "r": "Targets → '+ New target' — for a sales rep, a team leader, management, or the office (sales made from the warehouse, not assigned to a rep), over a given period, as an amount and/or a quantity of a specific product."
         },
         {
           "q": "How is a team leader's achieved target calculated?",
-          "r": "It's the sum of sales from all sales reps affiliated with their team — not their own personal sales. Affiliation is set in Settings → Sales org chart. A leadership target represents the company's total sales."
+          "r": "It is the sum of the sales of all reps assigned to their team — not their own personal sales. Assignment is set in Settings → Sales organisation chart. A management target represents all of the company's sales."
         },
         {
           "q": "What does the Analytics page show?",
-          "r": "A daily route summary, product turnover rate (based on successive visit reports), shelf presence rate versus competitors, and cancelled or partially delivered orders (lost revenue)."
+          "r": "Daily round summary, product turnover rate (based on successive visit reports), shelf presence rate against competitors, and cancelled or partly delivered orders (lost revenue)."
         },
         {
-          "q": "How do I download an AI analysis as PDF or Word?",
-          "r": "AI analysis → select the analysis → 'Download as PDF' or 'Download as Word' (.docx, editable)."
+          "q": "How do I download an AI Analysis as PDF or Word?",
+          "r": "AI Analysis → select the analysis → '📄 Download as PDF' (ready to print, with the company header) or '📝 Download as Word' (editable .docx file)."
+        },
+        {
+          "q": "How do I disable AI for a team member?",
+          "r": "Team → on the member, 'Disable AI'. They no longer see AI features and the server refuses their requests. Monthly AI usage (per feature and per person) is visible at the bottom of Settings."
+        },
+        {
+          "q": "How do I change a target?",
+          "r": "Targets → 'Edit' (admin, manager): period, amounts, quantity, notes, with a required reason. '🕘 History' shows who created or changed the target, when, why and what changed. Deleting also requires a reason and remains traced."
         }
       ]
     },
@@ -258,33 +367,41 @@
       "titre": "Dashboard",
       "items": [
         {
-          "q": "What does an admin, manager, or accountant see on the Dashboard that other roles don't?",
-          "r": "The balance of each active cash register (clickable to go straight to the Cash journal), a revenue breakdown pie chart — by product, by city, or by client group, over a chosen period (month, quarter, half-year, year, or custom dates) — and the sum of company-wide targets (this month and this year)."
+          "q": "What do an admin, a manager or an accountant see on the Dashboard that others do not?",
+          "r": "The balance of each active cash desk (clickable to go straight to the Cash journal), a pie chart of revenue — by product, by city or by customer group, over a chosen period (month, quarter, half-year, year or custom dates) — and the sum of the whole company's targets (this month and this year)."
         },
         {
-          "q": "How does the inactive sales rep alert work?",
-          "r": "Visible to admin and manager — lists sales reps who haven't logged into the app for more than 24h, with the exact time elapsed since their last access (in days and hours)."
+          "q": "How does the inactive sales reps alert work?",
+          "r": "Visible to admin and manager — lists reps who haven't signed in to the app for more than 24 hours, with the exact time since their last access (in days and hours)."
+        },
+        {
+          "q": "What does the 'Stock count overdue' alert mean?",
+          "r": "If a periodic reminder was set (Settings → Stock count reminders), this alert appears on the Dashboard as soon as the delay since the last stock or cash count has passed — with a direct link to do a new one."
+        },
+        {
+          "q": "What does the 'Batches to sell first' alert mean?",
+          "r": "Appears as soon as one or more batches approach their expiry date (within the next 15 days) or have already expired — visible to admin, manager and stock manager, with a direct link to the full list in Stock."
         }
       ]
     },
     {
-      "titre": "Team & Org chart",
+      "titre": "Team & Organisation chart",
       "items": [
         {
           "q": "How do I invite a new team member?",
-          "r": "Team → '+ Invite a colleague' — enter their email and role. The person must then create their own account, using exactly that email address."
+          "r": "Team → '+ Invite a colleague' — enter their email and role. The person must then create their account themselves, with exactly this email address."
         },
         {
-          "q": "How do I organize my sales reps into teams?",
-          "r": "Settings → Sales org chart (admin/manager) — create named teams, assign a team leader (manager or admin), then affiliate each sales rep with the appropriate team. This is used in particular for calculating team targets."
+          "q": "How do I organise my sales reps into teams?",
+          "r": "Settings → Sales organisation chart (admin/manager) — create named teams, assign a team leader (manager or admin), then assign each rep to the right team. It is used in particular to calculate team targets."
         },
         {
-          "q": "A member forgot their password, what do I do?",
-          "r": "Team → on their row → 'Reset password' — generates a temporary password to give them, which they'll have to change on their next login. As an admin, you'll never see either the old or the new password."
+          "q": "A member forgot their password: what should I do?",
+          "r": "Team → on their line → 'Reset password' — a temporary password is emailed directly to the person, with the sign-in link; they will have to change it at their next sign-in. The administrator does not see this password (it is only shown as a fallback if the email could not be sent). The person can also use « Forgot password? » on the sign-in screen themselves."
         },
         {
-          "q": "How do I remove someone who left the team?",
-          "r": "Team → 'Deactivate'. They can no longer sign in, no longer count toward your subscription and move to 'Former members'. Their history is kept."
+          "q": "How do I remove someone who has left the team?",
+          "r": "Team → 'Deactivate' on their account. They can no longer sign in, no longer count in your subscription and move to the collapsed 'Former members' section. Their history (sales, visits, deposits) is kept; you can reactivate them at any time."
         }
       ]
     },
@@ -301,7 +418,11 @@
         },
         {
           "q": "How do I get notified even with the app closed?",
-          "r": "Appearance → Notifications → enable the toggle, then allow notifications in your browser when it asks."
+          "r": "Appearance → Notifications → turn on the switch, then allow notifications in your browser when asked."
+        },
+        {
+          "q": "How do I know I have unread messages without opening Messaging?",
+          "r": "A red badge with the number of unread messages appears directly on 'Messaging' in the menu, visible from any page of the app — it updates automatically when a new message arrives and disappears once messages are read."
         }
       ]
     },
@@ -309,20 +430,20 @@
       "titre": "Appearance",
       "items": [
         {
-          "q": "How do I change the app's colors?",
-          "r": "Appearance menu — 5 themes to choose from, including a 'High contrast' theme designed for visual comfort. This is a personal setting, specific to your account, not shared with the rest of the team."
+          "q": "How do I change the app's colours?",
+          "r": "Appearance menu — 5 themes to choose from, including a 'High contrast' theme designed for visual comfort. It is a personal setting for your account, not shared with the rest of the team."
         },
         {
           "q": "How do I enlarge the text if I have trouble reading?",
-          "r": "Appearance menu → Text size — Normal, Large, or Extra large. Applies to the whole app immediately."
+          "r": "Appearance menu → Text size — Normal, Large or Extra large. Applies to the whole app immediately."
         },
         {
           "q": "How do I add my profile photo?",
-          "r": "Tap your name at the bottom of the menu (or Appearance) → 'Profile photo' → 'Choose a photo'. It appears in messaging, Team and the menu."
+          "r": "Tap your name at the bottom of the menu (or Appearance) → 'Profile photo' → '📷 Choose a photo'. It is cropped automatically and appears in messaging, the Team page and the menu."
         },
         {
-          "q": "What are the 💡 bubbles on buttons?",
-          "r": "Hover (computer) or long-press (phone) a button to see what it does — a long-press does not trigger it. Turn them off in Appearance."
+          "q": "What are the 💡 bubbles on buttons for?",
+          "r": "Hover over a button (computer) or long-press it (phone) to find out what it does — a long press does not trigger the button. To turn them off: Appearance → 'Help bubbles on buttons'."
         }
       ]
     },
@@ -331,32 +452,139 @@
       "items": [
         {
           "q": "How do I change the currency shown across the app?",
-          "r": "Settings → Currency (admin) — F CFA, Euro, US Dollar, Pound sterling, Ghanaian cedi, or Nigerian naira."
+          "r": "Settings → Currency (admin) — CFA franc, Euro, Dollar, Pound sterling, Ghanaian cedi or Nigerian naira."
         },
         {
           "q": "How do I enable VAT on sales?",
-          "r": "Settings → Billing & taxes (admin). Once enabled, each product must be configured individually (applicable rate) from the Stock page — the rate often varies by type of goods. Check with your accountant before relying on it for real invoices."
+          "r": "Settings → Billing & taxes (admin). Once enabled, each product must be configured individually (applicable rate) from the Stock page — the rate often depends on the nature of the goods. Check with your accountant before relying on it for real invoices."
         },
         {
           "q": "How do I add my own questions to the visit report?",
-          "r": "Settings → Additional information to collect — add a question (free text, number, yes/no, or choice from a list), it will automatically appear in every sales rep's visit report form."
+          "r": "Settings → Additional information to collect — add a question (free text, number, yes/no, or choice from a list); it automatically appears in the visit report form for all reps."
+        },
+        {
+          "q": "How do I set periodic stock count reminders?",
+          "r": "Settings → Stock count reminders (admin) — choose a frequency for stock and for cash, independently: weekly, monthly, quarterly or off. An alert then appears on the Dashboard as soon as the delay has passed."
+        },
+        {
+          "q": "How do I require proof to confirm a transfer?",
+          "r": "Settings → Transfers between cash desks/banks (admin) — enable 'Require a supporting document to confirm a transfer' to make attaching a photo of the deposit/withdrawal slip mandatory at each confirmation. Off by default (a simple confirmation is enough)."
+        },
+        {
+          "q": "How do I make the batch number mandatory?",
+          "r": "Settings → Batch traceability (admin) — enable 'Make the batch number mandatory at each stock entry'. Off by default: traceability still works when you enter a batch; this setting just forces you to always do so."
+        },
+        {
+          "q": "Who can regularise a cash difference?",
+          "r": "Settings → Cash difference regularisation (admin) — tick the authorised roles among admin, manager, accountant. By default: admin and manager only."
+        },
+        {
+          "q": "How do I export my entries to Sage Saari Compta or Ciel Compta?",
+          "r": "1) Chart of accounts (menu) — create or import your accounts (or load the starter SYSCOHADA chart). 2) Settings → Accounting — default accounts, link a cash account to each cash desk and bank, and choose the counterpart accounts (expenses, customers, differences, contributions). 3) From the Cash journal or Banks, Ledger tab, 'Export for accounting' button — generates an Excel file with standard columns (Date, Journal, Account no., Description, Document no., Debit, Credit). Importable into Sage Saari/Ciel via the 'configurable import format' (set up once in your accounting software by matching the columns)."
         }
       ]
     },
     {
-      "titre": "Sales reps stock",
+      "titre": "Usage scores",
+      "items": [
+        {
+          "q": "How does the sales reps' usage score work?",
+          "r": "Monthly score out of 100, calculated automatically from 3 objective indicators: field attendance (days with at least one recorded activity), complete visit reports (planned visits followed by a report), and deposit discipline (regular cash deposits). No AI is involved in calculating the figure — it is a fixed formula, so it can be explained in case of disagreement."
+        },
+        {
+          "q": "How do I calculate the month's scores?",
+          "r": "Usage scores (menu, admin/manager) → choose the month → 'Calculate this month's scores'. Can be recalculated at any time (replaces the previous calculation for the same month). PDF export available once calculated."
+        },
+        {
+          "q": "How do I set the weight of each indicator?",
+          "r": "Settings → App usage score (admin) — split the 100 points between attendance, visit reports and deposits according to your priorities."
+        },
+        {
+          "q": "Does a sales rep see their own score?",
+          "r": "Yes — a 'My usage score this month' card appears on their Dashboard as soon as a calculation has been done for the current month, with the details of the 3 indicators."
+        }
+      ]
+    },
+    {
+      "titre": "Sales reps' stock",
       "items": [
         {
           "q": "How do I exchange a sales rep's defective products?",
-          "r": "Sales reps stock → 'Defective exchanges' tab: choose the rep, warehouse, product, quantity and reason. The rep leaves with good products; damaged ones enter a 'damaged' batch."
+          "r": "Sales reps' stock → 'Defective exchanges' tab (warehouse, admin or manager): choose the rep, the warehouse, the product and the quantity, then the reason. The rep leaves with sound products and their stock does not change; the damaged products enter the warehouse in a « damaged » batch, visible in the stock details."
         },
         {
           "q": "How do I reconcile a sales rep?",
-          "r": "Reconciliations → '+ New reconciliation' → rep and period. The app computes stock and cash; enter the counted stock, then approve: cashier first, then the accountant, who decides for each gap (debt or write-off)."
+          "r": "Reconciliations → '+ New reconciliation' → choose the rep. « By rounds » mode (default): tick their rounds not yet reconciled; for closed rounds, the counted stock is prefilled with 0 (anything neither sold nor brought back is a shortage). « By dates » mode: choose the period. The app calculates stock (start, issues, sales, returns, theoretical; hover the ⓘ columns for their explanation) and money (cash sales, collections, deposits, difference). An automatic control report summarises the differences and defective exchanges. Enter the stock actually counted, then 'Save the count'. The sheet can be printed."
+        },
+        {
+          "q": "Who approves a reconciliation sheet?",
+          "r": "Two successive approvals: first the cash desk (cash manager, accountant or management) — the period's entries are then generated; then the accountant, by another person, who decides for each difference: charged to the rep (debt) or justified (loss, with comment). The rep can justify their differences before closing."
         },
         {
           "q": "How do I track a sales rep's debt?",
-          "r": "Reconciliations → 'Sales rep debts' tab: balance and history (debts, repayments, write-offs)."
+          "r": "Reconciliations → 'Sales reps' debts' tab: each rep's balance and history (debts, repayments, write-offs). The accountant records a repayment at the cash desk; only the admin can write off a debt, with a reason. Each rep has an accounting sub-account (e.g. 471001), configurable in Settings."
+        },
+        {
+          "q": "How do I recover a debt from a sales rep's salary?",
+          "r": "Reconciliations → Debts → on the rep, 'Forced recovery (salary deduction)' (admin, accountant): amount, number of instalments, first month, reference salary (confidential) and reason. The instalment cannot exceed the ratio set in Settings (as a % of the reference salary). The debt is reclassified from 471 to 421 (salary advance). Print the voluntary salary assignment deed, to be signed and stamped by the labour inspector or court president. Each month, 'Monthly deductions report' lists the amounts to carry to payslips. Anti-duplication: by default, payroll records the deductions (422/421) and DistribPro only tracks them — configurable in Settings."
+        },
+        {
+          "q": "How do I correct a mistake on a reconciliation sheet?",
+          "r": "Before cash approval: freely change the counted stock. After cash approval: the accountant or admin can « Send back to cashier for correction », with a reason — the entries are reversed and the sheet becomes editable again. After closing, the sheet is never edited: « Correct the count » corrects the count, the debt, the rep's stock and the entries, and each correction stays traced in the sheet's history."
+        }
+      ]
+    },
+    {
+      "titre": "Artificial intelligence",
+      "items": [
+        {
+          "q": "How do I get an activity report in PowerPoint?",
+          "r": "AI assistant (or AI Analysis) → « Activity report (PowerPoint) »: choose the period (last month, this month, quarter, year to date or custom dates), then « Generate PowerPoint ». In 20 to 40 seconds you download a presentation of about 10 slides: summary and comparison with the previous period, revenue trend, top customers and products, reps against their targets, breakdown by warehouse, receivables, stock and recommendations. The figures come from your data; the AI only writes the commentary. The charts are real, editable PowerPoint charts. A sales rep gets the report on their own activity."
+        },
+        {
+          "q": "How do I receive the report automatically every month?",
+          "r": "Settings → Automatic monthly report (administrator): enable sending and enter the recipients (otherwise: all administrators and managers). On the 1st of each month at 7 am, the previous month's report is emailed with the PowerPoint attached."
+        },
+        {
+          "q": "What can the AI assistant do?",
+          "r": "« AI assistant » menu: ask your questions in plain language (« What is my revenue this month compared with last month? », « Which customers are late paying? »). The assistant reads your real data, within your rights, and never invents a figure. It also answers questions about how to use the app."
+        },
+        {
+          "q": "How do I record a sale or an order by dictating it?",
+          "r": "Open the assistant (✨ bubble at the bottom right, or AI assistant menu), tap the 🎤 microphone and dictate, for example: « Sale to Boutique Exemple, ten Bacca mil 350 and five Dêguê, paid cash » or « Order for Diakité Transitaire, fifty Bacca riz 350, delivery Friday ». The assistant finds the customer and products, applies the customer's price and prepares a card: nothing is saved until you tap « Confirm ». You can correct quantities, remove an item, change the payment method. In case of doubt (two customers with similar names), the assistant asks you. A sales rep sells from their stock in hand. Dictation works best with Chrome and an internet connection; you can also type your request."
+        },
+        {
+          "q": "How do I hide or show the assistant bubble again?",
+          "r": "In the open bubble: « Hide bubble ». To show it again: Appearance → AI assistant → « Show the assistant bubble on every screen ». The assistant always remains available from the « AI assistant » menu. The 🔈/🔊 button turns reading answers aloud on or off."
+        },
+        {
+          "q": "Can the assistant open, print or send an invoice?",
+          "r": "Yes. Ask for example « Open invoice VTE-2026-00028 » or « Send Diakité's proforma by WhatsApp »: the assistant finds the document (within your rights) and shows Open, PDF, Print, Delivery note, WhatsApp, Email, Certify FNE buttons (or Proforma for an order). After a dictated and confirmed sale or order, these buttons also appear directly. In a customer's ledger, double-clicking a line (or clicking its number) opens the invoice or payment receipt."
+        },
+        {
+          "q": "Can I dictate a payment, a new customer or a visit report?",
+          "r": "Yes, in the assistant (✨ bubble or AI assistant menu): « Boutique Exemple paid 50,000 in cash » prepares a payment spread over their unpaid invoices, oldest first (editable amounts); « New customer: Supérette Les Palmiers, 07 07 12 34 56, Yopougon » prepares the customer record, flagging customers with similar names already recorded; « Visit at Eacci: manager absent, come back Thursday » prepares a visit report, linked to your round of the day if the customer is on it. Nothing is saved before « Confirm »."
+        },
+        {
+          "q": "Can the assistant help the stock manager?",
+          "r": "Yes. In the ✨ bubble, the stock manager can ask « Which orders should I prepare today? » and dictate: a receipt (« Receipt of 200 Bacca mil 350g at the main warehouse, batch L2510, expires 30/03/2027 »), an issue to a sales rep (« Issue to Commercial delta: 50 Bacca mil 350 »), a transfer (« Transfer 30 Bacca mil from the main warehouse to Yopougon »), preparing or delivering an order (« Deliver CMD-2026-00004, 10 Bacca riz missing »). A card shows available stock, editable batches, expiry dates and purchase prices; for a receipt, take a photo of the supplier note if your company requires it. Nothing is saved before « Confirm »."
+        }
+      ]
+    },
+    {
+      "titre": "Settings",
+      "items": [
+        {
+          "q": "How do I put my company's logo on my documents?",
+          "r": "Settings → Company logo (administrator): choose a PNG (ideally with a transparent background), JPEG or WebP image. It is resized automatically and appears at the top of all documents: invoices and FNE, receipts, delivery notes, proformas, credit notes, cash vouchers, stock count reports, PowerPoint reports and emails sent to customers. The logo can also be added when creating the company, and changed or removed at any time."
+        },
+        {
+          "q": "Where do I see my subscription and AI units?",
+          "r": "« My subscription » menu (administrator, manager, accountant): your plan, the end of the trial or next due date, the number of sales reps allowed, your AI unit balance (1 unit = 1 F CFA, deducted at each AI use: assistant, PowerPoint report, analysis, round planning), the history and your payments. At zero, AI features are blocked until topped up. To pay: choose Monthly or Annual, then « Choose and pay » on the plan you want; for AI units, « Buy » on a pack. Payment is made on CinetPay's secure page (Mobile Money or card), and your subscription or units are activated automatically on confirmation. A PDF receipt is available for each successful payment. Payment is reserved to the administrator and accountant."
+        },
+        {
+          "q": "What happens at the end of the trial or if payment is late?",
+          "r": "You receive email reminders (end of trial and due date at 7, 3 and 1 day; then after the due date), and a banner appears in the app. Without settlement, your workspace may become read-only (viewing possible, no changes), then be suspended. Your data is always kept, and everything becomes editable again as soon as you pay, from « My subscription ». The number of active sales reps is limited by your plan: to add more, upgrade to the next plan."
         }
       ]
     }

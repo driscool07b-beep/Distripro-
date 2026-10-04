@@ -13,7 +13,7 @@
         },
         {
           "q": "J'ai oublié mon mot de passe, comment le récupérer ?",
-          "r": "Sur l'écran de connexion, clique sur 'Mot de passe oublié ?', indique ton email — si un compte existe, tu recevras un lien pour choisir un nouveau mot de passe (vérifie aussi tes spams). Si ça ne suffit pas, un administrateur peut aussi réinitialiser ton mot de passe depuis Équipe."
+          "r": "Sur l'écran de connexion, clique sur 'Mot de passe oublié ?', indique ton email : si un compte existe, tu recevras un code à 6 chiffres (et un lien) pour choisir un nouveau mot de passe — vérifie aussi tes spams. Tape le code dans l'encadré qui apparaît sous le formulaire. Un administrateur peut aussi réinitialiser ton mot de passe depuis Équipe."
         },
         {
           "q": "Quels sont les différents rôles et à quoi donnent-ils accès ?",
@@ -397,7 +397,7 @@
         },
         {
           "q": "Un membre a oublié son mot de passe, que faire ?",
-          "r": "Équipe → sur sa ligne → 'Réinit. mot de passe' — génère un mot de passe temporaire à lui transmettre, qu'il devra changer à sa prochaine connexion. Toi-même en tant qu'admin ne verras jamais ni l'ancien ni le nouveau mot de passe."
+          "r": "Équipe → sur sa ligne → 'Réinit. mot de passe' — un mot de passe provisoire est envoyé directement par email à la personne, avec le lien de connexion ; elle devra le changer à sa prochaine connexion. L'administrateur ne voit pas ce mot de passe (il ne s'affiche qu'en secours, si l'email n'a pas pu partir). La personne peut aussi utiliser elle-même « Mot de passe oublié ? » sur l'écran de connexion."
         },
         {
           "q": "Comment retirer de l'équipe une personne qui est partie ?",
@@ -514,7 +514,7 @@
         },
         {
           "q": "Comment faire la réconciliation d'un commercial ?",
-          "r": "Réconciliations → '+ Nouvelle réconciliation' → commercial et période. L'app calcule le stock (début, sorties, ventes, retours, théorique) et l'argent (ventes comptant, recouvrements, versements, écart). Saisis le stock réellement compté, puis 'Enregistrer le comptage'. La fiche est imprimable et liste les fiches de versement de la période."
+          "r": "Réconciliations → '+ Nouvelle réconciliation' → choisis le commercial. Mode « Par tournées » (par défaut) : coche ses tournées non encore réconciliées ; pour les tournées clôturées, le stock compté est prérempli à 0 (ce qui n'est ni vendu ni rapporté est un manquant). Mode « Par dates » : choisis la période. L'app calcule le stock (début, sorties, ventes, retours, théorique ; survole les colonnes ⓘ pour leur explication) et l'argent (ventes comptant, recouvrements, versements, écart). Un rapport de contrôle automatique résume les écarts et les échanges défectueux. Saisis le stock réellement compté, puis 'Enregistrer le comptage'. La fiche est imprimable."
         },
         {
           "q": "Qui valide une fiche de réconciliation ?",
@@ -526,7 +526,11 @@
         },
         {
           "q": "Comment récupérer une dette sur le salaire d'un commercial ?",
-          "r": "Réconciliations → Dettes → sur le commercial, 'Recouvrement forcé (retenue sur salaire)' (admin, comptable) : montant, nombre de mensualités, premier mois et motif. La dette est reclassée du 471 vers le 421 (avance sur salaire). Imprime la notification et fais-la signer. Chaque mois, 'État des retenues du mois' liste les montants à reporter sur les bulletins ; enregistre ensuite la retenue. Anti-doublon : par défaut, c'est la paie qui comptabilise les retenues (422/421), DistribPro n'en fait que le suivi — réglable dans Paramètres."
+          "r": "Réconciliations → Dettes → sur le commercial, 'Recouvrement forcé (retenue sur salaire)' (admin, comptable) : montant, nombre de mensualités, premier mois, salaire de référence (confidentiel) et motif. La mensualité ne peut dépasser la quotité fixée dans Paramètres (en % du salaire de référence). La dette est reclassée du 471 vers le 421 (avance sur salaire). Imprime l'acte de cession volontaire de salaire, à signer et à faire viser par l'inspecteur du travail ou le président du tribunal. Chaque mois, 'État des retenues du mois' liste les montants à reporter sur les bulletins. Anti-doublon : par défaut, c'est la paie qui comptabilise les retenues (422/421), DistribPro n'en fait que le suivi — réglable dans Paramètres."
+        },
+        {
+          "q": "Comment corriger une erreur sur une fiche de réconciliation ?",
+          "r": "Avant la validation caisse : modifie librement le stock compté. Après la validation caisse : le comptable ou l'admin peut « Renvoyer à la caisse pour correction », avec un motif — les écritures sont contre-passées et la fiche redevient modifiable. Après la clôture, la fiche n'est jamais modifiée : « Rectifier le comptage » corrige le compté, la dette, le stock du commercial et les écritures, et chaque rectification reste tracée dans l'historique de la fiche."
         }
       ]
     },
@@ -543,7 +547,7 @@
         },
         {
           "q": "Que peut faire l'assistant IA ?",
-          "r": "Menu « Assistant IA » : posez vos questions en langage courant (« Quel est mon CA ce mois-ci par rapport au mois dernier ? », « Quels clients sont en retard de paiement ? »). L'assistant consulte vos vraies données, dans la limite de vos droits, et n'invente jamais un chiffre."
+          "r": "Menu « Assistant IA » : posez vos questions en langage courant (« Quel est mon CA ce mois-ci par rapport au mois dernier ? », « Quels clients sont en retard de paiement ? »). L'assistant consulte vos vraies données, dans la limite de vos droits, et n'invente jamais un chiffre. Il répond aussi aux questions sur l'utilisation de l'application."
         },
         {
           "q": "Comment enregistrer une vente ou une commande en la dictant ?",
