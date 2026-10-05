@@ -184,5 +184,6 @@
     "aideLivraison": "如有缺货，请更正实际交付数量：销售将按这些数量生成。",
     "dateSouhaitee": "日期",
     "commentaire": "备注（可选）"
-  }
+  },
+  "delaiDepasse": "助手响应时间过长。请检查网络，然后用更简短的问题重试。"
 }

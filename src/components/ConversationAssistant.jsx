@@ -61,7 +61,12 @@ export default function ConversationAssistant({ compact = false, onNavigation })
     try { page = sessionStorage.getItem('distribpro-derniere-page') || '' } catch { /* ignore */ }
     const historique = suite.filter((m) => m.content).map((m) => ({ role: m.role, content: m.content }))
     const aide = extraitsGuide(`${q} ${historique.slice(-3, -1).map((m) => m.content).join(' ')}`)
-    const { data, error } = await supabase.functions.invoke('assistant-ia', { body: { messages: historique, aide, page } })
+    // Délai maximal : jamais d'attente sans fin à l'écran.
+    const delai = new Promise((resolve) => setTimeout(() => resolve({ data: null, error: { message: t('delaiDepasse') } }), 115000))
+    const { data, error } = await Promise.race([
+      supabase.functions.invoke('assistant-ia', { body: { messages: historique, aide, page } }),
+      delai,
+    ])
     setEnCours(false)
     if (error) {
       let message = error.message

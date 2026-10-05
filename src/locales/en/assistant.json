@@ -184,5 +184,6 @@
     "aideLivraison": "Correct the quantities actually delivered in case of shortage: the sale is created on these quantities.",
     "dateSouhaitee": "For",
     "commentaire": "Comment (optional)"
-  }
+  },
+  "delaiDepasse": "The assistant is taking too long to answer. Check your connection, then try again with a shorter question."
 }

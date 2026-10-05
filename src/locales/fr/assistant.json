@@ -184,5 +184,6 @@
     "aideLivraison": "Corrigez les quantités réellement livrées en cas de rupture : la vente est créée sur ces quantités.",
     "dateSouhaitee": "Pour le",
     "commentaire": "Commentaire (facultatif)"
-  }
+  },
+  "delaiDepasse": "L'assistant met trop de temps à répondre. Vérifiez votre connexion, puis réessayez avec une question plus courte."
 }

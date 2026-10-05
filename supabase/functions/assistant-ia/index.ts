@@ -531,13 +531,34 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
     const conversation: any[] = [...historique]
     const usageTotal = { input_tokens: 0, output_tokens: 0 }
     let texteFinal = ''
+    // Rapidité : les outils (identiques à chaque appel) sont mis en cache chez
+    // le fournisseur d'IA ; budget de temps global pour toujours répondre avant
+    // la limite d'exécution du serveur.
+    const outilsEnCache = OUTILS.map((o: any, i: number) => (i === OUTILS.length - 1 ? { ...o, cache_control: { type: 'ephemeral' } } : o))
+    const debut = Date.now()
+    const BUDGET_MS = 100_000
     for (let tour = 0; tour < 8; tour++) {
-      const r = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-        body: JSON.stringify({ model: MODELE, max_tokens: 1500, system: systeme, tools: OUTILS, messages: conversation }),
-      })
-      if (!r.ok) return reponse({ error: `Service IA indisponible (${r.status}).` }, 502)
+      const reste = BUDGET_MS - (Date.now() - debut)
+      if (reste < 8_000) {
+        texteFinal = texteFinal || "Votre demande prend plus de temps que prévu. Pouvez-vous la reformuler plus simplement, ou la découper en plusieurs questions ?"
+        break
+      }
+      let r: Response
+      try {
+        r = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+          body: JSON.stringify({ model: MODELE, max_tokens: 1500, system: systeme, tools: outilsEnCache, messages: conversation }),
+          signal: AbortSignal.timeout(Math.min(60_000, reste)),
+        })
+      } catch (_) {
+        return reponse({ error: "Le service d'IA n'a pas répondu à temps. Réessayez dans un instant." }, 504)
+      }
+      if (!r.ok) {
+        const detail = await r.text().catch(() => '')
+        console.error('Anthropic', r.status, detail.slice(0, 500))
+        return reponse({ error: `Service IA indisponible (${r.status}).` }, 502)
+      }
       const resultat = await r.json()
       usageTotal.input_tokens += Number(resultat.usage?.input_tokens || 0)
       usageTotal.output_tokens += Number(resultat.usage?.output_tokens || 0)
