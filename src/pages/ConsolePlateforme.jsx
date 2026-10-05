@@ -94,6 +94,8 @@ function FicheEntreprise({ e, formules, onFermer, onMaj }) {
 
   const [enLigne, setEnLigne] = useState([])
   const [lectureSeule, setLectureSeule] = useState(null)
+  const [places, setPlaces] = useState(null)
+  useEffect(() => { supabase.rpc('plateforme_situation_places', { p_entreprise_id: e.id }).then(({ data }) => setPlaces(data || null)) }, [e.id])
   useEffect(() => { supabase.rpc('plateforme_lecture_seule_etat', { p_entreprise_id: e.id }).then(({ data }) => setLectureSeule(!!data)) }, [e.id])
   const charger = () => {
     supabase.rpc('plateforme_fiche_entreprise', { p_entreprise_id: e.id }).then(({ data }) => setFiche(data))
@@ -227,6 +229,28 @@ function FicheEntreprise({ e, formules, onFermer, onMaj }) {
           </div>
         </section>
 
+        {places && (
+          <section className="card p-3 space-y-2 text-sm">
+            <h3 className="font-semibold text-sm">Utilisateurs par rôle et places supplémentaires</h3>
+            <p className="text-xs text-petrol-600">
+              Inclus par rôle : {places.inclus_par_role ?? 'illimité'} · {Object.entries(places.roles || {}).map(([r, n]) => `${r} ${n}`).join(' · ') || 'aucun'}
+            </p>
+            <p className="text-xs">Places nécessaires : <strong>{places.depassement}</strong> · achetées : <strong>{places.places_achetees}</strong>
+              {places.depassement > places.places_achetees && <span className="text-red-700"> · dépassement non payé ({places.depassement - places.places_achetees})</span>}
+              {places.essai && <span className="text-sky-700"> · en essai (pas de limite)</span>}</p>
+            <button className="btn-secondary text-xs" onClick={async () => {
+              const n = window.prompt('Nombre de places supplémentaires pour cette entreprise :', String(places.places_achetees))
+              if (n == null) return
+              const motif = window.prompt('Motif :', 'Ajustement')
+              if (!motif) return
+              const { error } = await supabase.rpc('plateforme_definir_places', { p_entreprise_id: e.id, p_places: Number(n), p_motif: motif })
+              if (error) { window.alert(traduireErreur(error.message)); return }
+              supabase.rpc('plateforme_situation_places', { p_entreprise_id: e.id }).then(({ data }) => setPlaces(data || null))
+              charger()
+            }}>Modifier le nombre de places</button>
+          </section>
+        )}
+
         <section className="card p-3">
           <h3 className="font-semibold text-sm mb-2">Utilisateurs ({fiche?.utilisateurs?.length ?? '…'})</h3>
           <div className="text-xs space-y-0.5 max-h-48 overflow-y-auto">
@@ -356,7 +380,7 @@ function Entreprises() {
 function Formules() {
   const [formules, setFormules] = useState([])
   const [msg, setMsg] = useState({})
-  const charger = () => supabase.from('plans').select('*').order('ordre').then(({ data }) => setFormules((data || []).map((f) => ({ ...f, max: f.max_commerciaux ?? '' }))))
+  const charger = () => supabase.from('plans').select('*').order('ordre').then(({ data }) => setFormules((data || []).map((f) => ({ ...f, max: f.max_commerciaux ?? '', inclus: f.utilisateurs_par_role ?? '', prixPlace: f.prix_place_supp ?? 3000 }))))
   useEffect(() => { charger() }, [])
   const maj = (code, cle, v) => setFormules(formules.map((f) => (f.code === code ? { ...f, [cle]: v } : f)))
   async function enregistrer(f) {
@@ -364,7 +388,11 @@ function Formules() {
       p_code: f.code, p_nom: f.nom, p_prix_mensuel: Number(f.prix_mensuel), p_prix_annuel: Number(f.prix_annuel),
       p_max_commerciaux: f.max === '' ? null : Number(f.max), p_actif: f.actif,
     })
-    setMsg({ [f.code]: error ? { erreur: traduireErreur(error.message) } : { ok: 'Enregistré.' } })
+    if (error) { setMsg({ [f.code]: { erreur: traduireErreur(error.message) } }); return }
+    const r = await supabase.rpc('plateforme_modifier_places_formule', {
+      p_code: f.code, p_utilisateurs_par_role: f.inclus === '' ? null : Number(f.inclus), p_prix_place_supp: Number(f.prixPlace),
+    })
+    setMsg({ [f.code]: r.error ? { erreur: traduireErreur(r.error.message) } : { ok: 'Enregistré.' } })
   }
   const champ = 'input-field !py-1.5 text-sm'
   return (
@@ -376,6 +404,8 @@ function Formules() {
           <label className="text-xs block">Prix mensuel (F CFA)<input type="number" className={champ} value={f.prix_mensuel} onChange={(x) => maj(f.code, 'prix_mensuel', x.target.value)} /></label>
           <label className="text-xs block">Prix annuel (F CFA)<input type="number" className={champ} value={f.prix_annuel} onChange={(x) => maj(f.code, 'prix_annuel', x.target.value)} /></label>
           <label className="text-xs block">Commerciaux max (vide = illimité)<input type="number" className={champ} value={f.max} onChange={(x) => maj(f.code, 'max', x.target.value)} /></label>
+          <label className="text-xs block">Utilisateurs inclus par rôle, hors commerciaux (vide = illimité)<input type="number" min="1" className={champ} value={f.inclus} onChange={(x) => maj(f.code, 'inclus', x.target.value)} /></label>
+          <label className="text-xs block">Prix d'une place supplémentaire (F CFA / mois)<input type="number" min="0" className={champ} value={f.prixPlace} onChange={(x) => maj(f.code, 'prixPlace', x.target.value)} /></label>
           <label className="text-xs flex items-center gap-2"><input type="checkbox" checked={f.actif} onChange={(x) => maj(f.code, 'actif', x.target.checked)} /> Proposée aux clients</label>
           <button className="btn-primary text-xs" onClick={() => enregistrer(f)}>Enregistrer</button>
           <Message {...(msg[f.code] || {})} />

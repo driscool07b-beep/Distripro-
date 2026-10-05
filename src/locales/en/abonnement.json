@@ -90,5 +90,24 @@
     "essaiBientot_one": "Your trial ends in {{count}} day.",
     "essaiBientot_other": "Your trial ends in {{count}} days.",
     "iaEpuisee": "Your AI units are exhausted: the assistant and AI features are paused."
+  },
+  "places": {
+    "titre": "Users per role",
+    "aide": "Your plan includes {{n}} user(s) per role, on top of your sales reps. Beyond that, each user takes an extra seat at {{prix}} per month.",
+    "illimite": "Your plan includes unlimited users for each role.",
+    "roles": {
+      "admin": "Administrators",
+      "manager": "Managers",
+      "comptable": "Accountants",
+      "gestionnaire_stock": "Stock managers",
+      "agent_recouvrement": "Collection agents"
+    },
+    "achetees": "Extra seats purchased: {{n}}",
+    "utilisees": "seats needed: {{n}}",
+    "manque": "{{n}} seat(s) to add",
+    "essai": "No limit during the trial. When paying the subscription, the seats needed ({{n}}) are added to the amount automatically.",
+    "ajouter": "Add seats",
+    "prorata": "≈ {{montant}} prorated for the remaining {{jours}} days, then included in each renewal",
+    "plusPlaces": "+ {{n}} extra seat(s) at {{prix}} each, included in the amount"
   }
 }

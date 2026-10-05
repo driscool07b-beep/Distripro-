@@ -90,5 +90,24 @@
     "essaiBientot_one": "Votre période d'essai se termine dans {{count}} jour.",
     "essaiBientot_other": "Votre période d'essai se termine dans {{count}} jours.",
     "iaEpuisee": "Vos unités IA sont épuisées : l'assistant et les fonctions IA sont en pause."
+  },
+  "places": {
+    "titre": "Utilisateurs par rôle",
+    "aide": "Votre formule inclut {{n}} utilisateur(s) par rôle, en plus de vos commerciaux. Au-delà, chaque utilisateur occupe une place supplémentaire à {{prix}} par mois.",
+    "illimite": "Votre formule inclut un nombre illimité d'utilisateurs pour chaque rôle.",
+    "roles": {
+      "admin": "Administrateurs",
+      "manager": "Managers",
+      "comptable": "Comptables",
+      "gestionnaire_stock": "Gestionnaires de stock",
+      "agent_recouvrement": "Agents de recouvrement"
+    },
+    "achetees": "Places supplémentaires achetées : {{n}}",
+    "utilisees": "places nécessaires : {{n}}",
+    "manque": "{{n}} place(s) à ajouter pour régulariser",
+    "essai": "Pendant l'essai, aucune limite. Au paiement de l'abonnement, les places nécessaires ({{n}}) seront ajoutées automatiquement au montant.",
+    "ajouter": "Ajouter des places",
+    "prorata": "≈ {{montant}} au prorata des {{jours}} jours restants, puis inclus dans chaque renouvellement",
+    "plusPlaces": "+ {{n}} place(s) supplémentaire(s) à {{prix}} chacune, incluses dans le montant"
   }
 }

@@ -106,9 +106,22 @@ Deno.serve(async (req) => {
       const cycle = corps.cycle === 'annuel' ? 'annuel' : 'mensuel'
       const { data: formule } = await supabase.from('plans').select('code, nom, prix_mensuel, prix_annuel, actif').eq('code', corps.plan).maybeSingle()
       if (!formule || !formule.actif) return reponse({ error: 'Formule indisponible.' }, 400)
-      montant = Number(cycle === 'annuel' ? formule.prix_annuel : formule.prix_mensuel)
-      description = `Abonnement DistribPro ${formule.nom} ${cycle}`
-      Object.assign(ligne, { plan_code: formule.code, cycle })
+      // Places supplémentaires incluses : celles déjà achetées, ou au moins
+      // celles qu'exige l'équipe actuelle (cas d'une fin d'essai).
+      const { data: situation } = await supabase.rpc('situation_places', { p_entreprise_id: profil.entreprise_id })
+      const places = Math.max(Number(situation?.places_achetees || 0), Number(situation?.depassement || 0))
+      const { data: total } = await supabase.rpc('montant_abonnement', { p_entreprise_id: profil.entreprise_id, p_plan: formule.code, p_cycle: cycle, p_places: places })
+      montant = Number(total ?? (cycle === 'annuel' ? formule.prix_annuel : formule.prix_mensuel))
+      description = `Abonnement DistribPro ${formule.nom} ${cycle}${places ? ` et ${places} place(s) supplementaire(s)` : ''}`
+      Object.assign(ligne, { plan_code: formule.code, cycle, places })
+    } else if (corps.objet === 'places') {
+      const n = Math.round(Number(corps.places))
+      if (!(n >= 1 && n <= 50)) return reponse({ error: 'Nombre de places invalide.' }, 400)
+      const { data: prorata } = await supabase.rpc('prix_places_prorata', { p_entreprise_id: profil.entreprise_id, p_places: n })
+      if (!prorata?.possible) return reponse({ error: "L'ajout de places se fait sur un abonnement actif : renouvelez d'abord votre abonnement." }, 400)
+      montant = Number(prorata.montant)
+      description = `${n} place(s) supplementaire(s) DistribPro jusqu'au ${prorata.echeance}`
+      Object.assign(ligne, { places: n })
     } else if (corps.objet === 'unites') {
       const { data: pack } = await supabase.from('ia_packs').select('code, nom, unites, prix, actif').eq('code', corps.pack).maybeSingle()
       if (!pack || !pack.actif) return reponse({ error: 'Pack indisponible.' }, 400)

@@ -21,7 +21,10 @@ export default function MonAbonnement() {
   const [parametres, setParametres] = useSearchParams()
   const peutPayer = ['admin', 'comptable'].includes(profil?.role)
 
+  const [places, setPlaces] = useState(null)
+  const [nbPlaces, setNbPlaces] = useState(1)
   const charger = () => {
+    supabase.rpc('mes_places').then(({ data }) => setPlaces(data || null))
     supabase.rpc('mon_abonnement').then(({ data, error }) => (error ? setErreur(traduireErreur(error.message)) : setD(data)))
     supabase.from('ia_packs').select('*').eq('actif', true).order('ordre').then(({ data }) => setPacks(data || []))
   }
@@ -125,6 +128,46 @@ export default function MonAbonnement() {
         </div>
       </div>
 
+      {places && (
+        <div className="card p-4 text-sm space-y-3">
+          <div>
+            <h2 className="font-semibold">👥 {t('places.titre')}</h2>
+            <p className="text-xs text-petrol-500">{places.inclus_par_role == null ? t('places.illimite') : t('places.aide', { n: places.inclus_par_role, prix: formatXOF(places.prix_place) })}</p>
+          </div>
+          {places.inclus_par_role != null && (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                {['admin', 'manager', 'comptable', 'gestionnaire_stock', 'agent_recouvrement'].map((r) => {
+                  const n = Number(places.roles?.[r] || 0)
+                  const depasse = n > places.inclus_par_role
+                  return (
+                    <div key={r} className={`rounded-lg border px-3 py-2 ${depasse ? 'border-amber-300 bg-amber-50' : 'border-line bg-white'}`}>
+                      <p className="text-[11px] text-petrol-500">{t(`places.roles.${r}`)}</p>
+                      <p className="font-semibold">{n} / {places.inclus_par_role}</p>
+                    </div>
+                  )
+                })}
+              </div>
+              <p className="text-sm">
+                {t('places.achetees', { n: places.places_achetees })} · {t('places.utilisees', { n: places.depassement })}
+                {places.depassement > places.places_achetees && <span className="text-red-700"> · {t('places.manque', { n: places.depassement - places.places_achetees })}</span>}
+              </p>
+              {places.essai ? (
+                <p className="text-xs text-sky-800 bg-sky-50 border border-sky-200 rounded px-2 py-1">{t('places.essai', { n: places.depassement })}</p>
+              ) : places.prorata_une_place?.possible && peutPayer ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <input type="number" min="1" max="50" className="input-field !py-1.5 text-sm w-20" value={nbPlaces} onChange={(e) => setNbPlaces(Math.max(1, Math.min(50, Number(e.target.value) || 1)))} />
+                  <button className="btn-primary text-xs" disabled={!!envoi} onClick={() => payer({ objet: 'places', places: nbPlaces })}>
+                    {envoi === JSON.stringify({ objet: 'places', places: nbPlaces }) ? '…' : t('places.ajouter')}
+                  </button>
+                  <span className="text-xs text-petrol-500">{t('places.prorata', { montant: formatXOF(Math.max(Number(places.prorata_une_place.montant) * nbPlaces, 100)), jours: places.prorata_une_place.jours })}</span>
+                </div>
+              ) : null}
+            </>
+          )}
+        </div>
+      )}
+
       <div className="card p-4 text-sm space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-semibold">{t('payerTitre')}</h2>
@@ -141,6 +184,9 @@ export default function MonAbonnement() {
               <p className="font-semibold">{f.nom}{f.code === d.plan && <span className="ms-1 text-[10px] text-amber-700">({t('actuelle')})</span>}</p>
               <p className="text-lg font-bold">{formatXOF(cycle === 'annuel' ? f.prix_annuel : f.prix_mensuel)}<span className="text-xs font-normal text-petrol-500"> / {t(cycle === 'annuel' ? 'an' : 'mois')}</span></p>
               {cycle === 'mensuel' && <p className="text-xs text-petrol-500">{t('ouAnnuel', { prix: formatXOF(f.prix_annuel) })}</p>}
+              {places && Math.max(places.places_achetees || 0, places.depassement || 0) > 0 && f.code === d.plan && (
+                <p className="text-xs text-amber-800">{t('places.plusPlaces', { n: Math.max(places.places_achetees || 0, places.depassement || 0), prix: formatXOF((f.prix_place_supp || places.prix_place) * (cycle === 'annuel' ? 12 * 0.8 : 1)) })}</p>
+              )}
               <p className="text-xs text-petrol-600 mt-1 flex-1">{t('jusquA', { n: f.max_commerciaux ?? '∞' })}</p>
               {peutPayer && (
                 <button className="btn-primary text-xs mt-2" disabled={!!envoi} onClick={() => payer({ objet: 'abonnement', plan: f.code, cycle })}>

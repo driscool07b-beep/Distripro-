@@ -593,6 +593,10 @@
         {
           "q": "What happens at the end of the trial or if payment is late?",
           "r": "You receive email reminders (end of trial and due date at 7, 3 and 1 day; then after the due date), and a banner appears in the app. Without settlement, your workspace may become read-only (viewing possible, no changes), then be suspended. Your data is always kept, and everything becomes editable again as soon as you pay, from « My subscription ». The number of active sales reps is limited by your plan: to add more, upgrade to the next plan."
+        },
+        {
+          "q": "How many users can I have besides sales reps?",
+          "r": "Your plan includes a number of users per role (administrator, manager, accountant, stock manager, collection agent), on top of the sales reps limited by the plan. Beyond that, each user takes an extra seat, paid monthly. My subscription → « Users per role » shows accounts per role and your seats; « Add seats » charges prorated for the days left until your due date, then seats are included in each renewal. No limit during the trial: the seats needed are added automatically to the first payment. Current users are never deactivated; only new additions (invitation, role change, reactivation) need an available seat."
         }
       ]
     }

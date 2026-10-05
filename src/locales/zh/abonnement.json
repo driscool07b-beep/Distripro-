@@ -90,5 +90,24 @@
     "essaiBientot_one": "您的试用期将在 {{count}} 天后结束。",
     "essaiBientot_other": "您的试用期将在 {{count}} 天后结束。",
     "iaEpuisee": "您的 AI 单位已用完：助手和 AI 功能已暂停。"
+  },
+  "places": {
+    "titre": "按角色的用户",
+    "aide": "您的套餐除销售员外，每个角色包含 {{n}} 名用户。超出部分，每名用户占用一个额外席位，每月 {{prix}}。",
+    "illimite": "您的套餐每个角色的用户数不限。",
+    "roles": {
+      "admin": "管理员",
+      "manager": "经理",
+      "comptable": "会计",
+      "gestionnaire_stock": "库存管理员",
+      "agent_recouvrement": "催收员"
+    },
+    "achetees": "已购额外席位：{{n}}",
+    "utilisees": "所需席位：{{n}}",
+    "manque": "需增加 {{n}} 个席位",
+    "essai": "试用期内不限人数。支付订阅时，所需席位（{{n}}）会自动计入金额。",
+    "ajouter": "增加席位",
+    "prorata": "≈ {{montant}}，按剩余 {{jours}} 天折算，之后计入每次续费",
+    "plusPlaces": "+ {{n}} 个额外席位，每个 {{prix}}，已计入金额"
   }
 }

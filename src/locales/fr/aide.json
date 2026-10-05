@@ -593,6 +593,10 @@
         {
           "q": "Que se passe-t-il à la fin de l'essai ou en cas d'impayé ?",
           "r": "Vous recevez des rappels par email (fin d'essai et échéance à 7, 3 et 1 jour ; puis après l'échéance), et un bandeau s'affiche dans l'app. Sans régularisation, votre espace peut passer en lecture seule (consultation possible, aucune modification), puis être suspendu. Vos données sont toujours conservées, et tout redevient modifiable dès le paiement, depuis « Mon abonnement ». Le nombre de commerciaux actifs est limité par votre formule : pour en ajouter, passez à la formule supérieure."
+        },
+        {
+          "q": "Combien d'utilisateurs puis-je avoir en plus des commerciaux ?",
+          "r": "Votre formule inclut un nombre d'utilisateurs par rôle (administrateur, manager, comptable, gestionnaire de stock, agent de recouvrement), en plus des commerciaux limités par la formule. Au-delà, chaque utilisateur occupe une place supplémentaire, payée au mois. Mon abonnement → « Utilisateurs par rôle » montre les comptes par rôle et vos places ; « Ajouter des places » règle au prorata des jours restants jusqu'à votre échéance, puis les places sont incluses dans chaque renouvellement. Pendant l'essai, il n'y a aucune limite : les places nécessaires sont ajoutées automatiquement au premier paiement. Vos utilisateurs actuels ne sont jamais désactivés ; seuls les nouveaux ajouts (invitation, changement de rôle, réactivation) demandent une place disponible."
         }
       ]
     }
