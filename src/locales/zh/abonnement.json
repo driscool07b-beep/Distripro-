@@ -42,7 +42,9 @@
     "assistant_ia": "助手",
     "rapport_activite": "PowerPoint 报告",
     "analyse_ia": "AI 分析",
-    "planification_tournees": "行程规划"
+    "planification_tournees": "行程规划",
+    "demande_sortie": "出库申请",
+    "arbitrage_demande_sortie": "出库申请审核建议"
   },
   "cycleCourt": {
     "mensuel": "按月",

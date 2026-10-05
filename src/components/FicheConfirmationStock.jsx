@@ -7,12 +7,13 @@ import { envoyerFichierJustificatif } from '../lib/justificatifs'
 import CartePiece from './CartePiece'
 
 // Fiches de confirmation de l'assistant pour le magasin : réception, sortie
-// vers un commercial, transfert, préparation et livraison de commande.
+// vers un commercial, demande de produits d'un commercial, transfert,
+// préparation et livraison de commande.
 // Rien n'est enregistré avant « Valider » ; mêmes fonctions et contrôles que
 // les écrans Stock, Stock des commerciaux et Commandes.
 
 const TITRES = {
-  reception: '📥', sortie: '🚚', transfert: '🔁', commande_preparer: '📦', commande_livrer: '✅',
+  reception: '📥', sortie: '🚚', demande_sortie: '📝', transfert: '🔁', commande_preparer: '📦', commande_livrer: '✅',
 }
 
 export default function FicheConfirmationStock({ action, onTermine, onNavigation }) {
@@ -27,6 +28,8 @@ export default function FicheConfirmationStock({ action, onTermine, onNavigation
   const [progression, setProgression] = useState('')
   const [erreur, setErreur] = useState('')
   const [etat, setEtat] = useState('a_valider')
+  const [dateSouhaitee, setDateSouhaitee] = useState(action.date_souhaitee || '')
+  const [commentaire, setCommentaire] = useState(action.commentaire || '')
 
   useEffect(() => {
     if (action.type !== 'commande_livrer') return
@@ -71,6 +74,14 @@ export default function FicheConfirmationStock({ action, onTermine, onNavigation
           p_lignes: valides.map((l) => ({ produit_id: l.produit_id, quantite: Number(l.quantite) })),
         })
         if (error) throw new Error(traduireErreur(error.message))
+      } else if (action.type === 'demande_sortie') {
+        const { data: demandeId, error } = await supabase.rpc('creer_demande_sortie', {
+          p_depot_id: action.depot.id, p_date_souhaitee: dateSouhaitee,
+          p_lignes: valides.map((l) => ({ produit_id: l.produit_id, quantite: Number(l.quantite) })),
+          p_commentaire: commentaire || null, p_proposee_par_ia: true, p_synthese_ia: null,
+        })
+        if (error) throw new Error(traduireErreur(error.message))
+        supabase.functions.invoke('envoyer-notification-demande-sortie', { body: { demande_id: demandeId, evenement: 'creation' } }).catch(() => {})
       } else if (action.type === 'transfert') {
         let n = 0
         for (const l of valides) {
@@ -165,6 +176,14 @@ export default function FicheConfirmationStock({ action, onTermine, onNavigation
             📎 {t('stock.justificatif')}{entreprise?.justificatif_stock_obligatoire ? ' *' : ''}
             <input type="file" accept="image/*,application/pdf" capture="environment" className="block mt-1 text-xs" onChange={(e) => setFichier(e.target.files?.[0] || null)} />
           </label>
+        </div>
+      )}
+      {action.type === 'demande_sortie' && (
+        <div className="grid grid-cols-1 gap-1">
+          <label className="text-xs">📅 {t('stock.dateSouhaitee')}
+            <input type="date" className="block w-full border border-line rounded px-1.5 py-1 text-xs mt-0.5" value={dateSouhaitee} onChange={(e) => setDateSouhaitee(e.target.value)} />
+          </label>
+          <input className="border border-line rounded px-1.5 py-1 text-xs" placeholder={t('stock.commentaire')} value={commentaire} onChange={(e) => setCommentaire(e.target.value)} />
         </div>
       )}
       {action.type === 'commande_livrer' && depots.length > 1 && (

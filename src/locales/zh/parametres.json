@@ -199,6 +199,8 @@
     "fonctions": {
       "analyse_ia": "AI 分析",
       "planification_tournees": "路线规划",
+      "demande_sortie": "出库申请",
+      "arbitrage_demande_sortie": "出库申请审核建议",
       "assistant": "AI 助手"
     }
   },

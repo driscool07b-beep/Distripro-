@@ -159,14 +159,16 @@
       "sortie": "Sortie vers un commercial à valider",
       "transfert": "Transfert à valider",
       "commande_preparer": "Passer la commande en préparation",
-      "commande_livrer": "Livraison de commande à valider"
+      "commande_livrer": "Livraison de commande à valider",
+      "demande_sortie": "Demande de produits au magasin à envoyer"
     },
     "ok": {
       "reception": "Réception enregistrée : le stock est mis à jour.",
       "sortie": "Sortie enregistrée : la marchandise est dans le stock du commercial.",
       "transfert": "Transfert envoyé : à réceptionner par le magasin de destination.",
       "commande_preparer": "Commande passée en préparation.",
-      "commande_livrer": "Livraison enregistrée : la vente est créée et le stock déduit."
+      "commande_livrer": "Livraison enregistrée : la vente est créée et le stock déduit.",
+      "demande_sortie": "Demande envoyée au gestionnaire de stock : vous serez prévenu dès qu'elle est traitée."
     },
     "commande": "cmd.",
     "dispo": "dispo",
@@ -179,6 +181,8 @@
     "lotObligatoire": "Votre entreprise exige le numéro de lot pour chaque article.",
     "choisirMagasin": "Choisissez le magasin d'où part la marchandise.",
     "aPreparer": "À préparer",
-    "aideLivraison": "Corrigez les quantités réellement livrées en cas de rupture : la vente est créée sur ces quantités."
+    "aideLivraison": "Corrigez les quantités réellement livrées en cas de rupture : la vente est créée sur ces quantités.",
+    "dateSouhaitee": "Pour le",
+    "commentaire": "Commentaire (facultatif)"
   }
 }

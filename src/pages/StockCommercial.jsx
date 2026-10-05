@@ -5,11 +5,25 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF, formatDate } from '../lib/format'
+import { MesDemandesSortie, DemandesSortieATraiter } from '../components/DemandesSortie'
 
 export default function StockCommercial() {
   const { t } = useTranslation('stockcommercial')
   const { profil } = useAuth()
   const [onglet, setOnglet] = useState('enmain')
+  const [ongletCommercial, setOngletCommercial] = useState('enmain')
+  const [nbDemandes, setNbDemandes] = useState(0)
+
+  useEffect(() => {
+    if (!['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)) return
+    const compter = () => supabase.from('demandes_sortie').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente')
+      .then(({ count }) => setNbDemandes(count || 0))
+    compter()
+    const canal = supabase.channel('compteur-demandes-sortie')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes_sortie' }, compter)
+      .subscribe()
+    return () => { supabase.removeChannel(canal) }
+  }, [profil?.role])
 
   const gestionComplete = ['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)
   const lectureSeuleCommercial = profil?.role === 'commercial'
@@ -28,7 +42,24 @@ export default function StockCommercial() {
     return (
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         <h1 className="text-xl font-bold mb-4">{t('monStockEnMain')}</h1>
-        <StockEnMain />
+        <div className="flex gap-2 mb-4 flex-wrap">
+          {[
+            { id: 'enmain', label: t('ongletStockEnMain') },
+            { id: 'demandes', label: t('demandes.ongletCommercial') },
+          ].map((o) => (
+            <button
+              key={o.id}
+              onClick={() => setOngletCommercial(o.id)}
+              className={`text-sm px-3 py-1.5 rounded-full border ${
+                ongletCommercial === o.id ? 'bg-petrol-800 text-white border-petrol-800' : 'border-line'
+              }`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+        {ongletCommercial === 'enmain' && <StockEnMain />}
+        {ongletCommercial === 'demandes' && <MesDemandesSortie />}
       </div>
     )
   }
@@ -39,6 +70,7 @@ export default function StockCommercial() {
       <div className="flex gap-2 mb-4 flex-wrap">
         {[
           { id: 'enmain', label: t('ongletStockEnMain') },
+          { id: 'demandes', label: t('demandes.onglet'), badge: nbDemandes },
           { id: 'sorties', label: t('ongletSortiesRetours') },
           ...(['admin', 'manager', 'gestionnaire_stock', 'comptable'].includes(profil?.role) ? [{ id: 'echanges', label: t('echanges.onglet') }] : []),
         ].map((o) => (
@@ -50,11 +82,15 @@ export default function StockCommercial() {
             }`}
           >
             {o.label}
+            {o.badge > 0 && (
+              <span className="ms-1.5 bg-red-600 text-white text-[10px] font-semibold rounded-full px-1.5 py-0.5">{o.badge > 99 ? '99+' : o.badge}</span>
+            )}
           </button>
         ))}
       </div>
 
       {onglet === 'enmain' && <StockEnMain />}
+      {onglet === 'demandes' && <DemandesSortieATraiter />}
       {onglet === 'sorties' && <SortiesRetours />}
       {onglet === 'echanges' && <EchangesDefectueux />}
     </div>

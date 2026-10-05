@@ -199,6 +199,8 @@
     "fonctions": {
       "analyse_ia": "AI analysis",
       "planification_tournees": "Route planning",
+      "demande_sortie": "Stock requests",
+      "arbitrage_demande_sortie": "Stock request arbitration",
       "assistant": "AI assistant"
     }
   },

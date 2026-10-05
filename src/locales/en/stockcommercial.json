@@ -57,5 +57,67 @@
     "quantite": "In hand / received",
     "valeur": "Value",
     "aideQuantite": "In hand (bold) / received from the warehouse on the current round (grey), restocks included."
+  },
+  "demandes": {
+    "onglet": "Reps' requests",
+    "ongletCommercial": "My warehouse requests",
+    "nouvelle": "+ New stock request",
+    "titreFormulaire": "Stock request to the warehouse",
+    "aideFormulaire": "Say what you need for your route. The stock manager receives your request and prepares the release.",
+    "dateSouhaitee": "For",
+    "articles": "Requested products",
+    "commentaire": "Comment",
+    "commentairePlaceholder": "e.g. Large order expected at a customer",
+    "envoyer": "Send request",
+    "choisirMagasin": "Choose the warehouse.",
+    "dispoMagasin": "Warehouse: {{n}}",
+    "enMain": "In hand: {{n}}",
+    "pourLe": "for {{date}}",
+    "demande": "Requested",
+    "accorde": "Granted",
+    "dispo": "Avail.",
+    "motif": "Reason",
+    "motifPlaceholder": "e.g. Not enough oil in stock, restock Thursday",
+    "motifRefusObligatoire": "Enter the reason for refusing.",
+    "motifPartielObligatoire": "Enter a reason: you are not granting everything requested.",
+    "aideTraitement": "Granting directly creates the stock release to the rep. Enter 0 for a product you cannot supply.",
+    "accorder": "✓ Grant",
+    "accorderPartiel": "✓ Grant partially",
+    "refuser": "Refuse",
+    "fermer": "Close",
+    "annuler": "Cancel my request",
+    "confirmerAnnulation": "Cancel request {{numero}}?",
+    "traitePar": "Processed by {{nom}} on {{date}}",
+    "parIA": "Proposed with AI",
+    "aucune": "No requests yet.",
+    "aucuneATraiter": "No pending requests. 👍",
+    "filtres": {
+      "en_attente": "Pending",
+      "traitees": "Processed"
+    },
+    "statuts": {
+      "en_attente": "Pending",
+      "accordee": "Granted",
+      "partielle": "Partially granted",
+      "refusee": "Refused",
+      "annulee": "Cancelled"
+    },
+    "ia": {
+      "titre": "Let AI prepare my request",
+      "aide": "AI looks at your route, the stock recorded at your customers, their usual purchases, your recent sales and what you already carry. You can change everything before sending.",
+      "consignes": "Instruction (optional): e.g. bring more oil",
+      "bouton": "✨ Propose my request",
+      "enCours": "AI is preparing your request…",
+      "erreur": "The AI proposal failed, try again or enter your request.",
+      "vide": "AI has nothing to propose: enter your request yourself.",
+      "baseTournee": "Based on your route ({{n}} customers).",
+      "basePortefeuille": "No route that day: based on your {{n}} customers."
+    },
+    "arbitrage": {
+      "aide": "AI compares the request with warehouse stock, other pending requests, undelivered customer orders, what the rep already carries and their recent unsold returns.",
+      "bouton": "✨ Suggest an allocation",
+      "enCours": "AI is analysing the request…",
+      "erreur": "The AI suggestion failed: try again or decide yourself."
+    }
   }
 }

@@ -42,7 +42,9 @@
     "assistant_ia": "المساعد",
     "rapport_activite": "تقرير باوربوينت",
     "analyse_ia": "تحليل بالذكاء الاصطناعي",
-    "planification_tournees": "تخطيط الجولات"
+    "planification_tournees": "تخطيط الجولات",
+    "demande_sortie": "طلبات إخراج المخزون",
+    "arbitrage_demande_sortie": "تحكيم طلبات إخراج المخزون"
   },
   "cycleCourt": {
     "mensuel": "شهري",

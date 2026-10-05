@@ -133,7 +133,8 @@
     "soldeReporte": "登记使用 DistribPro 之前的客户欠款。"
   },
   "stockcommercial": {
-    "nouvelleSortie": "将货物交给销售员进行外勤销售。"
+    "nouvelleSortie": "将货物交给销售员进行外勤销售。",
+    "nouvelleDemande": "向仓库申请行程所需产品；AI 可以帮您准备清单。"
   },
   "versements": {
     "enregistrer": "登记销售员上缴的款项。"

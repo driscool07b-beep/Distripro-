@@ -199,6 +199,8 @@
     "fonctions": {
       "analyse_ia": "Analyse IA",
       "planification_tournees": "Planification des tournées",
+      "demande_sortie": "Demandes de sortie",
+      "arbitrage_demande_sortie": "Arbitrage des demandes de sortie",
       "assistant": "Assistant IA"
     }
   },

@@ -199,6 +199,8 @@
     "fonctions": {
       "analyse_ia": "تحليل الذكاء الاصطناعي",
       "planification_tournees": "تخطيط الجولات",
+      "demande_sortie": "طلبات إخراج المخزون",
+      "arbitrage_demande_sortie": "تحكيم طلبات إخراج المخزون",
       "assistant": "المساعد الذكي"
     }
   },

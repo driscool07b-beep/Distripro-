@@ -57,5 +57,67 @@
     "quantite": "Quantité en main / reçue",
     "valeur": "Valeur",
     "aideQuantite": "En main (en gras) / quantité reçue du magasin sur la tournée en cours (en gris), réapprovisionnements compris."
+  },
+  "demandes": {
+    "onglet": "Demandes des commerciaux",
+    "ongletCommercial": "Mes demandes au magasin",
+    "nouvelle": "+ Nouvelle demande de produits",
+    "titreFormulaire": "Demande de produits au magasin",
+    "aideFormulaire": "Indique ce dont tu as besoin pour ta tournée. Le gestionnaire de stock reçoit ta demande et prépare la sortie.",
+    "dateSouhaitee": "Pour le",
+    "articles": "Produits demandés",
+    "commentaire": "Commentaire",
+    "commentairePlaceholder": "ex. Grosse commande prévue chez un client",
+    "envoyer": "Envoyer la demande",
+    "choisirMagasin": "Choisis le magasin.",
+    "dispoMagasin": "Magasin : {{n}}",
+    "enMain": "En main : {{n}}",
+    "pourLe": "pour le {{date}}",
+    "demande": "Demandé",
+    "accorde": "Accordé",
+    "dispo": "Dispo",
+    "motif": "Motif",
+    "motifPlaceholder": "ex. Stock insuffisant en huile, réassort jeudi",
+    "motifRefusObligatoire": "Indique le motif du refus.",
+    "motifPartielObligatoire": "Indique le motif : tu n'accordes pas tout ce qui est demandé.",
+    "aideTraitement": "Accorder crée directement la sortie de stock vers le commercial. Mets 0 sur un produit que tu ne peux pas donner.",
+    "accorder": "✓ Accorder",
+    "accorderPartiel": "✓ Accorder en partie",
+    "refuser": "Refuser",
+    "fermer": "Fermer",
+    "annuler": "Annuler ma demande",
+    "confirmerAnnulation": "Annuler la demande {{numero}} ?",
+    "traitePar": "Traitée par {{nom}} le {{date}}",
+    "parIA": "Proposée avec l'IA",
+    "aucune": "Aucune demande pour le moment.",
+    "aucuneATraiter": "Aucune demande en attente. 👍",
+    "filtres": {
+      "en_attente": "En attente",
+      "traitees": "Traitées"
+    },
+    "statuts": {
+      "en_attente": "En attente",
+      "accordee": "Accordée",
+      "partielle": "Accordée en partie",
+      "refusee": "Refusée",
+      "annulee": "Annulée"
+    },
+    "ia": {
+      "titre": "Laisser l'IA préparer ma demande",
+      "aide": "L'IA regarde ta tournée, le stock relevé chez tes clients, leurs achats habituels, tes ventes récentes et ce que tu as déjà en main. Tu peux tout modifier avant d'envoyer.",
+      "consignes": "Consigne (facultatif) : ex. prévoir plus d'huile",
+      "bouton": "✨ Proposer ma demande",
+      "enCours": "L'IA prépare ta demande…",
+      "erreur": "La proposition de l'IA n'a pas abouti, réessaie ou saisis ta demande.",
+      "vide": "L'IA n'a rien à proposer : saisis ta demande toi-même.",
+      "baseTournee": "Basé sur ta tournée ({{n}} clients).",
+      "basePortefeuille": "Pas de tournée ce jour-là : basé sur tes {{n}} clients."
+    },
+    "arbitrage": {
+      "aide": "L'IA compare la demande au stock du magasin, aux autres demandes en attente, aux commandes clients non livrées, à ce que le commercial a déjà en main et à ses invendus récents.",
+      "bouton": "✨ Proposer un arbitrage",
+      "enCours": "L'IA analyse la demande…",
+      "erreur": "L'arbitrage de l'IA n'a pas abouti, réessaie ou décide toi-même."
+    }
   }
 }

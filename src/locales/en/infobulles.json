@@ -133,7 +133,8 @@
     "soldeReporte": "Records a customer debt from before DistribPro."
   },
   "stockcommercial": {
-    "nouvelleSortie": "Hands goods to a sales rep for field sales."
+    "nouvelleSortie": "Hands goods to a sales rep for field sales.",
+    "nouvelleDemande": "Ask the warehouse for your route's products; AI can prepare the list for you."
   },
   "versements": {
     "enregistrer": "Records money handed in by a sales rep."

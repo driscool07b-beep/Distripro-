@@ -509,6 +509,14 @@
       "titre": "Stock des commerciaux",
       "items": [
         {
+          "q": "Comment traiter une demande de sortie d'un commercial ?",
+          "r": "Stock des commerciaux → « Demandes des commerciaux » (gestionnaire de stock, admin, manager). Ouvre la demande, ajuste les quantités accordées, puis « Accorder » (motif obligatoire si ce n'est qu'une partie) ou « Refuser » avec un motif. Accorder crée directement la sortie de stock vers le commercial ; il est notifié. Un gestionnaire ne peut servir que depuis les magasins qui lui sont attribués. Bouton « ✨ Proposer un arbitrage » : l'IA propose les quantités à accorder (stock, autres demandes, commandes clients, stock en main, invendus) ; tu gardes la décision."
+        },
+        {
+          "q": "Comment un commercial demande-t-il des produits au magasin ?",
+          "r": "Mon stock en main → « Mes demandes au magasin » → « + Nouvelle demande de produits » : magasin, date, produits et quantités. « ✨ Proposer ma demande » laisse l'IA préparer la liste à partir de la tournée, du stock relevé chez les clients, de leurs achats et des ventes récentes ; tout reste modifiable avant l'envoi. La demande peut aussi être dictée à l'assistant."
+        },
+        {
           "q": "Comment échanger des produits défectueux d'un commercial ?",
           "r": "Stock des commerciaux → onglet 'Échanges défectueux' (magasin, admin ou manager) : choisis le commercial, le magasin, le produit et la quantité, puis le motif. Le commercial repart avec des produits sains, son stock ne change pas ; les produits abîmés entrent au magasin dans un lot « endommagé », visible dans le détail du stock."
         },
@@ -588,5 +596,476 @@
         }
       ]
     }
-  ]
+  ],
+  "tutoriels": {
+    "titre": "🎓 Tutoriels pour ton rôle",
+    "sousTitre": "Des parcours pas à pas pour les tâches de tous les jours. Touche un tutoriel pour l'ouvrir.",
+    "voirTous": "Voir les tutoriels des autres rôles",
+    "masquerTous": "Afficher seulement mes tutoriels",
+    "aucunPourRole": "Pas encore de tutoriel dédié à ton rôle : consulte ceux des autres rôles ou les questions ci-dessous.",
+    "ouvrirPage": "Ouvrir la page →",
+    "etape": "Étape",
+    "minutes": "{{n}} min",
+    "faqTitre": "Questions fréquentes",
+    "publics": {
+      "admin": "Administrateur",
+      "commercial": "Commercial terrain",
+      "direction": "Manager & comptable",
+      "magasin": "Gestionnaire de stock"
+    },
+    "liste": [
+      {
+        "id": "admin-mise-en-service",
+        "public": "admin",
+        "roles": [
+          "admin"
+        ],
+        "duree": 15,
+        "lien": "/parametres",
+        "titre": "Mettre ton entreprise en service",
+        "intro": "L'ordre qui évite les blocages au démarrage. La carte 🚀 Premiers pas du Tableau de bord coche chaque étape automatiquement.",
+        "etapes": [
+          "Paramètres : renseigne les informations de l'entreprise, la devise et ajoute ton logo (il apparaîtra sur factures, reçus et bons de livraison).",
+          "Magasins de stockage : crée tes dépôts, par exemple « Dépôt central Koumassi » et « Magasin Yopougon ».",
+          "Produits & Stock : crée tes articles, puis fais l'entrée du stock initial (voir le tutoriel Catalogue et stock).",
+          "Clients : importe ta liste avec le modèle Excel ou crée les premiers clients.",
+          "Équipe : invite tes collaborateurs avec le bon rôle.",
+          "Fais une vente test, vérifie le reçu, puis annule-la : tu verras l'avoir généré automatiquement."
+        ]
+      },
+      {
+        "id": "admin-equipe",
+        "public": "admin",
+        "roles": [
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/utilisateurs",
+        "titre": "Inviter ton équipe et régler les accès",
+        "intro": "Chaque personne a un rôle qui décide de ce qu'elle voit. Un commercial ne voit que ses propres données.",
+        "etapes": [
+          "Équipe → « + Inviter un collègue » : saisis l'email et le rôle (ex. Kouamé Yao, commercial).",
+          "La personne reçoit un email et crée son compte avec exactement cette adresse. Pense à lui dire de regarder dans les spams.",
+          "Si besoin, donne un accès élargi ou en lecture seule depuis sa ligne dans Équipe.",
+          "Pour quelqu'un qui ne doit pas utiliser l'IA : « Désactiver l'IA » sur sa ligne.",
+          "Paramètres → Organigramme commercial : crée tes équipes (ex. « Équipe Abidjan Nord ») et affilie les commerciaux à leur chef d'équipe.",
+          "Pour un départ : « Désactiver » le compte. L'historique reste, la place se libère dans ton abonnement."
+        ]
+      },
+      {
+        "id": "admin-catalogue",
+        "public": "admin",
+        "roles": [
+          "admin",
+          "manager",
+          "gestionnaire_stock"
+        ],
+        "duree": 10,
+        "lien": "/stock",
+        "titre": "Créer le catalogue et le stock initial",
+        "intro": "Exemple avec un article fictif : « Farine de maïs Soleil 1 kg ».",
+        "etapes": [
+          "Produits & Stock → nouveau produit : nom « Farine de maïs Soleil 1 kg », référence (touche ✨ pour obtenir P0001), unité « sachet », prix de vente.",
+          "Ajoute le code-barres si tu en as un (lecteur ou saisie à la main).",
+          "Sur le produit, « Ajuster le stock » → Entrée : 200 sachets au Dépôt central, lot L-2610, péremption 30/06/2027, prix d'achat (facultatif, pour suivre tes marges).",
+          "Joins la photo du bon de livraison du fournisseur : selon tes paramètres, il peut être obligatoire.",
+          "Clique sur le nom du produit pour vérifier la répartition par magasin et les lots."
+        ]
+      },
+      {
+        "id": "admin-clients",
+        "public": "admin",
+        "roles": [
+          "admin",
+          "manager"
+        ],
+        "duree": 8,
+        "lien": "/clients",
+        "titre": "Organiser les clients et les portefeuilles",
+        "intro": "Le portefeuille d'un commercial décide des clients proposés dans ses tournées.",
+        "etapes": [
+          "Clients → « Importer » : télécharge le modèle Excel, remplis-le sans changer l'ordre des colonnes, réimporte-le.",
+          "Coche les clients d'une zone (ex. Supérette La Confiance, Boutique Chez Awa…) → « Attribuer à… » → choisis le commercial.",
+          "Vérifie que chaque client a sa position GPS : sans elle, aucune visite ne peut être validée chez lui. Le commercial peut la capturer sur place.",
+          "Pour une enseigne à plusieurs magasins, crée un Groupe de clients (ex. « Réseau Alimentation Bon Prix »).",
+          "Paramètres → Comptes clients : choisis l'attribution automatique ou manuelle des comptes 411."
+        ]
+      },
+      {
+        "id": "admin-rapports-visite",
+        "public": "admin",
+        "roles": [
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/parametres",
+        "titre": "Choisir ce que les commerciaux remontent du terrain",
+        "intro": "Le rapport de visite s'adapte à tes besoins, sans développement.",
+        "etapes": [
+          "Paramètres → Informations supplémentaires à collecter : ajoute une question, par exemple « Le gérant veut-il une animation en magasin ? » (oui/non).",
+          "Choisis le type : texte libre, nombre, oui/non ou liste de choix.",
+          "Ajoute les produits concurrents à surveiller : les commerciaux cocheront leur présence en rayon.",
+          "Décide si la photo est obligatoire dans chaque rapport.",
+          "Active si tu veux la validation des tournées qu'un commercial programme lui-même."
+        ]
+      },
+      {
+        "id": "admin-objectifs",
+        "public": "admin",
+        "roles": [
+          "admin",
+          "manager"
+        ],
+        "duree": 5,
+        "lien": "/objectifs",
+        "titre": "Fixer les objectifs de vente",
+        "intro": "Chaque commercial suit sa progression depuis son Tableau de bord.",
+        "etapes": [
+          "Objectifs → « + Nouvel objectif » : choisis un commercial, un chef d'équipe, la direction ou le bureau.",
+          "Indique la période et un montant (ex. 3 000 000 F CFA en novembre) et/ou une quantité d'un produit (ex. 500 Riz parfumé Kora 5 kg).",
+          "Pour modifier plus tard : « Modifier » avec un motif. « 🕘 Historique » garde la trace de chaque changement."
+        ]
+      },
+      {
+        "id": "admin-abonnement",
+        "public": "admin",
+        "roles": [
+          "admin",
+          "comptable"
+        ],
+        "duree": 3,
+        "lien": "/abonnement",
+        "titre": "Suivre l'abonnement et les unités IA",
+        "intro": "Sans unités IA, l'assistant, la planification IA et les rapports PowerPoint s'arrêtent.",
+        "etapes": [
+          "Mon abonnement : vérifie ta formule, la fin de l'essai et le nombre de commerciaux autorisés.",
+          "Surveille le solde d'unités IA et la consommation par personne en bas de Paramètres.",
+          "Pour payer : choisis Mensuel ou Annuel, puis « Choisir et payer » (Mobile Money ou carte). Le reçu PDF est disponible ensuite."
+        ]
+      },
+      {
+        "id": "com-demarrer",
+        "public": "commercial",
+        "roles": [
+          "commercial",
+          "agent_recouvrement"
+        ],
+        "duree": 5,
+        "lien": "/apparence",
+        "titre": "Bien démarrer sur ton téléphone",
+        "intro": "À faire une seule fois, le premier jour.",
+        "etapes": [
+          "Ouvre le lien d'invitation reçu par email et crée ton compte avec la même adresse email.",
+          "Installe l'app : Chrome → menu ⋮ → « Ajouter à l'écran d'accueil » (iPhone : Partager → « Sur l'écran d'accueil »). Ouvre-la toujours depuis cette icône.",
+          "Quand l'app demande ta position, réponds « Autoriser » : c'est indispensable pour valider tes visites.",
+          "Apparence → Notifications : active-les pour recevoir les messages de ton équipe.",
+          "Si un bandeau « Nouvelle version disponible » apparaît, termine ta saisie puis touche « Mettre à jour »."
+        ]
+      },
+      {
+        "id": "com-tournee",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 3,
+        "lien": "/tournees",
+        "titre": "Ta journée de tournée",
+        "intro": "Chaque matin, ta liste de clients est prête dans le bon ordre.",
+        "etapes": [
+          "Ouvre Tournées : tu vois les clients du jour, par exemple Supérette La Confiance puis Boutique Chez Awa.",
+          "Touche 📍 Itinéraire pour être guidé par Google Maps jusqu'au magasin.",
+          "Suis l'ordre proposé : il a été calculé pour réduire tes déplacements.",
+          "Tu peux aussi programmer ta propre tournée ; selon les réglages, ton responsable devra l'approuver.",
+          "Attention : une tournée passée est clôturée, on ne peut plus y ajouter de client."
+        ]
+      },
+      {
+        "id": "com-demande",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 3,
+        "lien": "/stock-commercial",
+        "titre": "Demander tes produits au magasin",
+        "intro": "La veille ou le matin, demande la marchandise de ta tournée. L'IA peut préparer la liste pour toi.",
+        "etapes": [
+          "Mon stock en main → onglet « Mes demandes au magasin » → « + Nouvelle demande de produits ».",
+          "Choisis le magasin et la date (par défaut : demain).",
+          "Touche « ✨ Proposer ma demande » : l'IA regarde ta tournée, le stock relevé chez tes clients, leurs achats habituels, tes ventes récentes et ce que tu as déjà en main. Exemple : 40 Farine de maïs Soleil 1 kg, 24 Huile Palmeraie 1 L, chaque ligne avec sa raison.",
+          "Corrige les quantités si besoin (sous chaque produit : stock du magasin et ce que tu as en main), ajoute un commentaire, puis « Envoyer la demande ».",
+          "Tu reçois une notification quand elle est traitée : accordée, accordée en partie (avec le motif) ou refusée. La marchandise accordée apparaît dans ton stock en main.",
+          "Tant qu'elle est en attente, tu peux l'annuler. Tu peux aussi la dicter : « Demande pour demain : 40 Farine Soleil et 24 Huile Palmeraie »."
+        ]
+      },
+      {
+        "id": "com-visite",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 4,
+        "lien": "/tournees",
+        "titre": "Valider une visite et remplir le rapport",
+        "intro": "Une visite validée et un rapport complet comptent dans ta note d'utilisation.",
+        "etapes": [
+          "Une fois devant le client, ouvre la tournée → « Marquer comme visitée ». Ta position est comparée à celle du client : il faut être sur place.",
+          "Si ça refuse, rapproche-toi du magasin, attends quelques secondes à l'extérieur et réessaie.",
+          "Dans le rapport, indique le stock du client par produit : en rayon et en réserve (ex. Huile Palmeraie 1 L : 6 en rayon, 12 en réserve).",
+          "Coche les produits concurrents présents en rayon et réponds aux questions de ton entreprise.",
+          "Ajoute tes photos (rayon, réserve, devanture) puis envoie le rapport."
+        ]
+      },
+      {
+        "id": "com-vente",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 3,
+        "lien": "/ventes",
+        "titre": "Faire une vente",
+        "intro": "Exemple : Boutique Chez Awa prend 10 Farine de maïs Soleil 1 kg et 5 Huile Palmeraie 1 L, payés cash.",
+        "etapes": [
+          "Ventes → « + Nouvelle vente » : choisis le client « Boutique Chez Awa ».",
+          "Indique que la vente est faite par toi : le stock est pris dans ton stock en main (c'est aussi ce qui fonctionne sans réseau).",
+          "Ajoute les produits et les quantités. Le tarif négocié du client s'applique tout seul.",
+          "Choisis le mode de paiement. Si le client a un crédit disponible, tu peux l'utiliser.",
+          "Coche « Produire une FNE » si ton entreprise te le demande, puis valide. Tu peux envoyer le reçu par WhatsApp ou email.",
+          "Erreur ? Une vente ne se supprime pas : préviens ton responsable, il fera une annulation avec avoir."
+        ]
+      },
+      {
+        "id": "com-client",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 3,
+        "lien": "/clients",
+        "titre": "Créer un nouveau client sur place",
+        "intro": "Toujours depuis le magasin du client, pour enregistrer sa vraie position.",
+        "etapes": [
+          "Clients → « + Nouveau client ». Seul le nom est obligatoire, par exemple « Alimentation Bon Prix Marcory ».",
+          "Capture la position GPS : tu dois être dans le magasin à ce moment-là.",
+          "Ajoute le téléphone, la ville et une photo de la devanture.",
+          "Si le client a déjà une position fausse : ouvre sa fiche → « Modifier » et recapture la position sur place."
+        ]
+      },
+      {
+        "id": "com-assistant",
+        "public": "commercial",
+        "roles": [
+          "commercial",
+          "admin",
+          "manager",
+          "gestionnaire_stock"
+        ],
+        "duree": 3,
+        "lien": "/assistant",
+        "titre": "Gagner du temps en dictant à l'assistant",
+        "intro": "Tu parles, l'assistant prépare la fiche. Rien n'est enregistré avant que tu touches « Valider ».",
+        "etapes": [
+          "Touche la bulle ✨ en bas à droite, puis le micro 🎤.",
+          "Dicte une vente : « Vente à Boutique Chez Awa, dix Farine de maïs Soleil et cinq Huile Palmeraie, payé cash ».",
+          "Ou un encaissement : « Supérette La Confiance a payé 50 000 en espèces ».",
+          "Ou un rapport : « Visite chez Supérette La Confiance : gérant absent, repasser jeudi ».",
+          "Vérifie la fiche proposée, corrige si besoin, puis « Valider »."
+        ]
+      },
+      {
+        "id": "com-argent",
+        "public": "commercial",
+        "roles": [
+          "commercial",
+          "agent_recouvrement"
+        ],
+        "duree": 4,
+        "lien": "/mes-versements",
+        "titre": "Encaisser une créance et faire ton versement",
+        "intro": "Tout l'argent encaissé sur le terrain doit être versé en caisse. Un écart non justifié devient une dette à ton nom.",
+        "etapes": [
+          "Créances → ouvre la créance du client → « Enregistrer un paiement » : montant et mode (espèces, Mobile Money, chèque…).",
+          "Le soir, Mes versements : indique le montant remis et la caisse. Un accusé PDF est généré.",
+          "Vérifie que le montant correspond à tes ventes cash et à tes recouvrements du jour.",
+          "Lors de ta réconciliation, tu peux justifier un écart avant la clôture."
+        ]
+      },
+      {
+        "id": "com-hors-ligne",
+        "public": "commercial",
+        "roles": [
+          "commercial",
+          "agent_recouvrement"
+        ],
+        "duree": 2,
+        "lien": "/tournees",
+        "titre": "Travailler sans réseau",
+        "intro": "Dans une zone sans couverture ou un sous-sol, continue à travailler normalement.",
+        "etapes": [
+          "Sans réseau, tu peux : vendre depuis ton stock, valider une visite, envoyer un rapport, enregistrer un paiement sur une créance.",
+          "Un bandeau en haut indique le nombre d'actions en attente.",
+          "Dès que le réseau revient, tout se synchronise automatiquement : garde l'app ouverte quelques instants.",
+          "Une visite faite hors ligne peut encore être validée jusqu'à la fin du lendemain."
+        ]
+      },
+      {
+        "id": "stock-demandes",
+        "public": "magasin",
+        "roles": [
+          "gestionnaire_stock",
+          "admin",
+          "manager"
+        ],
+        "duree": 3,
+        "lien": "/stock-commercial",
+        "titre": "Traiter les demandes des commerciaux",
+        "intro": "Un badge rouge sur « Stock des commerciaux » indique les demandes en attente ; tu reçois aussi une notification.",
+        "etapes": [
+          "Stock des commerciaux → onglet « Demandes des commerciaux » : les demandes en attente sont triées par date souhaitée.",
+          "Ouvre une demande : pour chaque produit, tu vois la quantité demandée, le stock du magasin, ce que le commercial a déjà en main et, si l'IA a préparé la demande, sa raison.",
+          "Touche « ✨ Proposer un arbitrage » : l'IA tient compte du stock du magasin, des autres demandes en attente, des commandes clients non livrées, de ce que le commercial a en main et de ses invendus récents. Elle pré-remplit les quantités avec une raison par produit (⚖️) et propose un motif si elle n'accorde pas tout.",
+          "Les quantités accordées sont pré-remplies (plafonnées au stock du magasin). Corrige-les, ou mets 0 sur un produit que tu ne peux pas donner.",
+          "Tout accordé : « ✓ Accorder ». Une partie seulement : indique le motif (ex. « réassort huile jeudi »), puis « ✓ Accorder en partie ».",
+          "Accorder crée directement la sortie de stock : le stock du magasin baisse et la marchandise passe dans le stock en main du commercial, qui est prévenu.",
+          "Impossible de servir : « Refuser » avec un motif. L'onglet « Traitées » garde l'historique (qui, quand, quoi).",
+          "Tu peux aussi demander à l'assistant ✨ : « Quelles demandes dois-je traiter ? »"
+        ]
+      },
+      {
+        "id": "dir-revue-jour",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "comptable",
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/",
+        "titre": "Ta revue quotidienne en 5 minutes",
+        "intro": "Commence chaque journée par le Tableau de bord.",
+        "etapes": [
+          "Regarde les alertes : commerciaux inactifs depuis plus de 24 h, inventaire en retard, lots à écouler en priorité.",
+          "Vérifie le solde de chaque caisse (cliquable vers le Journal de caisse).",
+          "Traite les badges rouges du menu : décaissements à valider ou à payer, transferts à confirmer.",
+          "Touche une carte du tableau de bord pour ouvrir le détail déjà filtré."
+        ]
+      },
+      {
+        "id": "dir-tournees",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "admin"
+        ],
+        "duree": 6,
+        "lien": "/tournees",
+        "titre": "Planifier les tournées de l'équipe",
+        "intro": "Manuellement pour une journée, ou avec l'IA pour plusieurs semaines.",
+        "etapes": [
+          "Tournées → « + Nouvelle tournée » : choisis le commercial (ex. Kouamé Yao) et la date. Seuls ses clients apparaissent.",
+          "Manuel : coche les clients, l'ordre de passage est optimisé automatiquement.",
+          "Avec l'IA : bloc « ✨ Planification par l'IA » → période (1 jour à 1 mois), objectif de visites par jour, consignes (ex. « priorité aux créances échues »).",
+          "Relis les choix de l'IA et leurs raisons, retire les clients non voulus, puis « Créer les N tournées ».",
+          "Si tes commerciaux programment eux-mêmes leurs tournées, approuve-les si la validation est activée."
+        ]
+      },
+      {
+        "id": "dir-ventes",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "comptable",
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/ventes",
+        "titre": "Suivre les ventes, annulations et créances",
+        "intro": "Toutes les corrections laissent une trace : rien ne se supprime.",
+        "etapes": [
+          "Ventes : combine les filtres période, commercial, client, ville et produit ; touche une ligne pour le détail.",
+          "Pour corriger une vente : détail → « Annuler cette vente » avec un motif. Un avoir est créé et le stock revient au dépôt.",
+          "Créances : repère les retards mis en évidence et enregistre les paiements reçus.",
+          "Paiement d'un siège pour plusieurs magasins : « Règlement groupé », puis « Répartir automatiquement »."
+        ]
+      },
+      {
+        "id": "dir-caisse",
+        "public": "direction",
+        "roles": [
+          "comptable",
+          "manager",
+          "admin"
+        ],
+        "duree": 6,
+        "lien": "/versements",
+        "titre": "Contrôler les versements et la caisse",
+        "intro": "Chaque franc encaissé sur le terrain doit arriver en caisse.",
+        "etapes": [
+          "Versements : vois pour chaque commercial le total dû (ventes cash + recouvrements) moins ce qu'il a versé.",
+          "Journal de caisse → « + Nouvelle demande » pour une sortie ; le validateur peut réduire le montant selon la trésorerie.",
+          "Une fois validée, « Payer montant » génère le bon de caisse PDF à faire signer.",
+          "Onglet Inventaire : saisis le montant compté ; l'écart avec le solde théorique est calculé et un rapport PDF est produit.",
+          "Grand livre → « Exporter pour comptabilité » pour Sage Saari ou Ciel Compta."
+        ]
+      },
+      {
+        "id": "dir-reconciliation",
+        "public": "direction",
+        "roles": [
+          "comptable",
+          "manager",
+          "admin"
+        ],
+        "duree": 8,
+        "lien": "/reconciliations",
+        "titre": "Réconcilier le stock et l'argent d'un commercial",
+        "intro": "Deux validations successives par deux personnes différentes : la caisse, puis le comptable.",
+        "etapes": [
+          "Réconciliations → « + Nouvelle réconciliation » → choisis le commercial, puis ses tournées non réconciliées (ou une période).",
+          "Saisis le stock réellement compté, puis « Enregistrer le comptage ». L'app calcule les écarts de stock et d'argent.",
+          "La caisse valide : les écritures de la période sont générées.",
+          "Le comptable décide pour chaque écart : dette du commercial, ou perte justifiée avec commentaire.",
+          "Dettes des commerciaux : suis les soldes ; si besoin, « Recouvrement forcé (retenue sur salaire) »."
+        ]
+      },
+      {
+        "id": "dir-analyse",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/analytique",
+        "titre": "Exploiter les données du terrain",
+        "intro": "Les rapports de visite deviennent des indicateurs de pilotage.",
+        "etapes": [
+          "Rapports de visite : consulte stock rayon/réserve, concurrents, réponses et photos de chaque visite.",
+          "Analytique : récap quotidien des tournées, taux de rotation des produits, présence en rayon face à la concurrence.",
+          "Localiser un produit : retrouve chez quels clients un article a été vu récemment (utile quand un client appelle).",
+          "Assistant IA → « Rapport d'activité (PowerPoint) » pour une présentation prête en moins d'une minute."
+        ]
+      },
+      {
+        "id": "dir-mois",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/notes-utilisation",
+        "titre": "Clôturer le mois",
+        "intro": "Une routine mensuelle pour garder l'équipe motivée et les comptes propres.",
+        "etapes": [
+          "Notes d'utilisation → choisis le mois → « Calculer les notes du mois ». Exporte le PDF pour le calcul des primes.",
+          "Objectifs : compare le réalisé de chaque commercial et de chaque équipe.",
+          "Vérifie qu'aucune réconciliation ne reste en attente de validation.",
+          "Fais l'inventaire du stock et de la caisse si un rappel est en retard."
+        ]
+      }
+    ]
+  }
 }

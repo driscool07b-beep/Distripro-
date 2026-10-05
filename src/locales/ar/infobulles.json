@@ -133,7 +133,8 @@
     "soldeReporte": "يسجّل دينًا على عميل يعود لما قبل DistribPro."
   },
   "stockcommercial": {
-    "nouvelleSortie": "يسلّم بضاعة لمندوب للبيع الميداني."
+    "nouvelleSortie": "يسلّم بضاعة لمندوب للبيع الميداني.",
+    "nouvelleDemande": "اطلب من المخزن منتجات جولتك؛ يمكن للذكاء الاصطناعي تحضير القائمة لك."
   },
   "versements": {
     "enregistrer": "يسجّل مبلغًا سلّمه مندوب."

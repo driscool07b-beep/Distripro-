@@ -133,7 +133,8 @@
     "soldeReporte": "Enregistre une dette client antérieure à l'utilisation de DistribPro."
   },
   "stockcommercial": {
-    "nouvelleSortie": "Confie de la marchandise à un commercial pour ses ventes terrain."
+    "nouvelleSortie": "Confie de la marchandise à un commercial pour ses ventes terrain.",
+    "nouvelleDemande": "Demande au magasin les produits de ta tournée ; l'IA peut préparer la liste pour toi."
   },
   "versements": {
     "enregistrer": "Enregistre l'argent remis par un commercial."

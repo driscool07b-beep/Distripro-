@@ -57,5 +57,67 @@
     "quantite": "持有 / 已领",
     "valeur": "金额",
     "aideQuantite": "持有（粗体）/ 本次行程从仓库领取的数量（灰色），含补货。"
+  },
+  "demandes": {
+    "onglet": "销售员申请",
+    "ongletCommercial": "我向仓库的申请",
+    "nouvelle": "+ 新出库申请",
+    "titreFormulaire": "向仓库申请产品",
+    "aideFormulaire": "说明您的行程所需。库存管理员收到申请后会准备出库。",
+    "dateSouhaitee": "日期",
+    "articles": "申请的产品",
+    "commentaire": "备注",
+    "commentairePlaceholder": "例如：预计某客户有大单",
+    "envoyer": "发送申请",
+    "choisirMagasin": "请选择仓库。",
+    "dispoMagasin": "仓库：{{n}}",
+    "enMain": "手上：{{n}}",
+    "pourLe": "日期 {{date}}",
+    "demande": "申请",
+    "accorde": "批准",
+    "dispo": "可用",
+    "motif": "原因",
+    "motifPlaceholder": "例如：库存油不足，周四补货",
+    "motifRefusObligatoire": "请填写拒绝原因。",
+    "motifPartielObligatoire": "请填写原因：您未批准全部申请数量。",
+    "aideTraitement": "批准后会直接生成给销售员的出库。无法供应的产品请填 0。",
+    "accorder": "✓ 批准",
+    "accorderPartiel": "✓ 部分批准",
+    "refuser": "拒绝",
+    "fermer": "关闭",
+    "annuler": "取消我的申请",
+    "confirmerAnnulation": "取消申请 {{numero}}？",
+    "traitePar": "由 {{nom}} 于 {{date}} 处理",
+    "parIA": "由 AI 建议",
+    "aucune": "暂无申请。",
+    "aucuneATraiter": "没有待处理的申请。👍",
+    "filtres": {
+      "en_attente": "待处理",
+      "traitees": "已处理"
+    },
+    "statuts": {
+      "en_attente": "待处理",
+      "accordee": "已批准",
+      "partielle": "部分批准",
+      "refusee": "已拒绝",
+      "annulee": "已取消"
+    },
+    "ia": {
+      "titre": "让 AI 帮我准备申请",
+      "aide": "AI 会参考您的行程、客户处记录的库存、他们的常购商品、您近期的销售以及您手上已有的货。发送前您可以修改全部内容。",
+      "consignes": "指示（可选）：例如 多带些油",
+      "bouton": "✨ 建议我的申请",
+      "enCours": "AI 正在准备您的申请…",
+      "erreur": "AI 建议失败，请重试或自行填写。",
+      "vide": "AI 没有可建议的内容：请自行填写申请。",
+      "baseTournee": "基于您的行程（{{n}} 位客户）。",
+      "basePortefeuille": "当天没有行程：基于您的 {{n}} 位客户。"
+    },
+    "arbitrage": {
+      "aide": "AI 会将申请与仓库库存、其他待处理申请、未交付的客户订单、销售员手上的货及其近期未售退货进行比较。",
+      "bouton": "✨ 建议分配",
+      "enCours": "AI 正在分析申请…",
+      "erreur": "AI 建议失败：请重试或自行决定。"
+    }
   }
 }

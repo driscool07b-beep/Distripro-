@@ -42,7 +42,9 @@
     "assistant_ia": "Assistant",
     "rapport_activite": "PowerPoint report",
     "analyse_ia": "AI analysis",
-    "planification_tournees": "Round planning"
+    "planification_tournees": "Round planning",
+    "demande_sortie": "Stock requests",
+    "arbitrage_demande_sortie": "Stock request arbitration"
   },
   "cycleCourt": {
     "mensuel": "Monthly",

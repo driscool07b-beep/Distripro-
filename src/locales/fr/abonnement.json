@@ -42,7 +42,9 @@
     "assistant_ia": "Assistant",
     "rapport_activite": "Rapport PowerPoint",
     "analyse_ia": "Analyse IA",
-    "planification_tournees": "Planification des tournées"
+    "planification_tournees": "Planification des tournées",
+    "demande_sortie": "Demandes de sortie",
+    "arbitrage_demande_sortie": "Arbitrage des demandes de sortie"
   },
   "cycleCourt": {
     "mensuel": "Mensuel",

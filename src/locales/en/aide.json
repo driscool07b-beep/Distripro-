@@ -509,6 +509,14 @@
       "titre": "Sales reps' stock",
       "items": [
         {
+          "q": "How do I process a rep's stock request?",
+          "r": "Sales reps' stock → “Reps' requests” (stock manager, admin, manager). Open the request, adjust the granted quantities, then “Grant” (reason required if only partial) or “Refuse” with a reason. Granting directly creates the stock release to the rep, who is notified. A stock manager can only supply from the warehouses assigned to them. “✨ Suggest an allocation” button: AI proposes the quantities to grant (stock, other requests, customer orders, stock on hand, unsold returns); you keep the final decision."
+        },
+        {
+          "q": "How does a rep request products from the warehouse?",
+          "r": "My stock on hand → “My warehouse requests” → “+ New stock request”: warehouse, date, products and quantities. “✨ Propose my request” lets AI prepare the list from the route, the stock recorded at customers, their purchases and recent sales; everything can be edited before sending. The request can also be dictated to the assistant."
+        },
+        {
           "q": "How do I exchange a sales rep's defective products?",
           "r": "Sales reps' stock → 'Defective exchanges' tab (warehouse, admin or manager): choose the rep, the warehouse, the product and the quantity, then the reason. The rep leaves with sound products and their stock does not change; the damaged products enter the warehouse in a « damaged » batch, visible in the stock details."
         },
@@ -588,5 +596,476 @@
         }
       ]
     }
-  ]
+  ],
+  "tutoriels": {
+    "titre": "🎓 Tutorials for your role",
+    "sousTitre": "Step-by-step walkthroughs for everyday tasks. Tap a tutorial to open it.",
+    "voirTous": "Show tutorials for other roles",
+    "masquerTous": "Show only my tutorials",
+    "aucunPourRole": "No tutorial dedicated to your role yet: browse the other roles' tutorials or the questions below.",
+    "ouvrirPage": "Open the page →",
+    "etape": "Step",
+    "minutes": "{{n}} min",
+    "faqTitre": "Frequently asked questions",
+    "publics": {
+      "admin": "Administrator",
+      "commercial": "Field sales rep",
+      "direction": "Manager & accountant",
+      "magasin": "Stock manager"
+    },
+    "liste": [
+      {
+        "id": "admin-mise-en-service",
+        "public": "admin",
+        "roles": [
+          "admin"
+        ],
+        "duree": 15,
+        "lien": "/parametres",
+        "titre": "Set up your company",
+        "intro": "The order that avoids getting stuck at launch. The 🚀 Getting started card on the Dashboard ticks each step automatically.",
+        "etapes": [
+          "Settings: fill in the company details and currency, and add your logo (it will appear on invoices, receipts and delivery notes).",
+          "Storage warehouses: create your depots, for example “Koumassi central depot” and “Yopougon store”.",
+          "Products & Stock: create your items, then enter the opening stock (see the Catalogue and stock tutorial).",
+          "Customers: import your list with the Excel template or create the first customers.",
+          "Team: invite your colleagues with the right role.",
+          "Make a test sale, check the receipt, then cancel it: you will see the credit note generated automatically."
+        ]
+      },
+      {
+        "id": "admin-equipe",
+        "public": "admin",
+        "roles": [
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/utilisateurs",
+        "titre": "Invite your team and set access",
+        "intro": "Each person has a role that decides what they see. A sales rep only sees their own data.",
+        "etapes": [
+          "Team → “+ Invite a colleague”: enter the email and role (e.g. Kouamé Yao, sales rep).",
+          "The person receives an email and creates their account with exactly that address. Remind them to check their spam folder.",
+          "If needed, grant extended or read-only access from their row in Team.",
+          "For someone who should not use AI: “Disable AI” on their row.",
+          "Settings → Sales org chart: create your teams (e.g. “North Abidjan team”) and attach each rep to their team leader.",
+          "When someone leaves: “Deactivate” the account. History is kept and the seat is freed in your subscription."
+        ]
+      },
+      {
+        "id": "admin-catalogue",
+        "public": "admin",
+        "roles": [
+          "admin",
+          "manager",
+          "gestionnaire_stock"
+        ],
+        "duree": 10,
+        "lien": "/stock",
+        "titre": "Create the catalogue and opening stock",
+        "intro": "Example with a fictitious item: “Soleil corn flour 1 kg”.",
+        "etapes": [
+          "Products & Stock → new product: name “Soleil corn flour 1 kg”, reference (tap ✨ to get P0001), unit “bag”, selling price.",
+          "Add the barcode if you have one (scanner or typed in).",
+          "On the product, “Adjust stock” → In: 200 bags into the central depot, batch L-2610, expiry 30/06/2027, purchase price (optional, to track your margins).",
+          "Attach a photo of the supplier's delivery note: depending on your settings it may be mandatory.",
+          "Click the product name to check the split by warehouse and the batches."
+        ]
+      },
+      {
+        "id": "admin-clients",
+        "public": "admin",
+        "roles": [
+          "admin",
+          "manager"
+        ],
+        "duree": 8,
+        "lien": "/clients",
+        "titre": "Organise customers and portfolios",
+        "intro": "A rep's portfolio decides which customers are offered in their routes.",
+        "etapes": [
+          "Customers → “Import”: download the Excel template, fill it in without changing the column order, re-import it.",
+          "Tick the customers of an area (e.g. La Confiance minimarket, Chez Awa shop…) → “Assign to…” → choose the rep.",
+          "Check that every customer has a GPS position: without it, no visit can be validated there. The rep can capture it on site.",
+          "For a chain with several stores, create a Customer group (e.g. “Bon Prix grocery network”).",
+          "Settings → Customer accounts: choose automatic or manual allocation of 411 accounts."
+        ]
+      },
+      {
+        "id": "admin-rapports-visite",
+        "public": "admin",
+        "roles": [
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/parametres",
+        "titre": "Choose what reps report from the field",
+        "intro": "The visit report adapts to your needs, with no development.",
+        "etapes": [
+          "Settings → Additional information to collect: add a question, for example “Does the manager want an in-store promotion?” (yes/no).",
+          "Choose the type: free text, number, yes/no or choice list.",
+          "Add the competitor products to watch: reps will tick their shelf presence.",
+          "Decide whether a photo is mandatory in every report.",
+          "Enable approval of routes that reps schedule themselves, if you want it."
+        ]
+      },
+      {
+        "id": "admin-objectifs",
+        "public": "admin",
+        "roles": [
+          "admin",
+          "manager"
+        ],
+        "duree": 5,
+        "lien": "/objectifs",
+        "titre": "Set sales targets",
+        "intro": "Each rep follows their progress from their Dashboard.",
+        "etapes": [
+          "Targets → “+ New target”: choose a rep, a team leader, management or the office.",
+          "Enter the period and an amount (e.g. 3,000,000 F CFA in November) and/or a product quantity (e.g. 500 Kora fragrant rice 5 kg).",
+          "To change it later: “Edit” with a reason. “🕘 History” keeps track of every change."
+        ]
+      },
+      {
+        "id": "admin-abonnement",
+        "public": "admin",
+        "roles": [
+          "admin",
+          "comptable"
+        ],
+        "duree": 3,
+        "lien": "/abonnement",
+        "titre": "Track your subscription and AI units",
+        "intro": "Without AI units, the assistant, AI planning and PowerPoint reports stop.",
+        "etapes": [
+          "My subscription: check your plan, the end of the trial and the number of reps allowed.",
+          "Watch the AI unit balance and per-person usage at the bottom of Settings.",
+          "To pay: choose Monthly or Annual, then “Choose and pay” (Mobile Money or card). The PDF receipt is then available."
+        ]
+      },
+      {
+        "id": "com-demarrer",
+        "public": "commercial",
+        "roles": [
+          "commercial",
+          "agent_recouvrement"
+        ],
+        "duree": 5,
+        "lien": "/apparence",
+        "titre": "Get started on your phone",
+        "intro": "To do once, on your first day.",
+        "etapes": [
+          "Open the invitation link received by email and create your account with the same email address.",
+          "Install the app: Chrome → ⋮ menu → “Add to Home screen” (iPhone: Share → “Add to Home Screen”). Always open it from that icon.",
+          "When the app asks for your location, answer “Allow”: it is required to validate your visits.",
+          "Appearance → Notifications: turn them on to receive your team's messages.",
+          "If a “New version available” banner appears, finish what you are typing, then tap “Update”."
+        ]
+      },
+      {
+        "id": "com-tournee",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 3,
+        "lien": "/tournees",
+        "titre": "Your route for the day",
+        "intro": "Every morning, your customer list is ready in the right order.",
+        "etapes": [
+          "Open Routes: you see today's customers, for example La Confiance minimarket then Chez Awa shop.",
+          "Tap 📍 Directions to be guided by Google Maps to the store.",
+          "Follow the suggested order: it was calculated to reduce your travel.",
+          "You can also schedule your own route; depending on settings, your manager will have to approve it.",
+          "Note: a past route is closed, customers can no longer be added to it."
+        ]
+      },
+      {
+        "id": "com-demande",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 3,
+        "lien": "/stock-commercial",
+        "titre": "Request your products from the warehouse",
+        "intro": "The day before or in the morning, request the goods for your route. AI can prepare the list for you.",
+        "etapes": [
+          "My stock on hand → “My warehouse requests” tab → “+ New stock request”.",
+          "Choose the warehouse and the date (default: tomorrow).",
+          "Tap “✨ Propose my request”: AI looks at your route, the stock recorded at your customers, their usual purchases, your recent sales and what you already carry. Example: 40 Soleil corn flour 1 kg, 24 Palmeraie oil 1 L, each line with its reason.",
+          "Adjust the quantities if needed (under each product: warehouse stock and what you carry), add a comment, then “Send request”.",
+          "You are notified when it is processed: granted, partially granted (with the reason) or refused. Granted goods appear in your stock in hand.",
+          "While it is pending, you can cancel it. You can also dictate it: “Request for tomorrow: 40 Soleil flour and 24 Palmeraie oil”."
+        ]
+      },
+      {
+        "id": "com-visite",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 4,
+        "lien": "/tournees",
+        "titre": "Validate a visit and fill in the report",
+        "intro": "A validated visit and a complete report count towards your usage score.",
+        "etapes": [
+          "Once in front of the customer, open the route → “Mark as visited”. Your position is compared with the customer's: you must be on site.",
+          "If it is refused, move closer to the store, wait a few seconds outdoors and try again.",
+          "In the report, enter the customer's stock per product: on the shelf and in the back store (e.g. Palmeraie oil 1 L: 6 on shelf, 12 in store).",
+          "Tick the competitor products on the shelf and answer your company's questions.",
+          "Add your photos (shelf, back store, storefront), then send the report."
+        ]
+      },
+      {
+        "id": "com-vente",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 3,
+        "lien": "/ventes",
+        "titre": "Make a sale",
+        "intro": "Example: Chez Awa shop takes 10 Soleil corn flour 1 kg and 5 Palmeraie oil 1 L, paid in cash.",
+        "etapes": [
+          "Sales → “+ New sale”: choose the customer “Chez Awa shop”.",
+          "State that you are making the sale yourself: stock is taken from the stock you carry (this is also what works offline).",
+          "Add the products and quantities. The customer's negotiated price applies automatically.",
+          "Choose the payment method. If the customer has available credit, you can use it.",
+          "Tick “Issue an FNE” if your company asks you to, then validate. You can send the receipt by WhatsApp or email.",
+          "Mistake? A sale cannot be deleted: tell your manager, who will cancel it with a credit note."
+        ]
+      },
+      {
+        "id": "com-client",
+        "public": "commercial",
+        "roles": [
+          "commercial"
+        ],
+        "duree": 3,
+        "lien": "/clients",
+        "titre": "Create a new customer on site",
+        "intro": "Always from the customer's store, to record their real position.",
+        "etapes": [
+          "Customers → “+ New customer”. Only the name is required, for example “Bon Prix grocery Marcory”.",
+          "Capture the GPS position: you must be inside the store at that moment.",
+          "Add the phone number, city and a photo of the storefront.",
+          "If a customer has a wrong position: open their record → “Edit” and capture the position again on site."
+        ]
+      },
+      {
+        "id": "com-assistant",
+        "public": "commercial",
+        "roles": [
+          "commercial",
+          "admin",
+          "manager",
+          "gestionnaire_stock"
+        ],
+        "duree": 3,
+        "lien": "/assistant",
+        "titre": "Save time by dictating to the assistant",
+        "intro": "You speak, the assistant prepares the form. Nothing is saved until you tap “Validate”.",
+        "etapes": [
+          "Tap the ✨ bubble at the bottom right, then the 🎤 microphone.",
+          "Dictate a sale: “Sale to Chez Awa shop, ten Soleil corn flour and five Palmeraie oil, paid cash”.",
+          "Or a payment: “La Confiance minimarket paid 50,000 in cash”.",
+          "Or a report: “Visit to La Confiance minimarket: manager absent, come back Thursday”.",
+          "Check the proposed form, correct it if needed, then “Validate”."
+        ]
+      },
+      {
+        "id": "com-argent",
+        "public": "commercial",
+        "roles": [
+          "commercial",
+          "agent_recouvrement"
+        ],
+        "duree": 4,
+        "lien": "/mes-versements",
+        "titre": "Collect a receivable and make your deposit",
+        "intro": "All money collected in the field must be paid into a cash box. An unexplained gap becomes a debt in your name.",
+        "etapes": [
+          "Receivables → open the customer's receivable → “Record a payment”: amount and method (cash, Mobile Money, cheque…).",
+          "In the evening, My deposits: enter the amount handed over and the cash box. A PDF acknowledgement is generated.",
+          "Check that the amount matches your cash sales and collections of the day.",
+          "During your reconciliation, you can explain a gap before it is closed."
+        ]
+      },
+      {
+        "id": "com-hors-ligne",
+        "public": "commercial",
+        "roles": [
+          "commercial",
+          "agent_recouvrement"
+        ],
+        "duree": 2,
+        "lien": "/tournees",
+        "titre": "Work without network",
+        "intro": "In an area with no coverage or a basement, keep working as usual.",
+        "etapes": [
+          "Offline you can: sell from your stock, validate a visit, send a report, record a payment on a receivable.",
+          "A banner at the top shows the number of pending actions.",
+          "As soon as the network returns, everything syncs automatically: keep the app open for a moment.",
+          "A visit made offline can still be validated until the end of the following day."
+        ]
+      },
+      {
+        "id": "stock-demandes",
+        "public": "magasin",
+        "roles": [
+          "gestionnaire_stock",
+          "admin",
+          "manager"
+        ],
+        "duree": 3,
+        "lien": "/stock-commercial",
+        "titre": "Process reps' requests",
+        "intro": "A red badge on “Sales reps' stock” shows pending requests; you also get a notification.",
+        "etapes": [
+          "Sales reps' stock → “Reps' requests” tab: pending requests are sorted by requested date.",
+          "Open a request: for each product you see the quantity requested, the warehouse stock, what the rep already carries and, if AI prepared the request, its reason.",
+          "Tap “✨ Suggest an allocation”: AI considers warehouse stock, other pending requests, undelivered customer orders, what the rep already carries and their recent unsold returns. It pre-fills the quantities with a reason per product (⚖️) and suggests a reason if it does not grant everything.",
+          "Granted quantities are pre-filled (capped at the warehouse stock). Adjust them, or enter 0 for a product you cannot supply.",
+          "Everything granted: “✓ Grant”. Only part: enter the reason (e.g. “oil restock Thursday”), then “✓ Grant partially”.",
+          "Granting directly creates the stock release: warehouse stock goes down and the goods move into the rep's stock in hand; the rep is notified.",
+          "Cannot supply: “Refuse” with a reason. The “Processed” tab keeps the history (who, when, what).",
+          "You can also ask the ✨ assistant: “Which requests do I need to process?”"
+        ]
+      },
+      {
+        "id": "dir-revue-jour",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "comptable",
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/",
+        "titre": "Your 5-minute daily review",
+        "intro": "Start each day with the Dashboard.",
+        "etapes": [
+          "Look at the alerts: reps inactive for more than 24 h, overdue inventory, batches to sell first.",
+          "Check each cash box balance (clickable to the Cash journal).",
+          "Clear the red badges in the menu: disbursements to approve or pay, transfers to confirm.",
+          "Tap a dashboard card to open the already-filtered detail."
+        ]
+      },
+      {
+        "id": "dir-tournees",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "admin"
+        ],
+        "duree": 6,
+        "lien": "/tournees",
+        "titre": "Plan the team's routes",
+        "intro": "Manually for one day, or with AI for several weeks.",
+        "etapes": [
+          "Routes → “+ New route”: choose the rep (e.g. Kouamé Yao) and the date. Only their customers appear.",
+          "Manual: tick the customers, the visiting order is optimised automatically.",
+          "With AI: “✨ AI planning” block → period (1 day to 1 month), visits per day target, instructions (e.g. “prioritise overdue receivables”).",
+          "Review the AI's choices and reasons, remove unwanted customers, then “Create the N routes”.",
+          "If your reps schedule their own routes, approve them when approval is enabled."
+        ]
+      },
+      {
+        "id": "dir-ventes",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "comptable",
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/ventes",
+        "titre": "Track sales, cancellations and receivables",
+        "intro": "Every correction leaves a trace: nothing is deleted.",
+        "etapes": [
+          "Sales: combine the period, rep, customer, city and product filters; tap a row for the detail.",
+          "To correct a sale: detail → “Cancel this sale” with a reason. A credit note is created and stock returns to the depot.",
+          "Receivables: spot the highlighted overdue items and record payments received.",
+          "Head-office payment for several stores: “Grouped payment”, then “Allocate automatically”."
+        ]
+      },
+      {
+        "id": "dir-caisse",
+        "public": "direction",
+        "roles": [
+          "comptable",
+          "manager",
+          "admin"
+        ],
+        "duree": 6,
+        "lien": "/versements",
+        "titre": "Check deposits and the cash box",
+        "intro": "Every franc collected in the field must reach a cash box.",
+        "etapes": [
+          "Deposits: see for each rep the total due (cash sales + collections) minus what they have paid in.",
+          "Cash journal → “+ New request” for a disbursement; the approver can reduce the amount depending on cash available.",
+          "Once approved, “Pay amount” generates the PDF cash voucher to be signed.",
+          "Inventory tab: enter the amount counted; the gap with the theoretical balance is calculated and a PDF report is produced.",
+          "General ledger → “Export for accounting” for Sage Saari or Ciel Compta."
+        ]
+      },
+      {
+        "id": "dir-reconciliation",
+        "public": "direction",
+        "roles": [
+          "comptable",
+          "manager",
+          "admin"
+        ],
+        "duree": 8,
+        "lien": "/reconciliations",
+        "titre": "Reconcile a rep's stock and cash",
+        "intro": "Two successive approvals by two different people: the cash desk, then the accountant.",
+        "etapes": [
+          "Reconciliations → “+ New reconciliation” → choose the rep, then their unreconciled routes (or a period).",
+          "Enter the stock actually counted, then “Save count”. The app calculates stock and cash gaps.",
+          "The cash desk approves: the entries for the period are generated.",
+          "The accountant decides for each gap: rep's debt, or justified loss with a comment.",
+          "Reps' debts: track balances; if needed, “Forced recovery (salary deduction)”."
+        ]
+      },
+      {
+        "id": "dir-analyse",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/analytique",
+        "titre": "Make use of field data",
+        "intro": "Visit reports become management indicators.",
+        "etapes": [
+          "Visit reports: view shelf/back-store stock, competitors, answers and photos for each visit.",
+          "Analytics: daily route summary, product turnover rate, shelf presence against competitors.",
+          "Locate a product: find which customers recently had an item in stock (useful when a customer calls).",
+          "AI assistant → “Activity report (PowerPoint)” for a presentation ready in under a minute."
+        ]
+      },
+      {
+        "id": "dir-mois",
+        "public": "direction",
+        "roles": [
+          "manager",
+          "admin"
+        ],
+        "duree": 5,
+        "lien": "/notes-utilisation",
+        "titre": "Close the month",
+        "intro": "A monthly routine to keep the team motivated and the books clean.",
+        "etapes": [
+          "Usage scores → choose the month → “Calculate the month's scores”. Export the PDF for bonus calculation.",
+          "Targets: compare actuals for each rep and each team.",
+          "Check that no reconciliation is still awaiting approval.",
+          "Run a stock and cash inventory if a reminder is overdue."
+        ]
+      }
+    ]
+  }
 }

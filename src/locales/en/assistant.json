@@ -159,14 +159,16 @@
       "sortie": "Issue to a sales rep to confirm",
       "transfert": "Transfer to confirm",
       "commande_preparer": "Move the order to preparation",
-      "commande_livrer": "Order delivery to confirm"
+      "commande_livrer": "Order delivery to confirm",
+      "demande_sortie": "Stock request to send to the warehouse"
     },
     "ok": {
       "reception": "Receipt saved: stock updated.",
       "sortie": "Issue saved: goods are in the rep's stock.",
       "transfert": "Transfer sent: to be received by the destination warehouse.",
       "commande_preparer": "Order moved to preparation.",
-      "commande_livrer": "Delivery saved: the sale is created and stock deducted."
+      "commande_livrer": "Delivery saved: the sale is created and stock deducted.",
+      "demande_sortie": "Request sent to the stock manager: you will be notified as soon as it is processed."
     },
     "commande": "ord.",
     "dispo": "avail.",
@@ -179,6 +181,8 @@
     "lotObligatoire": "Your company requires a batch number for each item.",
     "choisirMagasin": "Choose the warehouse the goods leave from.",
     "aPreparer": "To prepare",
-    "aideLivraison": "Correct the quantities actually delivered in case of shortage: the sale is created on these quantities."
+    "aideLivraison": "Correct the quantities actually delivered in case of shortage: the sale is created on these quantities.",
+    "dateSouhaitee": "For",
+    "commentaire": "Comment (optional)"
   }
 }

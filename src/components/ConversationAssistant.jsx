@@ -118,7 +118,7 @@ export default function ConversationAssistant({ compact = false, onNavigation })
             {m.action && ['encaissement', 'client', 'visite'].includes(m.action.type) && (
               <div className="w-full max-w-[92%]"><FicheConfirmationAutre action={m.action} onTermine={finFiche} onNavigation={onNavigation} /></div>
             )}
-            {m.action && ['reception', 'sortie', 'transfert', 'commande_preparer', 'commande_livrer'].includes(m.action.type) && (
+            {m.action && ['reception', 'sortie', 'demande_sortie', 'transfert', 'commande_preparer', 'commande_livrer'].includes(m.action.type) && (
               <div className="w-full max-w-[92%]"><FicheConfirmationStock action={m.action} onTermine={finFiche} onNavigation={onNavigation} /></div>
             )}
             {m.action?.type === 'pieces' && (

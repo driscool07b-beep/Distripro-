@@ -54,6 +54,7 @@ export default function Layout() {
   const [badgeJournalCaisse, setBadgeJournalCaisse] = useState(0)
   const [badgeBanques, setBadgeBanques] = useState(0)
   const [badgeReconciliations, setBadgeReconciliations] = useState(0)
+  const [badgeDemandesSortie, setBadgeDemandesSortie] = useState(0)
   const location = useLocation()
   useEffect(() => {
     if (location.pathname !== '/assistant') {
@@ -69,6 +70,7 @@ export default function Layout() {
     chargerBadgeMessagerie()
     chargerBadgesCaisseBanque()
     chargerBadgeReconciliations()
+    chargerBadgeDemandesSortie()
 
     const canal = supabase
       .channel('badges-notifications')
@@ -77,6 +79,7 @@ export default function Layout() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'caisse_transferts' }, () => chargerBadgesCaisseBanque())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'transferts_banque_caisse' }, () => chargerBadgesCaisseBanque())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'reconciliations_commercial' }, () => chargerBadgeReconciliations())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes_sortie' }, () => chargerBadgeDemandesSortie())
       .subscribe()
 
     return () => {
@@ -89,8 +92,17 @@ export default function Layout() {
       chargerBadgeMessagerie()
       chargerBadgesCaisseBanque()
       chargerBadgeReconciliations()
+      chargerBadgeDemandesSortie()
     }
   }, [location.pathname])
+
+  // Demandes de sortie en attente : badge pour le magasin (gestionnaire,
+  // admin, manager). Le commercial est prévenu par notification.
+  async function chargerBadgeDemandesSortie() {
+    if (!['admin', 'manager', 'gestionnaire_stock'].includes(profil?.role)) return
+    const { count } = await supabase.from('demandes_sortie').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente')
+    setBadgeDemandesSortie(count || 0)
+  }
 
   async function chargerBadgeReconciliations() {
     const r = await compterReconciliationsATraiter(profil)
@@ -254,7 +266,12 @@ export default function Layout() {
               }
             >
               <StockCommercialIcon className="w-4 h-4 shrink-0" />
-              {profil?.role === 'commercial' ? t('menu.monStockEnMain') : t('menu.stockCommerciaux')}
+              <span className="flex-1">{profil?.role === 'commercial' ? t('menu.monStockEnMain') : t('menu.stockCommerciaux')}</span>
+              {badgeDemandesSortie > 0 && (
+                <span className="bg-red-600 text-white text-xs font-semibold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shrink-0">
+                  {badgeDemandesSortie > 99 ? '99+' : badgeDemandesSortie}
+                </span>
+              )}
             </NavLink>
           )}
           {profil?.role === 'commercial' && (

@@ -159,14 +159,16 @@
       "sortie": "待确认的销售员出库",
       "transfert": "待确认的调拨",
       "commande_preparer": "将订单转入备货",
-      "commande_livrer": "待确认的订单交付"
+      "commande_livrer": "待确认的订单交付",
+      "demande_sortie": "待发送给仓库的产品申请"
     },
     "ok": {
       "reception": "收货已登记：库存已更新。",
       "sortie": "出库已登记：货物已进入销售员库存。",
       "transfert": "调拨已发出：待目的仓库接收。",
       "commande_preparer": "订单已转入备货。",
-      "commande_livrer": "交付已登记：已生成销售并扣减库存。"
+      "commande_livrer": "交付已登记：已生成销售并扣减库存。",
+      "demande_sortie": "申请已发送给库存管理员：处理后您会收到通知。"
     },
     "commande": "订",
     "dispo": "可用",
@@ -179,6 +181,8 @@
     "lotObligatoire": "贵公司要求每个商品填写批号。",
     "choisirMagasin": "请选择出货仓库。",
     "aPreparer": "待备货",
-    "aideLivraison": "如有缺货，请更正实际交付数量：销售将按这些数量生成。"
+    "aideLivraison": "如有缺货，请更正实际交付数量：销售将按这些数量生成。",
+    "dateSouhaitee": "日期",
+    "commentaire": "备注（可选）"
   }
 }

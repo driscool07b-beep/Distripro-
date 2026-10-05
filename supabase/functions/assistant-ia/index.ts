@@ -97,6 +97,11 @@ const OUTILS = [
     input_schema: { type: 'object', properties: { numero: { type: 'string', description: 'Numéro précis (CMD-…), facultatif' } }, required: [] },
   },
   {
+    name: 'demandes_sortie',
+    description: "Demandes de produits des commerciaux au magasin. Pour le gestionnaire de stock / manager / admin : demandes en attente à traiter (les plus urgentes d'abord). Pour un commercial : ses propres demandes récentes et leur statut (accordée, en partie, refusée avec motif).",
+    input_schema: { type: 'object', properties: { statut: { type: 'string', enum: ['en_attente', 'toutes'], description: 'en_attente par défaut' } }, required: [] },
+  },
+  {
     name: 'preparer_reception',
     description: "PRÉPARE (sans l'enregistrer) une réception de marchandise (entrée en stock) dans un magasin, avec lot et péremption si dictés. L'utilisateur valide sur une fiche (photo du bon fournisseur si exigée).",
     input_schema: {
@@ -108,6 +113,20 @@ const OUTILS = [
           numero_lot: { type: 'string' }, date_peremption: { type: 'string', description: 'AAAA-MM-JJ' }, prix_achat: { type: 'number' },
         }, required: ['produit_id', 'quantite'] } },
         fournisseur: { type: 'string' }, endommage: { type: 'boolean', description: 'true si la marchandise arrive abîmée' },
+      },
+      required: ['depot_id', 'lignes'],
+    },
+  },
+  {
+    name: 'preparer_demande_sortie',
+    description: "PRÉPARE (sans l'envoyer) la demande de produits d'un COMMERCIAL au magasin pour sa tournée. Le commercial vérifie la fiche puis l'envoie au gestionnaire de stock. Réservé au rôle commercial.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        depot_id: { type: 'string' },
+        date_souhaitee: { type: 'string', description: 'AAAA-MM-JJ ; demain si « pour demain », aujourd’hui par défaut' },
+        lignes: SCHEMA_LIGNES,
+        commentaire: { type: 'string' },
       },
       required: ['depot_id', 'lignes'],
     },
@@ -279,10 +298,12 @@ Assistant de saisie (ventes et commandes dictées, souvent par un commercial pre
 - Nouveau client dicté : vérifie d'abord avec rechercher_clients ; s'il existe déjà un client très proche, demande confirmation avant preparer_client.
 - Visite dictée (« visite chez X, le gérant était absent ») : preparer_visite avec les observations reformulées clairement.
 - Dès que tout est clair, appelle l'outil preparer_… correspondant : une fiche de confirmation s'affiche à l'utilisateur, qui seul peut valider. Réponds alors en UNE phrase courte récapitulant (client, nombre d'articles, total approximatif) et invite à vérifier puis valider. Ne dis jamais que c'est déjà enregistré.
+- Demande de produits au magasin dictée par un commercial (« demande pour demain : 50 Farine Soleil et 20 Huile Palmeraie ») : rechercher_depots (si un seul magasin, utilise-le, sinon demande lequel) + produits, puis preparer_demande_sortie. Ne l'utilise que si l'utilisateur est commercial ; s'il ne précise pas les quantités, propose-lui le bouton « ✨ Proposer ma demande » de la page Mon stock en main.
 Assistant du magasin (gestionnaire de stock) :
 - Réception (« réception de 200 Bacca mil au dépôt principal, lot L2510, périme le 30/03/2027 ») : identifie le magasin (rechercher_depots) et les produits, puis preparer_reception. Si un seul magasin existe, utilise-le.
 - Sortie vers un commercial : rechercher_commerciaux + rechercher_depots + produits, puis preparer_sortie_commercial.
 - Transfert entre magasins : preparer_transfert (source et destination).
+- Demandes de produits des commerciaux : demandes_sortie pour lister celles à traiter (« quelles demandes dois-je traiter ? ») ou, pour un commercial, savoir où en est sa demande. Pour décider des quantités à accorder, invite à ouvrir la demande dans Stock des commerciaux → Demandes des commerciaux et à utiliser « ✨ Proposer un arbitrage ».
 - Commandes : commandes_a_traiter pour lister ou retrouver une commande (par numéro ou client) ; preparer_traitement_commande avec action 'preparer' ou 'livrer' ; pour une livraison incomplète, indique seulement les articles manquants dans « manquants ».
 - Signale toujours un stock insuffisant ; ne prépare jamais un mouvement avec un magasin ou un produit incertain.
 Pièces existantes (ouvrir, imprimer, PDF, bon de livraison, WhatsApp, email, FNE, proforma) :
@@ -336,6 +357,7 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
       if (!lignesDemandees.length) return { erreur: 'aucun article valide' }
       const { data: depots } = await supabaseUtilisateur.from('depots').select('id, nom').eq('actif', true)
       const depot = (id: string) => (depots || []).find((d: any) => d.id === id)
+      if (outil === 'preparer_demande_sortie' && profil.role !== 'commercial') return { erreur: 'seul un commercial peut demander une sortie de produits' }
       const source = depot(outil === 'preparer_transfert' ? e.depot_source_id : e.depot_id)
       if (!source) return { erreur: 'magasin introuvable : utilise rechercher_depots' }
       const destination = outil === 'preparer_transfert' ? depot(e.depot_destination_id) : null
@@ -364,10 +386,13 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
           prix_achat: Number(l.prix_achat) > 0 ? Number(l.prix_achat) : null,
         })
       }
-      const type = outil === 'preparer_reception' ? 'reception' : outil === 'preparer_sortie_commercial' ? 'sortie' : 'transfert'
+      const type = outil === 'preparer_reception' ? 'reception' : outil === 'preparer_sortie_commercial' ? 'sortie' : outil === 'preparer_demande_sortie' ? 'demande_sortie' : 'transfert'
+      const dateSouhaitee = /^\d{4}-\d{2}-\d{2}$/.test(e.date_souhaitee || '') && e.date_souhaitee >= aujourdHui ? e.date_souhaitee : aujourdHui
       return {
         type, depot: source, destination, commercial, lignes, alertes,
         fournisseur: String(e.fournisseur || e.motif || '').slice(0, 120) || null, endommage: !!e.endommage,
+        date_souhaitee: type === 'demande_sortie' ? dateSouhaitee : null,
+        commentaire: type === 'demande_sortie' ? (String(e.commentaire || '').slice(0, 300) || null) : null,
         resume: `${type} — ${source.nom}${destination ? ' → ' + destination.nom : ''}${commercial ? ' → ' + commercial.nom : ''} — ${lignes.length} article(s)`,
       }
     }
@@ -405,7 +430,21 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
             articles: (c.lignes_commande || []).map((l: any) => `${l.produits?.nom} × ${l.quantite}`),
           }))
         }
+        case 'demandes_sortie': {
+          let q = supabaseUtilisateur.from('demandes_sortie')
+            .select('numero, statut, date_souhaitee, created_at, commentaire, motif_traitement, proposee_par_ia, commercial:profils!commercial_id(nom), depots(nom), demande_sortie_lignes(quantite_demandee, quantite_accordee, produits(nom))')
+            .order('date_souhaitee', { ascending: true }).limit(20)
+          if (entree.statut !== 'toutes') q = q.eq('statut', 'en_attente')
+          const { data, error } = await q
+          if (error) return { erreur: error.message }
+          return (data || []).map((d: any) => ({
+            numero: d.numero, statut: d.statut, pour_le: d.date_souhaitee, commercial: d.commercial?.nom, magasin: d.depots?.nom,
+            commentaire: d.commentaire || null, motif: d.motif_traitement || null, proposee_par_ia: d.proposee_par_ia,
+            articles: (d.demande_sortie_lignes || []).map((l: any) => `${l.produits?.nom} × ${l.quantite_demandee}${l.quantite_accordee != null ? ` (accordé ${l.quantite_accordee})` : ''}`),
+          }))
+        }
         case 'preparer_reception':
+        case 'preparer_demande_sortie':
         case 'preparer_sortie_commercial':
         case 'preparer_transfert': {
           const brouillon = await preparerMouvementStock(nom, entree)
