@@ -29,7 +29,7 @@
         },
         {
           "q": "Un bandeau 'Nouvelle version disponible' apparaît : que faire ?",
-          "r": "Termine et enregistre ta saisie en cours, puis touche 'Mettre à jour'. La version affichée à côté de 'DistribPro' (en haut) permet de vérifier que l'appareil est à jour."
+          "r": "Termine et enregistre ta saisie en cours, puis touche 'Mettre à jour'. La version affichée à côté de 'DistribPro' (en haut) permet de vérifier que l'appareil est à jour. Si l'application semble bloquée sur une ancienne version, touchez le numéro de version (en haut du menu) : DistribPro propose alors de forcer la mise à jour."
         },
         {
           "q": "L'application ne démarre pas ou un envoi de fichier ne passe pas : que faire ?",

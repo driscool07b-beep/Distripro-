@@ -45,6 +45,23 @@ export default function Layout() {
   const { profil, entreprise, deconnexion, profilError, estSuperAdmin } = useAuth()
   const [menuOuvert, setMenuOuvert] = useState(false)
   const [rechercheOuverte, setRechercheOuverte] = useState(false)
+  // Secours : un appui sur le numéro de version force la récupération de la
+  // dernière version (désinscrit le service worker et vide ses caches).
+  async function forcerMiseAJour() {
+    if (!window.confirm(t('majForcee.confirmer', { version: __VERSION_APP__ }))) return
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations()
+        await Promise.all(regs.map((r) => r.unregister()))
+      }
+      if (window.caches) {
+        const cles = await caches.keys()
+        await Promise.all(cles.map((c) => caches.delete(c)))
+      }
+    } finally {
+      window.location.reload()
+    }
+  }
   useEffect(() => {
     const ouvrir = () => setRechercheOuverte(true)
     window.addEventListener('ouvrir-recherche-globale', ouvrir)
@@ -147,7 +164,7 @@ export default function Layout() {
         <div className="px-6 py-6 border-b border-white/10 flex items-center justify-between">
           <div>
             <div className="font-display font-bold text-lg tracking-tight">DistribPro</div>
-            <div className="text-[10px] text-white/40 font-mono">v {__VERSION_APP__}</div>
+            <button type="button" onClick={forcerMiseAJour} title={t('majForcee.titre')} className="text-[10px] text-white/40 hover:text-white/70 font-mono underline decoration-dotted">v {__VERSION_APP__}</button>
             <div className="text-xs text-white/50 mt-0.5 truncate">{entreprise?.nom || '—'}</div>
             <button onClick={() => { setMenuOuvert(false); setRechercheOuverte(true) }}
               className="mt-3 w-full flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 px-3 py-1.5 text-xs text-white/70">
@@ -526,7 +543,7 @@ export default function Layout() {
               <path d="M3 6h18M3 12h18M3 18h18" />
             </svg>
           </button>
-          <span className="font-display font-semibold flex-1">DistribPro <span className="text-[10px] font-mono font-normal text-petrol-400">v {__VERSION_APP__}</span></span>
+          <span className="font-display font-semibold flex-1">DistribPro <button type="button" onClick={forcerMiseAJour} className="text-[10px] font-mono font-normal text-petrol-400 underline decoration-dotted">v {__VERSION_APP__}</button></span>
           <button onClick={() => setRechercheOuverte(true)} className="text-petrol-800 p-1 text-lg" aria-label={t('rechercheGlobale.bouton')}>🔍</button>
         </div>
         <RechercheGlobale ouvert={rechercheOuverte} onFermer={() => setRechercheOuverte(false)} />

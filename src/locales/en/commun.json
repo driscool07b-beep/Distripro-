@@ -231,5 +231,9 @@
     "confidentialite": "privacy policy",
     "accepterObligatoire": "Please accept the terms of use and the privacy policy.",
     "mentions": "Legal notice"
+  },
+  "majForcee": {
+    "titre": "Force update",
+    "confirmer": "Installed version: {{version}}.\n\nGet the latest version of DistribPro? The app will reload (you stay signed in)."
   }
 }

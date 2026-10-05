@@ -231,5 +231,9 @@
     "confidentialite": "politique de confidentialité",
     "accepterObligatoire": "Veuillez accepter les conditions d'utilisation et la politique de confidentialité.",
     "mentions": "Mentions légales"
+  },
+  "majForcee": {
+    "titre": "Forcer la mise à jour",
+    "confirmer": "Version installée : {{version}}.\n\nRécupérer la dernière version de DistribPro ? L'application va se recharger (vous restez connecté)."
   }
 }

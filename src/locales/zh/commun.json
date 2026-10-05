@@ -231,5 +231,9 @@
     "confidentialite": "隐私政策",
     "accepterObligatoire": "请接受使用条款和隐私政策。",
     "mentions": "法律声明"
+  },
+  "majForcee": {
+    "titre": "强制更新",
+    "confirmer": "已安装版本：{{version}}。\n\n获取 DistribPro 最新版本？应用将重新加载（您仍保持登录）。"
   }
 }
