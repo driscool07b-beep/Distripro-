@@ -448,6 +448,24 @@ function UnitesIA() {
         {params.map((p) => (
           <div key={p.cle} className="card p-3 space-y-1.5">
             <p className="text-sm font-medium">{p.cle}</p>
+            {p.cle === 'taux_usd_fcfa' && (
+              <div className="text-[11px] text-petrol-600 space-y-1">
+                <p>{p.maj_at ? `Mis à jour le ${formatDateHeure(p.maj_at)} · ${p.source || ''}` : 'Pas encore actualisé automatiquement.'}</p>
+                <button className="btn-secondary text-xs" onClick={async () => {
+                  setMsg({ [p.cle]: { ok: 'Actualisation…' } })
+                  const { data, error } = await supabase.functions.invoke('actualiser-taux-change', { body: {} })
+                  if (error || data?.error) {
+                    let m = data?.error || error?.message
+                    try { m = (await error?.context?.json())?.error || m } catch { /* ignore */ }
+                    setMsg({ [p.cle]: { erreur: m } }); return
+                  }
+                  if (data?.statut === 'desactive') { setMsg({ [p.cle]: { erreur: 'Actualisation automatique désactivée (taux_auto = 0).' } }); return }
+                  setMsg({ [p.cle]: { ok: `Taux actualisé : ${data.taux} F CFA pour 1 $ (cours du ${data.date_cours}).` } })
+                  const r = await supabase.rpc('plateforme_parametres_liste')
+                  setParams((r.data || []).map((x) => ({ ...x, v: String(x.valeur) })))
+                }}>🔄 Actualiser maintenant</button>
+              </div>
+            )}
             <p className="text-[11px] text-petrol-500">{p.description}</p>
             <div className="flex gap-2">
               <input type="number" step="0.01" className="input-field !py-1.5 text-sm" value={p.v} onChange={(x) => setParams(params.map((q) => (q.cle === p.cle ? { ...q, v: x.target.value } : q)))} />
