@@ -1,48 +1,58 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Routes, Route } from 'react-router-dom'
 import { direction } from './lib/i18n'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
-import ReinitialiserMotDePasse from './pages/ReinitialiserMotDePasse'
-import Dashboard from './pages/Dashboard'
-import Clients from './pages/Clients'
-import Stock from './pages/Stock'
-import Ventes from './pages/Ventes'
-import NotFound from './pages/NotFound'
-import Tournees from './pages/Tournees';
-import Parametres from './pages/Parametres'
-import Rapports from './pages/Rapports'
-import Creances from './pages/Creances'
-import GrandLivre from './pages/GrandLivre'
-import Commandes from './pages/Commandes'
-import Analytique from './pages/Analytique'
-import LocaliserStock from './pages/LocaliserStock'
-import Messagerie from './pages/Messagerie'
-import Apparence from './pages/Apparence'
-import JournalCaisse from './pages/JournalCaisse'
-import Aide from './pages/Aide'
-import Banques from './pages/Banques'
-import PlanComptable from './pages/PlanComptable'
-import NotesUtilisation from './pages/NotesUtilisation'
-import AnalyseIA from './pages/AnalyseIA'
-import StockCommercial from './pages/StockCommercial'
-import Versements from './pages/Versements'
-import Reconciliations from './pages/Reconciliations'
-import AssistantIA from './pages/AssistantIA'
-import PagesLegales from './pages/PagesLegales'
-import ConsolePlateforme from './pages/ConsolePlateforme'
-import MonAbonnement from './pages/MonAbonnement'
-import Groupes from './pages/Groupes'
-import Inscription from './pages/Inscription'
-import CreerEntreprise from './pages/CreerEntreprise'
-import Depots from './pages/Depots'
-import MouvementsStock from './pages/MouvementsStock'
-import Utilisateurs from './pages/Utilisateurs'
-import Objectifs from './pages/Objectifs'
-import CarteClients from './pages/CarteClients'
-import MesVersements from './pages/MesVersements'
+const ReinitialiserMotDePasse = lazy(() => import('./pages/ReinitialiserMotDePasse'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Clients = lazy(() => import('./pages/Clients'))
+const Stock = lazy(() => import('./pages/Stock'))
+const Ventes = lazy(() => import('./pages/Ventes'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const Tournees = lazy(() => import('./pages/Tournees'))
+const Parametres = lazy(() => import('./pages/Parametres'))
+const Rapports = lazy(() => import('./pages/Rapports'))
+const Creances = lazy(() => import('./pages/Creances'))
+const GrandLivre = lazy(() => import('./pages/GrandLivre'))
+const Commandes = lazy(() => import('./pages/Commandes'))
+const Analytique = lazy(() => import('./pages/Analytique'))
+const LocaliserStock = lazy(() => import('./pages/LocaliserStock'))
+const Messagerie = lazy(() => import('./pages/Messagerie'))
+const Apparence = lazy(() => import('./pages/Apparence'))
+const JournalCaisse = lazy(() => import('./pages/JournalCaisse'))
+const Aide = lazy(() => import('./pages/Aide'))
+const Banques = lazy(() => import('./pages/Banques'))
+const PlanComptable = lazy(() => import('./pages/PlanComptable'))
+const NotesUtilisation = lazy(() => import('./pages/NotesUtilisation'))
+const AnalyseIA = lazy(() => import('./pages/AnalyseIA'))
+const StockCommercial = lazy(() => import('./pages/StockCommercial'))
+const Versements = lazy(() => import('./pages/Versements'))
+const Reconciliations = lazy(() => import('./pages/Reconciliations'))
+const AssistantIA = lazy(() => import('./pages/AssistantIA'))
+const PagesLegales = lazy(() => import('./pages/PagesLegales'))
+const ConsolePlateforme = lazy(() => import('./pages/ConsolePlateforme'))
+const MonAbonnement = lazy(() => import('./pages/MonAbonnement'))
+const Groupes = lazy(() => import('./pages/Groupes'))
+const Inscription = lazy(() => import('./pages/Inscription'))
+const CreerEntreprise = lazy(() => import('./pages/CreerEntreprise'))
+const Depots = lazy(() => import('./pages/Depots'))
+const MouvementsStock = lazy(() => import('./pages/MouvementsStock'))
+const Utilisateurs = lazy(() => import('./pages/Utilisateurs'))
+const Objectifs = lazy(() => import('./pages/Objectifs'))
+const CarteClients = lazy(() => import('./pages/CarteClients'))
+const MesVersements = lazy(() => import('./pages/MesVersements'))
+
+// Affiché le temps de charger une page (découpage : chaque page est
+// téléchargée à la première ouverture, puis gardée en cache).
+function ChargementPage() {
+  return (
+    <div className="min-h-[50vh] flex items-center justify-center">
+      <div className="w-8 h-8 rounded-full border-4 border-petrol-200 border-t-amber-500 animate-spin" aria-label="Chargement" />
+    </div>
+  )
+}
 
 export default function App() {
   const { i18n } = useTranslation()
@@ -53,7 +63,8 @@ export default function App() {
   }, [i18n.language])
 
   return (
-    <Routes>
+    <Suspense fallback={<ChargementPage />}>
+      <Routes>
       <Route path="/connexion" element={<Login />} />
       <Route path="/reinitialiser-mot-de-passe" element={<ReinitialiserMotDePasse />} />
       <Route path="/inscription" element={<Inscription />} />
@@ -105,5 +116,6 @@ export default function App() {
 
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </Suspense>
   )
 }

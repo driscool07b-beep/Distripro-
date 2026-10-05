@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { LANGUES } from '../lib/i18n'
+import { changerLangue as basculerLangue, LANGUES } from '../lib/i18n'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -14,7 +14,7 @@ export default function SelecteurLangue({ className = '' }) {
   const { profil, rechargerProfil } = useAuth()
 
   async function changerLangue(code) {
-    i18n.changeLanguage(code)
+    await basculerLangue(code)
     if (profil?.id) {
       const { error } = await supabase.rpc('definir_ma_langue', { p_langue: code })
       // Repli si la fonction n'est pas encore installée dans la base.

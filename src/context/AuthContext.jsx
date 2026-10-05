@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import { supabase } from '../lib/supabase'
 import { chargerLogoDocuments, deposerLogoEnAttente } from '../lib/logo'
 import i18n from '../lib/i18n'
+import { changerLangue } from '../lib/i18n'
 import { definirDevise } from '../lib/format'
 import { appliquerApparence } from '../lib/apparence'
 
@@ -84,7 +85,7 @@ export function AuthProvider({ children }) {
 
     setProfil(profilData)
     if (profilData.langue && profilData.langue !== i18n.language) {
-      i18n.changeLanguage(profilData.langue)
+      changerLangue(profilData.langue)
       appliquerApparence(profilData.theme, profilData.taille_police)
     }
 

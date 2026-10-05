@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-import './lib/i18n'
+import { i18nPret } from './lib/i18n'
 import './index.css'
 
 // Mises à jour : on vérifie régulièrement (toutes les 10 min et à chaque
@@ -25,7 +25,8 @@ const mettreAJour = registerSW({
 })
 window.__distribproMettreAJour = () => mettreAJour(true)
 
-createRoot(document.getElementById('root')).render(
+// Premier affichage dès que la langue de l'utilisateur est prête (4 s au plus).
+i18nPret.finally(() => createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
@@ -33,4 +34,4 @@ createRoot(document.getElementById('root')).render(
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
-)
+))

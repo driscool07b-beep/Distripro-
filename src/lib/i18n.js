@@ -4,140 +4,38 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 
 import communFr from '../locales/fr/commun.json'
 import abonnementFr from '../locales/fr/abonnement.json'
-import abonnementEn from '../locales/en/abonnement.json'
-import abonnementAr from '../locales/ar/abonnement.json'
-import abonnementZh from '../locales/zh/abonnement.json'
 import assistantFr from '../locales/fr/assistant.json'
-import assistantEn from '../locales/en/assistant.json'
-import assistantAr from '../locales/ar/assistant.json'
-import assistantZh from '../locales/zh/assistant.json'
 import reconciliationsFr from '../locales/fr/reconciliations.json'
-import reconciliationsEn from '../locales/en/reconciliations.json'
-import reconciliationsAr from '../locales/ar/reconciliations.json'
-import reconciliationsZh from '../locales/zh/reconciliations.json'
 import infobullesFr from '../locales/fr/infobulles.json'
-import infobullesEn from '../locales/en/infobulles.json'
-import infobullesAr from '../locales/ar/infobulles.json'
-import infobullesZh from '../locales/zh/infobulles.json'
-import communEn from '../locales/en/commun.json'
-import communAr from '../locales/ar/commun.json'
-import communZh from '../locales/zh/commun.json'
 import dashboardFr from '../locales/fr/dashboard.json'
-import dashboardEn from '../locales/en/dashboard.json'
-import dashboardAr from '../locales/ar/dashboard.json'
-import dashboardZh from '../locales/zh/dashboard.json'
 import ventesFr from '../locales/fr/ventes.json'
-import ventesEn from '../locales/en/ventes.json'
-import ventesAr from '../locales/ar/ventes.json'
-import ventesZh from '../locales/zh/ventes.json'
 import stockFr from '../locales/fr/stock.json'
-import stockEn from '../locales/en/stock.json'
-import stockAr from '../locales/ar/stock.json'
-import stockZh from '../locales/zh/stock.json'
 import clientsFr from '../locales/fr/clients.json'
-import clientsEn from '../locales/en/clients.json'
-import clientsAr from '../locales/ar/clients.json'
-import clientsZh from '../locales/zh/clients.json'
 import commandesFr from '../locales/fr/commandes.json'
-import commandesEn from '../locales/en/commandes.json'
-import commandesAr from '../locales/ar/commandes.json'
-import commandesZh from '../locales/zh/commandes.json'
 import tourneesFr from '../locales/fr/tournees.json'
-import tourneesEn from '../locales/en/tournees.json'
-import tourneesAr from '../locales/ar/tournees.json'
-import tourneesZh from '../locales/zh/tournees.json'
 import analyseiaFr from '../locales/fr/analyseia.json'
-import analyseiaEn from '../locales/en/analyseia.json'
-import analyseiaAr from '../locales/ar/analyseia.json'
-import analyseiaZh from '../locales/zh/analyseia.json'
 import mesversementsFr from '../locales/fr/mesversements.json'
-import mesversementsEn from '../locales/en/mesversements.json'
-import mesversementsAr from '../locales/ar/mesversements.json'
-import mesversementsZh from '../locales/zh/mesversements.json'
 import mouvementsstockFr from '../locales/fr/mouvementsstock.json'
-import mouvementsstockEn from '../locales/en/mouvementsstock.json'
-import mouvementsstockAr from '../locales/ar/mouvementsstock.json'
-import mouvementsstockZh from '../locales/zh/mouvementsstock.json'
 import carteclientsFr from '../locales/fr/carteclients.json'
-import carteclientsEn from '../locales/en/carteclients.json'
-import carteclientsAr from '../locales/ar/carteclients.json'
-import carteclientsZh from '../locales/zh/carteclients.json'
 import grandlivreFr from '../locales/fr/grandlivre.json'
-import grandlivreEn from '../locales/en/grandlivre.json'
-import grandlivreAr from '../locales/ar/grandlivre.json'
-import grandlivreZh from '../locales/zh/grandlivre.json'
 import depotsFr from '../locales/fr/depots.json'
-import depotsEn from '../locales/en/depots.json'
-import depotsAr from '../locales/ar/depots.json'
-import depotsZh from '../locales/zh/depots.json'
 import localiserstockFr from '../locales/fr/localiserstock.json'
-import localiserstockEn from '../locales/en/localiserstock.json'
-import localiserstockAr from '../locales/ar/localiserstock.json'
-import localiserstockZh from '../locales/zh/localiserstock.json'
 import groupesFr from '../locales/fr/groupes.json'
-import groupesEn from '../locales/en/groupes.json'
-import groupesAr from '../locales/ar/groupes.json'
-import groupesZh from '../locales/zh/groupes.json'
 import rapportsFr from '../locales/fr/rapports.json'
-import rapportsEn from '../locales/en/rapports.json'
-import rapportsAr from '../locales/ar/rapports.json'
-import rapportsZh from '../locales/zh/rapports.json'
 import versementsFr from '../locales/fr/versements.json'
-import versementsEn from '../locales/en/versements.json'
-import versementsAr from '../locales/ar/versements.json'
-import versementsZh from '../locales/zh/versements.json'
 import objectifsFr from '../locales/fr/objectifs.json'
-import objectifsEn from '../locales/en/objectifs.json'
-import objectifsAr from '../locales/ar/objectifs.json'
-import objectifsZh from '../locales/zh/objectifs.json'
 import stockcommercialFr from '../locales/fr/stockcommercial.json'
-import stockcommercialEn from '../locales/en/stockcommercial.json'
-import stockcommercialAr from '../locales/ar/stockcommercial.json'
-import stockcommercialZh from '../locales/zh/stockcommercial.json'
 import utilisateursFr from '../locales/fr/utilisateurs.json'
-import utilisateursEn from '../locales/en/utilisateurs.json'
-import utilisateursAr from '../locales/ar/utilisateurs.json'
-import utilisateursZh from '../locales/zh/utilisateurs.json'
 import analytiqueFr from '../locales/fr/analytique.json'
-import analytiqueEn from '../locales/en/analytique.json'
-import analytiqueAr from '../locales/ar/analytique.json'
-import analytiqueZh from '../locales/zh/analytique.json'
 import creancesFr from '../locales/fr/creances.json'
-import creancesEn from '../locales/en/creances.json'
-import creancesAr from '../locales/ar/creances.json'
-import creancesZh from '../locales/zh/creances.json'
 import messagerieFr from '../locales/fr/messagerie.json'
-import messagerieEn from '../locales/en/messagerie.json'
-import messagerieAr from '../locales/ar/messagerie.json'
-import messagerieZh from '../locales/zh/messagerie.json'
 import parametresFr from '../locales/fr/parametres.json'
-import parametresEn from '../locales/en/parametres.json'
-import parametresAr from '../locales/ar/parametres.json'
-import parametresZh from '../locales/zh/parametres.json'
 import apparenceFr from '../locales/fr/apparence.json'
-import apparenceEn from '../locales/en/apparence.json'
-import apparenceAr from '../locales/ar/apparence.json'
-import apparenceZh from '../locales/zh/apparence.json'
 import journalcaisseFr from '../locales/fr/journalcaisse.json'
-import journalcaisseEn from '../locales/en/journalcaisse.json'
-import journalcaisseAr from '../locales/ar/journalcaisse.json'
-import journalcaisseZh from '../locales/zh/journalcaisse.json'
 import aideFr from '../locales/fr/aide.json'
-import aideEn from '../locales/en/aide.json'
-import aideAr from '../locales/ar/aide.json'
-import aideZh from '../locales/zh/aide.json'
 import banquesFr from '../locales/fr/banques.json'
 import plancomptableFr from '../locales/fr/plancomptable.json'
 import notesutilisationFr from '../locales/fr/notesutilisation.json'
-import banquesEn from '../locales/en/banques.json'
-import banquesAr from '../locales/ar/banques.json'
-import banquesZh from '../locales/zh/banques.json'
-import plancomptableEn from '../locales/en/plancomptable.json'
-import plancomptableAr from '../locales/ar/plancomptable.json'
-import plancomptableZh from '../locales/zh/plancomptable.json'
-import notesutilisationEn from '../locales/en/notesutilisation.json'
-import notesutilisationAr from '../locales/ar/notesutilisation.json'
-import notesutilisationZh from '../locales/zh/notesutilisation.json'
 
 // Langues dont le contenu est réellement traduit. L'arabe et le chinois
 // sont préparés dans la structure (RTL, sélecteur) mais leur contenu
@@ -155,15 +53,31 @@ export function direction(langue) {
   return LANGUES.find((l) => l.code === langue)?.dir || 'ltr'
 }
 
+// Les autres langues sont chargées À LA DEMANDE (un fichier par écran), pour
+// ne pas alourdir le démarrage : le français, langue de secours, est intégré.
+const FICHIERS_LANGUES = import.meta.glob(['../locales/en/*.json', '../locales/ar/*.json', '../locales/zh/*.json'], { import: 'default' })
+
+export async function chargerLangue(code) {
+  if (!code || code === 'fr' || i18n.hasResourceBundle(code, 'commun')) return
+  const entrees = Object.entries(FICHIERS_LANGUES).filter(([chemin]) => chemin.includes(`/locales/${code}/`))
+  await Promise.all(entrees.map(async ([chemin, charger]) => {
+    const ns = chemin.split('/').pop().replace('.json', '')
+    i18n.addResourceBundle(code, ns, await charger(), true, true)
+  }))
+}
+
+// À utiliser à la place de i18n.changeLanguage : charge la langue avant de basculer.
+export async function changerLangue(code) {
+  try { await chargerLangue(code) } catch (e) { console.error('Chargement de la langue impossible :', e) }
+  return i18n.changeLanguage(code)
+}
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
       fr: { commun: communFr, abonnement: abonnementFr, assistant: assistantFr, reconciliations: reconciliationsFr, infobulles: infobullesFr, dashboard: dashboardFr, ventes: ventesFr, stock: stockFr, clients: clientsFr, commandes: commandesFr, tournees: tourneesFr, analyseia: analyseiaFr, mesversements: mesversementsFr, mouvementsstock: mouvementsstockFr, carteclients: carteclientsFr, grandlivre: grandlivreFr, depots: depotsFr, localiserstock: localiserstockFr, groupes: groupesFr, rapports: rapportsFr, versements: versementsFr, objectifs: objectifsFr, stockcommercial: stockcommercialFr, utilisateurs: utilisateursFr, analytique: analytiqueFr, creances: creancesFr, messagerie: messagerieFr, parametres: parametresFr, apparence: apparenceFr, journalcaisse: journalcaisseFr, aide: aideFr, banques: banquesFr, plancomptable: plancomptableFr, notesutilisation: notesutilisationFr },
-      en: { commun: communEn, abonnement: abonnementEn, assistant: assistantEn, reconciliations: reconciliationsEn, infobulles: infobullesEn, dashboard: dashboardEn, ventes: ventesEn, stock: stockEn, clients: clientsEn, commandes: commandesEn, tournees: tourneesEn, analyseia: analyseiaEn, mesversements: mesversementsEn, mouvementsstock: mouvementsstockEn, carteclients: carteclientsEn, grandlivre: grandlivreEn, depots: depotsEn, localiserstock: localiserstockEn, groupes: groupesEn, rapports: rapportsEn, versements: versementsEn, objectifs: objectifsEn, stockcommercial: stockcommercialEn, utilisateurs: utilisateursEn, analytique: analytiqueEn, creances: creancesEn, messagerie: messagerieEn, parametres: parametresEn, apparence: apparenceEn, journalcaisse: journalcaisseEn, aide: aideEn , banques: banquesEn, plancomptable: plancomptableEn, notesutilisation: notesutilisationEn },
-      ar: { commun: communAr, abonnement: abonnementAr, assistant: assistantAr, reconciliations: reconciliationsAr, infobulles: infobullesAr, dashboard: dashboardAr, ventes: ventesAr, stock: stockAr, clients: clientsAr, commandes: commandesAr, tournees: tourneesAr, analyseia: analyseiaAr, mesversements: mesversementsAr, mouvementsstock: mouvementsstockAr, carteclients: carteclientsAr, grandlivre: grandlivreAr, depots: depotsAr, localiserstock: localiserstockAr, groupes: groupesAr, rapports: rapportsAr, versements: versementsAr, objectifs: objectifsAr, stockcommercial: stockcommercialAr, utilisateurs: utilisateursAr, analytique: analytiqueAr, creances: creancesAr, messagerie: messagerieAr, parametres: parametresAr, apparence: apparenceAr, journalcaisse: journalcaisseAr, aide: aideAr , banques: banquesAr, plancomptable: plancomptableAr, notesutilisation: notesutilisationAr },
-      zh: { commun: communZh, abonnement: abonnementZh, assistant: assistantZh, reconciliations: reconciliationsZh, infobulles: infobullesZh, dashboard: dashboardZh, ventes: ventesZh, stock: stockZh, clients: clientsZh, commandes: commandesZh, tournees: tourneesZh, analyseia: analyseiaZh, mesversements: mesversementsZh, mouvementsstock: mouvementsstockZh, carteclients: carteclientsZh, grandlivre: grandlivreZh, depots: depotsZh, localiserstock: localiserstockZh, groupes: groupesZh, rapports: rapportsZh, versements: versementsZh, objectifs: objectifsZh, stockcommercial: stockcommercialZh, utilisateurs: utilisateursZh, analytique: analytiqueZh, creances: creancesZh, messagerie: messagerieZh, parametres: parametresZh, apparence: apparenceZh, journalcaisse: journalcaisseZh, aide: aideZh , banques: banquesZh, plancomptable: plancomptableZh, notesutilisation: notesutilisationZh },
     },
     fallbackLng: 'fr',
     supportedLngs: LANGUES.map((l) => l.code),
@@ -179,5 +93,15 @@ i18n
       lookupLocalStorage: 'distribpro_langue',
     },
   })
+
+// Langue détectée au démarrage (choix enregistré ou langue du navigateur) :
+// chargée avant le premier affichage (voir main.jsx), 4 s au plus.
+let langueInitiale = 'fr'
+try { langueInitiale = (localStorage.getItem('distribpro_langue') || navigator.language || 'fr').slice(0, 2) } catch { /* ignore */ }
+if (!LANGUES.some((l) => l.code === langueInitiale)) langueInitiale = 'fr'
+export const i18nPret = Promise.race([
+  chargerLangue(langueInitiale).then(() => (langueInitiale !== 'fr' ? i18n.changeLanguage(langueInitiale) : null)),
+  new Promise((resolve) => setTimeout(resolve, 4000)),
+]).catch(() => null)
 
 export default i18n

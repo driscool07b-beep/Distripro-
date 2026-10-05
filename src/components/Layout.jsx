@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
@@ -545,7 +545,9 @@ export default function Layout() {
           <BandeauHorsLigne />
           <BandeauAbonnement />
           <BandeauAnnonces />
-          <Outlet />
+          <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="w-8 h-8 rounded-full border-4 border-petrol-200 border-t-amber-500 animate-spin" aria-label="Chargement" /></div>}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
