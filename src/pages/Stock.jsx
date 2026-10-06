@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext'
 import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise, genererRapportInventaireStock } from '../lib/export'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
-import { formatXOF } from '../lib/format'
+import { formatXOF, formatDate } from '../lib/format'
 
 const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '', code_barre: '', reference: '', unite: '' }
 const UNITES = ['unité', 'sachet', 'paquet', 'boîte', 'bouteille', 'carton', 'sac', 'kg', 'g', 'litre', 'pot']

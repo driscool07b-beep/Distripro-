@@ -23,3 +23,9 @@ export function analyserTexte(contenu) {
   })
   return blocs
 }
+
+function segments(texte) {
+  return texte.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((s) =>
+    s.startsWith('**') && s.endsWith('**') ? { texte: s.slice(2, -2), gras: true } : { texte: s, gras: false }
+  )
+}

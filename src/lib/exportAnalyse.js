@@ -4,11 +4,6 @@ import { analyserTexte } from './analyseTexte'
 
 export { analyserTexte } from './analyseTexte'
 
-function segments(texte) {
-  return texte.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((s) =>
-    s.startsWith('**') && s.endsWith('**') ? { texte: s.slice(2, -2), gras: true } : { texte: s, gras: false }
-  )
-}
 
 const texteBrut = (segs) => segs.map((s) => s.texte).join('')
 
