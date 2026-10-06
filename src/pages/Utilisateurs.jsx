@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { formatDateHeure } from '../lib/format'
 import Avatar from '../components/Avatar'
 import { useAuth } from '../context/AuthContext'
 import { traduireErreur } from '../lib/erreurs'
@@ -23,6 +24,7 @@ export default function Utilisateurs() {
   const [membres, setMembres] = useState([])
   const [anciensVisibles, setAnciensVisibles] = useState(false)
   const [invitationsEnAttente, setInvitationsEnAttente] = useState([])
+  const [emails, setEmails] = useState({})
   const [journal, setJournal] = useState([])
   const [depots, setDepots] = useState([])
   const [depotsParMembre, setDepotsParMembre] = useState({}) // { profil_id: [{id, nom}] }
@@ -71,6 +73,8 @@ export default function Utilisateurs() {
       supabase.from('gestionnaire_depots').select('profil_id, depot:depots(id, nom)'),
     ])
     setMembres(m || [])
+    // Emails et dernière connexion (administrateur et manager uniquement).
+    supabase.rpc('emails_membres').then(({ data: e }) => setEmails(Object.fromEntries((e || []).map((x) => [x.id, x]))))
     setInvitationsEnAttente(inv || [])
     setJournal(j || [])
     setDepots(d || [])
@@ -329,6 +333,12 @@ export default function Utilisateurs() {
                     {m.zone ? ` — ${m.zone}` : ''}
                     {m.telephone ? ` — ${m.telephone}` : ''}
                   </p>
+                  {emails[m.id] && (
+                    <p className="text-xs text-petrol-500 flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                      <a href={`mailto:${emails[m.id].email}`} className="underline decoration-dotted break-all" title={t('emailConnexion')}>✉️ {emails[m.id].email}</a>
+                      <span>{emails[m.id].derniere_connexion ? t('derniereConnexion', { date: formatDateHeure(emails[m.id].derniere_connexion) }) : t('jamaisConnecte')}</span>
+                    </p>
+                  )}
                 </div>
                 </div>
                 <div className="flex gap-x-4 gap-y-2 flex-wrap sm:justify-end sm:max-w-[45%] border-t border-line pt-2 sm:border-0 sm:pt-0">

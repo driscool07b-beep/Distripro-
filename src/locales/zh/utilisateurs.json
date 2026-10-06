@@ -69,5 +69,8 @@
   "oui": "是",
   "non": "否",
   "mdpEnvoyeParEmail": "临时密码已通过邮件发送给 {{nom}}（{{email}}），并附登录链接。其登录时需设置新密码。",
-  "mdpEmailEchec": "邮件发送失败（{{raison}}）。请当面告知用户此密码。"
+  "mdpEmailEchec": "邮件发送失败（{{raison}}）。请当面告知用户此密码。",
+  "emailConnexion": "登录邮箱（受邀时使用的邮箱）",
+  "derniereConnexion": "上次登录：{{date}}",
+  "jamaisConnecte": "从未登录"
 }
