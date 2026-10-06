@@ -3,7 +3,7 @@
 // À COMPLÉTER une fois la société créée : tant qu'une valeur commence par
 // « [ », la page affiche un avertissement « document en cours de finalisation ».
 export const EDITEUR = {
-  raisonSociale: '[Raison sociale de la société éditrice]',
+  raisonSociale: 'Kora Système',
   formeJuridique: '[Forme juridique, ex. SASU]',
   capital: '[Capital social] F CFA',
   siege: '[Adresse du siège social], Abidjan, Côte d\'Ivoire',
