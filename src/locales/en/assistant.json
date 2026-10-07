@@ -100,7 +100,12 @@
     "commandeEnregistree": "✅ Order saved for {{client}} ({{total}}).",
     "venteEnregistreeCourt": "Sale saved",
     "commandeEnregistreeCourt": "Order saved",
-    "annulee": "Cancelled — nothing was saved"
+    "annulee": "Cancelled — nothing was saved",
+    "remise": "Discount %",
+    "motifRemise": "Reason for discount",
+    "remiseAppliquee": "Discount {{pct}}%: − {{montant}}",
+    "remiseHorsSeuil": "⚠️ A {{pct}}% discount exceeds the allowed threshold ({{seuil}}%): only a manager or administrator can apply it.",
+    "motifRemiseRequis": "Enter the reason for the discount."
   },
   "bulle": {
     "titre": "AI assistant",

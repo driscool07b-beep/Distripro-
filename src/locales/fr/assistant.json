@@ -100,7 +100,12 @@
     "commandeEnregistree": "✅ Commande enregistrée pour {{client}} ({{total}}).",
     "venteEnregistreeCourt": "Vente enregistrée",
     "commandeEnregistreeCourt": "Commande enregistrée",
-    "annulee": "Saisie annulée — rien n'a été enregistré"
+    "annulee": "Saisie annulée — rien n'a été enregistré",
+    "remise": "Remise %",
+    "motifRemise": "Motif de la remise",
+    "remiseAppliquee": "Remise {{pct}} % : − {{montant}}",
+    "remiseHorsSeuil": "⚠️ Remise de {{pct}} % au-delà du seuil autorisé ({{seuil}} %) : seul un manager ou un administrateur peut l'appliquer.",
+    "motifRemiseRequis": "Indiquez le motif de la remise."
   },
   "bulle": {
     "titre": "Assistant IA",

@@ -11,7 +11,7 @@ import CartePiece from './CartePiece'
 // l'enregistrement passe par les mêmes fonctions et contrôles que les formulaires.
 export default function FicheConfirmationAction({ action, onTermine, fneActive, onNavigation }) {
   const { t } = useTranslation('assistant')
-  const { profil } = useAuth()
+  const { profil, entreprise } = useAuth()
   const estCommercial = profil?.role === 'commercial'
   const [lignes, setLignes] = useState(action.lignes || [])
   const [paiement, setPaiement] = useState(action.paiement || 'comptant')
@@ -25,8 +25,17 @@ export default function FicheConfirmationAction({ action, onTermine, fneActive, 
   const [erreur, setErreur] = useState('')
   const [etat, setEtat] = useState('a_valider') // a_valider | valide | annule
   const [pieceCreee, setPieceCreee] = useState(null)
+  // Remise dictée (ventes) : en pourcentage du total HT des articles, comme le formulaire de vente.
+  const [remisePct, setRemisePct] = useState(action.remise_pourcentage ? String(action.remise_pourcentage) : '')
+  const [motifRemise, setMotifRemise] = useState(action.motif_remise || '')
+  const seuilRemise = Number(entreprise?.seuil_remise_pourcentage ?? 15)
+  const peutDepasserSeuil = ['admin', 'manager'].includes(profil?.role)
 
   const lignesValides = useMemo(() => lignes.filter((l) => Number(l.quantite) > 0), [lignes])
+  const sousTotal = lignesValides.reduce((s, l) => s + Number(l.quantite) * Number(l.prix_unitaire), 0)
+  const remisePctEffectif = action.type === 'vente' ? Math.min(Math.max(Number(remisePct || 0), 0), 100) : 0
+  const remiseMontant = Math.round(sousTotal * (remisePctEffectif / 100))
+  const remiseHorsSeuil = remisePctEffectif > seuilRemise && !peutDepasserSeuil
 
   // Vente hors commercial : choisir le magasin d'où part la marchandise.
   useEffect(() => {
@@ -43,14 +52,14 @@ export default function FicheConfirmationAction({ action, onTermine, fneActive, 
     const minuterie = setTimeout(async () => {
       const { data } = await supabase.rpc('calculer_totaux_vente', {
         p_lignes: lignesValides.map((l) => ({ produit_id: l.produit_id, quantite: Number(l.quantite), prix_unitaire: Number(l.prix_unitaire) })),
-        p_remise_montant: 0,
+        p_remise_montant: remiseMontant,
       })
       setTotaux(data || null)
     }, 250)
     return () => clearTimeout(minuterie)
-  }, [lignesValides])
+  }, [lignesValides, remiseMontant])
 
-  const total = totaux ? Number(totaux.total) : lignesValides.reduce((s, l) => s + Number(l.quantite) * Number(l.prix_unitaire), 0)
+  const total = totaux ? Number(totaux.total) : sousTotal - remiseMontant
 
   async function valider() {
     setErreur('')
@@ -58,6 +67,8 @@ export default function FicheConfirmationAction({ action, onTermine, fneActive, 
     if (action.type === 'vente' && !estCommercial && !depotId) { setErreur(t('fiche.choisirMagasin')); return }
     const p = paiement === 'comptant' ? total : paiement === 'credit' ? 0 : Math.min(Number(montantPaye || 0), total)
     if (paiement === 'partiel' && !(p > 0)) { setErreur(t('fiche.montantPartiel')); return }
+    if (remiseHorsSeuil) { setErreur(t('fiche.remiseHorsSeuil', { pct: remisePctEffectif, seuil: seuilRemise })); return }
+    if (remiseMontant > 0 && !motifRemise.trim()) { setErreur(t('fiche.motifRemiseRequis')); return }
     setEnvoi(true)
     const lignesEnvoi = lignesValides.map((l) => ({ produit_id: l.produit_id, quantite: Number(l.quantite), prix_unitaire: Number(l.prix_unitaire) }))
     const { data: idCree, error } = action.type === 'vente'
@@ -69,8 +80,8 @@ export default function FicheConfirmationAction({ action, onTermine, fneActive, 
           p_mode_reglement: modeReglement,
           p_date_echeance: null,
           p_commercial_id: estCommercial ? profil.id : null,
-          p_remise_montant: 0,
-          p_motif_remise: null,
+          p_remise_montant: remiseMontant,
+          p_motif_remise: remiseMontant > 0 ? motifRemise.trim() : null,
           p_depot_id: estCommercial ? null : depotId,
           p_credit_utilise: 0,
           p_source_stock: estCommercial ? null : 'depot',
@@ -133,6 +144,26 @@ export default function FicheConfirmationAction({ action, onTermine, fneActive, 
           </div>
         ))}
       </div>
+
+      {action.type === 'vente' && (
+        <div className="grid grid-cols-3 gap-2 items-center">
+          <label className="text-xs text-petrol-600 col-span-1">{t('fiche.remise')}
+            <input type="number" min="0" max="100" step="0.5" inputMode="decimal" className="input-field !py-1.5 text-sm mt-0.5"
+              placeholder="0" value={remisePct} onChange={(e) => setRemisePct(e.target.value)} />
+          </label>
+          {remiseMontant > 0 ? (
+            <label className="text-xs text-petrol-600 col-span-2">{t('fiche.motifRemise')}
+              <input type="text" className="input-field !py-1.5 text-sm mt-0.5" value={motifRemise} onChange={(e) => setMotifRemise(e.target.value)} />
+            </label>
+          ) : <span className="col-span-2" />}
+          {remiseMontant > 0 && (
+            <p className="col-span-3 text-xs text-blue-700 text-right">{t('fiche.remiseAppliquee', { pct: remisePctEffectif, montant: formatXOF(remiseMontant) })}</p>
+          )}
+          {remiseHorsSeuil && (
+            <p className="col-span-3 text-xs text-amber-800 bg-amber-100 border border-amber-300 rounded px-2 py-1">{t('fiche.remiseHorsSeuil', { pct: remisePctEffectif, seuil: seuilRemise })}</p>
+          )}
+        </div>
+      )}
 
       {totaux && Number(totaux.total) !== Number(totaux.ht) && (
         <p className="text-xs text-petrol-500 text-right">{t('fiche.ht')} {formatXOF(totaux.ht)} · {t('fiche.taxes')} {formatXOF(Number(totaux.total) - Number(totaux.ht))}</p>

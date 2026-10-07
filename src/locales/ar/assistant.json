@@ -100,7 +100,12 @@
     "commandeEnregistree": "✅ تم حفظ الطلبية لـ {{client}} ‏({{total}}).",
     "venteEnregistreeCourt": "تم حفظ البيع",
     "commandeEnregistreeCourt": "تم حفظ الطلبية",
-    "annulee": "أُلغي الإدخال — لم يُحفظ أي شيء"
+    "annulee": "أُلغي الإدخال — لم يُحفظ أي شيء",
+    "remise": "الخصم %",
+    "motifRemise": "سبب الخصم",
+    "remiseAppliquee": "خصم {{pct}}٪: − {{montant}}",
+    "remiseHorsSeuil": "⚠️ خصم {{pct}}٪ يتجاوز الحد المسموح ({{seuil}}٪): لا يمكن تطبيقه إلا من قبل مدير أو مسؤول.",
+    "motifRemiseRequis": "أدخل سبب الخصم."
   },
   "bulle": {
     "titre": "المساعد الذكي",

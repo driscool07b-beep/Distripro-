@@ -164,6 +164,9 @@ const OUTILS = [
         paiement: { type: 'string', enum: ['comptant', 'credit', 'partiel'], description: 'comptant = payé en totalité ; credit = rien payé ; partiel = acompte' },
         mode_reglement: { type: 'string', enum: ['espece', 'mobile_money', 'cheque', 'virement'] },
         montant_paye: { type: 'number', description: 'Seulement pour un paiement partiel' },
+        remise_pourcentage: { type: 'number', description: "Remise dictée en pourcentage (ex. « remise de 5 % » → 5). Calculée sur le total HT des articles." },
+        remise_montant: { type: 'number', description: "Remise dictée en montant (ex. « remise de 2 000 F » → 2000), seulement si elle n'est pas donnée en pourcentage." },
+        motif_remise: { type: 'string', description: 'Motif de la remise si dicté (ex. « client fidèle », « grosse quantité »).' },
         note: { type: 'string' },
       },
       required: ['client_id', 'lignes', 'paiement'],
@@ -257,7 +260,7 @@ Deno.serve(async (req) => {
     // Porte-monnaie d'unités IA : pas d'appel à l'IA si le solde est épuisé.
     const { data: soldeIa } = await supabase.rpc('ia_solde_disponible', { p_entreprise_id: profil.entreprise_id })
     if (soldeIa != null && Number(soldeIa) <= 0) return reponse({ error: "Crédit IA épuisé : rechargez vos unités IA (Paramètres → Mon abonnement) pour continuer à utiliser l'IA." }, 402)
-    const { data: entreprise } = await supabase.from('entreprises').select('nom, devise').eq('id', profil.entreprise_id).single()
+    const { data: entreprise } = await supabase.from('entreprises').select('nom, devise, seuil_remise_pourcentage').eq('id', profil.entreprise_id).single()
 
     const { messages, aide, page } = await req.json()
     // Assistance technique : passages du guide d'utilisation choisis par l'app.
@@ -293,6 +296,7 @@ Assistant de saisie (ventes et commandes dictées, souvent par un commercial pre
 - Catalogue des produits : ${listeProduits || '—'}
 - Quantités : comprends les nombres dictés en lettres (« dix », « une douzaine » = 12, « un carton » seulement si le catalogue le précise, sinon demande).
 - Paiement non précisé pour une vente : considère « comptant » en espèces et dis-le dans ta réponse.
+- Remise dictée sur une vente (« avec 5 % de remise », « fais-lui 2 000 F de remise ») : applique-la TOUJOURS via remise_pourcentage ou remise_montant de preparer_vente, avec le motif s'il est donné. Le seuil autorisé de l'entreprise est de ${entreprise?.seuil_remise_pourcentage ?? 15} % ; ${['admin', 'manager'].includes(profil.role) ? "ton utilisateur (administrateur ou manager) peut le dépasser" : "au-delà, la remise est refusée : explique-le et propose le maximum autorisé"}. Mentionne la remise dans ta phrase de récapitulatif. Les commandes n'acceptent pas de remise : elle s'applique au moment de la vente.
 - Une vente part du stock en main du commercial s'il est commercial ; signale un stock en main insuffisant.
 - Encaissement dicté (« X a payé 50 000 ») : retrouve le client, puis preparer_encaissement ; la répartition sur les factures se fait automatiquement (plus anciennes d'abord). Si le montant dépasse ce qui est dû, signale-le.
 - Nouveau client dicté : vérifie d'abord avec rechercher_clients ; s'il existe déjà un client très proche, demande confirmation avant preparer_client.
@@ -336,6 +340,19 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
         lignes.push({ produit_id: p.id, nom: p.nom, quantite: l.quantite, prix_unitaire: prixClient[p.id] ?? Number(p.prix_vente) })
       }
       const totalHT = lignes.reduce((s, l) => s + l.quantite * l.prix_unitaire, 0)
+      // Remise dictée (ventes seulement) : même règle que le formulaire et que
+      // creer_vente — au-delà du seuil de l'entreprise, seuls l'administrateur
+      // et le manager peuvent l'appliquer.
+      let remisePourcentage = 0
+      if (type === 'vente') {
+        if (Number(e.remise_pourcentage) > 0) remisePourcentage = Number(e.remise_pourcentage)
+        else if (Number(e.remise_montant) > 0 && totalHT > 0) remisePourcentage = (Number(e.remise_montant) / totalHT) * 100
+        remisePourcentage = Math.round(Math.min(remisePourcentage, 100) * 100) / 100
+        const seuil = Number(entreprise?.seuil_remise_pourcentage ?? 15)
+        if (remisePourcentage > seuil && !['admin', 'manager'].includes(profil.role)) {
+          return { erreur: `remise de ${remisePourcentage} % refusée : elle dépasse le seuil autorisé de ${seuil} % pour ton rôle. Propose à l'utilisateur une remise de ${seuil} % au plus, ou de faire valider la remise par un manager ou un administrateur.` }
+        }
+      }
       return {
         type, client: { id: client.id, nom: client.nom }, lignes,
         paiement: type === 'vente' ? (['comptant', 'credit', 'partiel'].includes(e.paiement) ? e.paiement : 'comptant') : null,
@@ -343,7 +360,9 @@ ${extraitsAide ? `Extraits du guide d'utilisation :\n${extraitsAide}` : ''}`
         montant_paye: Number(e.montant_paye || e.acompte || 0) || null,
         date_livraison: /^\d{4}-\d{2}-\d{2}$/.test(e.date_livraison || '') ? e.date_livraison : null,
         note: String(e.note || '').slice(0, 300) || null,
-        resume: `${client.nom} — ${lignes.length} article(s) — environ ${Math.round(totalHT)} F CFA HT`,
+        remise_pourcentage: remisePourcentage || null,
+        motif_remise: remisePourcentage ? (String(e.motif_remise || '').trim().slice(0, 200) || 'Remise commerciale') : null,
+        resume: `${client.nom} — ${lignes.length} article(s) — environ ${Math.round(totalHT)} F CFA HT${remisePourcentage ? ` — remise ${remisePourcentage} % (≈ ${Math.round(totalHT * remisePourcentage / 100)} F CFA)` : ''}`,
       }
     }
 

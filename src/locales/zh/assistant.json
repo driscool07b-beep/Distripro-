@@ -100,7 +100,12 @@
     "commandeEnregistree": "✅ 已为 {{client}} 保存订单（{{total}}）。",
     "venteEnregistreeCourt": "销售已保存",
     "commandeEnregistreeCourt": "订单已保存",
-    "annulee": "已取消 — 未保存任何内容"
+    "annulee": "已取消 — 未保存任何内容",
+    "remise": "折扣 %",
+    "motifRemise": "折扣原因",
+    "remiseAppliquee": "折扣 {{pct}}%：− {{montant}}",
+    "remiseHorsSeuil": "⚠️ {{pct}}% 的折扣超过允许的上限（{{seuil}}%）：只有经理或管理员可以应用。",
+    "motifRemiseRequis": "请填写折扣原因。"
   },
   "bulle": {
     "titre": "AI 助手",
