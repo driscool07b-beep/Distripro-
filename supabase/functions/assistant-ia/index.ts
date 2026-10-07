@@ -279,6 +279,19 @@ Deno.serve(async (req) => {
     const { data: catalogue } = await supabaseUtilisateur.from('produits').select('nom').order('nom').limit(200)
     const listeProduits = (catalogue || []).map((p: any) => p.nom).join(' ; ')
 
+    // Dictée : « vingt mil cinq cent cinquante grammes » (20 × Bacca mil 550 g)
+    // est transcrit « 20550 g » ou « 20 1000 550 g » par la reconnaissance
+    // vocale. Quand le poids final correspond à un produit « mil » du
+    // catalogue, on rétablit « 20 mil 550g » avant d'interroger l'IA.
+    const poidsMil = new Set((catalogue || [])
+      .filter((p: any) => /\bmil\b/i.test(p.nom))
+      .map((p: any) => (String(p.nom).match(/(\d+)\s*g\b/i) || [])[1])
+      .filter(Boolean))
+    const corrigerDicteeMil = (texte: string) => !poidsMil.size ? texte : texte
+      .replace(/\b(\d{1,4})\s?(?:1000|mille)\s?(\d{2,4})\s?(g|gr|grammes?)\b/gi, (m, q, w) => poidsMil.has(w) ? `${q} mil ${w}g` : m)
+      .replace(/\b(\d{1,4})[\s.\u00a0\u202f]?(\d{3})\s?(g|gr|grammes?)\b/gi, (m, q, w) => poidsMil.has(w) ? `${q} mil ${w}g` : m)
+    for (const m of historique) if (m.role === 'user') m.content = corrigerDicteeMil(m.content)
+
     const aujourdHui = new Date().toLocaleDateString('fr-CA', { timeZone: 'Africa/Abidjan' })
     const systeme = `Tu es l'assistant de gestion de DistribPro pour l'entreprise « ${entreprise?.nom || ''} » (Côte d'Ivoire).
 Date du jour : ${aujourdHui}. Utilisateur : ${profil.nom} (rôle : ${profil.role}). Devise : ${entreprise?.devise || 'XOF'} (F CFA).
@@ -292,7 +305,7 @@ Règles :
 Assistant de saisie (ventes et commandes dictées, souvent par un commercial pressé sur le terrain) :
 - Retrouve TOUJOURS le client puis chaque produit avec les outils de recherche ; n'invente jamais un identifiant.
 - Si un client ou un produit est ambigu (plusieurs résultats proches) ou introuvable, pose UNE question courte en proposant les choix ; ne prépare rien.
-- Le texte vient souvent d'une DICTÉE VOCALE : des mots qui se prononcent pareil peuvent être mal transcrits. En particulier « mil » (la céréale) est souvent écrit « mille » ou « 1000 » ; « maïs » peut devenir « mais » ; « riz » peut devenir « ri » ou « rit ». Compare toujours avec le catalogue ci-dessous : si « Bacca 1000 350 » ne correspond à aucun produit mais que « Bacca mil 350g » existe, c'est ce produit, et 1000 n'est PAS une quantité. En cas de doute réel sur une quantité, demande confirmation.
+- Le texte vient souvent d'une DICTÉE VOCALE : des mots qui se prononcent pareil peuvent être mal transcrits. En particulier « mil » (la céréale) est souvent écrit « mille » ou « 1000 » ; « maïs » peut devenir « mais » ; « riz » peut devenir « ri » ou « rit ». Compare toujours avec le catalogue ci-dessous : si « Bacca 1000 350 » ne correspond à aucun produit mais que « Bacca mil 350g » existe, c'est ce produit, et 1000 n'est PAS une quantité. De même « 20550 g » peut être « 20 mil 550 g » (vingt mil cinq cent cinquante), soit 20 × Bacca mil 550g. En cas de doute réel sur une quantité, demande confirmation en reformulant (« 20 Bacca mil 550g, c'est bien ça ? »).
 - Catalogue des produits : ${listeProduits || '—'}
 - Quantités : comprends les nombres dictés en lettres (« dix », « une douzaine » = 12, « un carton » seulement si le catalogue le précise, sinon demande).
 - Paiement non précisé pour une vente : considère « comptant » en espèces et dis-le dans ta réponse.
