@@ -14,7 +14,7 @@ const CHAMP_VIDE = { libelle: '', type_champ: 'texte', options: '' }
 
 export default function Parametres() {
   const { t } = useTranslation('parametres')
-  const { profil, entreprise, rechargerProfil } = useAuth()
+  const { profil, entreprise, rechargerProfil, estSuperAdmin } = useAuth()
   const TYPES_CHAMP = [
     { value: 'texte', label: t('typesChamp.texte') },
     { value: 'nombre', label: t('typesChamp.nombre') },
@@ -793,7 +793,7 @@ export default function Parametres() {
         </div>
       )}
 
-      {profil?.role === 'admin' && (
+      {estSuperAdmin && (
         <div className="card p-4">
           <h2 className="font-semibold mb-1">{t('fondConnexion.titre')}</h2>
           <p className="text-xs text-petrol-500 mb-3">{t('fondConnexion.sousTitre')}</p>
