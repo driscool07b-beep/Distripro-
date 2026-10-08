@@ -20,5 +20,15 @@
   "ecrireMessage": "输入消息…",
   "envoyer": "发送",
   "aujourdhui": "今天",
-  "hier": "昨天"
+  "hier": "昨天",
+  "supprimer": "删除消息",
+  "supprimerPourMoi": "仅为我删除",
+  "supprimerPourTous": "为所有人删除",
+  "messageSupprime": "此消息已被删除",
+  "vousAvezSupprime": "你删除了这条消息",
+  "vocal": "语音消息",
+  "vocalEnregistrer": "录制语音消息",
+  "vocalEnregistrement": "正在录音…",
+  "vocalMicroRefuse": "麦克风被阻止：请在浏览器中允许此网站使用麦克风。",
+  "vocalEchec": "语音消息发送失败（网络问题？），请重试。"
 }

@@ -20,5 +20,15 @@
   "ecrireMessage": "Write a message…",
   "envoyer": "Send",
   "aujourdhui": "Today",
-  "hier": "Yesterday"
+  "hier": "Yesterday",
+  "supprimer": "Delete message",
+  "supprimerPourMoi": "Delete for me",
+  "supprimerPourTous": "Delete for everyone",
+  "messageSupprime": "This message was deleted",
+  "vousAvezSupprime": "You deleted this message",
+  "vocal": "Voice message",
+  "vocalEnregistrer": "Record a voice message",
+  "vocalEnregistrement": "Recording…",
+  "vocalMicroRefuse": "Microphone blocked: allow the microphone for this site in your browser.",
+  "vocalEchec": "The voice message could not be sent (connection?). Try again."
 }

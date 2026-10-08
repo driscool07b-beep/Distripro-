@@ -19,6 +19,18 @@ async function marquerLue(conversationId) {
   } catch { /* notifications non disponibles : sans importance */ }
 }
 
+// Format d'enregistrement vocal pris en charge par le navigateur
+// (WebM/Opus sur Android et ordinateur, MP4/AAC sur iPhone).
+function formatVocal() {
+  if (typeof MediaRecorder === 'undefined') return null
+  for (const f of ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus']) {
+    if (MediaRecorder.isTypeSupported?.(f)) return f
+  }
+  return ''
+}
+const VOCAL_MAX_S = 300 // 5 minutes au plus
+const duree = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+
 // Libellé du jour pour les séparateurs du fil (« Aujourd'hui », « Hier », date).
 function libelleJour(date, t) {
   const d = new Date(date)
@@ -134,7 +146,9 @@ export default function Messagerie() {
                   )}
                 </p>
                 <p className="text-xs text-petrol-500 truncate">
-                  {c.dernier_message
+                  {c.dernier_message_supprime
+                    ? `🚫 ${t('messageSupprime')}`
+                    : c.dernier_message
                     ? `${c.dernier_expediteur_nom ? c.dernier_expediteur_nom + ' : ' : ''}${c.dernier_message}`
                     : c.dernier_message_a_piece_jointe
                     ? t('piecesJointe')
@@ -249,6 +263,15 @@ function FilConversation({ conversationId, onRetour }) {
   const [envoi, setEnvoi] = useState(false)
   const [urlsPieces, setUrlsPieces] = useState({})
   const [enTete, setEnTete] = useState(null)
+  const [messageChoisi, setMessageChoisi] = useState(null) // message dont on ouvre le menu « Supprimer »
+  const [erreurSuppression, setErreurSuppression] = useState('')
+  // Message vocal (façon WhatsApp) : enregistrement, puis envoi ou annulation.
+  const [vocal, setVocal] = useState(null) // null | { secondes }
+  const [erreurVocal, setErreurVocal] = useState('')
+  const enregistreur = useRef(null)
+  const morceaux = useRef([])
+  const minuterieVocal = useRef(null)
+  const vocalDisponible = typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia && formatVocal() !== null
   const finListe = useRef(null)
 
   useEffect(() => {
@@ -264,6 +287,12 @@ function FilConversation({ conversationId, onRetour }) {
           setMessages((prev) => [...prev, payload.new])
           marquerLue(conversationId)
         }
+      )
+      // Message supprimé pour tout le monde par son expéditeur : mis à jour en direct.
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'messages', filter: `conversation_id=eq.${conversationId}` },
+        (payload) => setMessages((prev) => prev.map((m) => (m.id === payload.new.id ? { ...m, ...payload.new } : m)))
       )
       .subscribe()
 
@@ -284,18 +313,90 @@ function FilConversation({ conversationId, onRetour }) {
 
     const { data } = await supabase
       .from('messages')
-      .select('id, contenu, piece_jointe_path, piece_jointe_nom, piece_jointe_type, expediteur_id, created_at, profils(nom, photo_path)')
+      .select('id, contenu, piece_jointe_path, piece_jointe_nom, piece_jointe_type, expediteur_id, created_at, supprime_pour_tous, profils(nom, photo_path)')
       .eq('conversation_id', conversationId)
       .order('created_at')
-    setMessages(data || [])
+    // Messages que j'ai supprimés « pour moi » : on ne les affiche plus.
+    const { data: masques } = await supabase.from('messages_masques').select('message_id')
+    const idsMasques = new Set((masques || []).map((x) => x.message_id))
+    setMessages((data || []).filter((m) => !idsMasques.has(m.id)))
     setChargement(false)
 
-    for (const m of data || []) {
-      if (m.piece_jointe_path && m.piece_jointe_type?.startsWith('image/')) {
-        const { data: signed } = await supabase.storage.from('pieces-jointes').createSignedUrl(m.piece_jointe_path, 3600)
+  }
+
+  // Liens temporaires des images et messages vocaux, y compris pour les
+  // messages arrivés en direct.
+  const demandes = useRef(new Set())
+  useEffect(() => {
+    for (const m of messages) {
+      const media = m.piece_jointe_type?.startsWith('image/') || m.piece_jointe_type?.startsWith('audio/')
+      if (!m.piece_jointe_path || !media || demandes.current.has(m.id)) continue
+      demandes.current.add(m.id)
+      supabase.storage.from('pieces-jointes').createSignedUrl(m.piece_jointe_path, 3600).then(({ data: signed }) => {
         if (signed?.signedUrl) setUrlsPieces((prev) => ({ ...prev, [m.id]: signed.signedUrl }))
-      }
+      })
     }
+  }, [messages])
+
+  useEffect(() => () => { clearInterval(minuterieVocal.current); arreterMicro() }, [])
+
+  function arreterMicro() {
+    try { enregistreur.current?.stream?.getTracks().forEach((piste) => piste.stop()) } catch { /* ignore */ }
+  }
+
+  async function demarrerVocal() {
+    setErreurVocal('')
+    try {
+      const flux = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const format = formatVocal()
+      const rec = new MediaRecorder(flux, format ? { mimeType: format } : undefined)
+      morceaux.current = []
+      rec.ondataavailable = (e) => { if (e.data?.size) morceaux.current.push(e.data) }
+      rec.start(250)
+      enregistreur.current = rec
+      setVocal({ secondes: 0 })
+      minuterieVocal.current = setInterval(() => {
+        setVocal((v) => {
+          if (!v) return v
+          if (v.secondes + 1 >= VOCAL_MAX_S) { setTimeout(() => terminerVocal(true), 0) }
+          return { secondes: v.secondes + 1 }
+        })
+      }, 1000)
+    } catch {
+      setErreurVocal(t('vocalMicroRefuse'))
+    }
+  }
+
+  // envoyer = true : on envoie l'enregistrement ; false : on l'annule.
+  function terminerVocal(envoyerVocal) {
+    const rec = enregistreur.current
+    clearInterval(minuterieVocal.current)
+    setVocal(null)
+    if (!rec) return
+    enregistreur.current = null
+    rec.onstop = async () => {
+      rec.stream.getTracks().forEach((piste) => piste.stop())
+      if (!envoyerVocal || !morceaux.current.length) return
+      const type = (rec.mimeType || 'audio/webm').split(';')[0]
+      const extension = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm'
+      const blob = new Blob(morceaux.current, { type })
+      if (blob.size < 1500) return // clic trop bref : rien d'audible
+      setEnvoi(true)
+      const nom = `vocal-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.${extension}`
+      const chemin = `${entreprise?.id}/messagerie/${conversationId}/${Date.now()}-${nom}`
+      const { error: erreurUpload } = await supabase.storage.from('pieces-jointes').upload(chemin, blob, { contentType: type })
+      if (erreurUpload) { setEnvoi(false); setErreurVocal(t('vocalEchec')); return }
+      const { data: messageId } = await supabase.rpc('envoyer_message', {
+        p_conversation_id: conversationId,
+        p_contenu: '',
+        p_piece_jointe_path: chemin,
+        p_piece_jointe_nom: nom,
+        p_piece_jointe_type: type,
+      })
+      if (messageId) supabase.functions.invoke('envoyer-notification-push', { body: { message_id: messageId } }).catch(() => {})
+      setEnvoi(false)
+    }
+    rec.stop()
   }
 
   async function envoyer() {
@@ -334,6 +435,17 @@ function FilConversation({ conversationId, onRetour }) {
     setTexte('')
     setFichier(null)
     setEnvoi(false)
+  }
+
+  async function supprimer(pourTous) {
+    if (!messageChoisi) return
+    setErreurSuppression('')
+    const { error } = await supabase.rpc('supprimer_message', { p_message_id: messageChoisi.id, p_pour_tous: pourTous })
+    if (error) { setErreurSuppression(error.message); return }
+    setMessages((prev) => (pourTous
+      ? prev.map((m) => (m.id === messageChoisi.id ? { ...m, contenu: null, piece_jointe_path: null, supprime_pour_tous: true } : m))
+      : prev.filter((m) => m.id !== messageChoisi.id)))
+    setMessageChoisi(null)
   }
 
   async function ouvrirPieceJointe(m) {
@@ -375,16 +487,31 @@ function FilConversation({ conversationId, onRetour }) {
                   {!estMoi && (debutSerie
                     ? <Avatar nom={m.profils?.nom} chemin={m.profils?.photo_path} taille={30} className="self-start" />
                     : <span className="w-[30px] shrink-0" />)}
-                  <div className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${estMoi ? 'bg-petrol-800 text-white rounded-br-md' : 'bg-white border border-line rounded-bl-md'}`}>
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    title={t('supprimer')}
+                    onClick={() => { setErreurSuppression(''); setMessageChoisi(m) }}
+                    className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm cursor-pointer ${estMoi ? 'bg-petrol-800 text-white rounded-br-md' : 'bg-white border border-line rounded-bl-md'}`}
+                  >
                     {!estMoi && debutSerie && <p className="text-xs font-medium text-petrol-500 mb-0.5">{m.profils?.nom}</p>}
+                    {m.supprime_pour_tous && (
+                      <p className={`italic ${estMoi ? 'text-petrol-200' : 'text-petrol-400'}`}>🚫 {estMoi ? t('vousAvezSupprime') : t('messageSupprime')}</p>
+                    )}
                     {m.contenu && <p className="whitespace-pre-wrap break-words">{m.contenu}</p>}
-                    {m.piece_jointe_path && (
+                    {m.piece_jointe_path && m.piece_jointe_type?.startsWith('audio/') ? (
+                      <div onClick={(e) => e.stopPropagation()} className="mt-1">
+                        {urlsPieces[m.id]
+                          ? <audio controls preload="metadata" src={urlsPieces[m.id]} className="max-w-[240px] h-10" />
+                          : <span className="text-xs">🎤 {t('vocal')}</span>}
+                      </div>
+                    ) : m.piece_jointe_path && (
                       m.piece_jointe_type?.startsWith('image/') && urlsPieces[m.id] ? (
-                        <button onClick={() => ouvrirPieceJointe(m)}>
+                        <button onClick={(e) => { e.stopPropagation(); ouvrirPieceJointe(m) }}>
                           <img src={urlsPieces[m.id]} alt="" className="rounded mt-1 max-h-48 object-cover" />
                         </button>
                       ) : (
-                        <button onClick={() => ouvrirPieceJointe(m)} className={`flex items-center gap-1 mt-1 underline text-xs ${estMoi ? 'text-white' : 'text-blue-600'}`}>
+                        <button onClick={(e) => { e.stopPropagation(); ouvrirPieceJointe(m) }} className={`flex items-center gap-1 mt-1 underline text-xs ${estMoi ? 'text-white' : 'text-blue-600'}`}>
                           📎 {m.piece_jointe_nom || t('piecesJointe')}
                         </button>
                       )
@@ -403,6 +530,29 @@ function FilConversation({ conversationId, onRetour }) {
         )}
       </div>
 
+      {messageChoisi && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-3" onClick={() => setMessageChoisi(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-2 space-y-1" onClick={(e) => e.stopPropagation()}>
+            <p className="text-xs text-petrol-500 px-3 pt-2 pb-1 truncate">
+              {messageChoisi.supprime_pour_tous ? t('messageSupprime') : (messageChoisi.contenu || messageChoisi.piece_jointe_nom || t('piecesJointe'))}
+            </p>
+            {messageChoisi.expediteur_id === profil?.id && !messageChoisi.supprime_pour_tous
+              && new Date(messageChoisi.created_at) > new Date(Date.now() - 48 * 3600 * 1000) && (
+              <button onClick={() => supprimer(true)} className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-red-50 text-red-700 text-sm">
+                🗑️ {t('supprimerPourTous')}
+              </button>
+            )}
+            <button onClick={() => supprimer(false)} className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-canvas text-sm">
+              🙈 {t('supprimerPourMoi')}
+            </button>
+            {erreurSuppression && <p className="text-xs text-red-600 px-3">{erreurSuppression}</p>}
+            <button onClick={() => setMessageChoisi(null)} className="w-full text-center px-3 py-2.5 rounded-lg text-petrol-500 text-sm border-t border-line">
+              {t('annuler')}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="p-3 border-t border-line shrink-0">
         {fichier && (
           <div className="flex items-center justify-between bg-canvas rounded px-2 py-1 mb-2 text-xs">
@@ -410,6 +560,19 @@ function FilConversation({ conversationId, onRetour }) {
             <button onClick={() => setFichier(null)} className="text-red-600 ml-2">✕</button>
           </div>
         )}
+        {erreurVocal && <p className="text-xs text-red-600 mb-1">{erreurVocal}</p>}
+        {vocal ? (
+          <div className="flex items-center gap-2">
+            <button onClick={() => terminerVocal(false)} className="shrink-0 text-red-600 p-2" title={t('annuler')}>🗑️</button>
+            <div className="flex-1 flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-sm text-red-700">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
+              {t('vocalEnregistrement')} {duree(vocal.secondes)}
+            </div>
+            <button onClick={() => terminerVocal(true)} className="bg-petrol-800 text-white rounded-lg px-4 py-2 text-sm shrink-0">
+              {t('envoyer')}
+            </button>
+          </div>
+        ) : (
         <div className="flex items-end gap-2">
           <label className="shrink-0 cursor-pointer text-petrol-500 p-2">
             📎
@@ -433,6 +596,16 @@ function FilConversation({ conversationId, onRetour }) {
               }
             }}
           />
+          {!texte.trim() && !fichier && vocalDisponible ? (
+            <button
+              onClick={demarrerVocal}
+              disabled={envoi}
+              title={t('vocalEnregistrer')}
+              className="bg-petrol-800 text-white rounded-lg px-3 py-2 text-sm disabled:opacity-40 shrink-0"
+            >
+              {envoi ? '…' : '🎤'}
+            </button>
+          ) : (
           <button
             onClick={envoyer}
             disabled={envoi || (!texte.trim() && !fichier)}
@@ -440,7 +613,9 @@ function FilConversation({ conversationId, onRetour }) {
           >
             {envoi ? '…' : t('envoyer')}
           </button>
+          )}
         </div>
+        )}
       </div>
     </div>
   )

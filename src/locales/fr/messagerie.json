@@ -20,5 +20,15 @@
   "ecrireMessage": "Écrire un message…",
   "envoyer": "Envoyer",
   "aujourdhui": "Aujourd'hui",
-  "hier": "Hier"
+  "hier": "Hier",
+  "supprimer": "Supprimer le message",
+  "supprimerPourMoi": "Supprimer pour moi",
+  "supprimerPourTous": "Supprimer pour tout le monde",
+  "messageSupprime": "Ce message a été supprimé",
+  "vousAvezSupprime": "Vous avez supprimé ce message",
+  "vocal": "Message vocal",
+  "vocalEnregistrer": "Enregistrer un message vocal",
+  "vocalEnregistrement": "Enregistrement…",
+  "vocalMicroRefuse": "Micro refusé : autorisez le micro pour ce site dans le navigateur.",
+  "vocalEchec": "Le message vocal n'a pas pu être envoyé (connexion ?). Réessayez."
 }

@@ -20,5 +20,15 @@
   "ecrireMessage": "اكتب رسالة…",
   "envoyer": "إرسال",
   "aujourdhui": "اليوم",
-  "hier": "أمس"
+  "hier": "أمس",
+  "supprimer": "حذف الرسالة",
+  "supprimerPourMoi": "حذف لدي فقط",
+  "supprimerPourTous": "حذف لدى الجميع",
+  "messageSupprime": "تم حذف هذه الرسالة",
+  "vousAvezSupprime": "لقد حذفت هذه الرسالة",
+  "vocal": "رسالة صوتية",
+  "vocalEnregistrer": "تسجيل رسالة صوتية",
+  "vocalEnregistrement": "جارٍ التسجيل…",
+  "vocalMicroRefuse": "الميكروفون محظور: اسمح باستخدام الميكروفون لهذا الموقع في المتصفح.",
+  "vocalEchec": "تعذر إرسال الرسالة الصوتية (الاتصال؟). حاول مرة أخرى."
 }
