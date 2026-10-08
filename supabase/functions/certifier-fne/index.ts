@@ -19,14 +19,24 @@ const reponse = (corps: unknown, status = 200) =>
   new Response(JSON.stringify(corps), { status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } })
 const reponseErreur = (message: string, status = 400) => reponse({ error: message }, status)
 
+// Téléphone : la DGI attend un numéro sans espaces ni indicatif (ex. 0709080765).
+function telephoneDgi(t: string | null | undefined): string {
+  let n = String(t || '').replace(/\D/g, '')
+  if (n.startsWith('00225')) n = n.slice(5)
+  else if (n.startsWith('225') && n.length > 10) n = n.slice(3)
+  return n
+}
+
 // Modes de paiement : valeurs littérales attendues par l'API DGI.
 const MODES: Record<string, string> = {
   espece: 'cash', cheque: 'check', mobile_money: 'mobile-money', virement: 'transfer', carte: 'card',
 }
 
 // Codes TVA DGI : TVA 18 %, TVAB 9 %, TVAC exonération conventionnelle, TVAD exonération légale.
+// Le code TVA est OBLIGATOIRE sur chaque article (procédure DGI, mai 2025) :
+// une entreprise non assujettie ou un article à 0 % est déclaré en TVAD.
 function codeTva(taux: number | null, assujetti: boolean): string[] {
-  if (!assujetti) return []
+  if (!assujetti) return ['TVAD']
   if (Number(taux) === 18) return ['TVA']
   if (Number(taux) === 9) return ['TVAB']
   return ['TVAD']
@@ -104,13 +114,36 @@ Deno.serve(async (req) => {
     if (vente.statut === 'annulee') return reponseErreur('Une vente annulée ne peut pas être certifiée.')
 
     const [{ data: entreprise }, { data: lignes }, { data: taxes }] = await Promise.all([
-      supabase.from('entreprises').select('assujetti_tva').eq('id', profil.entreprise_id).single(),
+      supabase.from('entreprises').select('assujetti_tva, devise').eq('id', profil.entreprise_id).single(),
       supabase.from('ventes_lignes').select('id, quantite, prix_unitaire, taux_tva, produits(nom, reference, unite)').eq('vente_id', vente_id).order('id'),
       supabase.from('taxes_entreprise').select('nom, taux').eq('entreprise_id', profil.entreprise_id).eq('actif', true),
     ])
     const client = vente.clients || {}
     const template = client.fne_template || (client.ncc ? 'B2B' : 'B2C')
     if (template === 'B2B' && !client.ncc) return reponseErreur("Client B2B : renseignez son NCC dans sa fiche avant de certifier.")
+    // Téléphone et e-mail du client : obligatoires pour la DGI.
+    const telephoneClient = telephoneDgi(client.telephone)
+    const emailClient = String(client.email || '').trim()
+    const manquants = [
+      telephoneClient.length < 8 ? 'son téléphone' : null,
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailClient) ? 'son e-mail' : null,
+    ].filter(Boolean)
+    if (manquants.length) {
+      return reponseErreur(`La DGI exige le téléphone et l'e-mail du client : renseignez ${manquants.join(' et ')} dans la fiche de ${client.nom || 'ce client'}, puis certifiez à nouveau.`)
+    }
+    // Facturation en devise étrangère : devise et taux obligatoires (B2F notamment).
+    const devise = String(entreprise?.devise || 'XOF')
+    let devisePourDgi = { foreignCurrency: '', foreignCurrencyRate: 0 }
+    if (devise !== 'XOF') {
+      let taux: number | null = null
+      if (devise === 'EUR') taux = 655.957 // parité fixe euro / F CFA
+      else if (devise === 'USD') {
+        const { data: p } = await supabase.from('plateforme_parametres').select('valeur').eq('cle', 'taux_usd_fcfa').maybeSingle()
+        taux = p?.valeur ? Number(p.valeur) : null
+      }
+      if (!taux) return reponseErreur(`Taux de change ${devise} / F CFA indisponible : la certification FNE en ${devise} n'est pas encore prise en charge.`)
+      devisePourDgi = { foreignCurrency: devise, foreignCurrencyRate: taux }
+    }
     const sousTotal = (lignes || []).reduce((s, l) => s + Number(l.quantite) * Number(l.prix_unitaire), 0)
     const remisePct = sousTotal > 0 ? Math.round((Number(vente.remise_montant || 0) / sousTotal) * 10000) / 100 : 0
     const paiement = vente.mode_paiement === 'credit' && Number(vente.montant_regle || 0) === 0
@@ -124,12 +157,13 @@ Deno.serve(async (req) => {
       rne: null,
       ...(client.ncc ? { clientNcc: client.ncc } : {}),
       clientCompanyName: client.nom || 'Client',
-      clientPhone: client.telephone || '',
-      clientEmail: client.email || '',
+      clientPhone: telephoneClient,
+      clientEmail: emailClient,
       clientSellerName: vente.commercial?.nom || profil.nom || '',
       pointOfSale: config.point_de_vente,
       establishment: config.etablissement,
       commercialMessage: vente.numero_vente ? `Vente ${vente.numero_vente}` : undefined,
+      ...devisePourDgi,
       items: (lignes || []).map((l) => ({
         // Référence (code article) et unité de mesure : champs prévus par la DGI.
         ...(l.produits?.reference ? { reference: l.produits.reference } : {}),
