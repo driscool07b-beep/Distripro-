@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
       try {
         await webpush.sendNotification(
           { endpoint: abonnement.endpoint, keys: { p256dh: abonnement.p256dh, auth: abonnement.auth } },
-          JSON.stringify({ title: titre, body: corps, url: '/messagerie' })
+          JSON.stringify({ title: titre, body: corps, url: '/messagerie', tag: `conv-${message.conversation_id}` })
         )
         envoyes++
       } catch (err) {

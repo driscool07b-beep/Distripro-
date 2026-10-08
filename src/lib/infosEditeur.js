@@ -14,7 +14,7 @@ export const EDITEUR = {
   telephone: '[Téléphone]',
   declarationArtci: '[Numéro de déclaration / d\'autorisation ARTCI]',
   site: 'distribpro.com',
-  application: 'distribpro-driscool.netlify.app',
+  application: 'distribpro.com',
   dateVersion: '[date de mise à jour]',
 }
 

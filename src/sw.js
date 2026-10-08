@@ -34,6 +34,8 @@ self.addEventListener('push', (event) => {
     badge: '/icons/icon-192.png',
     data: { url: donnees.url || '/' },
     vibrate: [100, 50, 100],
+    // Même conversation = même notification, remplacée par le dernier message.
+    ...(donnees.tag ? { tag: donnees.tag, renotify: true } : {}),
   }
 
   event.waitUntil(self.registration.showNotification(titre, options))

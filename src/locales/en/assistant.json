@@ -57,7 +57,7 @@
     "echec": "The presentation could not be generated."
   },
   "voix": {
-    "astuce": "Tap the mic and dictate, e.g. “Sale to Boutique Exemple, ten Bacca mil 350, paid cash”. A card appears: check it, then confirm.",
+    "astuce": "Tap the mic and dictate, e.g. “Sale to Boutique Exemple, ten Bacca mil 350, paid cash”. Tap the mic again to finish: the text appears in the input box — check it, then tap Send.",
     "parler": "Dictate",
     "arreter": "Stop dictation",
     "ecoute": "Listening…",

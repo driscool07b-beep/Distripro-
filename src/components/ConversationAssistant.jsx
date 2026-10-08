@@ -29,7 +29,9 @@ export default function ConversationAssistant({ compact = false, onNavigation })
   useEffect(() => { lireConfigFne().then((c) => setFneActive(!!c.actif)) }, [])
   const langue = (i18n.language || 'fr').slice(0, 2)
 
-  const dictee = useDictee({ langue, onFinal: (texte) => envoyer(texte) })
+  // Dictée « façon WhatsApp » : le texte dicté arrive dans la zone de saisie ;
+  // l'utilisateur le relit, le corrige au besoin, puis appuie sur Envoyer.
+  const dictee = useDictee({ langue, onFinal: (texte) => setQuestion((q) => (q.trim() ? `${q.trim()} ${texte}` : texte)) })
 
   useEffect(() => { finRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [messages, enCours, dictee.provisoire])
   useEffect(() => () => arreterLecture(), [])

@@ -8,9 +8,10 @@ const Reconnaissance = typeof window !== 'undefined' ? (window.SpeechRecognition
 export const dicteeDisponible = !!Reconnaissance
 export const lectureDisponible = typeof window !== 'undefined' && 'speechSynthesis' in window
 
-// Dictée CONTINUE : le micro reste ouvert pendant les pauses naturelles ;
-// la demande part quand on rappuie sur le micro, ou après un silence prolongé.
-const SILENCE_FIN_MS = 3500
+// Dictée CONTINUE : le micro reste ouvert pendant les pauses ; il se coupe
+// quand on rappuie dessus (ou, par sécurité, après un long silence). Le texte
+// est alors remis à l'écran appelant, qui ne l'envoie pas tout seul.
+const SILENCE_FIN_MS = 20000
 
 // Sur Android, Chrome renvoie souvent chaque morceau de la dictée comme un
 // nouveau résultat CUMULATIF (« fais-moi », « fais-moi la », « fais-moi la
@@ -89,7 +90,7 @@ export function useDictee({ langue = 'fr', onFinal }) {
     }
     reco.current = r
     setEcoute(true)
-    try { r.start(); relancerMinuterie(7000) } catch { setEcoute(false) }
+    try { r.start(); relancerMinuterie(15000) } catch { setEcoute(false) }
   }
 
   function arreter() { reco.current?.stop?.() }

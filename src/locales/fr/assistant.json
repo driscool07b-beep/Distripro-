@@ -57,7 +57,7 @@
     "echec": "La présentation n'a pas pu être générée."
   },
   "voix": {
-    "astuce": "Appuyez sur le micro et dictez, par exemple : « Vente à Boutique Exemple, dix Bacca mil 350, payé cash ». Une fiche s'affiche : vous vérifiez, puis vous validez.",
+    "astuce": "Appuyez sur le micro et dictez, par exemple : « Vente à Boutique Exemple, dix Bacca mil 350, payé cash ». Rappuyez sur le micro pour terminer : le texte s'affiche dans la zone de saisie, relisez-le puis appuyez sur Envoyer.",
     "parler": "Dicter",
     "arreter": "Arrêter la dictée",
     "ecoute": "Je vous écoute…",

@@ -99,8 +99,13 @@ export default function Layout() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes_sortie' }, () => chargerBadgeDemandesSortie())
       .subscribe()
 
+    // Conversation lue dans la messagerie : le badge du menu se met à jour aussitôt.
+    const surLecture = () => chargerBadgeMessagerie()
+    window.addEventListener('messagerie-lue', surLecture)
+
     return () => {
       supabase.removeChannel(canal)
+      window.removeEventListener('messagerie-lue', surLecture)
     }
   }, [profil?.id])
 

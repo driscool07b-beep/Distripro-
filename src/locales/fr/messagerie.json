@@ -18,5 +18,7 @@
   "conversation": "Conversation",
   "debutConversation": "Début de la conversation — dites bonjour 👋",
   "ecrireMessage": "Écrire un message…",
-  "envoyer": "Envoyer"
+  "envoyer": "Envoyer",
+  "aujourdhui": "Aujourd'hui",
+  "hier": "Hier"
 }

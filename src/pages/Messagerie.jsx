@@ -5,6 +5,31 @@ import Avatar from '../components/Avatar'
 import { useAuth } from '../context/AuthContext'
 import { formatDateHeure } from '../lib/format'
 
+// Marque une conversation comme lue, puis prévient le menu (badge) et retire
+// les notifications du téléphone qui concernent cette conversation.
+async function marquerLue(conversationId) {
+  await supabase.rpc('marquer_conversation_lue', { p_conversation_id: conversationId })
+  window.dispatchEvent(new Event('messagerie-lue'))
+  try {
+    const reg = await navigator.serviceWorker?.ready
+    const notifs = (await reg?.getNotifications?.()) || []
+    notifs
+      .filter((n) => n.tag === `conv-${conversationId}` || (!n.tag && n.data?.url === '/messagerie'))
+      .forEach((n) => n.close())
+  } catch { /* notifications non disponibles : sans importance */ }
+}
+
+// Libellé du jour pour les séparateurs du fil (« Aujourd'hui », « Hier », date).
+function libelleJour(date, t) {
+  const d = new Date(date)
+  const auj = new Date()
+  const hier = new Date(); hier.setDate(auj.getDate() - 1)
+  const meme = (a, b) => a.toDateString() === b.toDateString()
+  if (meme(d, auj)) return t('aujourdhui')
+  if (meme(d, hier)) return t('hier')
+  return formatDateHeure(d, { weekday: 'long', day: 'numeric', month: 'long', ...(d.getFullYear() !== auj.getFullYear() ? { year: 'numeric' } : {}) })
+}
+
 export default function Messagerie() {
   const { t } = useTranslation('messagerie')
   const { profil, entreprise } = useAuth()
@@ -62,7 +87,7 @@ export default function Messagerie() {
           // retour rapide, la liste peut se recharger juste avant que
           // la mise à jour soit enregistrée, et le badge "non lu"
           // reste affiché à tort.
-          await supabase.rpc('marquer_conversation_lue', { p_conversation_id: conversationOuverte })
+          await marquerLue(conversationOuverte)
           setConversationOuverte(null)
           charger()
         }}
@@ -228,7 +253,7 @@ function FilConversation({ conversationId, onRetour }) {
 
   useEffect(() => {
     charger()
-    supabase.rpc('marquer_conversation_lue', { p_conversation_id: conversationId })
+    marquerLue(conversationId)
 
     const canal = supabase
       .channel(`messages-${conversationId}`)
@@ -237,7 +262,7 @@ function FilConversation({ conversationId, onRetour }) {
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${conversationId}` },
         (payload) => {
           setMessages((prev) => [...prev, payload.new])
-          supabase.rpc('marquer_conversation_lue', { p_conversation_id: conversationId })
+          marquerLue(conversationId)
         }
       )
       .subscribe()
@@ -337,9 +362,16 @@ function FilConversation({ conversationId, onRetour }) {
             {messages.map((m, index) => {
               const estMoi = m.expediteur_id === profil?.id
               // Photo affichée une seule fois par suite de messages du même auteur.
-              const debutSerie = index === 0 || messages[index - 1].expediteur_id !== m.expediteur_id
+              const nouveauJour = index === 0 || new Date(messages[index - 1].created_at).toDateString() !== new Date(m.created_at).toDateString()
+              const debutSerie = nouveauJour || messages[index - 1].expediteur_id !== m.expediteur_id
               return (
-                <div key={m.id} className={`flex items-end gap-2 ${estMoi ? 'justify-end' : 'justify-start'} ${debutSerie ? 'pt-1.5' : ''}`}>
+                <div key={m.id}>
+                {nouveauJour && (
+                  <div className="flex justify-center my-2">
+                    <span className="text-[11px] bg-canvas border border-line text-petrol-500 rounded-full px-3 py-0.5 first-letter:uppercase">{libelleJour(m.created_at, t)}</span>
+                  </div>
+                )}
+                <div className={`flex items-end gap-2 ${estMoi ? 'justify-end' : 'justify-start'} ${debutSerie ? 'pt-1.5' : ''}`}>
                   {!estMoi && (debutSerie
                     ? <Avatar nom={m.profils?.nom} chemin={m.profils?.photo_path} taille={30} className="self-start" />
                     : <span className="w-[30px] shrink-0" />)}
@@ -361,6 +393,7 @@ function FilConversation({ conversationId, onRetour }) {
                       {formatDateHeure(m.created_at, { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
+                </div>
                 </div>
               )
             })}

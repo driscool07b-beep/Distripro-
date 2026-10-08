@@ -18,5 +18,7 @@
   "conversation": "对话",
   "debutConversation": "对话开始 — 打个招呼吧 👋",
   "ecrireMessage": "输入消息…",
-  "envoyer": "发送"
+  "envoyer": "发送",
+  "aujourdhui": "今天",
+  "hier": "昨天"
 }
