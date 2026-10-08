@@ -1,6 +1,10 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  # Économie de crédits : pas de mise en ligne (15 crédits) quand un envoi
+  # GitHub ne touche pas l'application — par ex. seulement des scripts SQL ou
+  # des fonctions serveur Supabase (dossier supabase/), déployées à part.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- src public index.html package.json package-lock.json vite.config.js tailwind.config.js postcss.config.js netlify.toml"
 
 # Indispensable pour une SPA (React Router) : sans ça, recharger une
 # page autre que l'accueil (ex. /ventes) renverrait une erreur 404,
