@@ -112,7 +112,8 @@
     "sousTitre": "Chiffres, aide, saisie dictée",
     "masquer": "Masquer la bulle",
     "fermer": "Fermer",
-    "ouvrir": "Ouvrir l'assistant IA"
+    "ouvrir": "Ouvrir l'assistant IA",
+    "deplacer": "Ouvrir l'assistant IA — maintenir et glisser pour déplacer"
   },
   "pieces": {
     "etMaintenant": "que voulez-vous faire ?",

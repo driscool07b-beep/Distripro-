@@ -112,7 +112,8 @@
     "sousTitre": "数据、帮助、口述录入",
     "masquer": "隐藏气泡",
     "fermer": "关闭",
-    "ouvrir": "打开 AI 助手"
+    "ouvrir": "打开 AI 助手",
+    "deplacer": "打开 AI 助手 — 按住拖动可移动"
   },
   "pieces": {
     "etMaintenant": "接下来要做什么？",

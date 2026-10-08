@@ -112,7 +112,8 @@
     "sousTitre": "Figures, help, dictation",
     "masquer": "Hide bubble",
     "fermer": "Close",
-    "ouvrir": "Open the AI assistant"
+    "ouvrir": "Open the AI assistant",
+    "deplacer": "Open the AI assistant — hold and drag to move"
   },
   "pieces": {
     "etMaintenant": "what next?",
