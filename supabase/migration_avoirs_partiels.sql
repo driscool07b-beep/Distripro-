@@ -229,7 +229,7 @@ begin
     vente_ligne_id uuid, produit_id uuid, quantite integer, prix_unitaire numeric,
     prix_corrige numeric, montant numeric, quantite_rendable integer, source_stock text, etat text
   ) on commit drop;
-  delete from tmp_avoir;
+  delete from tmp_avoir where true; -- « where » exigé par la protection de Supabase (safeupdate)
   insert into tmp_avoir
   select c.*, coalesce(nullif(x->>'etat', ''), 'bon')
   from calculer_avoir_vente(p_vente_id, p_type, p_lignes) c
@@ -274,7 +274,7 @@ begin
   select coalesce(sum(montant), 0) into v_somme from tmp_avoir;
   if v_somme > 0 and v_somme <> v_montant then
     select case when coalesce(devise, 'XOF') = 'XOF' then 0 else 2 end into v_decimales from entreprises where id = v_entreprise_id;
-    update tmp_avoir set montant = round(montant * v_montant / v_somme, v_decimales);
+    update tmp_avoir set montant = round(montant * v_montant / v_somme, v_decimales) where true;
     update tmp_avoir set montant = montant + (v_montant - (select sum(montant) from tmp_avoir))
     where vente_ligne_id = (select vente_ligne_id from tmp_avoir order by montant desc limit 1);
   end if;
