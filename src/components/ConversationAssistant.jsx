@@ -8,6 +8,7 @@ import { useDictee, dicteeDisponible, lectureDisponible, lireTexte, arreterLectu
 import FicheConfirmationAction from './FicheConfirmationAction'
 import CartePiece from './CartePiece'
 import ZoneTexteAuto from './ZoneTexteAuto'
+import IconeMicro, { IconeStop } from './IconeMicro'
 import FicheConfirmationAutre from './FicheConfirmationAutre'
 import FicheConfirmationStock from './FicheConfirmationStock'
 import { lireConfigFne } from '../lib/fne'
@@ -176,8 +177,8 @@ export default function ConversationAssistant({ compact = false, onNavigation })
         {dicteeDisponible && (
           <button type="button" onClick={() => (dictee.ecoute ? dictee.arreter() : dictee.demarrer())} disabled={enCours}
             title={dictee.ecoute ? t('voix.arreter') : t('voix.parler')}
-            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-lg border ${dictee.ecoute ? 'bg-red-600 border-red-600 text-white animate-pulse' : 'bg-white border-line'}`}>
-            🎤
+            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center border transition-colors ${dictee.ecoute ? 'bg-red-600 border-red-600 text-white animate-pulse' : 'bg-white border-line text-petrol-700 hover:bg-canvas'}`}>
+            {dictee.ecoute ? <IconeStop /> : <IconeMicro />}
           </button>
         )}
         <ZoneTexteAuto className="input-field flex-1 !py-2"

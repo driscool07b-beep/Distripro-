@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import ZoneTexteAuto from '../components/ZoneTexteAuto'
+import IconeMicro from '../components/IconeMicro'
 import { useAuth } from '../context/AuthContext'
 import { formatDateHeure } from '../lib/format'
 
@@ -597,9 +598,9 @@ function FilConversation({ conversationId, onRetour }) {
               onClick={demarrerVocal}
               disabled={envoi}
               title={t('vocalEnregistrer')}
-              className="bg-petrol-800 text-white rounded-lg px-3 py-2 text-sm disabled:opacity-40 shrink-0"
+              className="bg-petrol-800 text-white rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-40 shrink-0"
             >
-              {envoi ? '…' : '🎤'}
+              {envoi ? '…' : <IconeMicro />}
             </button>
           ) : (
           <button
