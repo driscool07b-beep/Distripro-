@@ -18,7 +18,10 @@
     "toutes": "All",
     "magasinClient": "Store / client",
     "zoneVille": "Zone / city",
-    "produit": "Product"
+    "produit": "Product",
+    "document": "Document type",
+    "documentFne": "FNE invoices (certified)",
+    "documentRecu": "Sales receipts (not certified)"
   },
   "table": {
     "date": "Date",

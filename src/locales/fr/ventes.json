@@ -18,7 +18,10 @@
     "toutes": "Toutes",
     "magasinClient": "Magasin / client",
     "zoneVille": "Zone / ville",
-    "produit": "Produit"
+    "produit": "Produit",
+    "document": "Type de document",
+    "documentFne": "Factures FNE (certifiées)",
+    "documentRecu": "Reçus de vente (non certifiés)"
   },
   "table": {
     "date": "Date",

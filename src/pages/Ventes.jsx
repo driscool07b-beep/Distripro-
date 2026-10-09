@@ -43,6 +43,7 @@ export default function Ventes() {
     ville: '',
     commercialId: '',
     produitId: '',
+    document: '', // '' | 'fne' | 'recu'
   })
 
   const [clientId, setClientId] = useState('')
@@ -133,6 +134,9 @@ export default function Ventes() {
     if (filtres.ville) requete = requete.eq('clients.ville', filtres.ville)
     if (filtres.commercialId) requete = requete.or(`commercial_id.eq.${filtres.commercialId},and(commercial_id.is.null,created_by.eq.${filtres.commercialId})`)
     if (filtres.produitId) requete = requete.eq('ventes_lignes.produit_id', filtres.produitId)
+    // Type de document : facture certifiée FNE ou simple reçu de vente.
+    if (filtres.document === 'fne') requete = requete.eq('fne_statut', 'certifiee')
+    if (filtres.document === 'recu') requete = requete.or('fne_statut.is.null,fne_statut.neq.certifiee')
     if (profil?.role === 'commercial' && !profil?.acces_etendu) {
       requete = requete.eq('commercial_id', profil.id)
     }
@@ -752,6 +756,18 @@ export default function Ventes() {
             {produits.map((p) => (
               <option key={p.id} value={p.id}>{p.nom}</option>
             ))}
+          </select>
+        </div>
+        <div>
+          <label className="label">{t('filtres.document')}</label>
+          <select
+            className="input-field"
+            value={filtres.document}
+            onChange={(e) => setFiltres({ ...filtres, document: e.target.value })}
+          >
+            <option value="">{t('filtres.tous')}</option>
+            <option value="fne">{t('filtres.documentFne')}</option>
+            <option value="recu">{t('filtres.documentRecu')}</option>
           </select>
         </div>
       </div>

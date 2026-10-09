@@ -18,7 +18,10 @@
     "toutes": "الكل",
     "magasinClient": "المتجر / العميل",
     "zoneVille": "المنطقة / المدينة",
-    "produit": "المنتج"
+    "produit": "المنتج",
+    "document": "نوع المستند",
+    "documentFne": "فواتير FNE (معتمدة)",
+    "documentRecu": "إيصالات بيع (غير معتمدة)"
   },
   "table": {
     "date": "التاريخ",

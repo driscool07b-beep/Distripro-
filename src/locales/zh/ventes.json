@@ -18,7 +18,10 @@
     "toutes": "全部",
     "magasinClient": "门店/客户",
     "zoneVille": "区域/城市",
-    "produit": "产品"
+    "produit": "产品",
+    "document": "单据类型",
+    "documentFne": "FNE 发票（已认证）",
+    "documentRecu": "销售收据（未认证）"
   },
   "table": {
     "date": "日期",
