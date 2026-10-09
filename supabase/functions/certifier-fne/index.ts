@@ -32,6 +32,35 @@ const MODES: Record<string, string> = {
   espece: 'cash', cheque: 'check', mobile_money: 'mobile-money', virement: 'transfer', carte: 'card',
 }
 
+// Message d'erreur lisible à partir de la réponse de la DGI : la DGI précise
+// souvent le champ refusé dans « errors » (ex. { establishment: { invalid: … } }).
+const CHAMPS_DGI: Record<string, string> = {
+  establishment: 'Établissement (Paramètres → FNE)', pointOfSale: 'Point de vente (Paramètres → FNE)',
+  clientNcc: 'NCC du client', clientPhone: 'Téléphone du client', clientEmail: 'E-mail du client',
+  clientCompanyName: 'Nom du client', paymentMethod: 'Mode de paiement', template: 'Type de facture (B2B/B2C)',
+  items: 'Articles', taxes: 'Code TVA', customTaxes: 'Autres taxes', foreignCurrency: 'Devise', foreignCurrencyRate: 'Taux de change',
+  quantity: 'Quantité', amount: 'Prix', description: 'Désignation', discount: 'Remise',
+}
+const MOTS_DGI: Record<string, string> = { invalid: 'invalide', required: 'obligatoire', isNotEmpty: 'obligatoire', notFound: 'introuvable' }
+function messageDgi(json: any): string {
+  if (!json) return 'erreur'
+  const details: string[] = []
+  const parcourir = (obj: any, chemin: string[]) => {
+    if (!obj || typeof obj !== 'object') return
+    for (const [cle, val] of Object.entries(obj)) {
+      if (val && typeof val === 'object') parcourir(val, [...chemin, cle])
+      else {
+        const champ = chemin.filter((c) => !/^\d+$/.test(c)).pop() || cle
+        details.push(`${CHAMPS_DGI[champ] || champ} : ${MOTS_DGI[cle] || String(val)}`)
+      }
+    }
+  }
+  parcourir(json.errors, [])
+  if (details.length) return details.join(' ; ')
+  if (Array.isArray(json.message)) return json.message.join(' ; ')
+  return json.message || 'erreur'
+}
+
 // Codes TVA DGI : TVA 18 %, TVAB 9 %, TVAC exonération conventionnelle, TVAD exonération légale.
 // Le code TVA est OBLIGATOIRE sur chaque article (procédure DGI, mai 2025) :
 // une entreprise non assujettie ou un article à 0 % est déclaré en TVAD.
@@ -104,7 +133,7 @@ Deno.serve(async (req) => {
       const corps = { items: (lignes || []).filter((l) => l.fne_item_id).map((l) => ({ id: l.fne_item_id, quantity: Number(l.quantite) })) }
       const res = await appelerDgi(`/external/invoices/${vente.fne_id}/refund`, corps)
       await journaliser('avoir', corps, res)
-      if (!res.ok) return reponseErreur(`DGI (${res.status}) : ${res.json?.message || 'erreur'}`, 502)
+      if (!res.ok) return reponseErreur(`Avoir refusé par la DGI (${res.status}) : ${messageDgi(res.json)}`, 502)
       await supabase.from('ventes').update({ fne_avoir_reference: res.json?.reference, fne_avoir_token: res.json?.token }).eq('id', vente_id)
       return reponse({ reference: res.json?.reference, token: res.json?.token })
     }
@@ -180,7 +209,7 @@ Deno.serve(async (req) => {
     await journaliser('certification', corps, res)
 
     if (!res.ok) {
-      const message = res.json?.message ? (Array.isArray(res.json.message) ? res.json.message.join(' ; ') : res.json.message) : 'erreur'
+      const message = messageDgi(res.json)
       await supabase.from('ventes').update({ fne_demandee: true, fne_statut: 'erreur', fne_erreur: `DGI (${res.status}) : ${message}` }).eq('id', vente_id)
       return reponseErreur(`Certification refusée par la DGI (${res.status}) : ${message}`, 502)
     }
