@@ -44,6 +44,17 @@ function libelleJour(date, t) {
   return formatDateHeure(d, { weekday: 'long', day: 'numeric', month: 'long', ...(d.getFullYear() !== auj.getFullYear() ? { year: 'numeric' } : {}) })
 }
 
+// Heure du dernier message dans la liste, façon WhatsApp :
+// l'heure aujourd'hui, « Hier », sinon la date.
+function libelleListe(date, t) {
+  const d = new Date(date)
+  const auj = new Date()
+  const hier = new Date(); hier.setDate(auj.getDate() - 1)
+  if (d.toDateString() === auj.toDateString()) return formatDateHeure(d, { hour: '2-digit', minute: '2-digit' })
+  if (d.toDateString() === hier.toDateString()) return t('hier')
+  return formatDateHeure(d, { day: '2-digit', month: '2-digit', ...(d.getFullYear() !== auj.getFullYear() ? { year: '2-digit' } : {}) })
+}
+
 export default function Messagerie() {
   const { t } = useTranslation('messagerie')
   const { profil, entreprise } = useAuth()
@@ -59,8 +70,19 @@ export default function Messagerie() {
     chargerCollegues()
   }, [])
 
-  async function charger() {
-    setChargement(true)
+  // Liste ouverte : un nouveau message (ou une suppression) met à jour
+  // les compteurs « non lus » et les aperçus sans recharger la page.
+  useEffect(() => {
+    if (conversationOuverte) return
+    const canal = supabase
+      .channel('messagerie-liste')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => charger(true))
+      .subscribe()
+    return () => { supabase.removeChannel(canal) }
+  }, [conversationOuverte])
+
+  async function charger(silencieux = false) {
+    if (!silencieux) setChargement(true)
     const { data } = await supabase.rpc('mes_conversations')
     setConversations(data || [])
     setChargement(false)
@@ -127,27 +149,24 @@ export default function Messagerie() {
         <p className="text-sm text-petrol-500">{t('chargement')}</p>
       ) : (
         <div className="space-y-2">
-          {conversations.map((c) => (
+          {conversations.map((c) => {
+            const nonLus = Number(c.non_lus) || 0
+            return (
             <button
               key={c.conversation_id}
               onClick={() => setConversationOuverte(c.conversation_id)}
-              className="w-full text-left border border-line rounded-lg p-3 flex items-center justify-between hover:bg-canvas/60"
+              className={`w-full text-left border rounded-lg p-3 flex items-center gap-3 hover:bg-canvas/60 ${nonLus > 0 ? 'border-emerald-300 bg-emerald-50/50' : 'border-line'}`}
             >
-              <div className="flex items-center gap-3 min-w-0">
               {c.type === 'groupe' ? (
                 <span className="shrink-0 w-10 h-10 rounded-full bg-petrol-800 text-white inline-flex items-center justify-center font-semibold">#</span>
               ) : (
                 <Avatar nom={c.autre_membre_nom} chemin={c.autre_membre_photo} taille={40} />
               )}
-              <div className="min-w-0">
-                <p className="font-medium text-sm flex items-center gap-2">
-                  {c.type === 'groupe' ? '# ' : ''}
-                  {c.type === 'groupe' ? c.nom : c.autre_membre_nom || t('utilisateurSupprime')}
-                  {c.non_lus > 0 && (
-                    <span className="bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">{c.non_lus}</span>
-                  )}
+              <div className="min-w-0 flex-1">
+                <p className={`text-sm truncate ${nonLus > 0 ? 'font-bold' : 'font-medium'}`}>
+                  {c.type === 'groupe' ? `# ${c.nom}` : c.autre_membre_nom || t('utilisateurSupprime')}
                 </p>
-                <p className="text-xs text-petrol-500 truncate">
+                <p className={`text-xs truncate ${nonLus > 0 ? 'text-petrol-900 font-semibold' : 'text-petrol-500'}`}>
                   {c.dernier_message_supprime
                     ? `🚫 ${t('messageSupprime')}`
                     : c.dernier_message
@@ -157,14 +176,26 @@ export default function Messagerie() {
                     : t('aucunMessage')}
                 </p>
               </div>
+              <div className="shrink-0 flex flex-col items-end gap-1 ml-1">
+                {c.dernier_message_at && (
+                  <span className={`text-xs ${nonLus > 0 ? 'text-emerald-700 font-semibold' : 'text-petrol-400'}`}>
+                    {libelleListe(c.dernier_message_at, t)}
+                  </span>
+                )}
+                {nonLus > 0 ? (
+                  <span
+                    className="min-w-[1.375rem] h-[1.375rem] px-1.5 rounded-full bg-emerald-600 text-white text-xs font-bold inline-flex items-center justify-center"
+                    aria-label={t('nonLus', { count: nonLus })}
+                  >
+                    {nonLus > 99 ? '99+' : nonLus}
+                  </span>
+                ) : (
+                  <span className="h-[1.375rem]" aria-hidden="true" />
+                )}
               </div>
-              {c.dernier_message_at && (
-                <span className="text-xs text-petrol-400 shrink-0 ml-2">
-                  {formatDateHeure(c.dernier_message_at, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                </span>
-              )}
             </button>
-          ))}
+            )
+          })}
           {conversations.length === 0 && (
             <p className="text-petrol-400 text-center py-12 text-sm">{t('aucuneConversation')}</p>
           )}

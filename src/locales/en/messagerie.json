@@ -30,5 +30,7 @@
   "vocalEnregistrer": "Record a voice message",
   "vocalEnregistrement": "Recording…",
   "vocalMicroRefuse": "Microphone blocked: allow the microphone for this site in your browser.",
-  "vocalEchec": "The voice message could not be sent (connection?). Try again."
+  "vocalEchec": "The voice message could not be sent (connection?). Try again.",
+  "nonLus_one": "{{count}} unread message",
+  "nonLus_other": "{{count}} unread messages"
 }
