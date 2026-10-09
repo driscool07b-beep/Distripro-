@@ -59,6 +59,10 @@ export default function Ventes() {
   const [certificationEnCours, setCertificationEnCours] = useState(false)
   const [envoiDocument, setEnvoiDocument] = useState(false)
   useEffect(() => { lireConfigFne().then((c) => { setConfigFne(c); setProduireFne(!!c.fne_par_defaut) }) }, [])
+  // Magasins actifs chargés dès l'ouverture de la page : nécessaires aussi pour
+  // l'annulation par avoir (choix du magasin où la marchandise revient),
+  // pas seulement pour le formulaire de nouvelle vente.
+  useEffect(() => { supabase.from('depots').select('id, nom').eq('actif', true).order('nom').then(({ data }) => setDepots(data || [])) }, [])
   const [depotId, setDepotId] = useState('')
   const [stocksParDepot, setStocksParDepot] = useState({}) // { produit_id: { depot_id: quantite } }
   const [stockTerrain, setStockTerrain] = useState({}) // { produit_id: quantite } du commercial choisi
