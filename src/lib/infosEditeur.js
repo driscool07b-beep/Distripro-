@@ -12,6 +12,10 @@ export const EDITEUR = {
   representant: '[Nom du représentant légal], [fonction]',
   email: 'contact@distribpro.com',
   telephone: '[Téléphone]',
+  // Numéro WhatsApp affiché sur le site vitrine (format international, ex.
+  // '2250700000000'). Laisser vide tant qu'il n'est pas choisi : le bouton
+  // WhatsApp est alors masqué.
+  whatsapp: '',
   declarationArtci: '[Numéro de déclaration / d\'autorisation ARTCI]',
   site: 'distribpro.com',
   application: 'distribpro.com',

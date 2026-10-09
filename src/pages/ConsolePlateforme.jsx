@@ -11,7 +11,7 @@ import { traduireErreur } from '../lib/erreurs'
 
 const ONGLETS = [
   ['bord', '📊 Tableau de bord'], ['entreprises', '🏢 Entreprises'], ['formules', '💳 Formules'],
-  ['ia', '⚙️ Paramètres'], ['annonces', '📣 Annonces'], ['journal', '📜 Journal'],
+  ['ia', '⚙️ Paramètres'], ['annonces', '📣 Annonces'], ['prospects', '📨 Prospects'], ['journal', '📜 Journal'],
 ]
 const STATUTS = { actif: ['Actif', 'bg-emerald-100 text-emerald-800'], essai: ['Essai', 'bg-sky-100 text-sky-800'], suspendu: ['Suspendu', 'bg-red-100 text-red-700'] }
 const aujourdhui = () => new Date().toISOString().slice(0, 10)
@@ -552,6 +552,70 @@ function Journal() {
   )
 }
 
+// ------------------------------------------------------------------ Prospects
+// Demandes reçues par le formulaire du site vitrine (distribpro.com).
+const SUJETS_CONTACT = { demo: 'Démonstration', tarifs: 'Devis / tarifs', migration: 'Reprise de données', partenariat: 'Partenariat', assistance: 'Assistance', autre: 'Autre' }
+const STATUTS_CONTACT = { nouveau: ['Nouveau', 'bg-amber-100 text-amber-800'], en_cours: ['En cours', 'bg-sky-100 text-sky-800'], traite: ['Traité', 'bg-emerald-100 text-emerald-800'], spam: ['Indésirable', 'bg-gray-100 text-gray-600'] }
+
+function Prospects() {
+  const [liste, setListe] = useState(null)
+  const [filtre, setFiltre] = useState('actifs')
+  const [erreur, setErreur] = useState('')
+  const charger = () => supabase.rpc('plateforme_demandes_contact', { p_limite: 500 }).then(({ data, error }) => {
+    if (error) setErreur(traduireErreur(error)); else setListe(data || [])
+  })
+  useEffect(() => { charger() }, [])
+
+  async function changer(id, statut) {
+    const { error } = await supabase.rpc('plateforme_suivre_demande_contact', { p_id: id, p_statut: statut, p_note: null })
+    if (error) setErreur(traduireErreur(error)); else charger()
+  }
+
+  if (erreur) return <Message erreur={erreur} />
+  if (!liste) return <p className="text-sm text-petrol-500">Chargement…</p>
+  const visibles = liste.filter((d) => filtre === 'tous' || (filtre === 'actifs' ? ['nouveau', 'en_cours'].includes(d.statut) : d.statut === filtre))
+  const nouveaux = liste.filter((d) => d.statut === 'nouveau').length
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        {[['actifs', 'À traiter'], ['traite', 'Traités'], ['spam', 'Indésirables'], ['tous', 'Tous']].map(([k, l]) => (
+          <button key={k} onClick={() => setFiltre(k)} className={`px-3 py-1.5 rounded-full text-xs border ${filtre === k ? 'bg-petrol-800 text-white border-petrol-800' : 'bg-white border-line'}`}>{l}</button>
+        ))}
+        <span className="text-xs text-petrol-500 ml-auto">{nouveaux} nouveau{nouveaux > 1 ? 'x' : ''} · {liste.length} au total</span>
+      </div>
+      {visibles.length === 0 && <p className="card p-4 text-sm text-petrol-400">Aucune demande ici. Les demandes du formulaire de distribpro.com apparaîtront dans cet onglet.</p>}
+      {visibles.map((d) => {
+        const wa = (d.telephone || '').replace(/\D/g, '')
+        const [libelle, couleur] = STATUTS_CONTACT[d.statut] || [d.statut, '']
+        return (
+          <div key={d.id} className="card p-4 space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <strong className="text-sm">{d.nom}</strong>
+              {d.entreprise && <span className="text-sm text-petrol-600">· {d.entreprise}</span>}
+              <span className={`text-[11px] px-2 py-0.5 rounded-full ${couleur}`}>{libelle}</span>
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-petrol-50 text-petrol-700 border border-line">{SUJETS_CONTACT[d.sujet] || d.sujet}</span>
+              <span className="text-xs text-petrol-400 ml-auto">{formatDateHeure(d.created_at)}</span>
+            </div>
+            <p className="text-xs text-petrol-600">
+              {[d.ville, d.taille_equipe].filter(Boolean).join(' · ') || '—'}
+            </p>
+            {d.message && <p className="text-sm whitespace-pre-wrap bg-canvas rounded-lg p-2">{d.message}</p>}
+            <div className="flex flex-wrap gap-2 text-xs">
+              {wa && <a href={`https://wa.me/${wa}`} target="_blank" rel="noreferrer" className="btn-secondary text-xs">WhatsApp {d.telephone}</a>}
+              <a href={`mailto:${d.email}?subject=${encodeURIComponent('Votre demande DistribPro')}`} className="btn-secondary text-xs">{d.email}</a>
+              {d.statut !== 'en_cours' && d.statut !== 'traite' && <button onClick={() => changer(d.id, 'en_cours')} className="btn-secondary text-xs">En cours</button>}
+              {d.statut !== 'traite' && <button onClick={() => changer(d.id, 'traite')} className="btn-primary text-xs">Marquer traité</button>}
+              {d.statut !== 'spam' && <button onClick={() => changer(d.id, 'spam')} className="text-xs text-petrol-500 underline px-2">Indésirable</button>}
+              {(d.statut === 'traite' || d.statut === 'spam') && <button onClick={() => changer(d.id, 'nouveau')} className="text-xs text-petrol-500 underline px-2">Rouvrir</button>}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function ConsolePlateforme() {
   const { estSuperAdmin } = useAuth()
   const [onglet, setOnglet] = useState('bord')
@@ -572,6 +636,7 @@ export default function ConsolePlateforme() {
       {onglet === 'formules' && <Formules />}
       {onglet === 'ia' && <UnitesIA />}
       {onglet === 'annonces' && <Annonces />}
+      {onglet === 'prospects' && <Prospects />}
       {onglet === 'journal' && <Journal />}
     </div>
   )

@@ -1,10 +1,12 @@
 import { useEffect, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { direction } from './lib/i18n'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
+import { useAuth } from './context/AuthContext'
+const Vitrine = lazy(() => import('./pages/Vitrine'))
 const ReinitialiserMotDePasse = lazy(() => import('./pages/ReinitialiserMotDePasse'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Clients = lazy(() => import('./pages/Clients'))
@@ -54,6 +56,23 @@ function ChargementPage() {
   )
 }
 
+// Racine du site : un visiteur non connecté qui arrive sur distribpro.com voit
+// le site vitrine ; un utilisateur connecté arrive sur son espace. Depuis
+// l'application installée sur le téléphone, on va directement à la connexion.
+function Racine() {
+  const { estConnecte, loading } = useAuth()
+  const { pathname } = useLocation()
+  const appliInstallee = typeof window !== 'undefined' && window.matchMedia?.('(display-mode: standalone)').matches
+  if (pathname === '/' && !loading && !estConnecte) {
+    return appliInstallee ? <Navigate to="/connexion" replace /> : <Vitrine />
+  }
+  return (
+    <ProtectedRoute>
+      <Layout />
+    </ProtectedRoute>
+  )
+}
+
 export default function App() {
   const { i18n } = useTranslation()
 
@@ -71,14 +90,9 @@ export default function App() {
       <Route path="/creer-entreprise" element={<CreerEntreprise />} />
       <Route path="/legal/:document" element={<PagesLegales />} />
 
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }
-      >
+      <Route path="/presentation" element={<Vitrine />} />
+
+      <Route path="/" element={<Racine />}>
         <Route index element={<Dashboard />} />
         <Route path="clients" element={<Clients />} />
         <Route path="stock" element={<Stock />} />
