@@ -52,7 +52,10 @@
     "imprimer": "Imprimer",
     "partager": "Partager",
     "ajouter": "Ajouter",
-    "confirmer": "Confirmer"
+    "confirmer": "Confirmer",
+    "enregistreOk": "✓ Enregistré",
+    "enregistrementEnCours": "Enregistrement…",
+    "nonEnregistre": "Modifications non enregistrées"
   },
   "commun": {
     "chargement": "Chargement…",

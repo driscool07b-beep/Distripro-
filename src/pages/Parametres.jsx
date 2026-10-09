@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import BoutonEnregistrer from '../components/BoutonEnregistrer'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { compresserImage } from '../lib/justificatifs'
@@ -227,6 +228,7 @@ export default function Parametres() {
       setConfirmationCaisse(true)
       setTimeout(() => setConfirmationCaisse(false), 2500)
       rechargerProfil?.()
+      return true
     }
   }
 
@@ -241,6 +243,7 @@ export default function Parametres() {
       setConfirmationRappels(true)
       setTimeout(() => setConfirmationRappels(false), 2500)
       rechargerProfil?.()
+      return true
     }
   }
 
@@ -252,6 +255,7 @@ export default function Parametres() {
       setConfirmationTransferts(true)
       setTimeout(() => setConfirmationTransferts(false), 2500)
       rechargerProfil?.()
+      return true
     }
   }
 
@@ -263,6 +267,7 @@ export default function Parametres() {
       setConfirmationTracabilite(true)
       setTimeout(() => setConfirmationTracabilite(false), 2500)
       rechargerProfil?.()
+      return true
     }
   }
 
@@ -278,6 +283,7 @@ export default function Parametres() {
       setConfirmationRegularisation(true)
       setTimeout(() => setConfirmationRegularisation(false), 2500)
       rechargerProfil?.()
+      return true
     }
   }
 
@@ -296,6 +302,7 @@ export default function Parametres() {
       setConfirmationComptes(true)
       setTimeout(() => setConfirmationComptes(false), 2500)
       rechargerProfil?.()
+      return true
     }
   }
 
@@ -325,6 +332,7 @@ export default function Parametres() {
     setConfirmationPonderation(true)
     setTimeout(() => setConfirmationPonderation(false), 2500)
     rechargerProfil?.()
+    return true
   }
 
   async function televerserFondConnexion(e) {
@@ -537,6 +545,7 @@ export default function Parametres() {
     await rechargerProfil()
     setConfirmationInfos(true)
     setTimeout(() => setConfirmationInfos(false), 2500)
+    return true
   }
 
   async function enregistrerSeuilRemise(e) {
@@ -558,6 +567,7 @@ export default function Parametres() {
     await rechargerProfil()
     setConfirmationSeuil(true)
     setTimeout(() => setConfirmationSeuil(false), 2500)
+    return true
   }
 
   async function basculerJustificatifObligatoire(valeur) {
@@ -623,7 +633,7 @@ export default function Parametres() {
         <p className="text-sm text-petrol-600 mb-4">
           {t('infosLegales.sousTitre')}
         </p>
-        <form onSubmit={enregistrerInfosLegales} className="space-y-3">
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-3">
           <div>
             <label className="label">{t('infosLegales.adresse')}</label>
             <input
@@ -671,9 +681,7 @@ export default function Parametres() {
           </div>
           {erreurInfos && <p className="text-xs text-red-600">{erreurInfos}</p>}
           {confirmationInfos && <p className="text-xs text-green-600">{t('enregistre')}</p>}
-          <button type="submit" disabled={enregistrementInfos} className="btn-primary w-full">
-            {enregistrementInfos ? t('enregistrement') : t('enregistrer')}
-          </button>
+          <BoutonEnregistrer type="submit" onClick={enregistrerInfosLegales} enCours={enregistrementInfos} />
         </form>
       </div>
 
@@ -733,7 +741,7 @@ export default function Parametres() {
           <p className="text-sm text-petrol-600 mb-3">
             {t('remises.sousTitre')}
           </p>
-          <form onSubmit={enregistrerSeuilRemise} className="flex gap-2 items-end">
+          <form onSubmit={(e) => e.preventDefault()} className="flex flex-wrap gap-2 items-end">
             <div className="flex-1">
               <label className="label">{t('remises.seuil')}</label>
               <input
@@ -746,9 +754,7 @@ export default function Parametres() {
                 onChange={(e) => setSeuilRemise(e.target.value)}
               />
             </div>
-            <button type="submit" disabled={enregistrementSeuil} className="btn-primary">
-              {enregistrementSeuil ? '…' : t('enregistrer')}
-            </button>
+            <BoutonEnregistrer type="submit" onClick={enregistrerSeuilRemise} enCours={enregistrementSeuil} />
           </form>
           {erreurSeuil && <p className="text-xs text-red-600 mt-2">{erreurSeuil}</p>}
           {confirmationSeuil && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
@@ -927,9 +933,7 @@ export default function Parametres() {
             ))}
           </div>
 
-          <button onClick={enregistrerParametrageCaisse} disabled={enregistrementCaisse} className="btn-primary text-sm">
-            {enregistrementCaisse ? t('enregistrement') : t('enregistrer')}
-          </button>
+          <BoutonEnregistrer onClick={enregistrerParametrageCaisse} enCours={enregistrementCaisse} className="text-sm" />
           {confirmationCaisse && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
@@ -959,9 +963,7 @@ export default function Parametres() {
             </select>
           </div>
 
-          <button onClick={enregistrerRappelsInventaire} disabled={enregistrementRappels} className="btn-primary text-sm">
-            {enregistrementRappels ? t('enregistrement') : t('enregistrer')}
-          </button>
+          <BoutonEnregistrer onClick={enregistrerRappelsInventaire} enCours={enregistrementRappels} className="text-sm" />
           {confirmationRappels && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
@@ -974,9 +976,7 @@ export default function Parametres() {
             <input type="checkbox" checked={justificatifTransfertRequis} onChange={(e) => setJustificatifTransfertRequis(e.target.checked)} />
             {t('transferts.exigerJustificatif')}
           </label>
-          <button onClick={enregistrerParametrageTransferts} disabled={enregistrementTransferts} className="btn-primary text-sm">
-            {enregistrementTransferts ? t('enregistrement') : t('enregistrer')}
-          </button>
+          <BoutonEnregistrer onClick={enregistrerParametrageTransferts} enCours={enregistrementTransferts} className="text-sm" />
           {confirmationTransferts && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
@@ -989,9 +989,7 @@ export default function Parametres() {
             <input type="checkbox" checked={tracabiliteLotsObligatoire} onChange={(e) => setTracabiliteLotsObligatoire(e.target.checked)} />
             {t('tracabilite.rendreObligatoire')}
           </label>
-          <button onClick={enregistrerParametrageTracabilite} disabled={enregistrementTracabilite} className="btn-primary text-sm">
-            {enregistrementTracabilite ? t('enregistrement') : t('enregistrer')}
-          </button>
+          <BoutonEnregistrer onClick={enregistrerParametrageTracabilite} enCours={enregistrementTracabilite} className="text-sm" />
           {confirmationTracabilite && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
@@ -1008,9 +1006,7 @@ export default function Parametres() {
               </label>
             ))}
           </div>
-          <button onClick={enregistrerParametrageRegularisation} disabled={enregistrementRegularisation} className="btn-primary text-sm">
-            {enregistrementRegularisation ? t('enregistrement') : t('enregistrer')}
-          </button>
+          <BoutonEnregistrer onClick={enregistrerParametrageRegularisation} enCours={enregistrementRegularisation} className="text-sm" />
           {confirmationRegularisation && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
@@ -1054,9 +1050,7 @@ export default function Parametres() {
               <input className="input-field text-sm" value={codeJournalBanque} onChange={(e) => setCodeJournalBanque(e.target.value)} maxLength={3} />
             </div>
           </div>
-          <button onClick={enregistrerComptesParDefaut} disabled={enregistrementComptes} className="btn-primary text-sm">
-            {enregistrementComptes ? t('enregistrement') : t('enregistrer')}
-          </button>
+          <BoutonEnregistrer onClick={enregistrerComptesParDefaut} enCours={enregistrementComptes} className="text-sm" />
           {confirmationComptes && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
@@ -1083,9 +1077,7 @@ export default function Parametres() {
             {t('notation.total', { total: Number(poidsAssiduite) + Number(poidsRapports) + Number(poidsVersements) })}
           </p>
           {erreurPonderation && <p className="text-xs text-red-600 mb-2">{erreurPonderation}</p>}
-          <button onClick={enregistrerPonderation} disabled={enregistrementPonderation} className="btn-primary text-sm">
-            {enregistrementPonderation ? t('enregistrement') : t('enregistrer')}
-          </button>
+          <BoutonEnregistrer onClick={enregistrerPonderation} enCours={enregistrementPonderation} className="text-sm" />
           {confirmationPonderation && <p className="text-xs text-green-600 mt-2">{t('enregistre')}</p>}
         </div>
       )}
@@ -1501,6 +1493,7 @@ function SectionReconciliation() {
     if (e2) { setErreur(traduireErreur(e2.message)); return }
     await rechargerProfil()
     setMessage(t('enregistre'))
+    return true
   }
 
   return (
@@ -1540,7 +1533,7 @@ function SectionReconciliation() {
           <p className="text-[11px] text-petrol-500 mt-1">{t('reconciliation.aideQuotite')}</p>
         </div>
       </div>
-      <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>
@@ -1572,6 +1565,7 @@ function SectionComptesClients() {
     if (error) { setErreur(traduireErreur(error.message)); return }
     await rechargerProfil()
     setMessage(t('enregistre'))
+    return true
   }
   async function attribuer() {
     setErreur(''); setMessage('')
@@ -1605,7 +1599,7 @@ function SectionComptesClients() {
       </div>
       <p className="text-[11px] text-petrol-500 mt-2">{t('comptesClients.exemple', { c: v.clients, g: v.groupes })}</p>
       <div className="flex flex-wrap gap-2 mt-3">
-        <button className="btn-primary text-sm" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+        <BoutonEnregistrer onClick={enregistrer} className="text-sm" />
         <button className="btn-secondary text-sm" disabled={envoi} onClick={attribuer}>{envoi ? '…' : t('comptesClients.attribuer')}</button>
       </div>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
@@ -1644,6 +1638,7 @@ function SectionFne() {
     setCle('')
     setV({ ...v, cle_enregistree: v.cle_enregistree || !!cle })
     setMessage(t('enregistre'))
+    return true
   }
 
   return (
@@ -1684,7 +1679,7 @@ function SectionFne() {
         <input type="checkbox" checked={v.fne_par_defaut} onChange={(e) => setV({ ...v, fne_par_defaut: e.target.checked })} />
         {t('fne.parDefaut')}
       </label>
-      <label className="flex items-start gap-2 text-sm mt-3 border-t border-line pt-3">
+      <label data-enregistrement-immediat className="flex items-start gap-2 text-sm mt-3 border-t border-line pt-3">
         <input type="checkbox" className="mt-0.5" checked={!!envoiAuto} onChange={async (e) => {
           const actif = e.target.checked
           setEnvoiAuto(actif)
@@ -1693,7 +1688,7 @@ function SectionFne() {
         }} />
         <span>{t('fne.envoiAuto')}<span className="block text-xs text-petrol-500">{t('fne.aideEnvoiAuto')}</span></span>
       </label>
-      <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>
@@ -1720,6 +1715,7 @@ function SectionRapportMensuel() {
     if (error) { setErreur(traduireErreur(error.message)); return }
     await rechargerProfil()
     setMessage(t('enregistre'))
+    return true
   }
 
   return (
@@ -1733,7 +1729,7 @@ function SectionRapportMensuel() {
       <label className="label">{t('rapportMensuel.destinataires')}</label>
       <input className="input-field" value={destinataires} onChange={(e) => setDestinataires(e.target.value)} placeholder={t('rapportMensuel.placeholder')} />
       <p className="text-[11px] text-petrol-500 mt-1">{t('rapportMensuel.aideDestinataires')}</p>
-      <button className="btn-primary text-sm mt-3" onClick={enregistrer}>{t('reconciliation.enregistrer')}</button>
+      <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>

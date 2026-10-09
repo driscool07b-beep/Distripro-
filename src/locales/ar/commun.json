@@ -52,7 +52,10 @@
     "imprimer": "طباعة",
     "partager": "مشاركة",
     "ajouter": "إضافة",
-    "confirmer": "تأكيد"
+    "confirmer": "تأكيد",
+    "enregistreOk": "✓ تم الحفظ",
+    "enregistrementEnCours": "جارٍ الحفظ…",
+    "nonEnregistre": "تغييرات غير محفوظة"
   },
   "commun": {
     "chargement": "جارٍ التحميل…",

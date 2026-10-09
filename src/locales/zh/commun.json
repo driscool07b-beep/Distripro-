@@ -52,7 +52,10 @@
     "imprimer": "打印",
     "partager": "分享",
     "ajouter": "添加",
-    "confirmer": "确认"
+    "confirmer": "确认",
+    "enregistreOk": "✓ 已保存",
+    "enregistrementEnCours": "正在保存…",
+    "nonEnregistre": "有未保存的更改"
   },
   "commun": {
     "chargement": "加载中…",
