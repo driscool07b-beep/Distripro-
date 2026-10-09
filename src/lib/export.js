@@ -223,7 +223,14 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
       corpsRecap.push([`${tx.nom} (${tx.taux}%)`, formatMontant(tx.montant)])
     })
   }
-  corpsRecap.push(['Total' + (aDesTaxes ? ' TTC' : ''), formatMontant(vente.total)])
+  // Après un avoir, la vente garde son montant facturé d'origine
+  // (total_initial) ; les avoirs et le net apparaissent à part.
+  const totalFacture = vente.total_initial != null ? Number(vente.total_initial) : Number(vente.total)
+  corpsRecap.push(['Total' + (aDesTaxes ? ' TTC' : ''), formatMontant(totalFacture)])
+  if (vente.total_initial != null) {
+    corpsRecap.push(['Avoirs', '- ' + formatMontant(totalFacture - Number(vente.total))])
+    corpsRecap.push(['Net après avoirs', formatMontant(vente.total)])
+  }
   corpsRecap.push(['Mode de paiement', `${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}${vente.mode_reglement ? ' — ' + LIBELLES_MODE[vente.mode_reglement] : ''}`])
   corpsRecap.push(['Montant réglé', formatMontant(vente.montant_regle)])
   if (soldeDu > 0) corpsRecap.push(['Reste dû', formatMontant(soldeDu)])
@@ -246,7 +253,7 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
   doc.setTextColor(60)
   const nomDevise = DEVISES[deviseCourante()]?.nom || 'francs CFA'
   const texteEnLettres = doc.splitTextToSize(
-    `Arrêtée la présente ${aDesTaxes ? 'facture' : 'vente'} à la somme de : ${montantEnLettresAvecDevise(vente.total, nomDevise)}.`,
+    `Arrêtée la présente ${aDesTaxes ? 'facture' : 'vente'} à la somme de : ${montantEnLettresAvecDevise(vente.total_initial != null ? vente.total_initial : vente.total, nomDevise)}.`,
     182
   )
   doc.text(texteEnLettres, 14, doc.lastAutoTable.finalY + 10)
@@ -286,7 +293,7 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
  * distinct des reçus (bandeau rouge) pour ne jamais être confondu avec un
  * document de paiement.
  */
-export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, montant, date, reference }) {
+export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, montant, date, reference, fneReference, typeAvoir }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
   const formatMontant = (n) => formatMontantDevise(n)
@@ -296,7 +303,8 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
   doc.rect(14, y0, 182, 9, 'FD')
   doc.setFontSize(9)
   doc.setTextColor(150, 20, 20)
-  doc.text(`AVOIR${reference ? ' — ' + reference : ''}`, 105, y0 + 6, { align: 'center' })
+  const libelleType = typeAvoir === 'prix' ? ' (correction de prix)' : typeAvoir === 'retour' ? ' (retour de marchandise)' : ''
+  doc.text(`AVOIR${reference ? ' — ' + reference : ''}${libelleType}`, 105, y0 + 6, { align: 'center' })
 
   doc.setTextColor(0)
   doc.setFontSize(10)
@@ -304,7 +312,8 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
   doc.text(`Client : ${client?.nom || '—'}`, 14, yInfo)
   if (client?.telephone) doc.text(`Téléphone : ${client.telephone}`, 14, yInfo + 6)
   doc.text(`Date : ${formatDateHeure(date, { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
-  if (vente?.numero_vente) doc.text(`Réf. vente annulée : ${vente.numero_vente}`, 120, yInfo + 6)
+  if (vente?.numero_vente) doc.text(`${typeAvoir === 'retour' || typeAvoir === 'prix' ? 'Réf. vente' : 'Réf. vente annulée'} : ${vente.numero_vente}`, 120, yInfo + 6)
+  if (fneReference) doc.text(`Avoir FNE (DGI) : ${fneReference}`, 120, yInfo + 12)
 
   let y = yInfo + 18
   if (motif) {
@@ -317,11 +326,11 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
   if (lignes && lignes.length > 0) {
     autoTable(doc, {
       startY: y,
-      head: [['Produit', 'Qté', `PU (${symboleDevise()})`, `Sous-total (${symboleDevise()})`]],
+      head: [['Produit', 'Qté', typeAvoir === 'prix' ? `PU → corrigé (${symboleDevise()})` : `PU (${symboleDevise()})`, `Montant (${symboleDevise()})`]],
       body: lignes.map((l) => [
-        designationProduit(l.produits),
+        designationProduit(l.produits) + (l.etat === 'abime' ? ' (abîmé)' : ''),
         String(l.quantite),
-        formatMontantPDF(l.prix_unitaire),
+        l.prix_corrige != null ? `${formatMontantPDF(l.prix_unitaire)} → ${formatMontantPDF(l.prix_corrige)}` : formatMontantPDF(l.prix_unitaire),
         formatMontantPDF(l.sous_total),
       ]),
       styles: { fontSize: 9, cellPadding: 3 },
@@ -347,10 +356,14 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
   doc.setFontSize(8)
   doc.setTextColor(130)
   doc.text(
-    'Ce document atteste l\u2019annulation de la vente ci-dessus et la remise en stock des articles concernés.',
+    typeAvoir === 'prix'
+      ? 'Ce document atteste la correction du prix des articles ci-dessus.'
+      : typeAvoir === 'retour'
+        ? 'Ce document atteste le retour des articles ci-dessus, déduits de la vente.'
+        : 'Ce document atteste l\u2019annulation de la vente ci-dessus et la remise en stock des articles concernés.',
     14, 278
   )
-  doc.text('Il ne constitue pas une facture normalisée DGI (FNE).', 14, 283)
+  if (!fneReference) doc.text('Il ne constitue pas une facture normalisée DGI (FNE).', 14, 283)
 
   return doc
 }

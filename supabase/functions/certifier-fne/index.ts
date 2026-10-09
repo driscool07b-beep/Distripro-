@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
     if (userError || !userData?.user) return reponseErreur('Utilisateur non authentifié.', 401)
     const supabase = createClient(supabaseUrl, serviceRoleKey)
 
-    const { action, vente_id } = await req.json()
+    const { action, vente_id, avoir_id } = await req.json()
     if (!['certifier', 'avoir'].includes(action) || !vente_id) return reponseErreur('Requête invalide.')
 
     const { data: profil } = await supabase.from('profils')
@@ -127,14 +127,41 @@ Deno.serve(async (req) => {
       })
 
     // ------------------------------------------------------------------ avoir
+    // Avec avoir_id : avoir (partiel ou total) créé par creer_avoir_vente —
+    // on certifie exactement les lignes et quantités rendues.
+    // Sans avoir_id : ancien avoir d'annulation complète (toutes les lignes).
     if (action === 'avoir') {
       if (vente.fne_statut !== 'certifiee' || !vente.fne_id) return reponse({ ignore: true, message: 'Vente non certifiée : aucun avoir FNE à émettre.' })
-      if (vente.fne_avoir_reference) return reponse({ reference: vente.fne_avoir_reference, token: vente.fne_avoir_token })
-      const { data: lignes } = await supabase.from('ventes_lignes').select('fne_item_id, quantite').eq('vente_id', vente_id)
-      const corps = { items: (lignes || []).filter((l) => l.fne_item_id).map((l) => ({ id: l.fne_item_id, quantity: Number(l.quantite) })) }
+      let corps: { items: { id: string; quantity: number }[] }
+      if (avoir_id) {
+        const { data: avoir } = await supabase.from('avoirs')
+          .select('id, type_avoir, fne_reference, fne_token').eq('id', avoir_id).eq('vente_id', vente_id).maybeSingle()
+        if (!avoir) return reponseErreur('Avoir introuvable.', 404)
+        if (avoir.fne_reference) return reponse({ reference: avoir.fne_reference, token: avoir.fne_token, deja: true })
+        if (avoir.type_avoir === 'prix') return reponseErreur("La DGI n'accepte pas d'avoir sur le prix seul.")
+        const { data: lignesAvoir } = await supabase.from('avoirs_lignes')
+          .select('quantite, ventes_lignes(fne_item_id)').eq('avoir_id', avoir_id)
+        const items = (lignesAvoir || [])
+          .filter((l: any) => l.ventes_lignes?.fne_item_id)
+          .map((l: any) => ({ id: l.ventes_lignes.fne_item_id, quantity: Number(l.quantite) }))
+        if (!items.length) return reponseErreur("Lignes de la facture DGI introuvables pour cet avoir.")
+        corps = { items }
+      } else {
+        if (vente.fne_avoir_reference) return reponse({ reference: vente.fne_avoir_reference, token: vente.fne_avoir_token })
+        const { data: lignes } = await supabase.from('ventes_lignes').select('fne_item_id, quantite').eq('vente_id', vente_id)
+        corps = { items: (lignes || []).filter((l) => l.fne_item_id).map((l) => ({ id: l.fne_item_id, quantity: Number(l.quantite) })) }
+      }
       const res = await appelerDgi(`/external/invoices/${vente.fne_id}/refund`, corps)
       await journaliser('avoir', corps, res)
-      if (!res.ok) return reponseErreur(`Avoir refusé par la DGI (${res.status}) : ${messageDgi(res.json)}`, 502)
+      if (!res.ok) {
+        const message = messageDgi(res.json)
+        if (avoir_id) await supabase.from('avoirs').update({ fne_statut: 'erreur', fne_erreur: `DGI (${res.status}) : ${message}` }).eq('id', avoir_id)
+        return reponseErreur(`Avoir refusé par la DGI (${res.status}) : ${message}`, 502)
+      }
+      if (avoir_id) {
+        await supabase.from('avoirs').update({ fne_statut: 'certifiee', fne_reference: res.json?.reference, fne_token: res.json?.token, fne_erreur: null }).eq('id', avoir_id)
+      }
+      // Dernier avoir certifié, aussi rappelé sur la vente (affichage).
       await supabase.from('ventes').update({ fne_avoir_reference: res.json?.reference, fne_avoir_token: res.json?.token }).eq('id', vente_id)
       return reponse({ reference: res.json?.reference, token: res.json?.token })
     }
@@ -142,6 +169,7 @@ Deno.serve(async (req) => {
     // ----------------------------------------------------------- certification
     if (vente.fne_statut === 'certifiee') return reponse({ reference: vente.fne_reference, token: vente.fne_token, deja: true })
     if (vente.statut === 'annulee') return reponseErreur('Une vente annulée ne peut pas être certifiée.')
+    if (vente.total_initial != null) return reponseErreur("Cette vente a déjà fait l'objet d'un avoir : elle ne peut plus être certifiée (certifiez les ventes avant tout avoir).")
 
     const [{ data: entreprise }, { data: lignes }, { data: taxes }] = await Promise.all([
       supabase.from('entreprises').select('assujetti_tva, devise').eq('id', profil.entreprise_id).single(),

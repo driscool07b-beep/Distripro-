@@ -298,5 +298,13 @@
     "confirmerRetrait": "Retirer le logo de tous vos documents ?",
     "envoi": "Envoi du logo…",
     "formatInvalide": "Image non reconnue : choisissez un fichier PNG, JPEG ou WebP."
+  },
+  "avoirs": {
+    "titre": "Avoirs : marchandise rendue abîmée",
+    "aide": "Quand un client rend de la marchandise abîmée ou périmée lors d'un avoir, que doit-elle devenir ?",
+    "perte": "L'enregistrer en perte",
+    "aidePerte": "Elle ne revient pas en stock ; la perte reste tracée dans l'avoir.",
+    "stock": "La remettre en stock comme lot « endommagé »",
+    "aideStock": "Elle revient dans un magasin, dans un lot marqué endommagé (vendu en dernier, à contrôler)."
   }
 }

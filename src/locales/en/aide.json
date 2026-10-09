@@ -143,8 +143,8 @@
           "r": "Yes — by indicating that the sale is made by the rep themselves (rather than an 'office sale'), the stock is deducted from what they carry, without going through a warehouse. This is also the mode that works offline."
         },
         {
-          "q": "How do I cancel a sale?",
-          "r": "Open the sale details → 'Cancel this sale'. A reason is required. It generates a credit note (accounting refund) and returns the stock to the original warehouse."
+          "q": "How do I issue a credit note (partial return, price correction, cancellation)?",
+          "r": "Open the sale's detail → \"Issue a credit note\". Reserved for admins, managers and accountants. Returned goods: enter, line by line, the returned quantity and its condition (good or damaged); \"Return everything\" cancels the whole sale. Choose where good goods go: the original warehouse (default), another warehouse, the stock of the sales rep collecting them, or \"stayed with the customer\". Damaged goods follow Settings → Credit notes (loss or back as a damaged batch). Price correction: enter the new price; no stock moves (not possible on an FNE-certified sale: return the line as \"stayed with the customer\" then create a new sale). The credit note first reduces what the customer owes; any part already paid goes to their credit. Several credit notes are possible; each has its number (AV-…) and PDF, and is certified with the DGI if the sale was."
         },
         {
           "q": "Above what discount amount is approval needed?",

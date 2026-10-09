@@ -1362,6 +1362,7 @@ export default function Parametres() {
         </form>
       </div>
       {profil?.role === 'admin' && <SectionLogo />}
+      {['admin', 'manager'].includes(profil?.role) && <SectionAvoirs />}
       {profil?.role === 'admin' && <SectionRapportMensuel />}
       {profil?.role === 'admin' && <SectionFne />}
       {profil?.role === 'admin' && <SectionComptesClients />}
@@ -1690,6 +1691,38 @@ function SectionFne() {
       </label>
       <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Avoirs : sort de la marchandise rendue abîmée ou périmée.
+function SectionAvoirs() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [mode, setMode] = useState('perte')
+  const [erreur, setErreur] = useState('')
+  useEffect(() => { setMode(entreprise?.avoir_marchandise_abimee || 'perte') }, [entreprise?.avoir_marchandise_abimee])
+
+  async function enregistrer() {
+    setErreur('')
+    const { error } = await supabase.rpc('modifier_parametrage_avoirs', { p_marchandise_abimee: mode })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    await rechargerProfil()
+    return true
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">↩️ {t('avoirs.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('avoirs.aide')}</p>
+      {[['perte', t('avoirs.perte'), t('avoirs.aidePerte')], ['stock_endommage', t('avoirs.stock'), t('avoirs.aideStock')]].map(([k, l, a]) => (
+        <label key={k} className="flex items-start gap-2 text-sm mb-2">
+          <input type="radio" name="avoir-abime" className="mt-1" checked={mode === k} onChange={() => setMode(k)} />
+          <span>{l}<span className="block text-xs text-petrol-500">{a}</span></span>
+        </label>
+      ))}
+      <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>
   )

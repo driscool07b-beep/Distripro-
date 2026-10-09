@@ -48,18 +48,30 @@ export default function GrandLivre() {
 
   async function chargerGrandLivre(id) {
     setChargement(true)
-    const [{ data: clientData }, { data: ventes }] = await Promise.all([
+    let [{ data: clientData }, { data: ventes, error: erreurVentes }] = await Promise.all([
       supabase.from('clients').select('nom, telephone, adresse, ville, limite_credit, compte_numero').eq('id', id).single(),
       supabase
         .from('ventes')
-        .select('id, numero_vente, total, mode_paiement, montant_regle, statut, created_at')
+        .select('id, numero_vente, total, total_initial, mode_paiement, montant_regle, statut, created_at')
         .eq('client_id', id)
         .order('created_at'),
     ])
+    // Base pas encore à jour (script des avoirs partiels) : sans total_initial.
+    if (erreurVentes) {
+      ({ data: ventes } = await supabase.from('ventes').select('id, numero_vente, total, mode_paiement, montant_regle, statut, created_at').eq('client_id', id).order('created_at'))
+    }
 
     const venteIds = (ventes || []).map((v) => v.id)
     let paiements = []
+    let avoirs = []
     if (venteIds.length > 0) {
+      let { data: av, error: erreurAvoirs } = await supabase
+        .from('avoirs')
+        .select('id, numero, vente_id, montant, trop_percu, created_at')
+        .in('vente_id', venteIds)
+        .order('created_at')
+      if (erreurAvoirs) ({ data: av } = await supabase.from('avoirs').select('id, vente_id, montant, created_at').in('vente_id', venteIds).order('created_at'))
+      avoirs = av || []
       const { data } = await supabase
         .from('reglements')
         .select('id, numero, vente_id, montant, created_at, auteur:profils!created_by(nom)')
@@ -69,25 +81,36 @@ export default function GrandLivre() {
     }
     const numeroVente = Object.fromEntries((ventes || []).map((v) => [v.id, v.numero_vente]))
 
+    // Part déjà payée rendue par un avoir (passée au crédit du client) : elle
+    // a bien été encaissée au moment de la vente.
+    const tropPercuParVente = {}
+    avoirs.forEach((a) => { tropPercuParVente[a.vente_id] = (tropPercuParVente[a.vente_id] || 0) + Number(a.trop_percu || 0) })
     const lignes = []
     ;(ventes || []).forEach((v) => {
       lignes.push({
         date: v.created_at,
         numero: v.numero_vente || '',
         libelle: v.mode_paiement === 'credit' ? t('venteCredit') : t('venteComptant'),
-        debit: Number(v.total),
+        debit: Number(v.total_initial ?? v.total),
         credit: 0,
         venteId: v.id,
       })
       // Vente au comptant : réglée sur le moment.
-      if (v.mode_paiement === 'cash' && Number(v.montant_regle) > 0) {
-        lignes.push({ date: v.created_at, numero: v.numero_vente || '', libelle: t('reglementComptant'), debit: 0, credit: Number(v.montant_regle), venteId: v.id })
+      const payeComptant = Number(v.montant_regle) + (tropPercuParVente[v.id] || 0)
+      if (v.mode_paiement === 'cash' && payeComptant > 0) {
+        lignes.push({ date: v.created_at, numero: v.numero_vente || '', libelle: t('reglementComptant'), debit: 0, credit: payeComptant, venteId: v.id })
       }
-      // Vente annulée par avoir : elle reste visible (traçabilité) mais ne
-      // doit plus peser sur le solde du client.
-      if (v.statut === 'annulee') {
-        lignes.push({ date: v.created_at, numero: v.numero_vente || '', libelle: t('annulationAvoir'), debit: 0, credit: Number(v.total), venteId: v.id })
-      }
+    })
+    // Avoirs (annulations complètes et avoirs partiels) : au crédit du client.
+    avoirs.forEach((a) => {
+      lignes.push({
+        date: a.created_at,
+        numero: a.numero || numeroVente[a.vente_id] || '',
+        libelle: numeroVente[a.vente_id] ? `${t('annulationAvoir')} — ${numeroVente[a.vente_id]}` : t('annulationAvoir'),
+        debit: 0,
+        credit: Number(a.montant),
+        venteId: a.vente_id,
+      })
     })
     paiements.forEach((p) => {
       lignes.push({

@@ -9,8 +9,8 @@ export async function lireConfigFne() {
   return data || { actif: false, fne_par_defaut: false }
 }
 
-async function appeler(action, venteId) {
-  const { data, error } = await supabase.functions.invoke('certifier-fne', { body: { action, vente_id: venteId } })
+async function appeler(action, venteId, extra = {}) {
+  const { data, error } = await supabase.functions.invoke('certifier-fne', { body: { action, vente_id: venteId, ...extra } })
   if (error) {
     // Le message utile de la DGI est dans le corps de la réponse d'erreur.
     let message = error.message
@@ -21,7 +21,8 @@ async function appeler(action, venteId) {
 }
 
 export const certifierVenteFne = (venteId) => appeler('certifier', venteId)
-export const emettreAvoirFne = (venteId) => appeler('avoir', venteId)
+// avoirId : avoir partiel ou total créé par creer_avoir_vente (lignes et quantités rendues).
+export const emettreAvoirFne = (venteId, avoirId) => appeler('avoir', venteId, avoirId ? { avoir_id: avoirId } : {})
 
 // QR code de vérification (lien « token » renvoyé par la DGI).
 export async function qrCodeFne(token) {

@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, genererFactureAvoir, formatMontantPDF, symboleDevise } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
+import FenetreAvoir from '../components/FenetreAvoir'
 import { traduireErreur } from '../lib/erreurs'
 import { ajouterActionEnAttente } from '../lib/offline'
 import { formatXOF, formatDate } from '../lib/format'
@@ -30,10 +31,6 @@ export default function Ventes() {
 
   const [venteOuverte, setVenteOuverte] = useState(null)
   const [modeAnnulation, setModeAnnulation] = useState(false)
-  const [motifAnnulation, setMotifAnnulation] = useState('')
-  const [depotRetour, setDepotRetour] = useState('')
-  const [envoiAnnulation, setEnvoiAnnulation] = useState(false)
-  const [erreurAnnulation, setErreurAnnulation] = useState('')
   const [detailVente, setDetailVente] = useState(null)
   const [chargementDetail, setChargementDetail] = useState(false)
 
@@ -168,23 +165,32 @@ export default function Ventes() {
     setChargementDetail(true)
     setDetailVente(null)
 
-    const [{ data: vente }, { data: lignes }, { data: autresTaxes }] = await Promise.all([
+    const colonnesVente = 'id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, montant_ht, montant_tva, montant_autres_taxes, depot_id, client_id, commercial_id, fne_statut, fne_reference, fne_token, fne_certifiee_at, fne_erreur, fne_avoir_reference, clients(nom, telephone, adresse, ville, email), profils!created_by(nom), commercial:profils!commercial_id(nom)'
+    let [{ data: vente, error: erreurVente }, { data: lignes }, { data: autresTaxes }] = await Promise.all([
       supabase
         .from('ventes')
-        .select('id, numero_vente, numero_bl, total, created_at, mode_paiement, mode_reglement, statut, montant_regle, remise_montant, notes, montant_ht, montant_tva, montant_autres_taxes, depot_id, fne_statut, fne_reference, fne_token, fne_certifiee_at, fne_erreur, fne_avoir_reference, clients(nom, telephone, adresse, ville, email), profils!created_by(nom), commercial:profils!commercial_id(nom)')
+        .select(`${colonnesVente}, total_initial`)
         .eq('id', venteId)
         .single(),
       supabase
         .from('ventes_lignes')
-        .select('quantite, prix_unitaire, sous_total, taux_tva, montant_tva, produits(nom, reference, unite)')
+        .select('id, produit_id, source_stock, quantite, prix_unitaire, sous_total, taux_tva, montant_tva, produits(nom, reference, unite)')
         .eq('vente_id', venteId),
       supabase
         .from('ventes_taxes')
         .select('nom, taux, montant, base_calcul')
         .eq('vente_id', venteId),
     ])
+    // Base pas encore à jour (script des avoirs partiels non exécuté) : on
+    // recharge sans la nouvelle colonne pour que le détail reste lisible.
+    if (erreurVente) ({ data: vente } = await supabase.from('ventes').select(colonnesVente).eq('id', venteId).single())
+    const { data: avoirs } = await supabase
+      .from('avoirs')
+      .select('id, numero, type_avoir, montant, motif, created_at, reduction_du, trop_percu, trop_percu_traitement, fne_reference, fne_token, fne_statut, fne_erreur')
+      .eq('vente_id', venteId)
+      .order('created_at')
 
-    setDetailVente({ vente, lignes: lignes || [], autresTaxes: autresTaxes || [] })
+    setDetailVente({ vente, lignes: lignes || [], autresTaxes: autresTaxes || [], avoirs: avoirs || [] })
     setChargementDetail(false)
   }
 
@@ -192,62 +198,6 @@ export default function Ventes() {
     setVenteOuverte(null)
     setDetailVente(null)
     setModeAnnulation(false)
-    setMotifAnnulation('')
-    setErreurAnnulation('')
-  }
-
-  async function confirmerAnnulation() {
-    if (!motifAnnulation.trim()) {
-      setErreurAnnulation(t('detail.erreurMotifObligatoire'))
-      return
-    }
-    setEnvoiAnnulation(true)
-    setErreurAnnulation('')
-    const motif = motifAnnulation.trim()
-    const { error } = await supabase.rpc('creer_avoir', {
-      p_vente_id: venteOuverte,
-      p_motif: motif,
-      p_depot_id: depotRetour || null,
-    })
-    setEnvoiAnnulation(false)
-    if (error) {
-      setErreurAnnulation(`Erreur : ${traduireErreur(error.message)}`)
-      return
-    }
-    // Vente certifiée FNE : l'avoir est aussi certifié auprès de la DGI.
-    if (detailVente?.vente?.fne_statut === 'certifiee') {
-      const { error: erreurFne } = await emettreAvoirFne(venteOuverte)
-      if (erreurFne) alert(t('fne.echecAvoir', { message: erreurFne }))
-    }
-
-    // Génère la facture d'avoir à partir de ce qu'on a déjà sous la main
-    // (détail de la vente encore ouvert) plutôt que de tout recharger.
-    const { data: avoir } = await supabase
-      .from('avoirs')
-      .select('id, montant, created_at')
-      .eq('vente_id', venteOuverte)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    if (avoir && detailVente) {
-      const doc = genererFactureAvoir({
-        entreprise,
-        client: detailVente.vente?.clients,
-        vente: detailVente.vente,
-        lignes: detailVente.lignes,
-        motif,
-        montant: avoir.montant,
-        date: avoir.created_at,
-        reference: avoir.id.slice(0, 8),
-      })
-      doc.save(`avoir-${avoir.id.slice(0, 8)}.pdf`)
-    }
-
-    setModeAnnulation(false)
-    setMotifAnnulation('')
-    await ouvrirDetailVente(venteOuverte)
-    chargerVentes()
   }
 
   async function telechargerRecu() {
@@ -263,27 +213,31 @@ export default function Ventes() {
     doc.save(`${detailVente.vente.numero_bl || 'bon-livraison-' + detailVente.vente.id.slice(0, 8)}.pdf`)
   }
 
-  async function telechargerFactureAvoir() {
-    if (!detailVente) return
-    const { data: avoir } = await supabase
-      .from('avoirs')
-      .select('id, montant, motif, created_at')
-      .eq('vente_id', detailVente.vente.id)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
-    if (!avoir) return
+  // Facture d'avoir (PDF) : lignes de l'avoir s'il en a (avoirs partiels),
+  // sinon toutes les lignes de la vente (anciennes annulations complètes).
+  async function telechargerAvoir(avoir) {
+    if (!detailVente || !avoir) return
+    const { data: lignesAvoir } = await supabase.from('avoirs_lignes')
+      .select('quantite, prix_unitaire, prix_corrige, montant, etat, produits(nom, reference, unite)').eq('avoir_id', avoir.id)
     const doc = genererFactureAvoir({
       entreprise,
       client: detailVente.vente?.clients,
       vente: detailVente.vente,
-      lignes: detailVente.lignes,
+      lignes: lignesAvoir?.length ? lignesAvoir.map((l) => ({ ...l, sous_total: l.montant })) : detailVente.lignes,
       motif: avoir.motif,
       montant: avoir.montant,
       date: avoir.created_at,
-      reference: avoir.id.slice(0, 8),
+      reference: avoir.numero || avoir.id.slice(0, 8),
+      fneReference: avoir.fne_reference,
+      typeAvoir: avoir.type_avoir,
     })
-    doc.save(`avoir-${avoir.id.slice(0, 8)}.pdf`)
+    doc.save(`${avoir.numero || 'avoir-' + avoir.id.slice(0, 8)}.pdf`)
+  }
+
+  async function certifierAvoir(avoir) {
+    const { error } = await emettreAvoirFne(detailVente.vente.id, avoir.id)
+    if (error) alert(t('fne.echecAvoir', { message: error }))
+    await ouvrirDetailVente(detailVente.vente.id)
   }
 
   // Document du client : FNE si la vente est certifiée, sinon reçu interne.
@@ -1183,56 +1137,63 @@ export default function Ventes() {
                     )}
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-petrol-500">{t('detail.total')}</p>
+                    {detailVente.vente?.total_initial != null && (
+                      <>
+                        <p className="text-xs text-petrol-500">{t('avoir.totalFacture')} : <span className="font-mono">{formatXOF(detailVente.vente.total_initial)}</span></p>
+                        <p className="text-xs text-red-700">{t('avoir.totalAvoirs')} : <span className="font-mono">- {formatXOF(Number(detailVente.vente.total_initial) - Number(detailVente.vente.total))}</span></p>
+                      </>
+                    )}
+                    <p className="text-xs text-petrol-500">{detailVente.vente?.total_initial != null ? t('avoir.totalNet') : t('detail.total')}</p>
                     <p className="font-mono text-xl font-semibold">{formatXOF(detailVente.vente?.total)}</p>
                   </div>
                 </div>
 
-                {detailVente.vente?.statut === 'annulee' ? (
-                  <div className="no-print border border-red-200 bg-red-50 rounded-lg p-3 space-y-2">
-                    <p className="text-sm font-medium text-red-700">{t('detail.venteAnnulee')}</p>
-                    <button data-aide="ventes.detail.telechargerAvoir" onClick={telechargerFactureAvoir} className="text-xs text-red-700 underline">
-                      {t('detail.telechargerAvoir')}
-                    </button>
-                  </div>
-                ) : modeAnnulation ? (
-                  <div className="no-print border border-red-200 bg-red-50 rounded-lg p-3 space-y-2">
-                    <label className="text-sm font-medium text-red-700">{t('detail.motifAnnulationLabel')}</label>
-                    <textarea
-                      className="input-field text-sm"
-                      rows={2}
-                      value={motifAnnulation}
-                      onChange={(e) => setMotifAnnulation(e.target.value)}
-                      placeholder={t('detail.motifAnnulationPlaceholder')}
-                    />
-                    {!detailVente?.vente?.depot_id && depots.length > 1 && (
-                      <div>
-                        <label className="text-xs font-medium text-red-700">{t('detail.magasinRetour')}</label>
-                        <select className="input-field text-sm" value={depotRetour} onChange={(e) => setDepotRetour(e.target.value)}>
-                          <option value="">{t('detail.choisirMagasin')}</option>
-                          {depots.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
-                        </select>
+                {detailVente.vente?.statut === 'annulee' && (
+                  <p className="no-print text-sm font-medium text-red-700 border border-red-200 bg-red-50 rounded-lg p-3">{t('detail.venteAnnulee')}</p>
+                )}
+
+                {(detailVente.avoirs || []).length > 0 && (
+                  <div className="no-print border border-line rounded-lg p-3 mt-3 space-y-2">
+                    <p className="text-sm font-semibold">{t('avoir.listeTitre')}</p>
+                    {detailVente.avoirs.map((a) => (
+                      <div key={a.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs border-t border-line pt-2 first:border-0 first:pt-0">
+                        <span className="font-mono font-semibold">{a.numero || a.id.slice(0, 8)}</span>
+                        <span className="text-petrol-500">{formatDate(a.created_at)}</span>
+                        <span className="px-2 py-0.5 rounded-full bg-red-50 text-red-700">{t(`avoir.type_${a.type_avoir || 'annulation'}`)}</span>
+                        <span className="font-mono text-red-700">- {formatXOF(a.montant)}</span>
+                        {Number(a.trop_percu) > 0 && (
+                          <span className="text-petrol-600">{a.trop_percu_traitement === 'a_rembourser' ? t('avoir.aRembourser', { montant: formatXOF(a.trop_percu) }) : t('avoir.auCredit', { montant: formatXOF(a.trop_percu) })}</span>
+                        )}
+                        {a.fne_reference && <a href={a.fne_token || '#'} target="_blank" rel="noreferrer" className="text-emerald-700 underline">FNE {a.fne_reference}</a>}
+                        <span className="ml-auto flex gap-2">
+                          {detailVente.vente?.fne_statut === 'certifiee' && !a.fne_reference && a.type_avoir !== 'prix' && a.numero && (
+                            <button type="button" onClick={() => certifierAvoir(a)} className="text-emerald-700 underline">{t('avoir.certifierFne')}</button>
+                          )}
+                          <button type="button" onClick={() => telechargerAvoir(a)} className="underline">📄 PDF</button>
+                        </span>
+                        {a.motif && <p className="w-full text-petrol-500">{a.motif}</p>}
+                        {a.fne_statut === 'erreur' && a.fne_erreur && <p className="w-full text-red-700">{a.fne_erreur}</p>}
                       </div>
-                    )}
-                    {erreurAnnulation && <p className="text-xs text-red-600">{erreurAnnulation}</p>}
-                    <div className="flex gap-2">
-                      <button data-aide="ventes.detail.retour"
-                        type="button"
-                        className="btn-secondary text-xs flex-1"
-                        onClick={() => { setModeAnnulation(false); setMotifAnnulation(''); setErreurAnnulation('') }}
-                      >
-                        {t('detail.retour')}
-                      </button>
-                      <button
-                        onClick={confirmerAnnulation}
-                        disabled={envoiAnnulation}
-                        className="bg-red-600 text-white text-xs flex-1 rounded px-3 py-2 disabled:opacity-50"
-                      >
-                        {envoiAnnulation ? t('detail.envoi') : t('detail.confirmerAnnulation')}
-                      </button>
-                    </div>
+                    ))}
                   </div>
-                ) : null}
+                )}
+
+                {modeAnnulation && detailVente.vente?.statut !== 'annulee' && (
+                  <div className="mt-3">
+                    <FenetreAvoir
+                      vente={detailVente.vente}
+                      lignes={detailVente.lignes}
+                      depots={depots}
+                      onFermer={() => setModeAnnulation(false)}
+                      onTermine={async (res) => {
+                        setModeAnnulation(false)
+                        if (res?.alerte) alert(res.alerte)
+                        await ouvrirDetailVente(detailVente.vente.id)
+                        chargerVentes()
+                      }}
+                    />
+                  </div>
+                )}
 
                 {(configFne.actif || detailVente.vente?.fne_statut) && (
                   <div className={`no-print rounded-lg border p-3 mt-3 text-sm ${detailVente.vente?.fne_statut === 'certifiee' ? 'border-emerald-200 bg-emerald-50/60' : detailVente.vente?.fne_statut === 'erreur' ? 'border-red-200 bg-red-50/60' : 'border-line'}`}>
@@ -1276,9 +1237,9 @@ export default function Ventes() {
                   <button data-aide="ventes.detail.whatsapp" onClick={envoyerWhatsAppDetail} disabled={envoiDocument} className="btn-3d text-xs flex-1 px-3 py-2" style={{ background: 'linear-gradient(180deg,#4ade80,#16a34a 60%,#15803d)' }}>
                     💬 WhatsApp
                   </button>
-                  {['admin', 'manager'].includes(profil?.role) && detailVente.vente?.statut !== 'annulee' && !modeAnnulation && (
+                  {['admin', 'manager', 'comptable'].includes(profil?.role) && detailVente.vente?.statut !== 'annulee' && !modeAnnulation && (
                     <button data-aide="ventes.detail.annulerVenteAvoir" onClick={() => setModeAnnulation(true)} className="text-xs text-red-600 underline w-full text-center pt-1">
-                      {t('detail.annulerVenteAvoir')}
+                      {t('avoir.ouvrir')}
                     </button>
                   )}
                 </div>

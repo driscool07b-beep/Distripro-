@@ -143,8 +143,8 @@
           "r": "Oui — en indiquant que la vente est réalisée par le commercial lui-même (plutôt que 'vente de bureau'), le stock est déduit de ce qu'il porte sur lui, sans passer par un dépôt. C'est aussi ce mode qui fonctionne hors-ligne."
         },
         {
-          "q": "Comment annuler une vente ?",
-          "r": "Ouvre le détail de la vente → 'Annuler cette vente'. Un motif est obligatoire. Ça génère un avoir (remboursement comptable) et remet le stock au dépôt d'origine."
+          "q": "Comment faire un avoir (retour partiel, correction de prix, annulation) ?",
+          "r": "Ouvrez le détail de la vente → « Faire un avoir ». Réservé à l'administrateur, au manager et au comptable. Retour de marchandise : indiquez ligne par ligne la quantité rendue et son état (bon ou abîmé) ; « Tout rendre » annule toute la vente. Choisissez où va la marchandise en bon état : le magasin d'origine (par défaut), un autre magasin, le stock du commercial qui la récupère, ou « restée chez le client ». La marchandise abîmée suit le réglage Paramètres → Avoirs (perte ou retour en lot endommagé). Correction de prix : saisissez le nouveau prix ; aucun stock ne bouge (impossible sur une vente certifiée FNE : faites un retour « restée chez le client » puis une nouvelle vente). L'avoir réduit d'abord ce que le client doit ; la part déjà payée passe à son crédit. Plusieurs avoirs successifs sont possibles ; chacun a son numéro (AV-…) et sa facture d'avoir PDF, et il est certifié par la DGI si la vente l'était."
         },
         {
           "q": "Au-delà de quel montant de remise faut-il une autorisation ?",

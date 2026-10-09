@@ -298,5 +298,13 @@
     "confirmerRetrait": "Remove the logo from all your documents?",
     "envoi": "Uploading the logo…",
     "formatInvalide": "Image not recognised: choose a PNG, JPEG or WebP file."
+  },
+  "avoirs": {
+    "titre": "Credit notes: damaged returned goods",
+    "aide": "When a customer returns damaged or expired goods with a credit note, what should happen to them?",
+    "perte": "Record them as a loss",
+    "aidePerte": "They don't go back into stock; the loss stays traced on the credit note.",
+    "stock": "Put them back in stock as a \"damaged\" batch",
+    "aideStock": "They go back to a warehouse in a batch flagged as damaged (sold last, to be checked)."
   }
 }

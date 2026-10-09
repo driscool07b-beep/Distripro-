@@ -29,7 +29,7 @@
   "totalDebit": "借方合计",
   "totalCredit": "贷方合计",
   "plafond": "信用额度",
-  "annulationAvoir": "作废（贷项通知）",
+  "annulationAvoir": "贷项通知单",
   "paiementRecuSur": "已收付款 — {{numero}}",
   "ouvrirPiece": "双击（或点击编号）打开单据：发票或收款收据"
 }
