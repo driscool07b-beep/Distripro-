@@ -34,6 +34,41 @@ function Message({ erreur, ok }) {
   return null
 }
 
+// Crédits IA du fournisseur (Anthropic) : c'est ce compte qui paie réellement
+// les appels d'IA de tous les clients. Liens directs vers la Claude Console.
+const CONSOLE_ANTHROPIC = {
+  facturation: 'https://console.anthropic.com/settings/billing',
+  limites: 'https://console.anthropic.com/settings/limits',
+  consommation: 'https://console.anthropic.com/usage',
+}
+
+function CreditsFournisseurIA({ coutUsdMois }) {
+  // Recommandation de recharge automatique à partir de la consommation du mois :
+  // seuil ≈ 7 jours de consommation, recharge ≈ 14 jours (au moins 10 $ / 20 $).
+  const jour = new Date().getDate()
+  const parJour = coutUsdMois != null ? Number(coutUsdMois) / Math.max(1, jour) : null
+  const seuil = parJour != null ? Math.max(10, Math.ceil(parJour * 7)) : null
+  const recharge = parJour != null ? Math.max(20, Math.ceil(parJour * 14)) : null
+  return (
+    <div className="card p-4 space-y-3 border-amber-300 bg-amber-50/40">
+      <div className="flex flex-wrap items-center gap-2">
+        <h3 className="text-sm font-semibold">Crédits IA du fournisseur (Anthropic)</h3>
+        <span className="text-[11px] text-petrol-500">ce compte paie les appels d'IA de tous vos clients</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <a href={CONSOLE_ANTHROPIC.facturation} target="_blank" rel="noreferrer" className="btn-primary text-sm">Acheter des crédits / recharge automatique ↗</a>
+        <a href={CONSOLE_ANTHROPIC.limites} target="_blank" rel="noreferrer" className="btn-secondary text-sm">Plafond de dépenses ↗</a>
+        <a href={CONSOLE_ANTHROPIC.consommation} target="_blank" rel="noreferrer" className="btn-secondary text-sm">Consommation détaillée ↗</a>
+      </div>
+      <p className="text-xs text-petrol-600">
+        Pour ne pas immobiliser d'argent : gardez un petit solde et activez la <strong>recharge automatique</strong> (Billing → Auto reload).
+        {seuil != null && <> Avec la consommation actuelle (≈ {usd(parJour)} par jour), réglage conseillé : recharger quand le solde passe sous <strong>{seuil} $</strong>, jusqu'à <strong>{recharge} $</strong>.</>}
+        {' '}Si le solde tombe à zéro, l'IA s'arrête pour tous les clients.
+      </p>
+    </div>
+  )
+}
+
 // ------------------------------------------------------------------ Tableau de bord
 function TableauDeBord() {
   const [d, setD] = useState(null)
@@ -64,6 +99,7 @@ function TableauDeBord() {
           <Carte titre="Échéances dépassées" valeur={nb(d.echeances_depassees)} alerte={d.echeances_depassees > 0} />
         </div>
       </div>
+      <CreditsFournisseurIA coutUsdMois={d.ia_cout_usd_mois} />
       <div>
         <h3 className="text-sm font-semibold mb-2">Intelligence artificielle (ce mois)</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -435,6 +471,7 @@ function UnitesIA() {
   const coef = Number(params.find((p) => p.cle === 'coefficient_marge_ia')?.v || 3)
   return (
     <div className="space-y-3">
+      <CreditsFournisseurIA />
       <div className="card p-3 text-sm space-y-1">
         <p><strong>Principe :</strong> 1 unité IA = 1 F CFA de valeur pour le client. Chaque appel d'IA débite le porte-monnaie de l'entreprise : coût réel (USD) × taux de change × coefficient de marge.</p>
         <p className="text-petrol-600">Exemple : une question à l'assistant coûtant 0,01 $ débite {Math.ceil(0.01 * taux * coef)} unités ({Math.ceil(0.01 * taux * coef)} F CFA), pour un coût réel d'environ {Math.round(0.01 * taux)} F CFA.</p>
