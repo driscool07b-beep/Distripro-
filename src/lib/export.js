@@ -103,7 +103,9 @@ export function exporterExcel(nomFichier, colonnes, lignes) {
  * Exporte un tableau d'objets en PDF avec en-tête, tableau et total optionnel.
  */
 export function exporterPDF(nomFichier, titre, sousTitre, colonnes, lignes, totalLibelle, totalValeur, entreprise) {
-  const doc = new jsPDF()
+  // Tableaux larges (plus de 8 colonnes) : page à l'italienne.
+  const large = colonnes.length > 8
+  const doc = new jsPDF(large ? { orientation: 'landscape' } : undefined)
   let y = 18
 
   if (entreprise) {
@@ -128,7 +130,7 @@ export function exporterPDF(nomFichier, titre, sousTitre, colonnes, lignes, tota
       const valeur = ligne[c.cle]
       return typeof valeur === 'number' ? formatNombre(valeur) : String(valeur ?? '')
     })),
-    styles: { fontSize: 9 },
+    styles: { fontSize: large ? 8.5 : 9 },
     headStyles: { fillColor: [10, 31, 38] },
     columnStyles: colonnes.reduce((acc, c, i) => {
       if (c.alignDroite) acc[i] = { halign: 'right' }

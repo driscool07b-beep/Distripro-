@@ -133,7 +133,13 @@
     "ville": "城市",
     "commercial": "销售代表",
     "articles": "商品",
-    "total": "总计"
+    "total": "总计",
+    "facture": "开票",
+    "avoirs": "贷项通知单",
+    "net": "净额",
+    "statut": "状态",
+    "statutAnnulee": "已取消（贷项通知单）",
+    "statutAvoir": "贷项通知单"
   },
   "bureau": "办公室销售",
   "saisiPar": "录入人 {{nom}}",

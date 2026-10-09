@@ -102,7 +102,10 @@ export default function Ventes() {
     let selectStr = 'id, numero_vente, total, created_at, statut, clients!inner(nom, ville), profils!created_by(nom), commercial:profils!commercial_id(nom)'
     selectStr += filtres.produitId ? ', ventes_lignes!inner(id, produit_id)' : ', ventes_lignes(id)'
 
-    let requete = supabase.from('ventes').select(selectStr).order('created_at', { ascending: false }).limit(200)
+    // Filtres appliqués à la requête (réutilisée sans total_initial si la
+    // base n'a pas encore le script des avoirs partiels).
+    const construire = (colonnes) => {
+    let requete = supabase.from('ventes').select(colonnes).order('created_at', { ascending: false }).limit(200)
 
     if (filtres.periode === 'jour') {
       const debut = new Date()
@@ -133,9 +136,33 @@ export default function Ventes() {
       requete = requete.eq('commercial_id', profil.id)
     }
 
-    const { data, error } = await requete
-    if (!error) setVentes(data || [])
-    else console.error('Erreur chargement ventes:', error)
+    return requete
+    }
+
+    let { data, error } = await construire(`${selectStr}, total_initial`)
+    if (error) ({ data, error } = await construire(selectStr))
+    if (error) { console.error('Erreur chargement ventes:', error); setChargement(false); return }
+    // Avoirs de ces ventes (annulations et avoirs partiels), pour la liste
+    // et les exports : facturé, avoirs, net.
+    const ids = (data || []).map((v) => v.id)
+    const parVente = {}
+    if (ids.length) {
+      let { data: av, error: erreurAvoirs } = await supabase.from('avoirs').select('vente_id, numero, montant').in('vente_id', ids)
+      if (erreurAvoirs) ({ data: av } = await supabase.from('avoirs').select('vente_id, montant').in('vente_id', ids))
+      ;(av || []).forEach((a) => {
+        const e = (parVente[a.vente_id] ||= { montant: 0, numeros: [] })
+        e.montant += Number(a.montant || 0)
+        if (a.numero) e.numeros.push(a.numero)
+      })
+    }
+    setVentes((data || []).map((v) => {
+      const avoirs = parVente[v.id]?.montant || 0
+      // Ventes annulées avant les avoirs partiels : leur total n'a pas été
+      // ramené à zéro, l'avoir couvre tout. Sinon le total est déjà net.
+      const facture = Number(v.total_initial ?? v.total)
+      const net = v.total_initial != null ? Number(v.total) : Math.max(Number(v.total) - avoirs, 0)
+      return { ...v, montant_facture: facture, montant_avoirs: avoirs, montant_net: net, numeros_avoirs: parVente[v.id]?.numeros || [] }
+    }))
     setChargement(false)
   }
 
@@ -452,7 +479,7 @@ export default function Ventes() {
   }, [cleTotaux])
 
   const creditEffectif = Math.min(Math.max(Number(creditUtilise || 0), 0), creditDisponible, total)
-  const totalFiltre = ventes.reduce((s, v) => (v.statut === 'annulee' ? s : s + Number(v.total || 0)), 0)
+  const totalFiltre = ventes.reduce((s, v) => s + Number(v.montant_net ?? (v.statut === 'annulee' ? 0 : v.total) ?? 0), 0)
 
   const COLONNES_EXPORT = [
     { cle: 'numero', titre: t('export.numeroVente') },
@@ -461,7 +488,10 @@ export default function Ventes() {
     { cle: 'ville', titre: t('export.ville') },
     { cle: 'commercial', titre: t('export.commercial') },
     { cle: 'articles', titre: t('export.articles'), alignDroite: true },
-    { cle: 'total', titre: `${t('export.total')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'facture', titre: `${t('export.facture')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'avoirs', titre: `${t('export.avoirs')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'total', titre: `${t('export.net')} (${symboleDevise()})`, alignDroite: true },
+    { cle: 'statut', titre: t('export.statut') },
   ]
   function donneesExport() {
     return ventes.map((v) => ({
@@ -471,7 +501,12 @@ export default function Ventes() {
       ville: v.clients?.ville || '—',
       commercial: v.commercial?.nom || t('bureau'),
       articles: v.ventes_lignes?.length || 0,
-      total: Number(v.total || 0),
+      facture: Number(v.montant_facture ?? v.total ?? 0),
+      avoirs: v.montant_avoirs ? -Number(v.montant_avoirs) : 0,
+      total: Number(v.montant_net ?? v.total ?? 0),
+      statut: v.statut === 'annulee'
+        ? t('export.statutAnnulee')
+        : v.montant_avoirs > 0 ? `${t('export.statutAvoir')}${v.numeros_avoirs?.length ? ' ' + v.numeros_avoirs.join(', ') : ''}` : '',
     }))
   }
   function exportExcel() {
@@ -757,7 +792,12 @@ export default function Ventes() {
                   <td className="px-4 py-3 text-petrol-700">{v.clients?.ville || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700">{v.commercial?.nom || <span className="text-petrol-400">{t('bureau')}</span>}</td>
                   <td className="px-4 py-3 text-petrol-700">{t('table.nbArticles', { n: v.ventes_lignes?.length || 0 })}</td>
-                  <td className="px-4 py-3 font-mono text-right">{formatXOF(v.total)}</td>
+                  <td className="px-4 py-3 font-mono text-right">
+                    {formatXOF(v.montant_net ?? v.total)}
+                    {v.montant_avoirs > 0 && v.statut !== 'annulee' && (
+                      <span className="block text-[11px] text-red-600">{t('export.statutAvoir')} - {formatXOF(v.montant_avoirs)}</span>
+                    )}
+                  </td>
                 </tr>
               ))
             )}

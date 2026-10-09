@@ -133,7 +133,13 @@
     "ville": "المدينة",
     "commercial": "المندوب",
     "articles": "الأصناف",
-    "total": "المجموع"
+    "total": "المجموع",
+    "facture": "المفوتر",
+    "avoirs": "الإشعارات الدائنة",
+    "net": "الصافي",
+    "statut": "الحالة",
+    "statutAnnulee": "ملغاة (إشعار دائن)",
+    "statutAvoir": "إشعار دائن"
   },
   "bureau": "بيع من المكتب",
   "saisiPar": "أدخلها {{nom}}",

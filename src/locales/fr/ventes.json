@@ -133,7 +133,13 @@
     "ville": "Ville",
     "commercial": "Commercial",
     "articles": "Articles",
-    "total": "Total"
+    "total": "Total",
+    "facture": "Facturé",
+    "avoirs": "Avoirs",
+    "net": "Net",
+    "statut": "Statut",
+    "statutAnnulee": "Annulée (avoir)",
+    "statutAvoir": "Avoir"
   },
   "bureau": "Vente de bureau",
   "saisiPar": "Saisie par {{nom}}",

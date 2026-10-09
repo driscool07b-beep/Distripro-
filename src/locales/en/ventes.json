@@ -133,7 +133,13 @@
     "ville": "City",
     "commercial": "Sales rep",
     "articles": "Items",
-    "total": "Total"
+    "total": "Total",
+    "facture": "Invoiced",
+    "avoirs": "Credit notes",
+    "net": "Net",
+    "statut": "Status",
+    "statutAnnulee": "Cancelled (credit note)",
+    "statutAvoir": "Credit note"
   },
   "bureau": "Office sale",
   "saisiPar": "Entered by {{nom}}",
