@@ -65,7 +65,11 @@
     "couper": "静音",
     "microRefuse": "麦克风被拒绝：请在浏览器中允许本网站使用麦克风。",
     "silence": "没有听到声音。请点击麦克风并清楚说话。",
-    "erreur": "口述失败（网络？）。您可以输入文字。"
+    "erreur": "口述失败（网络？）。您可以输入文字。",
+    "ecouter": "朗读",
+    "arreterLecture": "停止",
+    "copier": "复制",
+    "copie": "已复制"
   },
   "fiche": {
     "venteAValider": "待确认的销售",

@@ -133,18 +133,39 @@ function voixPour(code) {
     || null
 }
 
-// Lecture à voix haute (sans la mise en forme : astérisques, puces…).
-export function lireTexte(texte, langue = 'fr') {
+// Liste des voix pas encore chargée (fréquent juste après l'ouverture sur
+// Android) : on l'attend un court instant avant de parler.
+function attendreVoix() {
+  if (voixDisponibles.length || !lectureDisponible) return Promise.resolve()
+  return new Promise((resolve) => {
+    const fin = () => { voixDisponibles = window.speechSynthesis.getVoices() || []; resolve() }
+    window.speechSynthesis.addEventListener?.('voiceschanged', fin, { once: true })
+    setTimeout(fin, 1500)
+  })
+}
+
+// Lecture à voix haute (sans la mise en forme : astérisques, puces, émojis…).
+// onFin : appelé quand la lecture se termine ou est interrompue.
+export async function lireTexte(texte, langue = 'fr', { onFin } = {}) {
   if (!lectureDisponible || !texte) return
   window.speechSynthesis.cancel()
-  const propre = String(texte).replace(/\*\*/g, '').replace(/^#+\s*/gm, '').replace(/^[-•]\s*/gm, '').replace(/F CFA/g, 'francs CFA')
+  await attendreVoix()
+  const propre = String(texte)
+    .replace(/\*\*/g, '').replace(/^#+\s*/gm, '').replace(/^[-•]\s*/gm, '')
+    .replace(/F CFA/g, 'francs CFA')
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')
   const code = LANGUES[langue] || 'fr-FR'
-  const u = new SpeechSynthesisUtterance(propre.slice(0, 1200))
-  u.lang = code
+  // Lecture par phrases : Chrome coupe parfois les textes longs en cours de route.
+  const morceaux = propre.match(/[^.!?\n]+[.!?]*\s*/g)?.map((m) => m.trim()).filter(Boolean) || [propre]
   const voix = voixPour(code)
-  if (voix) u.voice = voix
-  u.rate = 1.05
-  window.speechSynthesis.speak(u)
+  morceaux.forEach((m, i) => {
+    const u = new SpeechSynthesisUtterance(m)
+    u.lang = code
+    if (voix) u.voice = voix
+    u.rate = 1.05
+    if (i === morceaux.length - 1) { u.onend = () => onFin?.(); u.onerror = () => onFin?.() }
+    window.speechSynthesis.speak(u)
+  })
 }
 
 export function arreterLecture() { if (lectureDisponible) window.speechSynthesis.cancel() }

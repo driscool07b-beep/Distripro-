@@ -26,6 +26,17 @@ export default function ConversationAssistant({ compact = false, onNavigation })
   const [erreur, setErreur] = useState('')
   const [voixActive, setVoixActive] = useState(() => { try { return localStorage.getItem(CLE_VOIX) === '1' } catch { return false } })
   const finRef = useRef(null)
+  const [lectureEnCours, setLectureEnCours] = useState(null) // index du message lu à voix haute
+  const [copie, setCopie] = useState(null)
+
+  function ecouter(i, texte) {
+    if (lectureEnCours === i) { arreterLecture(); setLectureEnCours(null); return }
+    setLectureEnCours(i)
+    lireTexte(texte, langue, { onFin: () => setLectureEnCours((x) => (x === i ? null : x)) })
+  }
+  async function copier(i, texte) {
+    try { await navigator.clipboard.writeText(texte); setCopie(i); setTimeout(() => setCopie((x) => (x === i ? null : x)), 1500) } catch { /* ignore */ }
+  }
   const [fneActive, setFneActive] = useState(false)
   useEffect(() => { lireConfigFne().then((c) => setFneActive(!!c.actif)) }, [])
   const langue = (i18n.language || 'fr').slice(0, 2)
@@ -79,7 +90,7 @@ export default function ConversationAssistant({ compact = false, onNavigation })
     }
     const reponse = data?.reponse || ''
     setMessages([...suite, { role: 'assistant', content: reponse, action: data?.action || null }])
-    if (voixActive) lireTexte(reponse, langue)
+    if (voixActive && reponse) ecouter(suite.length, reponse)
   }
 
   // Une fiche validée ou annulée laisse une trace dans la conversation.
@@ -118,6 +129,20 @@ export default function ConversationAssistant({ compact = false, onNavigation })
                       {b.segments.map((sg, k) => (sg.gras ? <strong key={k}>{sg.texte}</strong> : <span key={k}>{sg.texte}</span>))}
                     </p>
                   ))}
+              </div>
+            )}
+            {m.content && m.role !== 'user' && (
+              <div className="flex gap-1 -mt-1 ps-1">
+                {lectureDisponible && (
+                  <button type="button" onClick={() => ecouter(i, m.content)}
+                    className={`text-[11px] rounded-full px-2 py-0.5 border ${lectureEnCours === i ? 'bg-amber-100 border-amber-300 text-amber-800' : 'border-line text-petrol-500 hover:bg-white'}`}>
+                    {lectureEnCours === i ? `⏹ ${t('voix.arreterLecture')}` : `🔈 ${t('voix.ecouter')}`}
+                  </button>
+                )}
+                <button type="button" onClick={() => copier(i, m.content)}
+                  className="text-[11px] rounded-full px-2 py-0.5 border border-line text-petrol-500 hover:bg-white">
+                  {copie === i ? `✓ ${t('voix.copie')}` : `📋 ${t('voix.copier')}`}
+                </button>
               </div>
             )}
             {m.action && ['vente', 'commande'].includes(m.action.type) && (

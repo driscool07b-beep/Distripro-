@@ -65,7 +65,11 @@
     "couper": "Couper la voix",
     "microRefuse": "Micro refusé : autorisez le micro pour ce site dans le navigateur.",
     "silence": "Je n'ai rien entendu. Appuyez sur le micro et parlez distinctement.",
-    "erreur": "La dictée a échoué (connexion ?). Vous pouvez taper votre demande."
+    "erreur": "La dictée a échoué (connexion ?). Vous pouvez taper votre demande.",
+    "ecouter": "Écouter",
+    "arreterLecture": "Arrêter",
+    "copier": "Copier",
+    "copie": "Copié"
   },
   "fiche": {
     "venteAValider": "Vente à valider",

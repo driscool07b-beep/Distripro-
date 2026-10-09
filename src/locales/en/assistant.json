@@ -65,7 +65,11 @@
     "couper": "Mute",
     "microRefuse": "Microphone blocked: allow it for this site in your browser.",
     "silence": "I didn't hear anything. Tap the mic and speak clearly.",
-    "erreur": "Dictation failed (connection?). You can type your request."
+    "erreur": "Dictation failed (connection?). You can type your request.",
+    "ecouter": "Listen",
+    "arreterLecture": "Stop",
+    "copier": "Copy",
+    "copie": "Copied"
   },
   "fiche": {
     "venteAValider": "Sale to confirm",
