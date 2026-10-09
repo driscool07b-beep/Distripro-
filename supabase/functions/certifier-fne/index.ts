@@ -57,6 +57,7 @@ function messageDgi(json: any): string {
   }
   parcourir(json.errors, [])
   if (details.length) return details.join(' ; ')
+  if (json.error === 'invoice_signing_error') return 'la DGI n\'a pas pu signer la facture. Vérifiez le solde de stickers dans votre espace FNE (menu « Gestion des stickers »), rechargez-le si besoin, puis réessayez.'
   if (Array.isArray(json.message)) return json.message.join(' ; ')
   return json.message || 'erreur'
 }
