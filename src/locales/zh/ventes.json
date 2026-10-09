@@ -145,7 +145,7 @@
     "typeVente": "销售",
     "typeAvoir": "贷项通知单",
     "reference": "参考",
-    "refVente": "销售单号",
+    "refVente": "相关发票",
     "montant": "金额"
   },
   "bureau": "办公室销售",

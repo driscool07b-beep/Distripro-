@@ -145,7 +145,7 @@
     "typeVente": "Sale",
     "typeAvoir": "Credit note",
     "reference": "Reference",
-    "refVente": "Sale ref.",
+    "refVente": "Invoice ref.",
     "montant": "Amount"
   },
   "bureau": "Office sale",

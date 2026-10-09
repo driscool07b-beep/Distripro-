@@ -145,7 +145,7 @@
     "typeVente": "Vente",
     "typeAvoir": "Avoir",
     "reference": "Référence",
-    "refVente": "Réf. vente",
+    "refVente": "Facture concernée",
     "montant": "Montant"
   },
   "bureau": "Vente de bureau",

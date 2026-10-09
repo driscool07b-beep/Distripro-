@@ -165,7 +165,12 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
   doc.rect(14, y0, 182, 9, 'FD')
   doc.setFontSize(9)
   doc.setTextColor(...couleurTexte)
-  doc.text(`REÇU DE VENTE${vente.numero_vente ? ' — ' + vente.numero_vente : ''}`, 105, y0 + 6, { align: 'center' })
+  // Vente certifiée FNE : un seul numéro, celui de la DGI.
+  doc.text(
+    vente.fne_statut === 'certifiee' && vente.fne_reference
+      ? `FACTURE N° ${vente.fne_reference}`
+      : `REÇU DE VENTE${vente.numero_vente ? ' — ' + vente.numero_vente : ''}`,
+    105, y0 + 6, { align: 'center' })
 
   doc.setTextColor(0)
   doc.setFontSize(10)
@@ -272,12 +277,12 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
     doc.text('Facture Normalisée Électronique (FNE)', 14, yFne + 6)
     doc.setFont(undefined, 'normal')
     doc.setFontSize(9)
-    doc.text(`Référence DGI : ${vente.fne_reference}`, 14, yFne + 13)
+    doc.text(`N° de facture (DGI) : ${vente.fne_reference}`, 14, yFne + 13)
     if (vente.fne_certifiee_at) doc.text(`Certifiée le : ${formatDateHeure(vente.fne_certifiee_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 14, yFne + 19)
     doc.text(doc.splitTextToSize('Authenticité vérifiable en scannant le QR code (plateforme FNE de la DGI).', 125), 14, yFne + 25)
     if (vente.fne_avoir_reference) {
       doc.setTextColor(180, 60, 20)
-      doc.text(`Annulée par avoir FNE : ${vente.fne_avoir_reference}`, 14, yFne + 35)
+      doc.text(`Avoir FNE émis : ${vente.fne_avoir_reference}`, 14, yFne + 35)
       doc.setTextColor(0)
     }
   } else {
@@ -306,7 +311,8 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
   doc.setFontSize(9)
   doc.setTextColor(150, 20, 20)
   const libelleType = typeAvoir === 'prix' ? ' (correction de prix)' : typeAvoir === 'retour' ? ' (retour de marchandise)' : ''
-  doc.text(`AVOIR${reference ? ' — ' + reference : ''}${libelleType}`, 105, y0 + 6, { align: 'center' })
+  // Avoir certifié FNE : un seul numéro, celui de la DGI.
+  doc.text(fneReference ? `AVOIR N° ${fneReference}${libelleType}` : `AVOIR${reference ? ' — ' + reference : ''}${libelleType}`, 105, y0 + 6, { align: 'center' })
 
   doc.setTextColor(0)
   doc.setFontSize(10)
@@ -314,8 +320,8 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
   doc.text(`Client : ${client?.nom || '—'}`, 14, yInfo)
   if (client?.telephone) doc.text(`Téléphone : ${client.telephone}`, 14, yInfo + 6)
   doc.text(`Date : ${formatDateHeure(date, { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
-  if (vente?.numero_vente) doc.text(`${typeAvoir === 'retour' || typeAvoir === 'prix' ? 'Réf. vente' : 'Réf. vente annulée'} : ${vente.numero_vente}`, 120, yInfo + 6)
-  if (fneReference) doc.text(`Avoir FNE (DGI) : ${fneReference}`, 120, yInfo + 12)
+  const refVente = vente?.fne_statut === 'certifiee' && vente?.fne_reference ? vente.fne_reference : vente?.numero_vente
+  if (refVente) doc.text(`${typeAvoir === 'retour' || typeAvoir === 'prix' ? 'Facture concernée' : 'Facture annulée'} : ${refVente}`, 120, yInfo + 6)
 
   let y = yInfo + 18
   if (motif) {
@@ -446,7 +452,8 @@ export function genererBonLivraison({ entreprise, vente, lignes }) {
   if (vente.clients?.adresse) doc.text(`Adresse de livraison : ${vente.clients.adresse}`, 14, yInfo + 12)
   doc.text(`Date : ${formatDateHeure(vente.created_at, { dateStyle: 'medium', timeStyle: 'short' })}`, 120, yInfo)
   if (vente.commercial?.nom || vente.profils?.nom) doc.text(`Commercial : ${vente.commercial?.nom || 'Vente de bureau'}`, 120, yInfo + 6)
-  if (vente.numero_vente) doc.text(`Réf. vente : ${vente.numero_vente}`, 120, yInfo + 12)
+  const refFacture = vente.fne_statut === 'certifiee' && vente.fne_reference ? vente.fne_reference : vente.numero_vente
+  if (refFacture) doc.text(`Réf. facture : ${refFacture}`, 120, yInfo + 12)
 
   autoTable(doc, {
     startY: yInfo + 20,

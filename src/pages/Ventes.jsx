@@ -100,7 +100,7 @@ export default function Ventes() {
   async function chargerVentes() {
     setChargement(true)
 
-    let selectStr = 'id, numero_vente, total, created_at, statut, clients!inner(nom, ville), profils!created_by(nom), commercial:profils!commercial_id(nom)'
+    let selectStr = 'id, numero_vente, fne_statut, fne_reference, total, created_at, statut, clients!inner(nom, ville), profils!created_by(nom), commercial:profils!commercial_id(nom)'
     selectStr += filtres.produitId ? ', ventes_lignes!inner(id, produit_id)' : ', ventes_lignes(id)'
 
     // Filtres appliqués à la requête (réutilisée sans total_initial si la
@@ -149,7 +149,7 @@ export default function Ventes() {
     const ids = (data || []).map((v) => v.id)
     let avoirs = []
     if (ids.length) {
-      let { data: av, error: erreurAvoirs } = await supabase.from('avoirs').select('id, vente_id, numero, montant, created_at, avoirs_lignes(id)').in('vente_id', ids)
+      let { data: av, error: erreurAvoirs } = await supabase.from('avoirs').select('id, vente_id, numero, montant, created_at, fne_reference, avoirs_lignes(id)').in('vente_id', ids)
       if (erreurAvoirs) ({ data: av } = await supabase.from('avoirs').select('id, vente_id, montant, created_at').in('vente_id', ids))
       avoirs = av || []
     }
@@ -223,7 +223,7 @@ export default function Ventes() {
     if (!detailVente) return
     const qrFne = await qrCodeFne(detailVente.vente.fne_token)
     const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes, autresTaxes: detailVente.autresTaxes, qrFne })
-    doc.save(`recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`)
+    doc.save(detailVente.vente.fne_statut === 'certifiee' && detailVente.vente.fne_reference ? `facture-${detailVente.vente.fne_reference}.pdf` : `recu-vente-${detailVente.vente.numero_vente || detailVente.vente.id.slice(0, 8)}.pdf`)
   }
 
   function telechargerBonLivraison() {
@@ -266,7 +266,7 @@ export default function Ventes() {
     const certifiee = vente.fne_statut === 'certifiee'
     return {
       doc,
-      nomFichier: `${certifiee ? 'facture-fne' : 'recu'}-${vente.numero_vente || vente.id.slice(0, 8)}.pdf`,
+      nomFichier: certifiee && vente.fne_reference ? `facture-${vente.fne_reference}.pdf` : `recu-${vente.numero_vente || vente.id.slice(0, 8)}.pdf`,
       typeDocument: certifiee ? 'facture_fne' : 'recu',
     }
   }
@@ -318,7 +318,7 @@ export default function Ventes() {
       }
     } else {
       alert(t('detail.partagePasDisponible'))
-      doc.save(`recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`)
+      doc.save(detailVente.vente.fne_statut === 'certifiee' && detailVente.vente.fne_reference ? `facture-${detailVente.vente.fne_reference}.pdf` : `recu-vente-${detailVente.vente.numero_vente || detailVente.vente.id.slice(0, 8)}.pdf`)
     }
   }
 
@@ -474,10 +474,12 @@ export default function Ventes() {
   // Liste et exports : une ligne par vente (montant facturé) et une ligne
   // par avoir (montant négatif, référence de la vente) ; le total est le net.
   const ventesParId = Object.fromEntries(ventes.map((v) => [v.id, v]))
+  // Vente certifiée FNE : son numéro est celui de la DGI.
+  const numeroFacture = (v) => (v.fne_statut === 'certifiee' && v.fne_reference ? v.fne_reference : v.numero_vente)
   const lignesListe = [
-    ...ventes.map((v) => ({ type: 'vente', cle: v.id, venteId: v.id, numero: v.numero_vente, date: v.created_at, vente: v,
+    ...ventes.map((v) => ({ type: 'vente', cle: v.id, venteId: v.id, numero: numeroFacture(v), interne: v.fne_reference ? v.numero_vente : null, date: v.created_at, vente: v,
       articles: v.ventes_lignes?.length || 0, montant: Number(v.total_initial ?? v.total ?? 0) })),
-    ...avoirsListe.filter((a) => ventesParId[a.vente_id]).map((a) => ({ type: 'avoir', cle: a.id, venteId: a.vente_id, numero: a.numero || `AV-${a.id.slice(0, 8)}`,
+    ...avoirsListe.filter((a) => ventesParId[a.vente_id]).map((a) => ({ type: 'avoir', cle: a.id, venteId: a.vente_id, numero: a.fne_reference || a.numero || `AV-${a.id.slice(0, 8)}`, interne: a.fne_reference ? a.numero : null,
       date: a.created_at, vente: ventesParId[a.vente_id], articles: a.avoirs_lignes?.length || ventesParId[a.vente_id].ventes_lignes?.length || 0,
       montant: -Number(a.montant || 0) })),
   ].sort((x, y) => new Date(y.date) - new Date(x.date))
@@ -503,7 +505,7 @@ export default function Ventes() {
       ville: l.vente.clients?.ville || '—',
       commercial: l.vente.commercial?.nom || t('bureau'),
       articles: l.articles,
-      reference: l.type === 'avoir' ? `${t('export.refVente')} ${l.vente.numero_vente || ''}` : '',
+      reference: l.type === 'avoir' ? `${t('export.refVente')} ${numeroFacture(l.vente) || ''}` : '',
       total: l.montant,
     }))
   }
@@ -784,7 +786,8 @@ export default function Ventes() {
                 >
                   <td className={`px-4 py-3 font-mono text-xs ${estAvoir ? 'text-red-700' : 'text-petrol-700'}`}>
                     {l.numero || '—'}
-                    {estAvoir && <span className="block text-[10px] text-petrol-500">{t('export.refVente')} {v.numero_vente}</span>}
+                    {l.interne && <span className="block text-[10px] text-petrol-400">{l.interne}</span>}
+                    {estAvoir && <span className="block text-[10px] text-petrol-500">{t('export.refVente')} {numeroFacture(v)}</span>}
                   </td>
                   <td className="px-4 py-3 text-petrol-700">
                     {new Date(l.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -1085,7 +1088,7 @@ export default function Ventes() {
                   <div>
                     <h2 className="font-semibold text-lg">{entreprise?.nom}</h2>
                     <p className="text-xs text-petrol-500">
-                      {t('detail.detailVente')}{detailVente.vente?.numero_vente ? ` — ${detailVente.vente.numero_vente}` : ''}
+                      {t('detail.detailVente')}{(detailVente.vente?.fne_statut === 'certifiee' && detailVente.vente?.fne_reference) ? ` — ${detailVente.vente.fne_reference}` : detailVente.vente?.numero_vente ? ` — ${detailVente.vente.numero_vente}` : ''}
                     </p>
                   </div>
                   <button onClick={fermerDetailVente} className="text-petrol-400 hover:text-petrol-700 text-xl leading-none">

@@ -145,7 +145,7 @@
     "typeVente": "بيعة",
     "typeAvoir": "إشعار دائن",
     "reference": "المرجع",
-    "refVente": "مرجع البيعة",
+    "refVente": "الفاتورة المعنية",
     "montant": "المبلغ"
   },
   "bureau": "بيع من المكتب",
