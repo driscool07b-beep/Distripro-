@@ -136,10 +136,10 @@ export default function ConversationAssistant({ compact = false, onNavigation })
             )}
           </div>
         ))}
-        {(enCours || dictee.provisoire) && (
-          <div className={`flex ${dictee.provisoire ? 'justify-end' : 'justify-start'}`}>
-            <div className={`rounded-2xl px-3.5 py-2.5 text-sm ${dictee.provisoire ? 'bg-petrol-800/70 text-white' : 'bg-white border border-line text-petrol-500'}`}>
-              <span className="animate-pulse">{dictee.provisoire || t('reflexion')}</span>
+        {enCours && (
+          <div className="flex justify-start">
+            <div className="rounded-2xl px-3.5 py-2.5 text-sm bg-white border border-line text-petrol-500">
+              <span className="animate-pulse">{t('reflexion')}</span>
             </div>
           </div>
         )}
@@ -155,7 +155,9 @@ export default function ConversationAssistant({ compact = false, onNavigation })
             🎤
           </button>
         )}
-        <ZoneTexteAuto className="input-field flex-1 !py-2" value={question} onChange={(e) => setQuestion(e.target.value)}
+        <ZoneTexteAuto className="input-field flex-1 !py-2"
+          value={dictee.ecoute && dictee.provisoire ? [question.trim(), dictee.provisoire].filter(Boolean).join(' ') : question}
+          readOnly={dictee.ecoute} onChange={(e) => setQuestion(e.target.value)}
           onEnvoyer={() => envoyer()} maxLignes={6}
           placeholder={dictee.ecoute ? t('voix.ecoute') : t('placeholder')} disabled={enCours} maxLength={1000} />
         {lectureDisponible && (

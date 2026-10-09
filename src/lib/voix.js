@@ -13,6 +13,9 @@ export const lectureDisponible = typeof window !== 'undefined' && 'speechSynthes
 // après quelques secondes de pause : on la relance aussitôt, sans perdre le
 // texte déjà dicté. Arrêt de sécurité après un long silence.
 const SILENCE_MAX_MS = 30000
+// Android : le mode « continu » de Chrome est peu fiable (sessions muettes,
+// résultats répétés). On y enchaîne plutôt des sessions courtes.
+const ANDROID = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent || '')
 
 export function useDictee({ langue = 'fr', onFinal }) {
   const [ecoute, setEcoute] = useState(false)
@@ -22,6 +25,7 @@ export function useDictee({ langue = 'fr', onFinal }) {
   const actif = useRef(false) // l'utilisateur veut continuer à dicter
   const base = useRef('') // texte des sessions de reconnaissance précédentes
   const sessionFin = useRef('') // texte définitif de la session en cours
+  const sessionEnCours = useRef('') // texte encore provisoire de la session en cours
   const derniereActivite = useRef(0)
   const surveillance = useRef(null)
   const rappel = useRef(onFinal)
@@ -33,9 +37,10 @@ export function useDictee({ langue = 'fr', onFinal }) {
     actif.current = false
     clearInterval(surveillance.current)
     setEcoute(false)
-    const texte = fusionnerDictee(base.current, sessionFin.current).trim()
+    const texte = fusionnerDictee(base.current, fusionnerDictee(sessionFin.current, sessionEnCours.current)).trim()
     base.current = ''
     sessionFin.current = ''
+    sessionEnCours.current = ''
     setProvisoire('')
     if (texte) rappel.current?.(texte)
   }
@@ -44,7 +49,7 @@ export function useDictee({ langue = 'fr', onFinal }) {
     const r = new Reconnaissance()
     r.lang = LANGUES[langue] || 'fr-FR'
     r.interimResults = true
-    r.continuous = true
+    r.continuous = !ANDROID
     r.maxAlternatives = 1
     r.onresult = (e) => {
       let fin = ''
@@ -54,6 +59,7 @@ export function useDictee({ langue = 'fr', onFinal }) {
         else encours = fusionnerDictee(encours, e.results[i][0].transcript)
       }
       sessionFin.current = fin
+      sessionEnCours.current = encours
       derniereActivite.current = Date.now()
       setProvisoire(fusionnerDictee(fusionnerDictee(base.current, fin), encours))
     }
@@ -63,10 +69,17 @@ export function useDictee({ langue = 'fr', onFinal }) {
       // 'no-speech' / 'aborted' : simple pause, la session est relancée.
     }
     r.onend = () => {
-      base.current = fusionnerDictee(base.current, sessionFin.current)
+      // Le provisoire non confirmé n'est pas perdu : il rejoint le texte.
+      base.current = fusionnerDictee(base.current, fusionnerDictee(sessionFin.current, sessionEnCours.current))
       sessionFin.current = ''
+      sessionEnCours.current = ''
       if (actif.current && Date.now() - derniereActivite.current < SILENCE_MAX_MS) {
-        try { lancerSession(); return } catch { /* relance impossible : on termine */ }
+        // Petite pause avant de relancer : le micro doit être libéré.
+        setTimeout(() => {
+          if (!actif.current) { terminer(); return }
+          try { lancerSession() } catch { terminer() }
+        }, 250)
+        return
       }
       terminer()
     }
@@ -79,6 +92,7 @@ export function useDictee({ langue = 'fr', onFinal }) {
     setErreur('')
     base.current = ''
     sessionFin.current = ''
+    sessionEnCours.current = ''
     setProvisoire('')
     actif.current = true
     derniereActivite.current = Date.now()
