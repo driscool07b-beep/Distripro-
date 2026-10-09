@@ -139,7 +139,14 @@
     "net": "Net",
     "statut": "Status",
     "statutAnnulee": "Cancelled (credit note)",
-    "statutAvoir": "Credit note"
+    "statutAvoir": "Credit note",
+    "numero": "No.",
+    "type": "Type",
+    "typeVente": "Sale",
+    "typeAvoir": "Credit note",
+    "reference": "Reference",
+    "refVente": "Sale ref.",
+    "montant": "Amount"
   },
   "bureau": "Office sale",
   "saisiPar": "Entered by {{nom}}",

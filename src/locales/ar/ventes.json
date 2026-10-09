@@ -139,7 +139,14 @@
     "net": "الصافي",
     "statut": "الحالة",
     "statutAnnulee": "ملغاة (إشعار دائن)",
-    "statutAvoir": "إشعار دائن"
+    "statutAvoir": "إشعار دائن",
+    "numero": "رقم",
+    "type": "النوع",
+    "typeVente": "بيعة",
+    "typeAvoir": "إشعار دائن",
+    "reference": "المرجع",
+    "refVente": "مرجع البيعة",
+    "montant": "المبلغ"
   },
   "bureau": "بيع من المكتب",
   "saisiPar": "أدخلها {{nom}}",

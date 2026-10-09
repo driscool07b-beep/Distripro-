@@ -139,7 +139,14 @@
     "net": "净额",
     "statut": "状态",
     "statutAnnulee": "已取消（贷项通知单）",
-    "statutAvoir": "贷项通知单"
+    "statutAvoir": "贷项通知单",
+    "numero": "编号",
+    "type": "类型",
+    "typeVente": "销售",
+    "typeAvoir": "贷项通知单",
+    "reference": "参考",
+    "refVente": "销售单号",
+    "montant": "金额"
   },
   "bureau": "办公室销售",
   "saisiPar": "录入人 {{nom}}",

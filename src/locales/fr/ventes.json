@@ -139,7 +139,14 @@
     "net": "Net",
     "statut": "Statut",
     "statutAnnulee": "Annulée (avoir)",
-    "statutAvoir": "Avoir"
+    "statutAvoir": "Avoir",
+    "numero": "N°",
+    "type": "Type",
+    "typeVente": "Vente",
+    "typeAvoir": "Avoir",
+    "reference": "Référence",
+    "refVente": "Réf. vente",
+    "montant": "Montant"
   },
   "bureau": "Vente de bureau",
   "saisiPar": "Saisie par {{nom}}",

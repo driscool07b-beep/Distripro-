@@ -19,6 +19,7 @@ export default function Ventes() {
   const { entreprise, profil } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const [ventes, setVentes] = useState([])
+  const [avoirsListe, setAvoirsListe] = useState([])
   const [clients, setClients] = useState([])
   const [produits, setProduits] = useState([])
   const [commerciaux, setCommerciaux] = useState([])
@@ -142,27 +143,18 @@ export default function Ventes() {
     let { data, error } = await construire(`${selectStr}, total_initial`)
     if (error) ({ data, error } = await construire(selectStr))
     if (error) { console.error('Erreur chargement ventes:', error); setChargement(false); return }
-    // Avoirs de ces ventes (annulations et avoirs partiels), pour la liste
-    // et les exports : facturé, avoirs, net.
+    // Avoirs de ces ventes (annulations et avoirs partiels) : chacun devient
+    // une ligne à part dans la liste et les exports, en négatif, avec la
+    // référence de la vente d'origine.
     const ids = (data || []).map((v) => v.id)
-    const parVente = {}
+    let avoirs = []
     if (ids.length) {
-      let { data: av, error: erreurAvoirs } = await supabase.from('avoirs').select('vente_id, numero, montant').in('vente_id', ids)
-      if (erreurAvoirs) ({ data: av } = await supabase.from('avoirs').select('vente_id, montant').in('vente_id', ids))
-      ;(av || []).forEach((a) => {
-        const e = (parVente[a.vente_id] ||= { montant: 0, numeros: [] })
-        e.montant += Number(a.montant || 0)
-        if (a.numero) e.numeros.push(a.numero)
-      })
+      let { data: av, error: erreurAvoirs } = await supabase.from('avoirs').select('id, vente_id, numero, montant, created_at, avoirs_lignes(id)').in('vente_id', ids)
+      if (erreurAvoirs) ({ data: av } = await supabase.from('avoirs').select('id, vente_id, montant, created_at').in('vente_id', ids))
+      avoirs = av || []
     }
-    setVentes((data || []).map((v) => {
-      const avoirs = parVente[v.id]?.montant || 0
-      // Ventes annulées avant les avoirs partiels : leur total n'a pas été
-      // ramené à zéro, l'avoir couvre tout. Sinon le total est déjà net.
-      const facture = Number(v.total_initial ?? v.total)
-      const net = v.total_initial != null ? Number(v.total) : Math.max(Number(v.total) - avoirs, 0)
-      return { ...v, montant_facture: facture, montant_avoirs: avoirs, montant_net: net, numeros_avoirs: parVente[v.id]?.numeros || [] }
-    }))
+    setVentes(data || [])
+    setAvoirsListe(avoirs)
     setChargement(false)
   }
 
@@ -479,34 +471,40 @@ export default function Ventes() {
   }, [cleTotaux])
 
   const creditEffectif = Math.min(Math.max(Number(creditUtilise || 0), 0), creditDisponible, total)
-  const totalFiltre = ventes.reduce((s, v) => s + Number(v.montant_net ?? (v.statut === 'annulee' ? 0 : v.total) ?? 0), 0)
+  // Liste et exports : une ligne par vente (montant facturé) et une ligne
+  // par avoir (montant négatif, référence de la vente) ; le total est le net.
+  const ventesParId = Object.fromEntries(ventes.map((v) => [v.id, v]))
+  const lignesListe = [
+    ...ventes.map((v) => ({ type: 'vente', cle: v.id, venteId: v.id, numero: v.numero_vente, date: v.created_at, vente: v,
+      articles: v.ventes_lignes?.length || 0, montant: Number(v.total_initial ?? v.total ?? 0) })),
+    ...avoirsListe.filter((a) => ventesParId[a.vente_id]).map((a) => ({ type: 'avoir', cle: a.id, venteId: a.vente_id, numero: a.numero || `AV-${a.id.slice(0, 8)}`,
+      date: a.created_at, vente: ventesParId[a.vente_id], articles: a.avoirs_lignes?.length || ventesParId[a.vente_id].ventes_lignes?.length || 0,
+      montant: -Number(a.montant || 0) })),
+  ].sort((x, y) => new Date(y.date) - new Date(x.date))
+  const totalFiltre = lignesListe.reduce((s, l) => s + l.montant, 0)
 
   const COLONNES_EXPORT = [
-    { cle: 'numero', titre: t('export.numeroVente') },
+    { cle: 'numero', titre: t('export.numero') },
     { cle: 'date', titre: t('export.date') },
+    { cle: 'type', titre: t('export.type') },
     { cle: 'client', titre: t('export.client') },
     { cle: 'ville', titre: t('export.ville') },
     { cle: 'commercial', titre: t('export.commercial') },
     { cle: 'articles', titre: t('export.articles'), alignDroite: true },
-    { cle: 'facture', titre: `${t('export.facture')} (${symboleDevise()})`, alignDroite: true },
-    { cle: 'avoirs', titre: `${t('export.avoirs')} (${symboleDevise()})`, alignDroite: true },
-    { cle: 'total', titre: `${t('export.net')} (${symboleDevise()})`, alignDroite: true },
-    { cle: 'statut', titre: t('export.statut') },
+    { cle: 'reference', titre: t('export.reference') },
+    { cle: 'total', titre: `${t('export.montant')} (${symboleDevise()})`, alignDroite: true },
   ]
   function donneesExport() {
-    return ventes.map((v) => ({
-      numero: v.numero_vente || '—',
-      date: formatDate(v.created_at),
-      client: v.clients?.nom || '—',
-      ville: v.clients?.ville || '—',
-      commercial: v.commercial?.nom || t('bureau'),
-      articles: v.ventes_lignes?.length || 0,
-      facture: Number(v.montant_facture ?? v.total ?? 0),
-      avoirs: v.montant_avoirs ? -Number(v.montant_avoirs) : 0,
-      total: Number(v.montant_net ?? v.total ?? 0),
-      statut: v.statut === 'annulee'
-        ? t('export.statutAnnulee')
-        : v.montant_avoirs > 0 ? `${t('export.statutAvoir')}${v.numeros_avoirs?.length ? ' ' + v.numeros_avoirs.join(', ') : ''}` : '',
+    return lignesListe.map((l) => ({
+      numero: l.numero || '—',
+      date: formatDate(l.date),
+      type: l.type === 'avoir' ? t('export.typeAvoir') : (l.vente.statut === 'annulee' ? `${t('export.typeVente')} (${t('table.annulee')})` : t('export.typeVente')),
+      client: l.vente.clients?.nom || '—',
+      ville: l.vente.clients?.ville || '—',
+      commercial: l.vente.commercial?.nom || t('bureau'),
+      articles: l.articles,
+      reference: l.type === 'avoir' ? `${t('export.refVente')} ${l.vente.numero_vente || ''}` : '',
+      total: l.montant,
     }))
   }
   function exportExcel() {
@@ -760,6 +758,7 @@ export default function Ventes() {
         <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="border-b border-line bg-canvas text-left text-xs text-petrol-600">
+              <th className="px-4 py-3 font-medium">{t('export.numero')}</th>
               <th className="px-4 py-3 font-medium">{t('table.date')}</th>
               <th className="px-4 py-3 font-medium">{t('table.client')}</th>
               <th className="px-4 py-3 font-medium">{t('table.ville')}</th>
@@ -770,36 +769,39 @@ export default function Ventes() {
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
             ) : ventes.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-petrol-500">{t('table.aucuneVente')}</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-petrol-500">{t('table.aucuneVente')}</td></tr>
             ) : (
-              ventes.map((v) => (
+              lignesListe.map((l) => {
+                const v = l.vente
+                const estAvoir = l.type === 'avoir'
+                return (
                 <tr
-                  key={v.id}
-                  onClick={() => ouvrirDetailVente(v.id)}
-                  className={`border-b border-line last:border-0 hover:bg-canvas/60 cursor-pointer ${v.statut === 'annulee' ? 'opacity-50' : ''}`}
+                  key={l.cle}
+                  onClick={() => ouvrirDetailVente(l.venteId)}
+                  className={`border-b border-line last:border-0 hover:bg-canvas/60 cursor-pointer ${estAvoir ? 'bg-red-50/40' : ''}`}
                 >
+                  <td className={`px-4 py-3 font-mono text-xs ${estAvoir ? 'text-red-700' : 'text-petrol-700'}`}>
+                    {l.numero || '—'}
+                    {estAvoir && <span className="block text-[10px] text-petrol-500">{t('export.refVente')} {v.numero_vente}</span>}
+                  </td>
                   <td className="px-4 py-3 text-petrol-700">
-                    {new Date(v.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    {new Date(l.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </td>
                   <td className="px-4 py-3 font-medium">
                     {v.clients?.nom || '—'}
-                    {v.statut === 'annulee' && (
-                      <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">{t('table.annulee')}</span>
-                    )}
+                    {estAvoir
+                      ? <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">{t('export.typeAvoir')}</span>
+                      : v.statut === 'annulee' && <span className="ml-2 text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">{t('table.annulee')}</span>}
                   </td>
                   <td className="px-4 py-3 text-petrol-700">{v.clients?.ville || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700">{v.commercial?.nom || <span className="text-petrol-400">{t('bureau')}</span>}</td>
-                  <td className="px-4 py-3 text-petrol-700">{t('table.nbArticles', { n: v.ventes_lignes?.length || 0 })}</td>
-                  <td className="px-4 py-3 font-mono text-right">
-                    {formatXOF(v.montant_net ?? v.total)}
-                    {v.montant_avoirs > 0 && v.statut !== 'annulee' && (
-                      <span className="block text-[11px] text-red-600">{t('export.statutAvoir')} - {formatXOF(v.montant_avoirs)}</span>
-                    )}
-                  </td>
+                  <td className="px-4 py-3 text-petrol-700">{t('table.nbArticles', { n: l.articles })}</td>
+                  <td className={`px-4 py-3 font-mono text-right ${estAvoir ? 'text-red-700' : ''}`}>{estAvoir ? '- ' : ''}{formatXOF(Math.abs(l.montant))}</td>
                 </tr>
-              ))
+                )
+              })
             )}
           </tbody>
         </table>
