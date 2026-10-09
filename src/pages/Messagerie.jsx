@@ -313,11 +313,15 @@ function FilConversation({ conversationId, onRetour }) {
     const info = (convs || []).find((c) => c.conversation_id === conversationId)
     setEnTete(info)
 
-    const { data } = await supabase
+    // « profils!expediteur_id » : la table messages_masques relie aussi
+    // messages et profils ; sans cette précision, Supabase refuse la requête
+    // (relation ambiguë) et la conversation s'affiche vide.
+    const { data, error } = await supabase
       .from('messages')
-      .select('id, contenu, piece_jointe_path, piece_jointe_nom, piece_jointe_type, expediteur_id, created_at, supprime_pour_tous, profils(nom, photo_path)')
+      .select('id, contenu, piece_jointe_path, piece_jointe_nom, piece_jointe_type, expediteur_id, created_at, supprime_pour_tous, profils!expediteur_id(nom, photo_path)')
       .eq('conversation_id', conversationId)
       .order('created_at')
+    if (error) console.error('Chargement des messages :', error.message)
     // Messages que j'ai supprimés « pour moi » : on ne les affiche plus.
     const { data: masques } = await supabase.from('messages_masques').select('message_id')
     const idsMasques = new Set((masques || []).map((x) => x.message_id))
