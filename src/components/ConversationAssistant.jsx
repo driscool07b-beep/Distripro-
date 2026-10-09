@@ -7,6 +7,7 @@ import { extraitsGuide } from '../lib/guideAide'
 import { useDictee, dicteeDisponible, lectureDisponible, lireTexte, arreterLecture } from '../lib/voix'
 import FicheConfirmationAction from './FicheConfirmationAction'
 import CartePiece from './CartePiece'
+import ZoneTexteAuto from './ZoneTexteAuto'
 import FicheConfirmationAutre from './FicheConfirmationAutre'
 import FicheConfirmationStock from './FicheConfirmationStock'
 import { lireConfigFne } from '../lib/fne'
@@ -146,7 +147,7 @@ export default function ConversationAssistant({ compact = false, onNavigation })
         <div ref={finRef} />
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); envoyer() }} className={`flex gap-2 items-center ${compact ? 'p-2 border-t border-line bg-white' : 'sticky bottom-0 bg-canvas pt-2 pb-2'}`}>
+      <form onSubmit={(e) => { e.preventDefault(); envoyer() }} className={`flex gap-2 items-end ${compact ? 'p-2 border-t border-line bg-white' : 'sticky bottom-0 bg-canvas pt-2 pb-2'}`}>
         {dicteeDisponible && (
           <button type="button" onClick={() => (dictee.ecoute ? dictee.arreter() : dictee.demarrer())} disabled={enCours}
             title={dictee.ecoute ? t('voix.arreter') : t('voix.parler')}
@@ -154,7 +155,8 @@ export default function ConversationAssistant({ compact = false, onNavigation })
             🎤
           </button>
         )}
-        <input className="input-field flex-1 !py-2" value={question} onChange={(e) => setQuestion(e.target.value)}
+        <ZoneTexteAuto className="input-field flex-1 !py-2" value={question} onChange={(e) => setQuestion(e.target.value)}
+          onEnvoyer={() => envoyer()} maxLignes={6}
           placeholder={dictee.ecoute ? t('voix.ecoute') : t('placeholder')} disabled={enCours} maxLength={1000} />
         {lectureDisponible && (
           <button type="button" onClick={basculerVoix} title={voixActive ? t('voix.couper') : t('voix.activer')}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import Avatar from '../components/Avatar'
+import ZoneTexteAuto from '../components/ZoneTexteAuto'
 import { useAuth } from '../context/AuthContext'
 import { formatDateHeure } from '../lib/format'
 
@@ -583,18 +584,13 @@ function FilConversation({ conversationId, onRetour }) {
               onChange={(e) => setFichier(e.target.files?.[0] || null)}
             />
           </label>
-          <textarea
-            className="flex-1 border rounded-lg px-3 py-2 text-sm resize-none"
-            rows={1}
+          <ZoneTexteAuto
+            className="flex-1 border rounded-lg px-3 py-2 text-sm"
             value={texte}
             onChange={(e) => setTexte(e.target.value)}
+            onEnvoyer={envoyer}
+            maxLignes={6}
             placeholder={t('ecrireMessage')}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                envoyer()
-              }
-            }}
           />
           {!texte.trim() && !fichier && vocalDisponible ? (
             <button
