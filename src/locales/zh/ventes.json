@@ -149,7 +149,12 @@
     "typeAvoir": "贷项通知单",
     "reference": "参考",
     "refVente": "相关发票",
-    "montant": "金额"
+    "montant": "金额",
+    "ht": "不含税金额",
+    "tva": "已开增值税",
+    "ttc": "含税金额",
+    "totalNet": "合计（扣除红字发票）",
+    "titreEtatFiscal": "销售报表（不含税、增值税、其他税、含税）"
   },
   "bureau": "办公室销售",
   "saisiPar": "录入人 {{nom}}",

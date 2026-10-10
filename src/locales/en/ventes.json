@@ -149,7 +149,12 @@
     "typeAvoir": "Credit note",
     "reference": "Reference",
     "refVente": "Invoice ref.",
-    "montant": "Amount"
+    "montant": "Amount",
+    "ht": "Amount excl. tax",
+    "tva": "VAT invoiced",
+    "ttc": "Amount incl. tax",
+    "totalNet": "TOTAL (net of credit notes)",
+    "titreEtatFiscal": "Sales statement (excl. tax, VAT, taxes, incl. tax)"
   },
   "bureau": "Office sale",
   "saisiPar": "Entered by {{nom}}",

@@ -149,7 +149,12 @@
     "typeAvoir": "Avoir",
     "reference": "Référence",
     "refVente": "Facture concernée",
-    "montant": "Montant"
+    "montant": "Montant",
+    "ht": "Montant HT",
+    "tva": "TVA facturée",
+    "ttc": "Montant TTC",
+    "totalNet": "TOTAL (net des avoirs)",
+    "titreEtatFiscal": "État des ventes (HT, TVA, taxes, TTC)"
   },
   "bureau": "Vente de bureau",
   "saisiPar": "Saisie par {{nom}}",

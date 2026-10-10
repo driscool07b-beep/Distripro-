@@ -20,6 +20,10 @@ export default function Ventes() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [ventes, setVentes] = useState([])
   const [avoirsListe, setAvoirsListe] = useState([])
+  // État fiscal : détail des autres taxes par vente (ventes_taxes) et taxes
+  // configurées par l'entreprise (AIRSI…), pour les colonnes de l'état.
+  const [taxesParVente, setTaxesParVente] = useState({})
+  const [taxesConfigurees, setTaxesConfigurees] = useState([])
   const [clients, setClients] = useState([])
   const [produits, setProduits] = useState([])
   const [commerciaux, setCommerciaux] = useState([])
@@ -101,13 +105,13 @@ export default function Ventes() {
   async function chargerVentes() {
     setChargement(true)
 
-    let selectStr = 'id, numero_vente, fne_statut, fne_reference, total, created_at, statut, clients!inner(nom, ville), profils!created_by(nom), commercial:profils!commercial_id(nom)'
+    let selectStr = 'id, numero_vente, fne_statut, fne_reference, total, montant_ht, montant_tva, montant_autres_taxes, created_at, statut, clients!inner(nom, ville), profils!created_by(nom), commercial:profils!commercial_id(nom)'
     selectStr += filtres.produitId ? ', ventes_lignes!inner(id, produit_id)' : ', ventes_lignes(id)'
 
     // Filtres appliqués à la requête (réutilisée sans total_initial si la
     // base n'a pas encore le script des avoirs partiels).
     const construire = (colonnes) => {
-    let requete = supabase.from('ventes').select(colonnes).order('created_at', { ascending: false }).limit(200)
+    let requete = supabase.from('ventes').select(colonnes).order('created_at', { ascending: false })
 
     if (filtres.periode === 'jour') {
       const debut = new Date()
@@ -144,8 +148,20 @@ export default function Ventes() {
     return requete
     }
 
-    let { data, error } = await construire(`${selectStr}, total_initial`)
-    if (error) ({ data, error } = await construire(selectStr))
+    // Toutes les ventes de la période (par pages de 1000), pour que l'état
+    // remis à la comptabilité soit complet.
+    const toutCharger = async (colonnes) => {
+      let tout = []
+      for (let debut = 0; debut < 20000; debut += 1000) {
+        const { data: page, error: e } = await construire(colonnes).range(debut, debut + 999)
+        if (e) return { data: null, error: e }
+        tout = tout.concat(page || [])
+        if (!page || page.length < 1000) break
+      }
+      return { data: tout, error: null }
+    }
+    let { data, error } = await toutCharger(`${selectStr}, total_initial`)
+    if (error) ({ data, error } = await toutCharger(selectStr))
     if (error) { console.error('Erreur chargement ventes:', error); setChargement(false); return }
     // Avoirs de ces ventes (annulations et avoirs partiels) : chacun devient
     // une ligne à part dans la liste et les exports, en négatif, avec la
@@ -157,10 +173,21 @@ export default function Ventes() {
       if (erreurAvoirs) ({ data: av } = await supabase.from('avoirs').select('id, vente_id, montant, created_at').in('vente_id', ids))
       avoirs = av || []
     }
+    // Détail des autres taxes (AIRSI…) mémorisé à chaque vente.
+    const detailTaxes = {}
+    for (let i = 0; i < ids.length; i += 300) {
+      const { data: tx } = await supabase.from('ventes_taxes').select('vente_id, nom, montant').in('vente_id', ids.slice(i, i + 300))
+      for (const x of tx || []) (detailTaxes[x.vente_id] ||= []).push(x)
+    }
+    setTaxesParVente(detailTaxes)
     setVentes(data || [])
     setAvoirsListe(avoirs)
     setChargement(false)
   }
+
+  useEffect(() => {
+    supabase.from('taxes_entreprise').select('nom, actif').then(({ data }) => setTaxesConfigurees((data || []).filter((x) => x.actif).map((x) => x.nom)))
+  }, [])
 
   // Arrivée depuis une commande livrée (?vente=…) : ouvre directement la vente
   // (reçu / facture, bon de livraison, partage).
@@ -515,6 +542,32 @@ export default function Ventes() {
   ].sort((x, y) => new Date(y.date) - new Date(x.date))
   const totalFiltre = lignesListe.reduce((s, l) => s + l.montant, 0)
 
+  // État fiscal des ventes : HT, TVA facturée, autres taxes (une colonne par
+  // taxe : AIRSI…) et TTC, selon les impôts et taxes de l'entreprise. Une
+  // entreprise non assujettie sans autre taxe n'a qu'un montant TTC.
+  const nomsTaxes = [...new Set([...taxesConfigurees, ...Object.values(taxesParVente).flat().map((x) => x.nom)])]
+  const avecTva = !!entreprise?.assujetti_tva || ventes.some((v) => Number(v.montant_tva) > 0)
+  const etatDetaille = avecTva || nomsTaxes.length > 0
+  const detailFiscal = (l) => {
+    const v = l.vente
+    const ttcVente = Number(v.total_initial ?? v.total ?? 0)
+    const ratio = l.type === 'avoir' ? (ttcVente ? l.montant / ttcVente : 0) : 1
+    const arrondi = (n) => Math.round(n * ratio)
+    const taxes = {}
+    let totalTaxes = 0
+    const detail = taxesParVente[v.id]
+    if (detail?.length) for (const x of detail) { taxes[x.nom] = (taxes[x.nom] || 0) + arrondi(Number(x.montant)); totalTaxes += arrondi(Number(x.montant)) }
+    else if (Number(v.montant_autres_taxes) > 0) { const n = nomsTaxes[0] || 'Autres taxes'; taxes[n] = arrondi(Number(v.montant_autres_taxes)); totalTaxes = taxes[n] }
+    const tva = arrondi(Number(v.montant_tva || 0))
+    return { ht: l.montant - tva - totalTaxes, tva, taxes, ttc: l.montant }
+  }
+  const totauxFiscaux = lignesListe.reduce((acc, l) => {
+    const d = detailFiscal(l)
+    acc.ht += d.ht; acc.tva += d.tva; acc.ttc += d.ttc
+    for (const [n, m] of Object.entries(d.taxes)) acc.taxes[n] = (acc.taxes[n] || 0) + m
+    return acc
+  }, { ht: 0, tva: 0, taxes: {}, ttc: 0 })
+
   const COLONNES_EXPORT = [
     { cle: 'numero', titre: t('export.numero') },
     { cle: 'date', titre: t('export.date') },
@@ -524,10 +577,18 @@ export default function Ventes() {
     { cle: 'commercial', titre: t('export.commercial') },
     { cle: 'articles', titre: t('export.articles'), alignDroite: true },
     { cle: 'reference', titre: t('export.reference') },
-    { cle: 'total', titre: `${t('export.montant')} (${symboleDevise()})`, alignDroite: true },
+    ...(etatDetaille ? [
+      { cle: 'ht', titre: `${t('export.ht')} (${symboleDevise()})`, alignDroite: true },
+      ...(avecTva ? [{ cle: 'tva', titre: `${t('export.tva')} (${symboleDevise()})`, alignDroite: true }] : []),
+      ...nomsTaxes.map((n) => ({ cle: `taxe_${n}`, titre: `${n} (${symboleDevise()})`, alignDroite: true })),
+      { cle: 'total', titre: `${t('export.ttc')} (${symboleDevise()})`, alignDroite: true },
+    ] : [{ cle: 'total', titre: `${t('export.ttc')} (${symboleDevise()})`, alignDroite: true }]),
   ]
+  function ligneFiscale(d) {
+    return { ht: d.ht, tva: d.tva, ...Object.fromEntries(nomsTaxes.map((n) => [`taxe_${n}`, d.taxes[n] || 0])), total: d.ttc }
+  }
   function donneesExport() {
-    return lignesListe.map((l) => ({
+    const lignes = lignesListe.map((l) => ({
       numero: l.numero || '—',
       date: formatDate(l.date),
       type: l.type === 'avoir' ? t('export.typeAvoir') : (l.vente.statut === 'annulee' ? `${t('export.typeVente')} (${t('table.annulee')})` : t('export.typeVente')),
@@ -536,14 +597,17 @@ export default function Ventes() {
       commercial: l.vente.commercial?.nom || t('bureau'),
       articles: l.articles,
       reference: l.type === 'avoir' ? `${t('export.refVente')} ${numeroFacture(l.vente) || ''}` : '',
-      total: l.montant,
+      ...(etatDetaille ? ligneFiscale(detailFiscal(l)) : { total: l.montant }),
     }))
+    // Ligne de totaux (net des avoirs), colonne par colonne.
+    if (etatDetaille && lignes.length) lignes.push({ numero: t('export.totalNet'), articles: '', ...ligneFiscale(totauxFiscaux) })
+    return lignes
   }
   function exportExcel() {
     exporterExcel('ventes', COLONNES_EXPORT, donneesExport())
   }
   function exportPDF() {
-    exporterPDF('ventes', 'Ventes', null, COLONNES_EXPORT, donneesExport(), 'Total', formatMontantPDF(totalFiltre) + ' F CFA', entreprise)
+    exporterPDF('ventes', etatDetaille ? t('export.titreEtatFiscal') : 'Ventes', null, COLONNES_EXPORT, donneesExport(), 'Total', formatMontantPDF(totalFiltre) + ' F CFA', entreprise)
   }
 
   async function validerVente(e) {
@@ -682,6 +746,14 @@ export default function Ventes() {
           <p className="text-sm text-petrol-700 mt-1">
             {ventes.length} {t('compteur_venteS')} — {t('totalFiltre')} : <span className="font-mono font-medium">{formatXOF(totalFiltre)}</span>
           </p>
+          {etatDetaille && ventes.length > 0 && (
+            <p className="text-xs text-petrol-600 mt-1 flex flex-wrap gap-x-3">
+              <span>{t('export.ht')} : <span className="font-mono">{formatXOF(totauxFiscaux.ht)}</span></span>
+              {avecTva && <span>{t('export.tva')} : <span className="font-mono">{formatXOF(totauxFiscaux.tva)}</span></span>}
+              {nomsTaxes.map((n) => <span key={n}>{n} : <span className="font-mono">{formatXOF(totauxFiscaux.taxes[n] || 0)}</span></span>)}
+              <span>{t('export.ttc')} : <span className="font-mono">{formatXOF(totauxFiscaux.ttc)}</span></span>
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
           <button data-aide="ventes.excel" className="btn-secondary text-sm" onClick={exportExcel} disabled={ventes.length === 0}>
@@ -808,18 +880,23 @@ export default function Ventes() {
               <th className="px-4 py-3 font-medium">{t('table.ville')}</th>
               <th className="px-4 py-3 font-medium">{t('table.commercial')}</th>
               <th className="px-4 py-3 font-medium">{t('table.articles')}</th>
-              <th className="px-4 py-3 font-medium text-right">{t('table.total')}</th>
+              {etatDetaille && <th className="hidden lg:table-cell px-4 py-3 font-medium text-right">{t('export.ht')}</th>}
+              {etatDetaille && avecTva && <th className="hidden lg:table-cell px-4 py-3 font-medium text-right">{t('export.tva')}</th>}
+              {etatDetaille && nomsTaxes.map((n) => <th key={n} className="hidden lg:table-cell px-4 py-3 font-medium text-right">{n}</th>)}
+              <th className="px-4 py-3 font-medium text-right">{etatDetaille ? t('export.ttc') : t('table.total')}</th>
             </tr>
           </thead>
           <tbody>
             {chargement ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
+              <tr><td colSpan={20} className="px-4 py-8 text-center text-petrol-500">{t('table.chargement')}</td></tr>
             ) : ventes.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-petrol-500">{t('table.aucuneVente')}</td></tr>
+              <tr><td colSpan={20} className="px-4 py-8 text-center text-petrol-500">{t('table.aucuneVente')}</td></tr>
             ) : (
               lignesListe.map((l) => {
                 const v = l.vente
                 const estAvoir = l.type === 'avoir'
+                const fisc = etatDetaille ? detailFiscal(l) : null
+                const cellule = (n, k) => <td key={k} className={`hidden lg:table-cell px-4 py-3 font-mono text-right text-xs ${estAvoir ? 'text-red-700' : 'text-petrol-700'}`}>{n < 0 ? '- ' : ''}{formatXOF(Math.abs(n))}</td>
                 return (
                 <tr
                   key={l.cle}
@@ -843,6 +920,9 @@ export default function Ventes() {
                   <td className="px-4 py-3 text-petrol-700">{v.clients?.ville || '—'}</td>
                   <td className="px-4 py-3 text-petrol-700">{v.commercial?.nom || <span className="text-petrol-400">{t('bureau')}</span>}</td>
                   <td className="px-4 py-3 text-petrol-700">{t('table.nbArticles', { n: l.articles })}</td>
+                  {fisc && cellule(fisc.ht, 'ht')}
+                  {fisc && avecTva && cellule(fisc.tva, 'tva')}
+                  {fisc && nomsTaxes.map((n) => cellule(fisc.taxes[n] || 0, n))}
                   <td className={`px-4 py-3 font-mono text-right ${estAvoir ? 'text-red-700' : ''}`}>{estAvoir ? '- ' : ''}{formatXOF(Math.abs(l.montant))}</td>
                 </tr>
                 )
