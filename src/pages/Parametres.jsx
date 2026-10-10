@@ -1397,6 +1397,7 @@ export default function Parametres() {
       {profil?.role === 'admin' && <SectionLogo />}
       {['admin', 'manager'].includes(profil?.role) && <SectionAvoirs />}
       {profil?.role === 'admin' && <SectionRapportMensuel />}
+      {['admin', 'manager'].includes(profil?.role) && 'pays' in (entreprise || {}) && <SectionFiscalite />}
       {profil?.role === 'admin' && <SectionFne />}
       {profil?.role === 'admin' && <SectionComptesClients />}
       {profil?.role === 'admin' && <SectionReconciliation />}
@@ -1661,6 +1662,14 @@ function SectionFne() {
     }))
   }, [])
   if (!v) return null
+  if (entreprise?.pays && entreprise.pays !== 'CI') {
+    return (
+      <div className="card p-4">
+        <h2 className="font-semibold mb-1">🧾 {t('fne.titre')}</h2>
+        <p className="text-xs text-petrol-500">{t('fne.horsCi')}</p>
+      </div>
+    )
+  }
 
   async function enregistrer() {
     setErreur(''); setMessage('')
@@ -1724,6 +1733,60 @@ function SectionFne() {
       </label>
       <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
       {message && <p className="text-xs text-green-600 mt-2">{message}</p>}
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Pays et fiscalité : pays de l'entreprise (la FNE n'existe qu'en Côte d'Ivoire)
+// et code TVA FNE appliqué aux ventes sans TVA.
+const PAYS_DISPONIBLES = ['CI', 'SN', 'BF', 'ML', 'BJ', 'TG', 'NE', 'GW', 'GN', 'CM', 'GA', 'CG', 'CD', 'TD', 'CF', 'GQ', 'MR', 'MA', 'TN', 'DZ', 'GH', 'NG', 'LR', 'SL', 'FR']
+function nomPays(code, langue) {
+  try { return new Intl.DisplayNames([langue || 'fr'], { type: 'region' }).of(code) } catch { return code }
+}
+function SectionFiscalite() {
+  const { t, i18n } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [pays, setPays] = useState('CI')
+  const [code, setCode] = useState('TVAD')
+  const [erreur, setErreur] = useState('')
+  useEffect(() => {
+    setPays(entreprise?.pays || 'CI')
+    setCode(entreprise?.fne_code_exoneration || 'TVAD')
+  }, [entreprise?.pays, entreprise?.fne_code_exoneration])
+  const listePays = PAYS_DISPONIBLES.map((c) => [c, nomPays(c, i18n.language)])
+    .sort((a, b) => (a[0] === 'CI' ? -1 : b[0] === 'CI' ? 1 : a[1].localeCompare(b[1])))
+
+  async function enregistrer() {
+    setErreur('')
+    const { error } = await supabase.rpc('modifier_parametrage_fiscal', { p_pays: pays, p_code_exoneration: code })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    await rechargerProfil()
+    return true
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">🌍 {t('fiscalite.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('fiscalite.aide')}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="label">{t('fiscalite.pays')}</label>
+          <select className="input-field" value={pays} onChange={(e) => setPays(e.target.value)}>
+            {listePays.map(([c, n]) => <option key={c} value={c}>{n}</option>)}
+          </select>
+        </div>
+        {pays === 'CI' && (
+          <div>
+            <label className="label">{t('fiscalite.codeExoneration')}</label>
+            <select className="input-field" value={code} onChange={(e) => setCode(e.target.value)}>
+              {['TVAD', 'TVAC', 'TVAE'].map((c) => <option key={c} value={c}>{t(`fiscalite.codes.${c}`)}</option>)}
+            </select>
+          </div>
+        )}
+      </div>
+      <p className="text-xs text-petrol-500 mt-2">{pays === 'CI' ? t('fiscalite.aideCodes') : t('fiscalite.horsCi')}</p>
+      <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>
   )

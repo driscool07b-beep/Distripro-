@@ -123,7 +123,7 @@ export default function FenetreAvoir({ vente, lignes, depots, configFne, onTermi
     // Facture d'avoir (PDF) avec les seules lignes de cet avoir. Avoir
     // certifié : même modèle que la facture FNE (visuel, QR code, n° DGI).
     const { data: lignesAvoir } = await supabase.from('avoirs_lignes')
-      .select('quantite, prix_unitaire, prix_corrige, montant, etat, ventes_lignes(taux_tva), produits(nom, reference, unite)').eq('avoir_id', res.avoir_id)
+      .select('quantite, prix_unitaire, prix_corrige, montant, etat, ventes_lignes(*), produits(nom, reference, unite)').eq('avoir_id', res.avoir_id)
     let doc
     if (fneReference) {
       let { data: cli, error: errCli } = vente.client_id
@@ -132,7 +132,7 @@ export default function FenetreAvoir({ vente, lignes, depots, configFne, onTermi
       if (errCli) ({ data: cli } = await supabase.from('clients').select('nom, adresse, email, ncc').eq('id', vente.client_id).single())
       doc = genererFactureFne({
         entreprise, vente, configFne, client: cli || vente.clients,
-        lignes: (lignesAvoir || []).map((l) => ({ ...l, taux_tva: l.ventes_lignes?.taux_tva })),
+        lignes: (lignesAvoir || []).map((l) => ({ ...l, taux_tva: l.ventes_lignes?.taux_tva, code_tva_fne: l.ventes_lignes?.code_tva_fne })),
         qrFne: fneToken ? await qrCodeFne(fneToken) : null, visuelFne: await visuelFne(),
         avoir: { reference: fneReference, referenceOrigine: vente.fne_reference || vente.numero_vente, motif: motif.trim(), montant: res.montant,
           date: new Date().toISOString(), brutVente: lignes.reduce((n, l) => n + Number(l.quantite) * Number(l.prix_unitaire), 0) },

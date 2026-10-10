@@ -9,13 +9,17 @@ import { exporterExcel, exporterPDF, formatMontantPDF, symboleDevise, genererRap
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF, formatDate } from '../lib/format'
+import { CODES_TVA_LIBELLES } from '../lib/fiscalite'
 
-const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '', code_barre: '', reference: '', unite: '' }
+const PRODUIT_VIDE = { nom: '', categorie: '', prix_vente: '', seuil_alerte: '10', quantite_initiale: '0', tva_applicable: false, taux_tva: '', code_barre: '', reference: '', unite: '', code_tva_fne: '' }
 const UNITES = ['unité', 'sachet', 'paquet', 'boîte', 'bouteille', 'carton', 'sac', 'kg', 'g', 'litre', 'pot']
 
 export default function Stock() {
   const { t } = useTranslation('stock')
+  const { t: tp } = useTranslation('parametres')
   const { entreprise, profil } = useAuth()
+  // Code TVA FNE propre à l'article (colonne ajoutée par migration_parametrage_fiscal.sql).
+  const [codesTvaProduits, setCodesTvaProduits] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const filtreAlertes = searchParams.get('filtre') === 'alertes'
   const filtreDepot = searchParams.get('depot') || ''
@@ -102,6 +106,11 @@ export default function Stock() {
       .from('produits')
       .select('id, nom, reference, unite, categorie, prix_vente, seuil_alerte, created_at, tva_applicable, taux_tva, stocks(quantite, depot_id)')
       .order('created_at', { ascending: false })
+    if ((entreprise?.pays || 'CI') === 'CI') {
+      supabase.from('produits').select('id, code_tva_fne').then(({ data: c, error: e }) => {
+        setCodesTvaProduits(e ? null : Object.fromEntries((c || []).map((x) => [x.id, x.code_tva_fne])))
+      })
+    }
     if (['admin', 'manager', 'comptable', 'gestionnaire_stock'].includes(profil?.role)) {
       supabase.from('produits_couts').select('produit_id, prix_achat_moyen').then(({ data: c }) => {
         setCouts(Object.fromEntries((c || []).map((x) => [x.produit_id, Number(x.prix_achat_moyen)])))
@@ -175,6 +184,10 @@ export default function Stock() {
       const r = await supabase.rpc('definir_reference_produit', { p_produit_id: produitId, p_reference: formulaire.reference || null, p_unite: formulaire.unite || null })
       error = r.error
     }
+    if (!error && produitId && codesTvaProduits && (formulaire.code_tva_fne || null) !== (codesTvaProduits[produitId] || null)) {
+      const r = await supabase.rpc('definir_code_tva_produit', { p_produit_id: produitId, p_code: formulaire.code_tva_fne || null })
+      error = r.error
+    }
 
     setEnregistrement(false)
     if (error) {
@@ -201,6 +214,7 @@ export default function Stock() {
       code_barre: produit.code_barre || '',
       reference: produit.reference || '',
       unite: produit.unite || '',
+      code_tva_fne: codesTvaProduits?.[produit.id] || '',
     })
     setErreur('')
     setModalProduit(true)
@@ -958,6 +972,16 @@ export default function Stock() {
                       />
                     </div>
                   )}
+                </div>
+              )}
+
+              {codesTvaProduits && ['admin', 'manager', 'comptable', 'gestionnaire_stock'].includes(profil?.role) && (
+                <div>
+                  <label className="label">{tp('fiscalite.codeFiche')}</label>
+                  <select className="input-field" value={formulaire.code_tva_fne || ''} onChange={(e) => setFormulaire({ ...formulaire, code_tva_fne: e.target.value })}>
+                    <option value="">{tp('fiscalite.codeFicheDefaut')}</option>
+                    {Object.entries(CODES_TVA_LIBELLES).map(([c, l]) => <option key={c} value={c}>{l}</option>)}
+                  </select>
                 </div>
               )}
 

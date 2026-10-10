@@ -290,7 +290,8 @@
     "etablissement": "营业机构（税务总局要求）",
     "parDefaut": "每笔销售默认勾选“开具 FNE”",
     "envoiAuto": "每笔销售后自动通过邮件发送收据或发票",
-    "aideEnvoiAuto": "仅当客户有电子邮箱时发送。发件人为 noreply@distribpro.com，回复将发到您的邮箱。"
+    "aideEnvoiAuto": "仅当客户有电子邮箱时发送。发件人为 noreply@distribpro.com，回复将发到您的邮箱。",
+    "horsCi": "“FNE”是科特迪瓦税务总局的电子发票。所选国家（“国家与税务”）不支持：您所在国家的电子发票尚未集成到 DistribPro。您的发票仍可正常开具。"
   },
   "rapportMensuel": {
     "titre": "自动月度报告",
@@ -316,5 +317,20 @@
     "aidePerte": "不退回库存；损失记录在贷项通知单中。",
     "stock": "作为“损坏”批次退回库存",
     "aideStock": "退回仓库，归入标记为损坏的批次（最后出售，需检查）。"
+  },
+  "fiscalite": {
+    "titre": "国家与税务",
+    "aide": "公司所在国家及发票适用的增值税规则。",
+    "pays": "国家",
+    "codeExoneration": "免税销售的 FNE 增值税代码",
+    "codes": {
+      "TVAD": "TVAD — 法定免税（默认）",
+      "TVAC": "TVAC — 协议免税",
+      "TVAE": "TVAE — 出口免税"
+    },
+    "aideCodes": "当公司不是增值税纳税人或商品税率为 0% 时使用。18% 的商品按 TVA (A) 发送，9% 按 TVAB (B)。客户（出口、免税）或商品可在其档案中设置自己的代码。",
+    "horsCi": "该国家已停用 FNE（科特迪瓦税务总局）。您所在国家的电子发票集成后将会添加。",
+    "codeFiche": "FNE 增值税代码（可选）",
+    "codeFicheDefaut": "自动（根据税率和公司设置）"
   }
 }

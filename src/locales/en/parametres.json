@@ -290,7 +290,8 @@
     "etablissement": "Establishment (required by the DGI)",
     "parDefaut": "'Issue an FNE' ticked by default on each sale",
     "envoiAuto": "Automatically email the receipt or invoice after each sale",
-    "aideEnvoiAuto": "Only if the customer has an email address. Sent from noreply@distribpro.com, replies go to your address."
+    "aideEnvoiAuto": "Only if the customer has an email address. Sent from noreply@distribpro.com, replies go to your address.",
+    "horsCi": "FNE is the electronic invoice of Côte d'Ivoire's tax authority (DGI). It is not available for the country selected in “Country and tax”: your country's e-invoicing is not yet integrated into DistribPro. Your invoices are still issued normally."
   },
   "rapportMensuel": {
     "titre": "Automatic monthly report",
@@ -316,5 +317,20 @@
     "aidePerte": "They don't go back into stock; the loss stays traced on the credit note.",
     "stock": "Put them back in stock as a \"damaged\" batch",
     "aideStock": "They go back to a warehouse in a batch flagged as damaged (sold last, to be checked)."
+  },
+  "fiscalite": {
+    "titre": "Country and tax",
+    "aide": "Company country and VAT rules applied on invoices.",
+    "pays": "Country",
+    "codeExoneration": "FNE VAT code for sales without VAT",
+    "codes": {
+      "TVAD": "TVAD — Statutory exemption (default)",
+      "TVAC": "TVAC — Contractual exemption",
+      "TVAE": "TVAE — Export exemption"
+    },
+    "aideCodes": "Used when the company is not VAT-registered or an item is at 0%. Items at 18% are sent as TVA (A), at 9% as TVAB (B). A customer (export, exempt) or an item can have its own code in its record.",
+    "horsCi": "FNE (Côte d'Ivoire DGI) is disabled for this country. Your country's e-invoicing will be added once integrated.",
+    "codeFiche": "FNE VAT code (optional)",
+    "codeFicheDefaut": "Automatic (based on rate and company setting)"
   }
 }

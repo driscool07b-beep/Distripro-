@@ -849,12 +849,19 @@ const CATEGORIES_TVA = {
   TVAB: { taux: 9, libelle: 'TVA réduite - TVA sur HT 09,00% - B' },
   TVAC: { taux: 0, libelle: 'TVA exo.conv - TVA sur HT 00,00% - C' },
   TVAD: { taux: 0, libelle: 'TVA exo.légale - TVA sur HT 00,00% - D' },
+  TVAE: { taux: 0, libelle: 'TVA exo.export - TVA sur HT 00,00% - E' },
 }
-export function codeTvaFne(taux, assujetti) {
-  if (!assujetti) return 'TVAD'
+export const CODES_TVA_FNE = Object.keys(CATEGORIES_TVA)
+export const CODES_EXONERATION_FNE = ['TVAD', 'TVAC', 'TVAE']
+// Code TVA FNE d'une ligne : code réellement certifié (ventes_lignes) >
+// exception client > exception produit > taux > code d'exonération par défaut.
+export function codeTvaFne(taux, assujetti, defaut, codeLigne, codeClient, codeProduit) {
+  for (const c of [codeLigne, codeClient, codeProduit]) if (c && CATEGORIES_TVA[c]) return c
+  const exo = CODES_EXONERATION_FNE.includes(defaut) ? defaut : 'TVAD'
+  if (!assujetti) return exo
   if (Number(taux) === 18) return 'TVA'
   if (Number(taux) === 9) return 'TVAB'
-  return 'TVAD'
+  return exo
 }
 const LIBELLES_PAIEMENT_FNE = { espece: 'Espèces', cheque: 'Chèque', mobile_money: 'Mobile Money', virement: 'Virement', carte: 'Carte bancaire' }
 
@@ -959,7 +966,7 @@ export function genererFactureFne({ entreprise, vente, lignes, autresTaxes, qrFn
   let totalHt = 0
   let totalTva = 0
   const corps = (lignes || []).map((l) => {
-    const code = codeTvaFne(l.taux_tva, !!entreprise?.assujetti_tva)
+    const code = codeTvaFne(l.taux_tva, !!entreprise?.assujetti_tva, entreprise?.fne_code_exoneration, l.code_tva_fne, client?.code_tva_fne, l.produits?.code_tva_fne)
     const cat = CATEGORIES_TVA[code]
     const ht = Number(l.quantite) * Number(l.prix_unitaire) * (1 - remisePct / 100)
     const tva = ht * cat.taux / 100

@@ -8,6 +8,7 @@ import { accesAutorise } from '../lib/accesRole'
 import * as XLSX from 'xlsx'
 import { traduireErreur } from '../lib/erreurs'
 import { formatXOF } from '../lib/format'
+import { CODES_TVA_LIBELLES } from '../lib/fiscalite'
 
 const COULEURS_SEGMENT = {
   actif: 'bg-green-50 text-green-700 border-green-200',
@@ -35,9 +36,11 @@ const CLIENT_VIDE = {
 
 export default function Clients() {
   const { t } = useTranslation('clients')
+  const { t: tp } = useTranslation('parametres')
   const { profil, entreprise } = useAuth()
   const [clients, setClients] = useState([])
   const [regimeDisponible, setRegimeDisponible] = useState(false)
+  const [codeTvaDisponible, setCodeTvaDisponible] = useState(false)
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
   const [modalOuvert, setModalOuvert] = useState(false)
@@ -166,6 +169,7 @@ export default function Clients() {
       ncc: client.ncc || '',
       fne_template: client.fne_template || '',
       regime_imposition: client.regime_imposition || '',
+      code_tva_fne: client.code_tva_fne || '',
     })
     setErreur('')
     setCaptureGps('idle')
@@ -392,6 +396,15 @@ export default function Clients() {
     setRegimeDisponible(!error)
     if (error) ({ data, error } = await supabase.from('clients').select(colonnes).order('created_at', { ascending: false }))
     if (!error) setClients(data || [])
+    // Code TVA FNE propre au client (colonne ajoutée par migration_parametrage_fiscal.sql).
+    if (!error && (entreprise?.pays || 'CI') === 'CI') {
+      const r = await supabase.from('clients').select('id, code_tva_fne')
+      setCodeTvaDisponible(!r.error)
+      if (!r.error) {
+        const codes = Object.fromEntries((r.data || []).map((c) => [c.id, c.code_tva_fne]))
+        setClients((data || []).map((c) => ({ ...c, code_tva_fne: codes[c.id] ?? null })))
+      }
+    }
     setChargement(false)
   }
 
@@ -478,6 +491,7 @@ export default function Clients() {
       ncc: (formulaire.ncc || '').trim() || null,
       fne_template: formulaire.fne_template || null,
       ...(regimeDisponible ? { regime_imposition: formulaire.regime_imposition || null } : {}),
+      ...(codeTvaDisponible ? { code_tva_fne: formulaire.code_tva_fne || null } : {}),
     }
 
     const { error } = clientEnEdition
@@ -829,6 +843,15 @@ export default function Clients() {
                   </select>
                 </div>
               </div>
+              )}
+              {codeTvaDisponible && (
+                <div>
+                  <label className="label">{tp('fiscalite.codeFiche')}</label>
+                  <select className="input-field" value={formulaire.code_tva_fne || ''} onChange={(e) => setFormulaire({ ...formulaire, code_tva_fne: e.target.value })}>
+                    <option value="">{tp('fiscalite.codeFicheDefaut')}</option>
+                    {['TVA', 'TVAB', 'TVAC', 'TVAD', 'TVAE'].map((c) => <option key={c} value={c}>{CODES_TVA_LIBELLES[c] || c}</option>)}
+                  </select>
+                </div>
               )}
               <div>
                 <label className="label">{t('form.compteClient')}</label>

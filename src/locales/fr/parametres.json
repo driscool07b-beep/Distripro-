@@ -290,7 +290,8 @@
     "etablissement": "Établissement (exigé par la DGI)",
     "parDefaut": "Case « Produire une FNE » cochée par défaut sur chaque vente",
     "envoiAuto": "Envoyer automatiquement le reçu ou la facture par email après chaque vente",
-    "aideEnvoiAuto": "Seulement si le client a une adresse email dans sa fiche. Envoyé depuis noreply@distribpro.com, avec votre adresse en réponse."
+    "aideEnvoiAuto": "Seulement si le client a une adresse email dans sa fiche. Envoyé depuis noreply@distribpro.com, avec votre adresse en réponse.",
+    "horsCi": "La FNE est la facture électronique de la DGI de Côte d'Ivoire. Elle n'est pas disponible pour le pays choisi dans « Pays et fiscalité » : la facture électronique de votre pays n'est pas encore intégrée à DistribPro. Vos factures restent émises normalement."
   },
   "rapportMensuel": {
     "titre": "Rapport mensuel automatique",
@@ -316,5 +317,20 @@
     "aidePerte": "Elle ne revient pas en stock ; la perte reste tracée dans l'avoir.",
     "stock": "La remettre en stock comme lot « endommagé »",
     "aideStock": "Elle revient dans un magasin, dans un lot marqué endommagé (vendu en dernier, à contrôler)."
+  },
+  "fiscalite": {
+    "titre": "Pays et fiscalité",
+    "aide": "Pays de l'entreprise et règles de TVA appliquées sur les factures.",
+    "pays": "Pays",
+    "codeExoneration": "Code TVA FNE des ventes sans TVA",
+    "codes": {
+      "TVAD": "TVAD — Exonération légale (par défaut)",
+      "TVAC": "TVAC — Exonération conventionnelle",
+      "TVAE": "TVAE — Exonération à l'export"
+    },
+    "aideCodes": "Utilisé quand l'entreprise n'est pas assujettie à la TVA ou qu'un article est à 0 %. Les articles à 18 % sont envoyés en TVA (A), à 9 % en TVAB (B). Un client (export, exonéré) ou un article peut avoir son propre code dans sa fiche.",
+    "horsCi": "La FNE (DGI Côte d'Ivoire) est désactivée pour ce pays. La facture électronique de votre pays sera ajoutée dès qu'elle sera intégrée.",
+    "codeFiche": "Code TVA FNE (facultatif)",
+    "codeFicheDefaut": "Automatique (selon le taux et le réglage de l'entreprise)"
   }
 }

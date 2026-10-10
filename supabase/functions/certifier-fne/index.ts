@@ -65,11 +65,18 @@ function messageDgi(json: any): string {
 // Codes TVA DGI : TVA 18 %, TVAB 9 %, TVAC exonération conventionnelle, TVAD exonération légale.
 // Le code TVA est OBLIGATOIRE sur chaque article (procédure DGI, mai 2025) :
 // une entreprise non assujettie ou un article à 0 % est déclaré en TVAD.
-function codeTva(taux: number | null, assujetti: boolean): string[] {
-  if (!assujetti) return ['TVAD']
+// Code TVA d'un article, par ordre de priorité : exception du client (export,
+// exonération), exception du produit, taux (18 % → TVA, 9 % → TVAB), puis le
+// code par défaut de l'entreprise pour les ventes sans TVA (TVAD si non réglé).
+const CODES_TVA = ['TVA', 'TVAB', 'TVAC', 'TVAD', 'TVAE']
+function codeTva(taux: number | null, assujetti: boolean, defaut?: string | null, codeProduit?: string | null, codeClient?: string | null): string[] {
+  if (codeClient && CODES_TVA.includes(codeClient)) return [codeClient]
+  if (codeProduit && CODES_TVA.includes(codeProduit)) return [codeProduit]
+  const exoneration = defaut && ['TVAC', 'TVAD', 'TVAE'].includes(defaut) ? defaut : 'TVAD'
+  if (!assujetti) return [exoneration]
   if (Number(taux) === 18) return ['TVA']
   if (Number(taux) === 9) return ['TVAB']
-  return ['TVAD']
+  return [exoneration]
 }
 
 Deno.serve(async (req) => {
@@ -94,9 +101,11 @@ Deno.serve(async (req) => {
 
     const { data: config } = await supabase.from('fne_config').select('*').eq('entreprise_id', profil.entreprise_id).maybeSingle()
     if (!config?.actif || !config.api_key) return reponseErreur("La FNE n'est pas activée pour votre entreprise (Paramètres → FNE).")
+    const { data: paysEntreprise } = await supabase.from('entreprises').select('*').eq('id', profil.entreprise_id).single()
+    if (paysEntreprise?.pays && paysEntreprise.pays !== 'CI') return reponseErreur("La FNE (DGI) concerne les entreprises établies en Côte d'Ivoire.")
 
     const { data: vente } = await supabase.from('ventes')
-      .select('*, clients(nom, telephone, email, ncc, fne_template), commercial:profils!commercial_id(nom)')
+      .select('*, clients(*), commercial:profils!commercial_id(nom)')
       .eq('id', vente_id).eq('entreprise_id', profil.entreprise_id).single()
     if (!vente) return reponseErreur('Vente introuvable.', 404)
 
@@ -172,8 +181,8 @@ Deno.serve(async (req) => {
     if (vente.total_initial != null) return reponseErreur("Cette vente a déjà fait l'objet d'un avoir : elle ne peut plus être certifiée (certifiez les ventes avant tout avoir).")
 
     const [{ data: entreprise }, { data: lignes }, { data: taxes }] = await Promise.all([
-      supabase.from('entreprises').select('assujetti_tva, devise').eq('id', profil.entreprise_id).single(),
-      supabase.from('ventes_lignes').select('id, quantite, prix_unitaire, taux_tva, produits(nom, reference, unite)').eq('vente_id', vente_id).order('id'),
+      supabase.from('entreprises').select('*').eq('id', profil.entreprise_id).single(),
+      supabase.from('ventes_lignes').select('id, quantite, prix_unitaire, taux_tva, produits(*)').eq('vente_id', vente_id).order('id'),
       supabase.from('taxes_entreprise').select('nom, taux').eq('entreprise_id', profil.entreprise_id).eq('actif', true),
     ])
     const client = vente.clients || {}
@@ -229,7 +238,7 @@ Deno.serve(async (req) => {
         description: l.produits?.nom || 'Article',
         quantity: Number(l.quantite),
         amount: Number(l.prix_unitaire),
-        taxes: codeTva(l.taux_tva, !!entreprise?.assujetti_tva),
+        taxes: codeTva(l.taux_tva, !!entreprise?.assujetti_tva, entreprise?.fne_code_exoneration, l.produits?.code_tva_fne, client.code_tva_fne),
       })),
       customTaxes: (taxes || []).map((t) => ({ name: t.nom, amount: Number(t.taux) })),
       ...(remisePct > 0 ? { discount: remisePct } : {}),
@@ -251,6 +260,11 @@ Deno.serve(async (req) => {
     const itemsDgi = res.json?.invoice?.items || []
     for (let i = 0; i < Math.min(itemsDgi.length, (lignes || []).length); i++) {
       await supabase.from('ventes_lignes').update({ fne_item_id: itemsDgi[i].id }).eq('id', lignes![i].id)
+    }
+    // Code TVA réellement envoyé, mémorisé pour l'impression de la facture
+    // (sans effet si la colonne n'existe pas encore).
+    for (let i = 0; i < (lignes || []).length; i++) {
+      await supabase.from('ventes_lignes').update({ code_tva_fne: corps.items[i]?.taxes?.[0] ?? null }).eq('id', lignes![i].id)
     }
     return reponse({
       reference: res.json?.reference, token: res.json?.token,

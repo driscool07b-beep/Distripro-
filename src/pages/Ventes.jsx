@@ -257,13 +257,13 @@ export default function Ventes() {
   async function telechargerAvoir(avoir) {
     if (!detailVente || !avoir) return
     const { data: lignesAvoir } = await supabase.from('avoirs_lignes')
-      .select('quantite, prix_unitaire, prix_corrige, montant, etat, ventes_lignes(taux_tva), produits(nom, reference, unite)').eq('avoir_id', avoir.id)
+      .select('quantite, prix_unitaire, prix_corrige, montant, etat, ventes_lignes(*), produits(nom, reference, unite)').eq('avoir_id', avoir.id)
     const vente = detailVente.vente
     if (avoir.fne_reference) {
       // Avoir certifié : même modèle que la facture FNE.
       const doc = genererFactureFne({
         entreprise, vente, configFne, client: await clientFacture(vente),
-        lignes: (lignesAvoir || []).map((l) => ({ ...l, taux_tva: l.ventes_lignes?.taux_tva })),
+        lignes: (lignesAvoir || []).map((l) => ({ ...l, taux_tva: l.ventes_lignes?.taux_tva, code_tva_fne: l.ventes_lignes?.code_tva_fne })),
         qrFne: await qrCodeFne(avoir.fne_token), visuelFne: await visuelFne(),
         avoir: { reference: avoir.fne_reference, referenceOrigine: vente.fne_reference || vente.numero_vente, motif: avoir.motif, montant: avoir.montant, date: avoir.created_at,
           brutVente: detailVente.lignes.reduce((n, l) => n + Number(l.quantite) * Number(l.prix_unitaire), 0) },
