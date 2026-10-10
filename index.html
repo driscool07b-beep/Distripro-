@@ -52,6 +52,31 @@
         }
         Promise.all(taches).finally(function () { location.reload() })
       }
+      // Nouvelle version mise en ligne : les fichiers de l'ancienne version
+      // (gardés en cache) n'existent plus. On répare et recharge tout seul,
+      // une fois par période de 2 minutes, pour ne jamais boucler.
+      function reparationAutomatique() {
+        try {
+          var derniere = Number(sessionStorage.getItem('distribpro_reparation') || 0)
+          if (Date.now() - derniere < 120000) return false
+          sessionStorage.setItem('distribpro_reparation', String(Date.now()))
+        } catch (x) { return false }
+        reparerDistribPro()
+        return true
+      }
+      function estFichierPerime(texte) {
+        return /dynamically imported module|Importing a module script failed|error loading dynamically imported module|Fichier non chargé : .*\/assets\//i.test(String(texte || ''))
+      }
+      window.addEventListener('vite:preloadError', function (e) {
+        if (reparationAutomatique()) e.preventDefault()
+      })
+      window.addEventListener('error', function (e) {
+        var cible = e.target && (e.target.src || e.target.href)
+        if (estFichierPerime(cible ? 'Fichier non chargé : ' + cible : e.message)) reparationAutomatique()
+      }, true)
+      window.addEventListener('unhandledrejection', function (e) {
+        if (estFichierPerime(e.reason && (e.reason.message || e.reason))) reparationAutomatique()
+      })
       // Surveillance du démarrage : une vraie erreur s'affiche après 10 s ;
       // sans erreur (connexion lente), un message d'attente s'affiche d'abord,
       // et l'écran d'erreur seulement après 45 s. React remplace ce contenu
