@@ -1795,6 +1795,14 @@ function SectionFiscalite() {
 
 // Timbre fiscal sur les paiements en espèces : barème par tranches saisi par
 // l'entreprise (selon la réglementation de son pays).
+// Timbre de quittance en Côte d'Ivoire (documents constatant un paiement).
+const BAREME_TIMBRE_CI = [
+  { de: 5001, a: 100000, montant: 100 },
+  { de: 100001, a: 500000, montant: 500 },
+  { de: 500001, a: 1000000, montant: 1000 },
+  { de: 1000001, a: 5000000, montant: 2000 },
+  { de: 5000001, a: null, montant: 5000 },
+]
 function SectionTimbre() {
   const { t } = useTranslation('parametres')
   const { entreprise, rechargerProfil } = useAuth()
@@ -1839,7 +1847,16 @@ function SectionTimbre() {
               <button type="button" className="btn-secondary text-sm px-3" onClick={() => setTranches(tranches.filter((_, j) => j !== i))} aria-label={t('timbre.supprimer')}>✕</button>
             </div>
           ))}
-          <button type="button" className="btn-secondary text-sm" onClick={() => setTranches([...tranches, { de: '', a: '', montant: '' }])}>+ {t('timbre.ajouter')}</button>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className="btn-secondary text-sm" onClick={() => setTranches([...tranches, { de: '', a: '', montant: '' }])}>+ {t('timbre.ajouter')}</button>
+            {(entreprise?.pays || 'CI') === 'CI' && (
+              <button type="button" className="btn-secondary text-sm" onClick={(e) => {
+                setTranches(BAREME_TIMBRE_CI.map((x) => ({ de: String(x.de), a: x.a == null ? '' : String(x.a), montant: String(x.montant) })))
+                // Signale la modification au bouton Enregistrer.
+                e.currentTarget.dispatchEvent(new Event('input', { bubbles: true }))
+              }}>{t('timbre.baremeCi')}</button>
+            )}
+          </div>
           <p className="text-xs text-petrol-500">{t('timbre.aideBareme')}</p>
         </div>
       )}

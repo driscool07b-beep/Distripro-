@@ -343,6 +343,7 @@
     "sansLimite": "No limit",
     "supprimer": "Remove bracket",
     "ajouter": "Add a bracket",
-    "aideBareme": "Example: from 5,001 to 100,000 → stamp 100. Leave “To” empty for the last bracket. Check the scale with your accountant or current regulations."
+    "aideBareme": "Example: from 5,001 to 100,000 → stamp 100. Leave “To” empty for the last bracket. Check the scale with your accountant or current regulations.",
+    "baremeCi": "Fill with the Côte d'Ivoire scale"
   }
 }

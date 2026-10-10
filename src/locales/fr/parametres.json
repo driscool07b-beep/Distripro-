@@ -343,6 +343,7 @@
     "sansLimite": "Sans limite",
     "supprimer": "Supprimer la tranche",
     "ajouter": "Ajouter une tranche",
-    "aideBareme": "Exemple de saisie : de 5 001 à 100 000 → timbre 100. Laissez « À » vide pour la dernière tranche. Vérifiez le barème avec votre comptable ou la réglementation en vigueur."
+    "aideBareme": "Exemple de saisie : de 5 001 à 100 000 → timbre 100. Laissez « À » vide pour la dernière tranche. Vérifiez le barème avec votre comptable ou la réglementation en vigueur.",
+    "baremeCi": "Remplir avec le barème Côte d'Ivoire"
   }
 }
