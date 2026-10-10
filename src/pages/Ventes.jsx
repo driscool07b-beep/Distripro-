@@ -269,7 +269,10 @@ export default function Ventes() {
   async function pdfVente(vente, lignes, autresTaxes) {
     const qrFne = await qrCodeFne(vente.fne_token)
     if (vente.fne_statut === 'certifiee' && vente.fne_reference) {
-      return genererFactureFne({ entreprise, vente, lignes, autresTaxes, qrFne, visuelFne: await visuelFne(), configFne, client: await clientFacture(vente) })
+      // Avoirs de la vente : rappelés sous la facture avec le net (le tableau
+      // officiel garde le montant certifié).
+      const { data: avoirsVente } = await supabase.from('avoirs').select('numero, montant, fne_reference, created_at').eq('vente_id', vente.id).order('created_at')
+      return genererFactureFne({ entreprise, vente, lignes, autresTaxes, qrFne, visuelFne: await visuelFne(), configFne, client: await clientFacture(vente), avoirsLies: avoirsVente || [] })
     }
     return genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne })
   }

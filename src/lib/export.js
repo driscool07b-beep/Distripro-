@@ -870,7 +870,7 @@ export function codeTvaFne(taux, assujetti, defaut, codeLigne, codeClient, codeP
 }
 const LIBELLES_PAIEMENT_FNE = { espece: 'Espèces', cheque: 'Chèque', mobile_money: 'Mobile Money', virement: 'Virement', carte: 'Carte bancaire' }
 
-export function genererFactureFne({ entreprise, vente, lignes, autresTaxes, qrFne, visuelFne, configFne, client, avoir }) {
+export function genererFactureFne({ entreprise, vente, lignes, autresTaxes, qrFne, visuelFne, configFne, client, avoir, avoirsLies }) {
   const doc = new jsPDF()
   const L = 210
   const fmt = (n) => formatMontantPDF(Math.round(Number(n) || 0))
@@ -1050,5 +1050,30 @@ export function genererFactureFne({ entreprise, vente, lignes, autresTaxes, qrFn
   const nomDevise = DEVISES[deviseCourante()]?.nom || 'francs CFA'
   doc.setFontSize(8.5)
   doc.text(doc.splitTextToSize(`${avoir ? 'Arrêté le présent avoir' : 'Arrêtée la présente facture'} à la somme de : ${montantEnLettresAvecDevise(totalAPayer, nomDevise)}.`, 190), 10, doc.lastAutoTable.finalY + 8)
+
+  // Facture ayant fait l'objet d'avoirs : rappel des avoirs et du net, hors
+  // du tableau officiel (le montant certifié reste inchangé).
+  const avoirsAffiches = avoir ? [] : (avoirsLies || []).filter((a) => Number(a.montant) > 0)
+  if (avoirsAffiches.length) {
+    let y = doc.lastAutoTable.finalY + 18
+    const totalAvoirs = avoirsAffiches.reduce((s, a) => s + Number(a.montant), 0)
+    doc.setFontSize(9)
+    doc.setFont(undefined, 'bold')
+    doc.text("Avoirs émis sur cette facture", 10, y)
+    doc.setFont(undefined, 'normal')
+    y += 5
+    for (const a of avoirsAffiches) {
+      const date = a.created_at ? new Date(a.created_at).toLocaleDateString('fr-FR') : ''
+      doc.text(`${a.fne_reference ? 'Avoir FNE ' + a.fne_reference : 'Avoir ' + (a.numero || '')}${date ? ' du ' + date : ''}`, 10, y)
+      doc.text(`- ${fmt(a.montant)}`, 200, y, { align: 'right' })
+      y += 5
+    }
+    doc.setDrawColor(180)
+    doc.line(120, y - 2, 200, y - 2)
+    doc.setFont(undefined, 'bold')
+    doc.text('Net après avoir' + (avoirsAffiches.length > 1 ? 's' : ''), 10, y + 3)
+    doc.text(fmt(totalAPayer - totalAvoirs), 200, y + 3, { align: 'right' })
+    doc.setFont(undefined, 'normal')
+  }
   return doc
 }
