@@ -5,13 +5,13 @@ import { useAuth } from '../context/AuthContext'
 import { formatXOF } from '../lib/format'
 import { traduireErreur } from '../lib/erreurs'
 import { emettreAvoirFne, qrCodeFne, visuelFne } from '../lib/fne'
-import { genererFactureAvoir } from '../lib/export'
+import { genererFactureAvoir, genererFactureFne } from '../lib/export'
 
 // Avoir sur une vente : retour de marchandise ligne par ligne (quantités au
 // choix) ou correction de prix. Le serveur (creer_avoir_vente) contrôle tout
 // et calcule le montant ; l'écran montre un aperçu avant validation.
 // Réservé à l'administrateur, au manager et au comptable.
-export default function FenetreAvoir({ vente, lignes, depots, onTermine, onFermer }) {
+export default function FenetreAvoir({ vente, lignes, depots, configFne, onTermine, onFermer }) {
   const { t } = useTranslation('ventes')
   const { entreprise } = useAuth()
   const certifieeFne = vente.fne_statut === 'certifiee'
@@ -120,24 +120,37 @@ export default function FenetreAvoir({ vente, lignes, depots, onTermine, onFerme
       else { fneReference = fne?.reference; fneToken = fne?.token }
     }
 
-    // Facture d'avoir (PDF) avec les seules lignes de cet avoir.
+    // Facture d'avoir (PDF) avec les seules lignes de cet avoir. Avoir
+    // certifié : même modèle que la facture FNE (visuel, QR code, n° DGI).
     const { data: lignesAvoir } = await supabase.from('avoirs_lignes')
-      .select('quantite, prix_unitaire, prix_corrige, montant, etat, produits(nom, reference, unite)').eq('avoir_id', res.avoir_id)
-    const doc = genererFactureAvoir({
-      entreprise,
-      client: vente.clients,
-      vente,
-      lignes: (lignesAvoir || []).map((l) => ({ ...l, sous_total: l.montant })),
-      motif: motif.trim(),
-      montant: res.montant,
-      date: new Date().toISOString(),
-      reference: res.numero,
-      fneReference,
-      typeAvoir: type,
-      qrFne: fneToken ? await qrCodeFne(fneToken) : null,
-      visuelFne: fneReference ? await visuelFne() : null,
-    })
-    doc.save(`${res.numero}.pdf`)
+      .select('quantite, prix_unitaire, prix_corrige, montant, etat, ventes_lignes(taux_tva), produits(nom, reference, unite)').eq('avoir_id', res.avoir_id)
+    let doc
+    if (fneReference) {
+      let { data: cli, error: errCli } = vente.client_id
+        ? await supabase.from('clients').select('nom, adresse, email, ncc, regime_imposition').eq('id', vente.client_id).single()
+        : { data: null }
+      if (errCli) ({ data: cli } = await supabase.from('clients').select('nom, adresse, email, ncc').eq('id', vente.client_id).single())
+      doc = genererFactureFne({
+        entreprise, vente, configFne, client: cli || vente.clients,
+        lignes: (lignesAvoir || []).map((l) => ({ ...l, taux_tva: l.ventes_lignes?.taux_tva })),
+        qrFne: fneToken ? await qrCodeFne(fneToken) : null, visuelFne: await visuelFne(),
+        avoir: { reference: fneReference, referenceOrigine: vente.fne_reference || vente.numero_vente, motif: motif.trim(), montant: res.montant,
+          date: new Date().toISOString(), brutVente: lignes.reduce((n, l) => n + Number(l.quantite) * Number(l.prix_unitaire), 0) },
+      })
+    } else {
+      doc = genererFactureAvoir({
+        entreprise,
+        client: vente.clients,
+        vente,
+        lignes: (lignesAvoir || []).map((l) => ({ ...l, sous_total: l.montant })),
+        motif: motif.trim(),
+        montant: res.montant,
+        date: new Date().toISOString(),
+        reference: res.numero,
+        typeAvoir: type,
+      })
+    }
+    doc.save(fneReference ? `avoir-${fneReference}.pdf` : `${res.numero}.pdf`)
     setEnvoi(false)
     onTermine?.({ ...res, alerte })
   }

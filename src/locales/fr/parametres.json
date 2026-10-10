@@ -13,7 +13,17 @@
     "telephone": "Téléphone",
     "email": "Email",
     "ncc": "NCC (numéro de compte contribuable)",
-    "rccm": "RCCM (registre de commerce)"
+    "rccm": "RCCM (registre de commerce)",
+    "regime": "Régime d'imposition",
+    "regime_TEE": "TEE — Taxe d'État de l'Entreprenant",
+    "regime_RME": "RME — Régime des Microentreprises",
+    "regime_RSI": "RSI — Réel simplifié",
+    "regime_RNI": "RNI — Réel normal",
+    "centreImpots": "Centre des impôts",
+    "centreImpotsExemple": "ex. 964 Impôts des Deux-Plateaux I",
+    "referencesBancaires": "Références bancaires",
+    "referencesBancairesExemple": "ex. Banque — IBAN / RIB",
+    "aideFne": "Ces mentions figurent sur vos factures normalisées (FNE), comme sur le modèle de la DGI."
   },
   "caisses": {
     "titre": "Caisses",

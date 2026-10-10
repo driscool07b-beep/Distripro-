@@ -83,7 +83,8 @@
     "typeFneB2B": "B2B — شركة (NCC إلزامي)",
     "typeFneB2C": "B2C — فرد",
     "typeFneB2G": "B2G — إدارة عمومية",
-    "typeFneB2F": "B2F — عميل دولي"
+    "typeFneB2F": "B2F — عميل دولي",
+    "regimeImposition": "النظام الضريبي (فاتورة FNE)"
   },
   "import": {
     "titre": "استيراد العملاء (Excel)",

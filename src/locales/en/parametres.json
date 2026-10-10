@@ -13,7 +13,17 @@
     "telephone": "Phone",
     "email": "Email",
     "ncc": "NCC (taxpayer account number)",
-    "rccm": "RCCM (trade register)"
+    "rccm": "RCCM (trade register)",
+    "regime": "Tax regime",
+    "regime_TEE": "TEE — Entrepreneur's state tax",
+    "regime_RME": "RME — Micro-enterprise regime",
+    "regime_RSI": "RSI — Simplified actual regime",
+    "regime_RNI": "RNI — Normal actual regime",
+    "centreImpots": "Tax office",
+    "centreImpotsExemple": "e.g. 964 Impôts des Deux-Plateaux I",
+    "referencesBancaires": "Bank details",
+    "referencesBancairesExemple": "e.g. Bank — IBAN / RIB",
+    "aideFne": "These details appear on your standardised e-invoices (FNE), as on the DGI template."
   },
   "caisses": {
     "titre": "Cash registers",

@@ -834,3 +834,209 @@ export function genererRapportNotesUtilisation({ entreprise, notes, mois }) {
 
   return doc
 }
+
+// ---------------------------------------------------------------------------
+// Facture normalisée électronique (FNE) — même dispositif que la facture
+// produite par la plateforme FNE de la DGI : bloc fiscal de l'entreprise,
+// « Facture de vente N° <numéro DGI> », QR code + visuel FNE, bloc client,
+// tableau des articles (Réf, Désignation, P.U HT, Qté, Unité, Taxes, Rem.,
+// Montant HT), totaux, résumé par catégorie de taxe.
+// Sert aussi pour la facture d'avoir certifiée (avoir = { reference,
+// referenceOrigine, motif, montant }).
+// ---------------------------------------------------------------------------
+const CATEGORIES_TVA = {
+  TVA: { taux: 18, libelle: 'TVA normale - TVA sur HT 18,00% - A' },
+  TVAB: { taux: 9, libelle: 'TVA réduite - TVA sur HT 09,00% - B' },
+  TVAC: { taux: 0, libelle: 'TVA exo.conv - TVA sur HT 00,00% - C' },
+  TVAD: { taux: 0, libelle: 'TVA exo.légale - TVA sur HT 00,00% - D' },
+}
+export function codeTvaFne(taux, assujetti) {
+  if (!assujetti) return 'TVAD'
+  if (Number(taux) === 18) return 'TVA'
+  if (Number(taux) === 9) return 'TVAB'
+  return 'TVAD'
+}
+const LIBELLES_PAIEMENT_FNE = { espece: 'Espèces', cheque: 'Chèque', mobile_money: 'Mobile Money', virement: 'Virement', carte: 'Carte bancaire' }
+
+export function genererFactureFne({ entreprise, vente, lignes, autresTaxes, qrFne, visuelFne, configFne, client, avoir }) {
+  const doc = new jsPDF()
+  const L = 210
+  const fmt = (n) => formatMontantPDF(Math.round(Number(n) || 0))
+  const cli = client || vente.clients || {}
+  doc.setFont('helvetica', 'normal')
+
+  // Bloc fiscal de l'entreprise (cadre arrondi).
+  doc.setDrawColor(0)
+  doc.setLineWidth(0.3)
+  doc.roundedRect(10, 10, 96, 32, 2, 2)
+  doc.setTextColor(0)
+  doc.setFontSize(11)
+  const lignesFiscales = [
+    String(entreprise?.nom || '').toUpperCase(),
+    entreprise?.ncc ? `NCC : ${entreprise.ncc}` : null,
+    entreprise?.regime_imposition ? `Régime d'imposition : ${entreprise.regime_imposition}` : null,
+    entreprise?.centre_impots ? `Centre des impôts : ${entreprise.centre_impots}` : null,
+  ].filter(Boolean)
+  let yf = 17
+  lignesFiscales.forEach((t) => {
+    const morceaux = doc.splitTextToSize(t, 90)
+    doc.text(morceaux, 13, yf)
+    yf += morceaux.length * 5.2
+  })
+
+  // Logo de l'entreprise, en haut à droite.
+  if (entreprise?.logo_data) {
+    try {
+      const ratio = Number(entreprise.logo_ratio) || 1.4
+      let h = 26
+      let w = h * ratio
+      if (w > 48) { w = 48; h = w / ratio }
+      const format = String(entreprise.logo_data).startsWith('data:image/png') ? 'PNG' : 'JPEG'
+      doc.addImage(entreprise.logo_data, format, 150 - w / 2 + 18, 10, w, h, undefined, 'FAST')
+    } catch { /* logo illisible : on continue */ }
+  }
+
+  // Titre + signature électronique (QR code, visuel FNE, numéro DGI).
+  doc.setFontSize(10)
+  const titre = avoir ? `Facture d'avoir N° ${avoir.reference}` : `Facture de vente N° ${vente.fne_reference}`
+  doc.text(titre, 148, 46, { align: 'center' })
+  if (qrFne) doc.addImage(qrFne, 'PNG', 117, 50, 28, 28)
+  if (visuelFne) doc.addImage(visuelFne, 'PNG', 152, 50, 37, 27.6)
+
+  // Informations de l'entreprise et de la vente (colonne de gauche).
+  const modePaiement = vente.mode_paiement === 'credit' && Number(vente.montant_regle || 0) === 0
+    ? 'À terme' : (LIBELLES_PAIEMENT_FNE[vente.mode_reglement] || (vente.mode_paiement === 'credit' ? 'À terme' : 'Espèces'))
+  const dateDoc = avoir?.date || vente.fne_certifiee_at || vente.created_at
+  const infos = [
+    ['RCCM', entreprise?.rccm],
+    ['Références bancaires', entreprise?.references_bancaires || ''],
+    ['Établissement', configFne?.etablissement || entreprise?.nom],
+    ['Adresse', entreprise?.adresse],
+    ['N° Tel', entreprise?.telephone],
+    ['Mail', entreprise?.email],
+    ['Nom du vendeur', vente.commercial?.nom || vente.profils?.nom],
+    ['Nom de PDV', configFne?.point_de_vente],
+    ['Date et heure', formatDateHeure(dateDoc, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })],
+    ['Mode de paiement', modePaiement],
+  ].filter(([, v]) => v !== undefined && v !== null)
+  doc.setFontSize(9.5)
+  let yi = 50
+  infos.forEach(([k, v]) => {
+    const morceaux = doc.splitTextToSize(`${k} :  ${v || ''}`, 98)
+    doc.text(morceaux, 10, yi)
+    yi += Math.max(morceaux.length, 1) * 6.3
+  })
+
+  // Bloc client (colonne de droite).
+  let yc = 85
+  doc.setFont('helvetica', 'bold')
+  doc.text('Client', 117, yc)
+  doc.setFont('helvetica', 'normal')
+  yc += 6.3
+  ;[
+    ['Nom', cli.nom],
+    ['Adresse', cli.adresse || cli.email],
+    ['NCC', cli.ncc],
+    ["Régime d'imposition", cli.regime_imposition],
+  ].filter(([, v]) => v).forEach(([k, v]) => {
+    const morceaux = doc.splitTextToSize(`${k} :  ${v}`, 82)
+    doc.text(morceaux, 117, yc)
+    yc += morceaux.length * 6.3
+  })
+  let y = Math.max(yi, yc) + 4
+  if (avoir) {
+    doc.setFontSize(9)
+    doc.text(`Facture d'origine N° ${avoir.referenceOrigine || ''}`, 10, y)
+    if (avoir.motif) doc.text(doc.splitTextToSize(`Motif : ${avoir.motif}`, 190), 10, y + 5)
+    y += avoir.motif ? 12 : 7
+  }
+
+  // Articles.
+  const brut = (lignes || []).reduce((s, l) => s + Number(l.quantite) * Number(l.prix_unitaire), 0)
+  const brutVente = Number(avoir?.brutVente ?? brut)
+  const remisePct = brutVente > 0 ? Math.round((Number(vente.remise_montant || 0) / brutVente) * 10000) / 100 : 0
+  const parCategorie = {}
+  let totalHt = 0
+  let totalTva = 0
+  const corps = (lignes || []).map((l) => {
+    const code = codeTvaFne(l.taux_tva, !!entreprise?.assujetti_tva)
+    const cat = CATEGORIES_TVA[code]
+    const ht = Number(l.quantite) * Number(l.prix_unitaire) * (1 - remisePct / 100)
+    const tva = ht * cat.taux / 100
+    totalHt += ht
+    totalTva += tva
+    const c = (parCategorie[code] ||= { ht: 0, tva: 0 })
+    c.ht += ht
+    c.tva += tva
+    return [
+      l.produits?.reference || '',
+      l.produits?.nom || '',
+      fmt(l.prix_unitaire),
+      String(l.quantite),
+      l.produits?.unite || '',
+      `${code} (${cat.taux})`,
+      String(remisePct),
+      fmt(ht),
+    ]
+  })
+  autoTable(doc, {
+    startY: y,
+    head: [['Réf', 'Désignation', 'P.U HT', 'Qté', 'Unité', 'Taxes (%)', 'Rem. (%)', 'Montant HT']],
+    body: corps,
+    theme: 'grid',
+    styles: { fontSize: 8, cellPadding: 1.8, textColor: 0, lineColor: 0, lineWidth: 0.2 },
+    headStyles: { fillColor: [255, 255, 255], textColor: 0, fontStyle: 'bold', halign: 'center' },
+    columnStyles: {
+      0: { cellWidth: 26 }, 1: { cellWidth: 38 }, 2: { cellWidth: 20, halign: 'right' }, 3: { cellWidth: 11, halign: 'right' },
+      4: { cellWidth: 14 }, 5: { cellWidth: 23, halign: 'center' }, 6: { cellWidth: 18, halign: 'center' }, 7: { halign: 'right' },
+    },
+    margin: { left: 10, right: 10 },
+  })
+
+  // Totaux : le total à payer est le montant de la facture (ou de l'avoir) ;
+  // l'écart éventuel avec HT + TVA correspond aux autres taxes.
+  const totalAPayer = avoir ? Number(avoir.montant) : Number(vente.total_initial ?? vente.total)
+  const totalTtc = totalHt + totalTva
+  const autres = avoir
+    ? Math.max(totalAPayer - totalTtc, 0)
+    : (autresTaxes || []).reduce((s, tx) => s + Number(tx.montant || 0), 0) || Math.max(totalAPayer - totalTtc, 0)
+  autoTable(doc, {
+    startY: doc.lastAutoTable.finalY,
+    body: [
+      ['TOTAL HT', fmt(totalHt)],
+      ['TVA', fmt(totalTva)],
+      ['TOTAL TTC', fmt(totalTtc)],
+      ['AUTRES TAXES', fmt(autres)],
+      [avoir ? "MONTANT DE L'AVOIR" : 'TOTAL A PAYER', fmt(totalAPayer)],
+    ],
+    theme: 'grid',
+    styles: { fontSize: 8, cellPadding: 2, textColor: 0, lineColor: 0, lineWidth: 0.2, halign: 'right' },
+    columnStyles: { 0: { cellWidth: 72 }, 1: { cellWidth: 40, fontStyle: 'bold' } },
+    margin: { left: L - 10 - 112, right: 10 },
+  })
+
+  // Résumé de la facture, par catégorie de taxe.
+  let yr = doc.lastAutoTable.finalY + 9
+  doc.setFontSize(8.5)
+  doc.setFont('helvetica', 'bold')
+  doc.text(avoir ? "RESUME DE L'AVOIR" : 'RESUME DE LA FACTURE', 11, yr)
+  doc.setFont('helvetica', 'normal')
+  autoTable(doc, {
+    startY: yr + 2,
+    head: [['CATEGORIE', 'SOUS-TOTAL', 'TAUX (%)', 'TOTAL TAXES']],
+    body: Object.entries(parCategorie).map(([code, c]) => [CATEGORIES_TVA[code].libelle, fmt(c.ht), `${CATEGORIES_TVA[code].taux}%`, fmt(c.tva)]),
+    theme: 'plain',
+    styles: { fontSize: 8, cellPadding: 2, textColor: 0 },
+    headStyles: { fontStyle: 'bold', lineWidth: { top: 0.3, bottom: 0.3 }, lineColor: 0 },
+    bodyStyles: { lineWidth: { bottom: 0.2 }, lineColor: 0 },
+    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'center' }, 3: { halign: 'right' } },
+    didParseCell: (d) => { if (d.section === 'head') d.cell.styles.halign = ['left', 'right', 'center', 'right'][d.column.index] },
+    margin: { left: 10, right: 10 },
+  })
+
+  // Montant en lettres.
+  const nomDevise = DEVISES[deviseCourante()]?.nom || 'francs CFA'
+  doc.setFontSize(8.5)
+  doc.text(doc.splitTextToSize(`${avoir ? 'Arrêté le présent avoir' : 'Arrêtée la présente facture'} à la somme de : ${montantEnLettresAvecDevise(totalAPayer, nomDevise)}.`, 190), 10, doc.lastAutoTable.finalY + 8)
+  return doc
+}

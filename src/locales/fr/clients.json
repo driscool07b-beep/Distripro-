@@ -83,7 +83,8 @@
     "typeFneB2B": "B2B — entreprise (NCC obligatoire)",
     "typeFneB2C": "B2C — particulier",
     "typeFneB2G": "B2G — administration publique",
-    "typeFneB2F": "B2F — client à l'international"
+    "typeFneB2F": "B2F — client à l'international",
+    "regimeImposition": "Régime d'imposition (facture FNE)"
   },
   "import": {
     "titre": "Importer des clients (Excel)",

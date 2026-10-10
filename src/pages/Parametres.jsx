@@ -22,7 +22,7 @@ export default function Parametres() {
     { value: 'oui_non', label: t('typesChamp.oui_non') },
     { value: 'choix_multiple', label: t('typesChamp.choix_multiple') },
   ]
-  const [infosLegales, setInfosLegales] = useState({ adresse: '', telephone: '', email: '', ncc: '', rccm: '' })
+  const [infosLegales, setInfosLegales] = useState({ adresse: '', telephone: '', email: '', ncc: '', rccm: '', regime_imposition: '', centre_impots: '', references_bancaires: '' })
   const [seuilRemise, setSeuilRemise] = useState('15')
   const [enregistrementSeuil, setEnregistrementSeuil] = useState(false)
   const [erreurSeuil, setErreurSeuil] = useState('')
@@ -105,6 +105,9 @@ export default function Parametres() {
         email: entreprise.email || '',
         ncc: entreprise.ncc || '',
         rccm: entreprise.rccm || '',
+        regime_imposition: entreprise.regime_imposition || '',
+        centre_impots: entreprise.centre_impots || '',
+        references_bancaires: entreprise.references_bancaires || '',
       })
       setSeuilRemise(String(entreprise.seuil_remise_pourcentage ?? 15))
       setJustificatifObligatoire(entreprise.justificatif_stock_obligatoire ?? true)
@@ -535,6 +538,12 @@ export default function Parametres() {
         email: infosLegales.email.trim() || null,
         ncc: infosLegales.ncc.trim() || null,
         rccm: infosLegales.rccm.trim() || null,
+        // Mentions de la facture FNE (colonnes créées par migration_mentions_facture_fne.sql).
+        ...('regime_imposition' in (entreprise || {}) ? {
+          regime_imposition: infosLegales.regime_imposition || null,
+          centre_impots: infosLegales.centre_impots.trim() || null,
+          references_bancaires: infosLegales.references_bancaires.trim() || null,
+        } : {}),
       })
       .eq('id', entreprise.id)
     setEnregistrementInfos(false)
@@ -679,6 +688,30 @@ export default function Parametres() {
               />
             </div>
           </div>
+          {'regime_imposition' in (entreprise || {}) && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label">{t('infosLegales.regime')}</label>
+                  <select className="input-field" value={infosLegales.regime_imposition} onChange={(e) => setInfosLegales({ ...infosLegales, regime_imposition: e.target.value })}>
+                    <option value="">—</option>
+                    {['TEE', 'RME', 'RSI', 'RNI'].map((r) => <option key={r} value={r}>{t(`infosLegales.regime_${r}`)}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="label">{t('infosLegales.centreImpots')}</label>
+                  <input className="input-field" value={infosLegales.centre_impots} placeholder={t('infosLegales.centreImpotsExemple')}
+                    onChange={(e) => setInfosLegales({ ...infosLegales, centre_impots: e.target.value })} />
+                </div>
+              </div>
+              <div>
+                <label className="label">{t('infosLegales.referencesBancaires')}</label>
+                <input className="input-field" value={infosLegales.references_bancaires} placeholder={t('infosLegales.referencesBancairesExemple')}
+                  onChange={(e) => setInfosLegales({ ...infosLegales, references_bancaires: e.target.value })} />
+              </div>
+              <p className="text-[11px] text-petrol-500">{t('infosLegales.aideFne')}</p>
+            </>
+          )}
           {erreurInfos && <p className="text-xs text-red-600">{erreurInfos}</p>}
           {confirmationInfos && <p className="text-xs text-green-600">{t('enregistre')}</p>}
           <BoutonEnregistrer type="submit" onClick={enregistrerInfosLegales} enCours={enregistrementInfos} />

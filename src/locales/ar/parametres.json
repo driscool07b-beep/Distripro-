@@ -13,7 +13,17 @@
     "telephone": "الهاتف",
     "email": "البريد الإلكتروني",
     "ncc": "الرقم الضريبي (NCC)",
-    "rccm": "السجل التجاري (RCCM)"
+    "rccm": "السجل التجاري (RCCM)",
+    "regime": "النظام الضريبي",
+    "regime_TEE": "TEE — ضريبة الدولة على المقاول",
+    "regime_RME": "RME — نظام المؤسسات الصغيرة جدًا",
+    "regime_RSI": "RSI — النظام الحقيقي المبسط",
+    "regime_RNI": "RNI — النظام الحقيقي العادي",
+    "centreImpots": "مركز الضرائب",
+    "centreImpotsExemple": "مثال: 964 Impôts des Deux-Plateaux I",
+    "referencesBancaires": "المراجع البنكية",
+    "referencesBancairesExemple": "مثال: البنك — IBAN / RIB",
+    "aideFne": "تظهر هذه البيانات على فواتيرك المعتمدة (FNE) كما في نموذج المديرية."
   },
   "caisses": {
     "titre": "الصناديق",

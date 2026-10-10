@@ -37,6 +37,7 @@ export default function Clients() {
   const { t } = useTranslation('clients')
   const { profil, entreprise } = useAuth()
   const [clients, setClients] = useState([])
+  const [regimeDisponible, setRegimeDisponible] = useState(false)
   const [recherche, setRecherche] = useState('')
   const [chargement, setChargement] = useState(true)
   const [modalOuvert, setModalOuvert] = useState(false)
@@ -164,6 +165,7 @@ export default function Clients() {
       compte_numero: client.compte_numero || '',
       ncc: client.ncc || '',
       fne_template: client.fne_template || '',
+      regime_imposition: client.regime_imposition || '',
     })
     setErreur('')
     setCaptureGps('idle')
@@ -384,10 +386,11 @@ export default function Clients() {
 
   async function chargerClients() {
     setChargement(true)
-    const { data, error } = await supabase
-      .from('clients')
-      .select('id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, commercial_id, compte_numero, ncc, fne_template, groupes_clients(nom, compte_numero)')
-      .order('created_at', { ascending: false })
+    const colonnes = 'id, nom, telephone, email, adresse, ville, pays, type_client, segment, limite_credit, solde_credit, notes, latitude, longitude, photo_devanture_path, created_at, groupe_id, commercial_id, compte_numero, ncc, fne_template, groupes_clients(nom, compte_numero)'
+    // Régime d'imposition du client (colonne ajoutée par migration_mentions_facture_fne.sql).
+    let { data, error } = await supabase.from('clients').select(`${colonnes}, regime_imposition`).order('created_at', { ascending: false })
+    setRegimeDisponible(!error)
+    if (error) ({ data, error } = await supabase.from('clients').select(colonnes).order('created_at', { ascending: false }))
     if (!error) setClients(data || [])
     setChargement(false)
   }
@@ -474,6 +477,7 @@ export default function Clients() {
       ...(peutGererComptes && (formulaire.compte_numero || '').trim() ? { compte_numero: formulaire.compte_numero.trim() } : {}),
       ncc: (formulaire.ncc || '').trim() || null,
       fne_template: formulaire.fne_template || null,
+      ...(regimeDisponible ? { regime_imposition: formulaire.regime_imposition || null } : {}),
     }
 
     const { error } = clientEnEdition
@@ -815,6 +819,17 @@ export default function Clients() {
                   </select>
                 </div>
               </div>
+              {regimeDisponible && (
+              <div>
+                <div>
+                  <label className="label">{t('form.regimeImposition')}</label>
+                  <select className="input-field" value={formulaire.regime_imposition || ''} onChange={(e) => setFormulaire({ ...formulaire, regime_imposition: e.target.value })}>
+                    <option value="">—</option>
+                    {['TEE', 'RME', 'RSI', 'RNI'].map((r) => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+              </div>
+              )}
               <div>
                 <label className="label">{t('form.compteClient')}</label>
                 <input

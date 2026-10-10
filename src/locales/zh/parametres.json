@@ -13,7 +13,17 @@
     "telephone": "电话",
     "email": "电子邮件",
     "ncc": "纳税人账号（NCC）",
-    "rccm": "商业注册号（RCCM）"
+    "rccm": "商业注册号（RCCM）",
+    "regime": "税制",
+    "regime_TEE": "TEE — 创业者国家税",
+    "regime_RME": "RME — 微型企业制度",
+    "regime_RSI": "RSI — 简化实际制度",
+    "regime_RNI": "RNI — 普通实际制度",
+    "centreImpots": "税务中心",
+    "centreImpotsExemple": "例如：964 Impôts des Deux-Plateaux I",
+    "referencesBancaires": "银行信息",
+    "referencesBancairesExemple": "例如：银行 — IBAN / RIB",
+    "aideFne": "这些信息将出现在您的电子标准发票（FNE）上，与税务总局模板一致。"
   },
   "caisses": {
     "titre": "收银台",

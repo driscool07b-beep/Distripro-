@@ -83,7 +83,8 @@
     "typeFneB2B": "B2B — 企业（须有 NCC）",
     "typeFneB2C": "B2C — 个人",
     "typeFneB2G": "B2G — 公共机构",
-    "typeFneB2F": "B2F — 国际客户"
+    "typeFneB2F": "B2F — 国际客户",
+    "regimeImposition": "税制（FNE 发票）"
   },
   "import": {
     "titre": "导入客户（Excel）",
