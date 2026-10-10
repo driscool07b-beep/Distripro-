@@ -240,6 +240,11 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
   }
   corpsRecap.push(['Mode de paiement', `${vente.mode_paiement === 'credit' ? 'Crédit' : 'Cash'}${vente.mode_reglement ? ' — ' + LIBELLES_MODE[vente.mode_reglement] : ''}`])
   corpsRecap.push(['Montant réglé', formatMontant(vente.montant_regle)])
+  // Timbre fiscal sur la part payée en espèces (en plus du total facturé).
+  if (Number(vente.montant_timbre) > 0) {
+    corpsRecap.push(['Timbre fiscal', formatMontant(vente.montant_timbre)])
+    corpsRecap.push(['Total encaissé (timbre compris)', formatMontant(Number(vente.montant_regle) + Number(vente.montant_timbre))])
+  }
   if (soldeDu > 0) corpsRecap.push(['Reste dû', formatMontant(soldeDu)])
 
   autoTable(doc, {

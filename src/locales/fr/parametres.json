@@ -332,5 +332,17 @@
     "horsCi": "La FNE (DGI Côte d'Ivoire) est désactivée pour ce pays. La facture électronique de votre pays sera ajoutée dès qu'elle sera intégrée.",
     "codeFiche": "Code TVA FNE (facultatif)",
     "codeFicheDefaut": "Automatique (selon le taux et le réglage de l'entreprise)"
+  },
+  "timbre": {
+    "titre": "Timbre fiscal (paiements en espèces)",
+    "aide": "Ajouté à la part payée en espèces, selon le barème en vigueur dans votre pays. Il apparaît sur le reçu et dans l'état des ventes, à part du chiffre d'affaires (collecté pour le compte de l'État).",
+    "activer": "Appliquer le timbre fiscal aux paiements en espèces",
+    "de": "De (montant)",
+    "a": "À (montant)",
+    "montant": "Timbre",
+    "sansLimite": "Sans limite",
+    "supprimer": "Supprimer la tranche",
+    "ajouter": "Ajouter une tranche",
+    "aideBareme": "Exemple de saisie : de 5 001 à 100 000 → timbre 100. Laissez « À » vide pour la dernière tranche. Vérifiez le barème avec votre comptable ou la réglementation en vigueur."
   }
 }

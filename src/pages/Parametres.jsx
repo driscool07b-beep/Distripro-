@@ -1398,6 +1398,7 @@ export default function Parametres() {
       {['admin', 'manager'].includes(profil?.role) && <SectionAvoirs />}
       {profil?.role === 'admin' && <SectionRapportMensuel />}
       {['admin', 'manager'].includes(profil?.role) && 'pays' in (entreprise || {}) && <SectionFiscalite />}
+      {['admin', 'manager', 'comptable'].includes(profil?.role) && 'timbre_actif' in (entreprise || {}) && <SectionTimbre />}
       {profil?.role === 'admin' && <SectionFne />}
       {profil?.role === 'admin' && <SectionComptesClients />}
       {profil?.role === 'admin' && <SectionReconciliation />}
@@ -1786,6 +1787,62 @@ function SectionFiscalite() {
         )}
       </div>
       <p className="text-xs text-petrol-500 mt-2">{pays === 'CI' ? t('fiscalite.aideCodes') : t('fiscalite.horsCi')}</p>
+      <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
+      {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
+    </div>
+  )
+}
+
+// Timbre fiscal sur les paiements en espèces : barème par tranches saisi par
+// l'entreprise (selon la réglementation de son pays).
+function SectionTimbre() {
+  const { t } = useTranslation('parametres')
+  const { entreprise, rechargerProfil } = useAuth()
+  const [actif, setActif] = useState(false)
+  const [tranches, setTranches] = useState([])
+  const [erreur, setErreur] = useState('')
+  useEffect(() => {
+    setActif(!!entreprise?.timbre_actif)
+    setTranches((entreprise?.timbre_bareme || []).map((x) => ({ de: x.de ?? '', a: x.a ?? '', montant: x.montant ?? '' })))
+  }, [entreprise?.timbre_actif, entreprise?.timbre_bareme])
+  const majTranche = (i, cle, valeur) => setTranches(tranches.map((x, j) => (j === i ? { ...x, [cle]: valeur.replace(/[^0-9]/g, '') } : x)))
+
+  async function enregistrer() {
+    setErreur('')
+    const bareme = tranches.filter((x) => x.montant !== '')
+      .map((x) => ({ de: x.de === '' ? 0 : Number(x.de), a: x.a === '' ? null : Number(x.a), montant: Number(x.montant) }))
+      .sort((x, y) => x.de - y.de)
+    const { error } = await supabase.rpc('modifier_timbre_fiscal', { p_actif: actif, p_bareme: bareme })
+    if (error) { setErreur(traduireErreur(error.message)); return }
+    await rechargerProfil()
+    return true
+  }
+
+  return (
+    <div className="card p-4">
+      <h2 className="font-semibold mb-1">🧾 {t('timbre.titre')}</h2>
+      <p className="text-xs text-petrol-500 mb-3">{t('timbre.aide')}</p>
+      <label className="flex items-center gap-2 text-sm mb-3">
+        <input type="checkbox" checked={actif} onChange={(e) => setActif(e.target.checked)} />
+        {t('timbre.activer')}
+      </label>
+      {actif && (
+        <div className="space-y-2">
+          <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-xs text-petrol-600">
+            <span>{t('timbre.de')}</span><span>{t('timbre.a')}</span><span>{t('timbre.montant')}</span><span />
+          </div>
+          {tranches.map((x, i) => (
+            <div key={i} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2">
+              <input className="input-field font-mono" inputMode="numeric" value={x.de} onChange={(e) => majTranche(i, 'de', e.target.value)} placeholder="0" />
+              <input className="input-field font-mono" inputMode="numeric" value={x.a} onChange={(e) => majTranche(i, 'a', e.target.value)} placeholder={t('timbre.sansLimite')} />
+              <input className="input-field font-mono" inputMode="numeric" value={x.montant} onChange={(e) => majTranche(i, 'montant', e.target.value)} />
+              <button type="button" className="btn-secondary text-sm px-3" onClick={() => setTranches(tranches.filter((_, j) => j !== i))} aria-label={t('timbre.supprimer')}>✕</button>
+            </div>
+          ))}
+          <button type="button" className="btn-secondary text-sm" onClick={() => setTranches([...tranches, { de: '', a: '', montant: '' }])}>+ {t('timbre.ajouter')}</button>
+          <p className="text-xs text-petrol-500">{t('timbre.aideBareme')}</p>
+        </div>
+      )}
       <div className="mt-3"><BoutonEnregistrer onClick={enregistrer} className="text-sm" /></div>
       {erreur && <p className="text-xs text-red-600 mt-2">{erreur}</p>}
     </div>

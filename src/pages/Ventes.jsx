@@ -6,6 +6,7 @@ import { envoyerParEmail, partagerWhatsApp } from '../lib/envoiDocuments'
 import { lireConfigFne, certifierVenteFne, emettreAvoirFne, qrCodeFne, visuelFne } from '../lib/fne'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
+import { calculerTimbre } from '../lib/fiscalite'
 import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, genererFactureAvoir, genererFactureFne, formatMontantPDF, symboleDevise } from '../lib/export'
 import SelectRecherche from '../components/SelectRecherche'
 import FenetreAvoir from '../components/FenetreAvoir'
@@ -160,7 +161,8 @@ export default function Ventes() {
       }
       return { data: tout, error: null }
     }
-    let { data, error } = await toutCharger(`${selectStr}, total_initial`)
+    let { data, error } = await toutCharger(`${selectStr}, total_initial, montant_timbre`)
+    if (error) ({ data, error } = await toutCharger(`${selectStr}, total_initial`))
     if (error) ({ data, error } = await toutCharger(selectStr))
     if (error) { console.error('Erreur chargement ventes:', error); setChargement(false); return }
     // Avoirs de ces ventes (annulations et avoirs partiels) : chacun devient
@@ -234,6 +236,11 @@ export default function Ventes() {
     // Base pas encore à jour (script des avoirs partiels non exécuté) : on
     // recharge sans la nouvelle colonne pour que le détail reste lisible.
     if (erreurVente) ({ data: vente } = await supabase.from('ventes').select(colonnesVente).eq('id', venteId).single())
+    // Timbre fiscal (colonne ajoutée par migration_timbre_fiscal.sql).
+    if (vente && 'timbre_actif' in (entreprise || {})) {
+      const { data: tb, error: e } = await supabase.from('ventes').select('montant_timbre').eq('id', venteId).single()
+      if (!e) vente = { ...vente, montant_timbre: Number(tb?.montant_timbre || 0) }
+    }
     const { data: avoirs } = await supabase
       .from('avoirs')
       .select('id, numero, type_avoir, montant, motif, created_at, reduction_du, trop_percu, trop_percu_traitement, fne_reference, fne_token, fne_statut, fne_erreur')
@@ -547,7 +554,9 @@ export default function Ventes() {
   // entreprise non assujettie sans autre taxe n'a qu'un montant TTC.
   const nomsTaxes = [...new Set([...taxesConfigurees, ...Object.values(taxesParVente).flat().map((x) => x.nom)])]
   const avecTva = !!entreprise?.assujetti_tva || ventes.some((v) => Number(v.montant_tva) > 0)
-  const etatDetaille = avecTva || nomsTaxes.length > 0
+  // Timbre fiscal : hors chiffre d'affaires (collecté pour l'État), en colonne à part.
+  const avecTimbre = !!entreprise?.timbre_actif || ventes.some((v) => Number(v.montant_timbre) > 0)
+  const etatDetaille = avecTva || nomsTaxes.length > 0 || avecTimbre
   const detailFiscal = (l) => {
     const v = l.vente
     const ttcVente = Number(v.total_initial ?? v.total ?? 0)
@@ -559,14 +568,15 @@ export default function Ventes() {
     if (detail?.length) for (const x of detail) { taxes[x.nom] = (taxes[x.nom] || 0) + arrondi(Number(x.montant)); totalTaxes += arrondi(Number(x.montant)) }
     else if (Number(v.montant_autres_taxes) > 0) { const n = nomsTaxes[0] || 'Autres taxes'; taxes[n] = arrondi(Number(v.montant_autres_taxes)); totalTaxes = taxes[n] }
     const tva = arrondi(Number(v.montant_tva || 0))
-    return { ht: l.montant - tva - totalTaxes, tva, taxes, ttc: l.montant }
+    const timbre = l.type === 'vente' ? Number(v.montant_timbre || 0) : 0
+    return { ht: l.montant - tva - totalTaxes, tva, taxes, ttc: l.montant, timbre }
   }
   const totauxFiscaux = lignesListe.reduce((acc, l) => {
     const d = detailFiscal(l)
-    acc.ht += d.ht; acc.tva += d.tva; acc.ttc += d.ttc
+    acc.ht += d.ht; acc.tva += d.tva; acc.ttc += d.ttc; acc.timbre += d.timbre
     for (const [n, m] of Object.entries(d.taxes)) acc.taxes[n] = (acc.taxes[n] || 0) + m
     return acc
-  }, { ht: 0, tva: 0, taxes: {}, ttc: 0 })
+  }, { ht: 0, tva: 0, taxes: {}, ttc: 0, timbre: 0 })
 
   const COLONNES_EXPORT = [
     { cle: 'numero', titre: t('export.numero') },
@@ -582,10 +592,11 @@ export default function Ventes() {
       ...(avecTva ? [{ cle: 'tva', titre: `${t('export.tva')} (${symboleDevise()})`, alignDroite: true }] : []),
       ...nomsTaxes.map((n) => ({ cle: `taxe_${n}`, titre: `${n} (${symboleDevise()})`, alignDroite: true })),
       { cle: 'total', titre: `${t('export.ttc')} (${symboleDevise()})`, alignDroite: true },
+      ...(avecTimbre ? [{ cle: 'timbre', titre: `${t('export.timbre')} (${symboleDevise()})`, alignDroite: true }] : []),
     ] : [{ cle: 'total', titre: `${t('export.ttc')} (${symboleDevise()})`, alignDroite: true }]),
   ]
   function ligneFiscale(d) {
-    return { ht: d.ht, tva: d.tva, ...Object.fromEntries(nomsTaxes.map((n) => [`taxe_${n}`, d.taxes[n] || 0])), total: d.ttc }
+    return { ht: d.ht, tva: d.tva, ...Object.fromEntries(nomsTaxes.map((n) => [`taxe_${n}`, d.taxes[n] || 0])), total: d.ttc, timbre: d.timbre }
   }
   function donneesExport() {
     const lignes = lignesListe.map((l) => ({
@@ -752,6 +763,7 @@ export default function Ventes() {
               {avecTva && <span>{t('export.tva')} : <span className="font-mono">{formatXOF(totauxFiscaux.tva)}</span></span>}
               {nomsTaxes.map((n) => <span key={n}>{n} : <span className="font-mono">{formatXOF(totauxFiscaux.taxes[n] || 0)}</span></span>)}
               <span>{t('export.ttc')} : <span className="font-mono">{formatXOF(totauxFiscaux.ttc)}</span></span>
+              {avecTimbre && <span>{t('export.timbre')} : <span className="font-mono">{formatXOF(totauxFiscaux.timbre)}</span></span>}
             </p>
           )}
         </div>
@@ -884,6 +896,7 @@ export default function Ventes() {
               {etatDetaille && avecTva && <th className="hidden lg:table-cell px-4 py-3 font-medium text-right">{t('export.tva')}</th>}
               {etatDetaille && nomsTaxes.map((n) => <th key={n} className="hidden lg:table-cell px-4 py-3 font-medium text-right">{n}</th>)}
               <th className="px-4 py-3 font-medium text-right">{etatDetaille ? t('export.ttc') : t('table.total')}</th>
+              {etatDetaille && avecTimbre && <th className="hidden lg:table-cell px-4 py-3 font-medium text-right">{t('export.timbre')}</th>}
             </tr>
           </thead>
           <tbody>
@@ -924,6 +937,7 @@ export default function Ventes() {
                   {fisc && avecTva && cellule(fisc.tva, 'tva')}
                   {fisc && nomsTaxes.map((n) => cellule(fisc.taxes[n] || 0, n))}
                   <td className={`px-4 py-3 font-mono text-right ${estAvoir ? 'text-red-700' : ''}`}>{estAvoir ? '- ' : ''}{formatXOF(Math.abs(l.montant))}</td>
+                  {fisc && avecTimbre && cellule(fisc.timbre, 'timbre')}
                 </tr>
                 )
               })
@@ -1171,6 +1185,18 @@ export default function Ventes() {
                     <option value="mobile_money">{t('form.mobileMoney')}</option>
                     <option value="virement">{t('form.virement')}</option>
                   </select>
+                  {(() => {
+                    // Timbre fiscal : dû sur la part payée en espèces (barème de l'entreprise).
+                    if (modeReglement !== 'espece') return null
+                    const restant = Math.max(0, total - creditEffectif)
+                    const especes = montantPaye === '' ? restant : Math.min(Number(montantPaye), restant)
+                    const timbre = calculerTimbre(entreprise, especes)
+                    return timbre > 0 ? (
+                      <p className="text-xs text-petrol-700 mt-1">
+                        {t('form.timbre', { timbre: formatXOF(timbre), total: formatXOF(especes + timbre) })}
+                      </p>
+                    ) : null
+                  })()}
                 </div>
               )}
 
@@ -1297,6 +1323,9 @@ export default function Ventes() {
                     <p>{t('detail.modeDePaiement')} : <span className="capitalize">{detailVente.vente?.mode_paiement}</span></p>
                     <p>{t('detail.statut')} : <span className="capitalize">{detailVente.vente?.statut}</span></p>
                     <p>Montant réglé : {formatXOF(detailVente.vente?.montant_regle)}</p>
+                    {Number(detailVente.vente?.montant_timbre) > 0 && (
+                      <p>{t('export.timbre')} : {formatXOF(detailVente.vente.montant_timbre)}</p>
+                    )}
                     {detailVente.vente?.montant_regle < detailVente.vente?.total && (
                       <p className="text-amber-600 font-medium">
                         {t('detail.resteARegler', { montant: formatXOF(detailVente.vente.total - detailVente.vente.montant_regle) })}

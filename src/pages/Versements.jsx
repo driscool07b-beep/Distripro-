@@ -46,13 +46,17 @@ export default function Versements() {
       .in('role', ['commercial', 'admin', 'manager', 'comptable'])
       .order('nom')
 
-    const { data: ventesCash } = await supabase
+    // Timbre fiscal encaissé en espèces avec la vente (colonne ajoutée par
+    // migration_timbre_fiscal.sql ; requête sans elle si absente).
+    const requeteCash = (colonnes) => supabase
       .from('ventes')
-      .select('montant_regle, commercial_id, created_by')
+      .select(colonnes)
       .eq('mode_paiement', 'cash')
       .neq('statut', 'annulee')
       .gte('created_at', `${date}T00:00:00`)
       .lt('created_at', `${date}T23:59:59.999`)
+    let { data: ventesCash, error: erreurCash } = await requeteCash('montant_regle, montant_timbre, commercial_id, created_by')
+    if (erreurCash) ({ data: ventesCash } = await requeteCash('montant_regle, commercial_id, created_by'))
 
     const { data: recouvrements } = await supabase
       .from('reglements')
@@ -68,7 +72,7 @@ export default function Versements() {
     const resultat = (personnel || []).map((c) => {
       const cash = (ventesCash || [])
         .filter((v) => (v.commercial_id || v.created_by) === c.id)
-        .reduce((s, v) => s + Number(v.montant_regle || 0), 0)
+        .reduce((s, v) => s + Number(v.montant_regle || 0) + Number(v.montant_timbre || 0), 0)
       const recouvre = (recouvrements || [])
         .filter((p) => (p.commercial_id || p.created_by) === c.id)
         .reduce((s, p) => s + Number(p.montant || 0), 0)

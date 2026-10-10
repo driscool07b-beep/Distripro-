@@ -332,5 +332,17 @@
     "horsCi": "FNE (Côte d'Ivoire DGI) is disabled for this country. Your country's e-invoicing will be added once integrated.",
     "codeFiche": "FNE VAT code (optional)",
     "codeFicheDefaut": "Automatic (based on rate and company setting)"
+  },
+  "timbre": {
+    "titre": "Tax stamp (cash payments)",
+    "aide": "Added to the part paid in cash, according to the scale in force in your country. It appears on the receipt and in the sales statement, separate from revenue (collected on behalf of the State).",
+    "activer": "Apply the tax stamp to cash payments",
+    "de": "From (amount)",
+    "a": "To (amount)",
+    "montant": "Stamp",
+    "sansLimite": "No limit",
+    "supprimer": "Remove bracket",
+    "ajouter": "Add a bracket",
+    "aideBareme": "Example: from 5,001 to 100,000 → stamp 100. Leave “To” empty for the last bracket. Check the scale with your accountant or current regulations."
   }
 }

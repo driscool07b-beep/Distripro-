@@ -91,7 +91,8 @@
     "choisirSource": "— Choisir le magasin ou le stock terrain —",
     "choisirSourceCourt": "choisissez d'abord la source",
     "stockTerrainDe": "Stock terrain de {{nom}} (il livre lui-même)",
-    "sourceObligatoire": "Choisissez d'où part la marchandise (magasin ou stock terrain)."
+    "sourceObligatoire": "Choisissez d'où part la marchandise (magasin ou stock terrain).",
+    "timbre": "Timbre fiscal (espèces) : {{timbre}} — à encaisser : {{total}}"
   },
   "detail": {
     "chargement": "Chargement…",
@@ -154,7 +155,8 @@
     "tva": "TVA facturée",
     "ttc": "Montant TTC",
     "totalNet": "TOTAL (net des avoirs)",
-    "titreEtatFiscal": "État des ventes (HT, TVA, taxes, TTC)"
+    "titreEtatFiscal": "État des ventes (HT, TVA, taxes, TTC)",
+    "timbre": "Timbre fiscal"
   },
   "bureau": "Vente de bureau",
   "saisiPar": "Saisie par {{nom}}",

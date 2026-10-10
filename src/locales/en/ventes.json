@@ -91,7 +91,8 @@
     "choisirSource": "— Choose warehouse or field stock —",
     "choisirSourceCourt": "choose the source first",
     "stockTerrainDe": "{{nom}}'s field stock (they deliver)",
-    "sourceObligatoire": "Choose where the goods come from (warehouse or field stock)."
+    "sourceObligatoire": "Choose where the goods come from (warehouse or field stock).",
+    "timbre": "Tax stamp (cash): {{timbre}} — to collect: {{total}}"
   },
   "detail": {
     "chargement": "Loading…",
@@ -154,7 +155,8 @@
     "tva": "VAT invoiced",
     "ttc": "Amount incl. tax",
     "totalNet": "TOTAL (net of credit notes)",
-    "titreEtatFiscal": "Sales statement (excl. tax, VAT, taxes, incl. tax)"
+    "titreEtatFiscal": "Sales statement (excl. tax, VAT, taxes, incl. tax)",
+    "timbre": "Tax stamp"
   },
   "bureau": "Office sale",
   "saisiPar": "Entered by {{nom}}",
