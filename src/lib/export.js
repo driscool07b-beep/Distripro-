@@ -151,7 +151,7 @@ export function exporterPDF(nomFichier, titre, sousTitre, colonnes, lignes, tota
 /**
  * Génère un reçu/facture interne pour une vente.
  */
-export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne }) {
+export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne, visuelFne }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
 
@@ -271,6 +271,8 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
     // Éléments FNE : référence DGI + QR code de vérification (lien DGI).
     const yFne = Math.min(doc.lastAutoTable.finalY + 22, 235)
     if (qrFne) doc.addImage(qrFne, 'PNG', 150, yFne, 42, 42)
+    // Visuel officiel FNE, à gauche du QR code.
+    if (visuelFne) doc.addImage(visuelFne, 'PNG', 118, yFne + 5, 30, 30)
     doc.setFontSize(10)
     doc.setTextColor(0)
     doc.setFont(undefined, 'bold')
@@ -300,7 +302,7 @@ export function genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne
  * distinct des reçus (bandeau rouge) pour ne jamais être confondu avec un
  * document de paiement.
  */
-export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, montant, date, reference, fneReference, typeAvoir }) {
+export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, montant, date, reference, fneReference, typeAvoir, qrFne, visuelFne }) {
   const doc = new jsPDF()
   const y0 = ecrireEnTeteEntreprise(doc, entreprise)
   const formatMontant = (n) => formatMontantDevise(n)
@@ -372,6 +374,16 @@ export function genererFactureAvoir({ entreprise, client, vente, lignes, motif, 
     14, 278
   )
   if (!fneReference) doc.text('Il ne constitue pas une facture normalisée DGI (FNE).', 14, 283)
+  if (fneReference && (qrFne || visuelFne)) {
+    // Signature électronique FNE de l'avoir : visuel, QR code, numéro DGI.
+    const yS = 235
+    if (visuelFne) doc.addImage(visuelFne, 'PNG', 118, yS + 5, 30, 30)
+    if (qrFne) doc.addImage(qrFne, 'PNG', 150, yS, 42, 42)
+    doc.setFontSize(9)
+    doc.setTextColor(0)
+    doc.text('Avoir certifié — Facture Normalisée Électronique (FNE)', 14, yS + 10)
+    doc.text(`N° d'avoir (DGI) : ${fneReference}`, 14, yS + 16)
+  }
 
   return doc
 }

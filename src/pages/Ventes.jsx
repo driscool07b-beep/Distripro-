@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { envoyerParEmail, partagerWhatsApp } from '../lib/envoiDocuments'
-import { lireConfigFne, certifierVenteFne, emettreAvoirFne, qrCodeFne } from '../lib/fne'
+import { lireConfigFne, certifierVenteFne, emettreAvoirFne, qrCodeFne, visuelFne } from '../lib/fne'
 import { useAuth } from '../context/AuthContext'
 import { accesAutorise } from '../lib/accesRole'
 import { exporterExcel, exporterPDF, genererRecuVente, genererBonLivraison, genererFactureAvoir, formatMontantPDF, symboleDevise } from '../lib/export'
@@ -226,7 +226,7 @@ export default function Ventes() {
   async function telechargerRecu() {
     if (!detailVente) return
     const qrFne = await qrCodeFne(detailVente.vente.fne_token)
-    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes, autresTaxes: detailVente.autresTaxes, qrFne })
+    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes, autresTaxes: detailVente.autresTaxes, qrFne, visuelFne: qrFne ? await visuelFne() : null })
     doc.save(detailVente.vente.fne_statut === 'certifiee' && detailVente.vente.fne_reference ? `facture-${detailVente.vente.fne_reference}.pdf` : `recu-vente-${detailVente.vente.numero_vente || detailVente.vente.id.slice(0, 8)}.pdf`)
   }
 
@@ -253,6 +253,8 @@ export default function Ventes() {
       reference: avoir.numero || avoir.id.slice(0, 8),
       fneReference: avoir.fne_reference,
       typeAvoir: avoir.type_avoir,
+      qrFne: avoir.fne_token ? await qrCodeFne(avoir.fne_token) : null,
+      visuelFne: avoir.fne_reference ? await visuelFne() : null,
     })
     doc.save(`${avoir.numero || 'avoir-' + avoir.id.slice(0, 8)}.pdf`)
   }
@@ -266,7 +268,7 @@ export default function Ventes() {
   // Document du client : FNE si la vente est certifiée, sinon reçu interne.
   async function documentVente(vente, lignes, autresTaxes) {
     const qrFne = await qrCodeFne(vente.fne_token)
-    const doc = genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne })
+    const doc = genererRecuVente({ entreprise, vente, lignes, autresTaxes, qrFne, visuelFne: qrFne ? await visuelFne() : null })
     const certifiee = vente.fne_statut === 'certifiee'
     return {
       doc,
@@ -306,7 +308,7 @@ export default function Ventes() {
   async function partagerRecu() {
     if (!detailVente) return
     const qrFne = await qrCodeFne(detailVente.vente.fne_token)
-    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes, autresTaxes: detailVente.autresTaxes, qrFne })
+    const doc = genererRecuVente({ entreprise, vente: detailVente.vente, lignes: detailVente.lignes, autresTaxes: detailVente.autresTaxes, qrFne, visuelFne: qrFne ? await visuelFne() : null })
     const blob = doc.output('blob')
     const fichier = new File([blob], `recu-vente-${detailVente.vente.id.slice(0, 8)}.pdf`, { type: 'application/pdf' })
 

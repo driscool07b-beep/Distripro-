@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { formatXOF } from '../lib/format'
 import { traduireErreur } from '../lib/erreurs'
-import { emettreAvoirFne } from '../lib/fne'
+import { emettreAvoirFne, qrCodeFne, visuelFne } from '../lib/fne'
 import { genererFactureAvoir } from '../lib/export'
 
 // Avoir sur une vente : retour de marchandise ligne par ligne (quantités au
@@ -112,11 +112,12 @@ export default function FenetreAvoir({ vente, lignes, depots, onTermine, onFerme
 
     // Vente certifiée FNE : l'avoir (retour) est certifié auprès de la DGI.
     let fneReference = null
+    let fneToken = null
     let alerte = null
     if (res?.certifier_fne) {
       const { data: fne, error: erreurFne } = await emettreAvoirFne(vente.id, res.avoir_id)
       if (erreurFne) alerte = t('fne.echecAvoir', { message: erreurFne })
-      else fneReference = fne?.reference
+      else { fneReference = fne?.reference; fneToken = fne?.token }
     }
 
     // Facture d'avoir (PDF) avec les seules lignes de cet avoir.
@@ -133,6 +134,8 @@ export default function FenetreAvoir({ vente, lignes, depots, onTermine, onFerme
       reference: res.numero,
       fneReference,
       typeAvoir: type,
+      qrFne: fneToken ? await qrCodeFne(fneToken) : null,
+      visuelFne: fneReference ? await visuelFne() : null,
     })
     doc.save(`${res.numero}.pdf`)
     setEnvoi(false)
